@@ -49,6 +49,14 @@
 
 #pragma mark - Properties
 
+- (void)setCommandType:(MIKMIDICommandType)commandType
+{
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
+	
+	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	data[0] |= (commandType & 0xF0); // Need to avoid changing channel
+}
+
 - (UInt8)channel
 {
 	if ([self.internalData length] < 1) return 0;

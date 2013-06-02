@@ -89,16 +89,18 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 - (id)copyWithZone:(NSZone *)zone
 {
 	Class copyClass = [[self class] immutableCounterpartClass];
-	MIKMIDICommand *result = [[copyClass alloc] initWithMIDIPacket:(MIDIPacket *)[self.data bytes]];
+	MIKMIDICommand *result = [[copyClass alloc] init];
 	result.midiTimestamp = self.midiTimestamp;
+	result.internalData = [self.data mutableCopy];
 	return result;
 }
 
 - (id)mutableCopy
 {
 	Class copyClass = [[self class] mutableCounterpartClass];
-	MIKMutableMIDICommand *result = [[copyClass alloc] initWithMIDIPacket:(MIDIPacket *)[self.data bytes]];
+	MIKMutableMIDICommand *result = [[copyClass alloc] init];
 	result.midiTimestamp = self.midiTimestamp;
+	result.data = self.data;
 	return result;
 }
 
