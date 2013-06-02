@@ -23,7 +23,6 @@
 #import "MIKMIDIPort.h"
 #import "MIKMIDIResponder.h"
 #import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDISupport.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
 #import "MIKMIDIUtilities.h"
