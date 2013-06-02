@@ -11,7 +11,6 @@
 
 @interface MIKMIDIObject : NSObject
 
-+ (BOOL)canInitWithObjectRef:(MIDIObjectRef)objectRef;
 + (instancetype)MIDIObjectWithObjectRef:(MIDIObjectRef)objectRef; // Returns a subclass of MIKMIDIObject (device, entity, or endpoint)
 - (id)initWithObjectRef:(MIDIObjectRef)objectRef;
 

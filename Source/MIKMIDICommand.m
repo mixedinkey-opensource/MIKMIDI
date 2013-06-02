@@ -71,7 +71,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ command: %d data: %@", [super description], self.commandType, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
+	return [NSString stringWithFormat:@"%@ command: %lu data: %@", [super description], (unsigned long)self.commandType, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
 }
 
 #pragma mark - Private
@@ -137,11 +137,17 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return [NSDate dateWithTimeIntervalSinceNow:elapsedInSeconds];
 }
 
-- (UInt8)commandType
+- (MIKMIDICommandType)commandType
 {
 	if ([self.internalData length] < 1) return 0;
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	return data[0];
+	MIKMIDICommandType result = data[0];
+	if (![[self class] supportsMIDICommandType:result]) {
+		if ([[self class] supportsMIDICommandType:(result | 0x0F)]) {
+			result |= 0x0F;
+		}
+	}
+	return result;
 }
 
 - (UInt8)dataByte1
@@ -180,12 +186,12 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	self.midiTimestamp = mach_absolute_time() + elapsed;
 }
 
-- (void)setCommandType:(UInt8)commandType
+- (void)setCommandType:(MIKMIDICommandType)commandType
 {
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
 
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= ((commandType << 4) & 0xF0);
+	data[0] = commandType;
 }
 
 - (void)setDataByte1:(UInt8)byte

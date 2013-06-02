@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 
 @property (nonatomic, strong, readonly) NSDate *timestamp;
-@property (nonatomic, readonly) UInt8 commandType;
+@property (nonatomic, readonly) MIKMIDICommandType commandType;
 @property (nonatomic, readonly) UInt8 dataByte1;
 @property (nonatomic, readonly) UInt8 dataByte2;
 
@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @interface MIKMutableMIDICommand : MIKMIDICommand
 
 @property (nonatomic, strong, readwrite) NSDate *timestamp;
-@property (nonatomic, readwrite) UInt8 commandType;
+@property (nonatomic, readwrite) MIKMIDICommandType commandType;
 @property (nonatomic, readwrite) UInt8 dataByte1;
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
