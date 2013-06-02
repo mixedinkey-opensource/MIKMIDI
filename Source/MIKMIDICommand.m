@@ -8,29 +8,42 @@
 
 #import "MIKMIDICommand.h"
 #include <mach/mach_time.h>
+#import "MIKMIDICommand_SubclassMethods.h"
+
+static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 @interface MIKMIDICommand ()
-
-@property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, strong, readwrite) NSMutableData *internalData;
 
 @end
 
 @implementation MIKMIDICommand
+
++ (void)registerSubclass:(Class)subclass;
 {
-	MIDIPacket *_MIDIPacket;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		registeredMIKMIDICommandSubclasses = [[NSMutableSet alloc] init];
+	});
+	[registeredMIKMIDICommandSubclasses addObject:subclass];
 }
+
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return NO; }
++ (Class)immutableCounterpartClass; { return [MIKMIDICommand class]; }
++ (Class)mutableCounterpartClass; { return [MIKMutableMIDICommand class]; }
 
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 {
-	MIKMIDICommandType commandType = packet->data[0] >> 4;
+	MIKMIDICommandType commandType = packet->data[0];
 	
-	Class subclass = self;
-	if (commandType == MIKMIDICommandTypeControlChange) {
-		subclass = [self isEqual:[MIKMutableMIDICommand class]] ? [MIKMutableMIDIControlChangeCommand class] : [MIKMIDIControlChangeCommand class];
+	Class subclass = [[self class] subclassForCommandType:commandType];
+	if (!subclass) {
+		// Try again ignoring lower 4 bits
+		commandType |= 0x0f;
+		subclass = [[self class] subclassForCommandType:commandType];
 	}
+	if (!subclass) subclass = self;
+	if ([self isSubclassOfClass:[MIKMutableMIDICommand class]]) subclass = [subclass mutableCounterpartClass];
 	MIKMIDICommand *result = [[subclass alloc] initWithMIDIPacket:packet];
-	
 	return result;
 }
 
@@ -56,31 +69,36 @@
 	return self;
 }
 
-- (void)dealloc
-{
-    if (_MIDIPacket) free(_MIDIPacket);
-}
-
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ command: %d channel: %d data: %@", [super description], self.commandType, self.channel, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
+	return [NSString stringWithFormat:@"%@ command: %d data: %@", [super description], self.commandType, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
+}
+
+#pragma mark - Private
+
++ (Class)subclassForCommandType:(MIKMIDICommandType)commandType
+{
+	for (Class subclass in registeredMIKMIDICommandSubclasses) {
+		if ([subclass supportsMIDICommandType:commandType]) return subclass;
+	}
+	return nil;
 }
 
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone
 {
-	MIKMIDICommand *result = [[MIKMIDICommand alloc] init];
+	Class copyClass = [[self class] immutableCounterpartClass];
+	MIKMIDICommand *result = [[copyClass alloc] initWithMIDIPacket:(MIDIPacket *)[self.data bytes]];
 	result.midiTimestamp = self.midiTimestamp;
-	result.internalData = [self.data mutableCopy];
 	return result;
 }
 
 - (id)mutableCopy
 {
-	MIKMutableMIDICommand *result = [[MIKMutableMIDICommand alloc] init];
+	Class copyClass = [[self class] mutableCounterpartClass];
+	MIKMutableMIDICommand *result = [[copyClass alloc] initWithMIDIPacket:(MIDIPacket *)[self.data bytes]];
 	result.midiTimestamp = self.midiTimestamp;
-	result.data = self.data;
 	return result;
 }
 
@@ -123,14 +141,7 @@
 {
 	if ([self.internalData length] < 1) return 0;
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	return data[0] >> 4;
-}
-
-- (UInt8)channel
-{
-	if ([self.internalData length] < 1) return 0;
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	return data[0] & 0x0F;
+	return data[0];
 }
 
 - (UInt8)dataByte1
@@ -152,6 +163,8 @@
 @end
 
 @implementation MIKMutableMIDICommand
+
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
 
 #pragma mark - Properties
 
@@ -175,14 +188,6 @@
 	data[0] |= ((commandType << 4) & 0xF0);
 }
 
-- (void)setChannel:(UInt8)channel
-{
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
-	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= (channel & 0x0F);
-}
-
 - (void)setDataByte1:(UInt8)byte
 {
 	byte &= 0x7F;
@@ -201,60 +206,6 @@
 {
 	self.internalData = [data mutableCopy];
 }
-
-@end
-
-@implementation MIKMIDIControlChangeCommand
-
-- (id)copyWithZone:(NSZone *)zone
-{
-	MIKMIDIControlChangeCommand *result = [[MIKMIDIControlChangeCommand alloc] init];
-	result.midiTimestamp = self.midiTimestamp;
-	result.internalData = [self.data mutableCopy];
-	return result;
-}
-
-- (id)mutableCopy
-{
-	MIKMutableMIDIControlChangeCommand *result = [[MIKMutableMIDIControlChangeCommand alloc] init];
-	result.midiTimestamp = self.midiTimestamp;
-	result.data = self.data;
-	return result;
-}
-
-#pragma mark - Properties
-
-- (NSUInteger)controllerNumber { return self.dataByte1; }
-
-- (NSUInteger)controllerValue { return self.dataByte2; }
-
-@end
-
-@implementation MIKMutableMIDIControlChangeCommand
-
-- (id)copyWithZone:(NSZone *)zone
-{
-	MIKMIDIControlChangeCommand *result = [[MIKMIDIControlChangeCommand alloc] init];
-	result.midiTimestamp = self.midiTimestamp;
-	result.internalData = [self.data mutableCopy];
-	return result;
-}
-
-- (id)mutableCopy
-{
-	MIKMutableMIDIControlChangeCommand *result = [[MIKMutableMIDIControlChangeCommand alloc] init];
-	result.midiTimestamp = self.midiTimestamp;
-	result.data = self.data;
-	return result;
-}
-
-#pragma mark - Properties
-
-- (NSUInteger)controllerNumber { return self.dataByte1; }
-- (void)setControllerNumber:(NSUInteger)value { self.dataByte1 = value; }
-
-- (NSUInteger)controllerValue { return self.dataByte2; }
-- (void)setControllerValue:(NSUInteger)value { self.dataByte2 = value; }
 
 @end
 

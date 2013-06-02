@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDISourceEndpoint.h"
+#import "MIKMIDIObject_SubclassMethods.h"
 
 @implementation MIKMIDISourceEndpoint
 

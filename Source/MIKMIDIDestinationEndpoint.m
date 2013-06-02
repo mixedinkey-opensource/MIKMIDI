@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIDestinationEndpoint.h"
+#import "MIKMIDIObject_SubclassMethods.h"
 
 @implementation MIKMIDIDestinationEndpoint
 

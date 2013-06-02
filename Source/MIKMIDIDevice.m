@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIDevice.h"
+#import "MIKMIDIObject_SubclassMethods.h"
 #import "MIKMIDIEntity.h"
 #import "MIKMIDIUtilities.h"
 

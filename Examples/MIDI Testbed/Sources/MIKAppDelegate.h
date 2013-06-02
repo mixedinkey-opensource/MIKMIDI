@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class MIKMIDIDeviceManager;
+@class MIKMIDIDevice;
 
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
@@ -18,5 +19,6 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
+@property (nonatomic, strong) MIKMIDIDevice *device;
 
 @end

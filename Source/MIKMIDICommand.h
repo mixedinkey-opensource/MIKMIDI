@@ -24,7 +24,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 	MIKMIDICommandTypeSystemSongPositionPointer = 0xf2,
 	MIKMIDICommandTypeSystemSongSelect = 0xf3,
 	MIKMIDICommandTypeSystemTuneRequest = 0xf6,
-	MIKMIDICommandTypeSystemEndExclusive = 0xf7,
 
 	MIKMIDICommandTypeSystemTimingClock = 0xf8,
 	MIKMIDICommandTypeSystemStartSequence = 0xfa,
@@ -39,7 +38,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 
 @property (nonatomic, strong, readonly) NSDate *timestamp;
 @property (nonatomic, readonly) UInt8 commandType;
-@property (nonatomic, readonly) UInt8 channel;
 @property (nonatomic, readonly) UInt8 dataByte1;
 @property (nonatomic, readonly) UInt8 dataByte2;
 
@@ -52,7 +50,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 
 @property (nonatomic, strong, readwrite) NSDate *timestamp;
 @property (nonatomic, readwrite) UInt8 commandType;
-@property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 dataByte1;
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
@@ -61,19 +58,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 
 @end
 
-@interface MIKMIDIControlChangeCommand : MIKMIDICommand
-
-@property (nonatomic, readonly) NSUInteger controllerNumber;
-@property (nonatomic, readonly) NSUInteger controllerValue;
-
-@end
-
-@interface MIKMutableMIDIControlChangeCommand : MIKMutableMIDICommand
-
-@property (nonatomic, readwrite) NSUInteger controllerNumber;
-@property (nonatomic, readwrite) NSUInteger controllerValue;
-
-@end
-
 // Pass 0 for listSize to use standard MIDIPacketList size (i.e. sizeof(MIDIPacketList) )
 BOOL MIKMIDIPacketListFromCommands(MIDIPacketList *inOutPacketList, ByteCount listSize, NSArray *commands);
+

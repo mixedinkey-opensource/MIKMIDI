@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreMIDI/CoreMIDI.h>
 #import "MIKMIDIObject.h"
 
 @class MIKMIDIEntity;

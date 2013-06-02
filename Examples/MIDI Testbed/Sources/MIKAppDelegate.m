@@ -7,17 +7,11 @@
 //
 
 #import "MIKAppDelegate.h"
-#import "MIKMIDIDeviceManager.h"
-#import "MIKMIDIDevice.h"
-#import "MIKMIDIEntity.h"
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDICommand.h"
+#import "MIKMIDI.h"
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 
 @interface MIKAppDelegate ()
-
-@property (nonatomic, strong) MIKMIDIDevice *device;
 
 @end
 
@@ -27,25 +21,30 @@
 {
 	self.midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
 	[self.midiDeviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
-	
-	MIKMIDIDevice *x1 = nil;
-	for (MIKMIDIDevice *device in self.midiDeviceManager.availableDevices) {
-		if ([device.model rangeOfString:@"Traktor Kontrol X1"].location != NSNotFound) {
-			x1 = device;
-			break;
-		}
+}
+
+- (void)disconnectFromDevice:(MIKMIDIDevice *)device
+{
+	if (!device) return;
+	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+	for (MIKMIDISourceEndpoint *source in sources) {
+		[self.midiDeviceManager disconnectInput:source];
 	}
-	if (!x1) return;
-	self.device = x1;
-	
-	NSArray *sources = [self.device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+}
+
+- (void)connectToDevice:(MIKMIDIDevice *)device
+{
+	if (!device) return;
+	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	if (![sources count]) return;
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
 	NSError *error = nil;
 	BOOL success = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		NSMutableString *textFieldString = self.textView.textStorage.mutableString;
-		for (MIKMIDICommand *command in commands) {
+		for (MIKMIDIChannelVoiceCommand *command in commands) {
+			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
 			[textFieldString appendFormat:@"Received command: %d %d from %@ on channel %d\n", command.dataByte1, command.dataByte2, source.name, command.channel];
+			NSLog(@"Received: %@", command);
 		}
 	}];
 	if (!success) NSLog(@"Unable to connect to input: %@", error);
@@ -101,6 +100,17 @@
 	NSError *error = nil;
 	if (![self.midiDeviceManager sendCommands:commands toEndpoint:destination error:&error]) {
 		NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
+	}
+}
+
+#pragma mark - Devices
+
+- (void)setDevice:(MIKMIDIDevice *)device
+{
+	if (device != _device) {
+		[self disconnectFromDevice:_device];
+		_device = device;
+		[self connectToDevice:_device];
 	}
 }
 
