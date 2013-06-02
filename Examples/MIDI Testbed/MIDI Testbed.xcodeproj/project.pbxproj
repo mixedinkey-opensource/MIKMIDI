@@ -70,7 +70,6 @@
 		9D749435175BCAFA00A95994 /* MIKMIDIResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIResponder.h; sourceTree = "<group>"; };
 		9D749436175BCAFA00A95994 /* MIKMIDISourceEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISourceEndpoint.h; sourceTree = "<group>"; };
 		9D749437175BCAFA00A95994 /* MIKMIDISourceEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISourceEndpoint.m; sourceTree = "<group>"; };
-		9D749438175BCAFA00A95994 /* MIKMIDISupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISupport.h; sourceTree = "<group>"; };
 		9D749439175BCAFA00A95994 /* MIKMIDIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIUtilities.h; sourceTree = "<group>"; };
 		9D74943A175BCAFA00A95994 /* MIKMIDIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIUtilities.m; sourceTree = "<group>"; };
 		9D74943B175BCAFA00A95994 /* NSApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+MIKMIDI.h"; sourceTree = "<group>"; };
@@ -196,7 +195,6 @@
 				9D749435175BCAFA00A95994 /* MIKMIDIResponder.h */,
 				9D749436175BCAFA00A95994 /* MIKMIDISourceEndpoint.h */,
 				9D749437175BCAFA00A95994 /* MIKMIDISourceEndpoint.m */,
-				9D749438175BCAFA00A95994 /* MIKMIDISupport.h */,
 				9D749439175BCAFA00A95994 /* MIKMIDIUtilities.h */,
 				9D74943A175BCAFA00A95994 /* MIKMIDIUtilities.m */,
 				9D74943B175BCAFA00A95994 /* NSApplication+MIKMIDI.h */,
