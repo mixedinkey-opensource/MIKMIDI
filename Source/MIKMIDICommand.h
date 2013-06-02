@@ -10,7 +10,27 @@
 #import <CoreMIDI/CoreMIDI.h>
 
 typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
-	MIKMIDICommandTypeControlChange = 0x0b,
+	MIKMIDICommandTypeNoteOff = 0x8f,
+	MIKMIDICommandTypeNoteOn = 0x9f,
+	MIKMIDICommandTypePolyphonicKeyPressure = 0xaf,
+	MIKMIDICommandTypeControlChange = 0xbf,
+	MIKMIDICommandTypeProgramChange = 0xcf,
+	MIKMIDICommandTypeChannelPressure = 0xdf,
+	MIKMIDICommandTypePitchWheelChange = 0xef,
+	
+	MIKMIDICommandTypeSystemMessage = 0xff,
+	MIKMIDICommandTypeSystemExclusive = 0xf0,
+	MIKMIDICommandTypeSystemTimecodeQuarterFrame = 0xf1,
+	MIKMIDICommandTypeSystemSongPositionPointer = 0xf2,
+	MIKMIDICommandTypeSystemSongSelect = 0xf3,
+	MIKMIDICommandTypeSystemTuneRequest = 0xf6,
+	MIKMIDICommandTypeSystemEndExclusive = 0xf7,
+
+	MIKMIDICommandTypeSystemTimingClock = 0xf8,
+	MIKMIDICommandTypeSystemStartSequence = 0xfa,
+	MIKMIDICommandTypeSystemContinueSequence = 0xfb,
+	MIKMIDICommandTypeSystemStopSequence = 0xfc,
+	MIKMIDICommandTypeSystemKeepAlive = 0xfe,
 };
 
 @interface MIKMIDICommand : NSObject <NSCopying>
