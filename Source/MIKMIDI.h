@@ -26,7 +26,4 @@
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
 #import "MIKMIDIUtilities.h"
-
-#if (TARGET_OS_MAC && !TARGET_OS_IPHONE)
-#import "NSApplication+MIKMIDI.h"
-#endif
+#import "NSUIApplication+MIKMIDI.h"
