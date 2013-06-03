@@ -1,5 +1,5 @@
 //
-//  ORSViewController.h
+//  ORSSoundboardViewController.h
 //  MIDI Soundboard
 //
 //  Created by Andrew Madsen on 6/2/13.
@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ORSViewController : UIViewController
+@interface ORSSoundboardViewController : UIViewController
+
+@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 
 @end

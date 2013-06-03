@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */; };
+		9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */; };
 		9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B2175C1A6A006546F6 /* UIKit.framework */; };
 		9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B4175C1A6A006546F6 /* Foundation.framework */; };
 		9D8E68B7175C1A6A006546F6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */; };
 		9D8E68DF175C1AAE006546F6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E68D9175C1AAE006546F6 /* main.m */; };
 		9D8E68E0175C1AAE006546F6 /* ORSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */; };
-		9D8E68E1175C1AAE006546F6 /* ORSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E68DE175C1AAE006546F6 /* ORSViewController.m */; };
 		9D8E68EE175C1AB3006546F6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E3175C1AB3006546F6 /* InfoPlist.strings */; };
 		9D8E68EF175C1AB3006546F6 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E5175C1AB3006546F6 /* MainStoryboard_iPad.storyboard */; };
 		9D8E68F0175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D8E68E7175C1AB3006546F6 /* MainStoryboard_iPhone.storyboard */; };
@@ -43,6 +44,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9D6BF5AA175C3A0D00DF6B15 /* ORSSplitViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSSplitViewManager.h; sourceTree = "<group>"; };
+		9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSplitViewManager.m; sourceTree = "<group>"; };
+		9D6BF5AD175C3C9900DF6B15 /* ORSSoundboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSSoundboardViewController.h; sourceTree = "<group>"; };
+		9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSoundboardViewController.m; sourceTree = "<group>"; };
 		9D8E68AF175C1A6A006546F6 /* MIDI Soundboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Soundboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D8E68B2175C1A6A006546F6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9D8E68B4175C1A6A006546F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -51,8 +56,6 @@
 		9D8E68DA175C1AAE006546F6 /* MIDI Soundboard-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIDI Soundboard-Prefix.pch"; sourceTree = "<group>"; };
 		9D8E68DB175C1AAE006546F6 /* ORSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSAppDelegate.h; sourceTree = "<group>"; };
 		9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSAppDelegate.m; sourceTree = "<group>"; };
-		9D8E68DD175C1AAE006546F6 /* ORSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSViewController.h; sourceTree = "<group>"; };
-		9D8E68DE175C1AAE006546F6 /* ORSViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSViewController.m; sourceTree = "<group>"; };
 		9D8E68E4175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9D8E68E6175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		9D8E68E8175C1AB3006546F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -158,7 +161,7 @@
 				9D8E68DB175C1AAE006546F6 /* ORSAppDelegate.h */,
 				9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */,
 				9D8E693A175C1CA7006546F6 /* Views */,
-				9D8E68F6175C1AD1006546F6 /* View Controllers */,
+				9D8E68F6175C1AD1006546F6 /* UI Controllers */,
 				9D8E68F8175C1B49006546F6 /* MIKMIDI */,
 				9D8E68F7175C1AD6006546F6 /* Other Sources */,
 			);
@@ -195,15 +198,17 @@
 			name = "Storyboards and XIBs";
 			sourceTree = "<group>";
 		};
-		9D8E68F6175C1AD1006546F6 /* View Controllers */ = {
+		9D8E68F6175C1AD1006546F6 /* UI Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				9D8E68DD175C1AAE006546F6 /* ORSViewController.h */,
-				9D8E68DE175C1AAE006546F6 /* ORSViewController.m */,
 				9D8E6937175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.h */,
 				9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */,
+				9D6BF5AD175C3C9900DF6B15 /* ORSSoundboardViewController.h */,
+				9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */,
+				9D6BF5AA175C3A0D00DF6B15 /* ORSSplitViewManager.h */,
+				9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */,
 			);
-			name = "View Controllers";
+			name = "UI Controllers";
 			sourceTree = "<group>";
 		};
 		9D8E68F7175C1AD6006546F6 /* Other Sources */ = {
@@ -343,7 +348,6 @@
 			files = (
 				9D8E68DF175C1AAE006546F6 /* main.m in Sources */,
 				9D8E68E0175C1AAE006546F6 /* ORSAppDelegate.m in Sources */,
-				9D8E68E1175C1AAE006546F6 /* ORSViewController.m in Sources */,
 				9D8E6924175C1B49006546F6 /* MIKMIDIChannelVoiceCommand.m in Sources */,
 				9D8E6925175C1B49006546F6 /* MIKMIDICommand.m in Sources */,
 				9D8E6926175C1B49006546F6 /* MIKMIDIControlChangeCommand.m in Sources */,
@@ -364,6 +368,8 @@
 				9D8E6935175C1B49006546F6 /* MIKMIDIUtilities.m in Sources */,
 				9D8E6936175C1B49006546F6 /* NSApplication+MIKMIDI.m in Sources */,
 				9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */,
+				9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */,
+				9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
