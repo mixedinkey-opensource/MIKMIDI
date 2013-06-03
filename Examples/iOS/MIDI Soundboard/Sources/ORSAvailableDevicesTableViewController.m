@@ -9,27 +9,17 @@
 #import "ORSAvailableDevicesTableViewController.h"
 #import "MIKMIDI.h"
 
+@interface ORSAvailableDevicesTableViewController ()
+
+@property (nonatomic, strong) MIKMIDIDeviceManager *deviceManager;
+
+@end
+
 @implementation ORSAvailableDevicesTableViewController
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)dealloc
 {
-	[super viewWillAppear:animated];
-	[self.deviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-	[self.deviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-	if ([keyPath isEqualToString:@"availableDevices"]) {
-		[self.tableView reloadData];
-	}
+    self.deviceManager = nil; // Break KVO
 }
 
 #pragma mark - UITableViewDataSource
@@ -51,9 +41,42 @@
 
 #pragma mark - UITableViewDelegate
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	MIKMIDIDevice *selectedDevice = self.deviceManager.availableDevices[indexPath.row];
+	if ([self.delegate respondsToSelector:@selector(availableDevicesTableViewController:midiDeviceWasSelected:)]) {
+		[self.delegate availableDevicesTableViewController:self midiDeviceWasSelected:selectedDevice];
+	}
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"availableDevices"]) {
+		[self.tableView reloadData];
+	}
+}
 
 #pragma mark - Properties
 
-- (MIKMIDIDeviceManager *)deviceManager { return [MIKMIDIDeviceManager sharedDeviceManager]; }
+@synthesize deviceManager = _deviceManager;
+
+- (void)setDeviceManager:(MIKMIDIDeviceManager *)deviceManager
+{
+	if (deviceManager != _deviceManager) {
+		[_deviceManager removeObserver:self forKeyPath:@"availableDevices"];
+		_deviceManager = deviceManager;
+		[_deviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
+	}
+}
+
+- (MIKMIDIDeviceManager *)deviceManager
+{
+	if (!_deviceManager) {
+		self.deviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
+	}
+	return _deviceManager;
+}
 
 @end

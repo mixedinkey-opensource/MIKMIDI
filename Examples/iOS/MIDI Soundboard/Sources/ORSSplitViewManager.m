@@ -7,9 +7,20 @@
 //
 
 #import "ORSSplitViewManager.h"
+#import "ORSAvailableDevicesTableViewController.h"
 #import "ORSSoundboardViewController.h"
 
 @implementation ORSSplitViewManager
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	
+	if ([self.splitViewController.viewControllers count] < 2) return;
+	ORSAvailableDevicesTableViewController *availableDevicesController = (ORSAvailableDevicesTableViewController *)[(UINavigationController *)self.splitViewController.viewControllers[0] topViewController];
+	ORSSoundboardViewController *soundboardController = self.splitViewController.viewControllers[1];
+	availableDevicesController.delegate = soundboardController;
+}
 
 - (void)splitViewController:(UISplitViewController *)splitViewController willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)pc
 {

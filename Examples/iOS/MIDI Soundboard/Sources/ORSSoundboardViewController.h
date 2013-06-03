@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ORSAvailableDevicesTableViewController.h"
 
-@interface ORSSoundboardViewController : UIViewController
+@interface ORSSoundboardViewController : UIViewController <ORSAvailableDevicesTableViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
 
 @end

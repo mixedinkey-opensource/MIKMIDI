@@ -8,6 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol ORSAvailableDevicesTableViewControllerDelegate;
+
+@class MIKMIDIDevice;
+
 @interface ORSAvailableDevicesTableViewController : UITableViewController
+
+@property (nonatomic, weak) id<ORSAvailableDevicesTableViewControllerDelegate>delegate;
+
+@end
+
+@protocol ORSAvailableDevicesTableViewControllerDelegate <NSObject>
+
+@optional
+- (void)availableDevicesTableViewController:(ORSAvailableDevicesTableViewController *)controller midiDeviceWasSelected:(MIKMIDIDevice *)device;
 
 @end

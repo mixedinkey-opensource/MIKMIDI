@@ -84,6 +84,12 @@
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jdU-tM-6qg">
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CfH-Nu-sMX">
                                 <items>
                                     <navigationItem title="MIDI Soundboard" id="03w-jN-PGX"/>
@@ -92,13 +98,18 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="jdU-tM-6qg" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" type="default" id="2pR-mc-6wh"/>
                             <constraint firstItem="CfH-Nu-sMX" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" type="default" id="Jkt-qd-JHZ"/>
+                            <constraint firstItem="jdU-tM-6qg" firstAttribute="top" secondItem="CfH-Nu-sMX" secondAttribute="bottom" type="default" id="Kgj-L9-qc3"/>
+                            <constraint firstItem="jdU-tM-6qg" firstAttribute="bottom" secondItem="Maz-Ib-b4y" secondAttribute="bottom" type="default" id="Mkt-k7-71s"/>
                             <constraint firstItem="CfH-Nu-sMX" firstAttribute="trailing" secondItem="Maz-Ib-b4y" secondAttribute="trailing" type="default" id="QlH-pZ-4a3"/>
+                            <constraint firstItem="jdU-tM-6qg" firstAttribute="trailing" secondItem="Maz-Ib-b4y" secondAttribute="trailing" type="default" id="T8I-WI-Tvm"/>
                             <constraint firstItem="CfH-Nu-sMX" firstAttribute="top" secondItem="Maz-Ib-b4y" secondAttribute="top" type="default" id="VUq-RT-C4B"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="navigationBar" destination="CfH-Nu-sMX" id="ucT-n1-VFw"/>
+                        <outlet property="textView" destination="jdU-tM-6qg" id="REf-cl-miB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5nn-Z8-fCu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -121,6 +132,9 @@
         </class>
         <class className="ORSSplitViewManager" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ORSSplitViewManager.h"/>
+            <relationships>
+                <relationship kind="outlet" name="splitViewController" candidateClass="UISplitViewController"/>
+            </relationships>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
