@@ -38,6 +38,8 @@
 		9D8E6934175C1B49006546F6 /* MIKMIDISystemMessageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E691F175C1B49006546F6 /* MIKMIDISystemMessageCommand.m */; };
 		9D8E6935175C1B49006546F6 /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E6921175C1B49006546F6 /* MIKMIDIUtilities.m */; };
 		9D8E6936175C1B49006546F6 /* NSApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E6923175C1B49006546F6 /* NSApplication+MIKMIDI.m */; };
+		9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */; };
+		9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -101,6 +103,9 @@
 		9D8E6921175C1B49006546F6 /* MIKMIDIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIUtilities.m; sourceTree = "<group>"; };
 		9D8E6922175C1B49006546F6 /* NSApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9D8E6923175C1B49006546F6 /* NSApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSApplication+MIKMIDI.m"; sourceTree = "<group>"; };
+		9D8E6937175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSAvailableDevicesTableViewController.h; sourceTree = "<group>"; };
+		9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSAvailableDevicesTableViewController.m; sourceTree = "<group>"; };
+		9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */,
 				9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */,
 				9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */,
 				9D8E68B7175C1A6A006546F6 /* CoreGraphics.framework in Frameworks */,
@@ -138,6 +144,7 @@
 		9D8E68B1175C1A6A006546F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */,
 				9D8E68B2175C1A6A006546F6 /* UIKit.framework */,
 				9D8E68B4175C1A6A006546F6 /* Foundation.framework */,
 				9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */,
@@ -150,6 +157,7 @@
 			children = (
 				9D8E68DB175C1AAE006546F6 /* ORSAppDelegate.h */,
 				9D8E68DC175C1AAE006546F6 /* ORSAppDelegate.m */,
+				9D8E693A175C1CA7006546F6 /* Views */,
 				9D8E68F6175C1AD1006546F6 /* View Controllers */,
 				9D8E68F8175C1B49006546F6 /* MIKMIDI */,
 				9D8E68F7175C1AD6006546F6 /* Other Sources */,
@@ -192,6 +200,8 @@
 			children = (
 				9D8E68DD175C1AAE006546F6 /* ORSViewController.h */,
 				9D8E68DE175C1AAE006546F6 /* ORSViewController.m */,
+				9D8E6937175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.h */,
+				9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -254,6 +264,13 @@
 			);
 			name = MIKMIDI;
 			path = ../../../../Source;
+			sourceTree = "<group>";
+		};
+		9D8E693A175C1CA7006546F6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -346,6 +363,7 @@
 				9D8E6934175C1B49006546F6 /* MIKMIDISystemMessageCommand.m in Sources */,
 				9D8E6935175C1B49006546F6 /* MIKMIDIUtilities.m in Sources */,
 				9D8E6936175C1B49006546F6 /* NSApplication+MIKMIDI.m in Sources */,
+				9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
