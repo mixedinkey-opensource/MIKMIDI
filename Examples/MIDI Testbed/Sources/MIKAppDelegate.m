@@ -43,8 +43,7 @@
 		NSMutableString *textFieldString = self.textView.textStorage.mutableString;
 		for (MIKMIDIChannelVoiceCommand *command in commands) {
 			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
-			[textFieldString appendFormat:@"Received command: %d %d from %@ on channel %d\n", command.dataByte1, command.dataByte2, source.name, command.channel];
-			NSLog(@"Received: %@", command);
+			[textFieldString appendFormat:@"Received: %@\n", command];
 		}
 	}];
 	if (!success) NSLog(@"Unable to connect to input: %@", error);

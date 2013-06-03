@@ -47,6 +47,7 @@
 	if ([self.delegate respondsToSelector:@selector(availableDevicesTableViewController:midiDeviceWasSelected:)]) {
 		[self.delegate availableDevicesTableViewController:self midiDeviceWasSelected:selectedDevice];
 	}
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark - KVO

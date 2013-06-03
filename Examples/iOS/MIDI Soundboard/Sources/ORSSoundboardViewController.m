@@ -27,6 +27,8 @@
 	for (MIKMIDISourceEndpoint *source in sources) {
 		[self.deviceManager disconnectInput:source];
 	}
+	
+	self.textView.text = @"";
 }
 
 - (void)connectToDevice:(MIKMIDIDevice *)device
@@ -40,7 +42,7 @@
 		NSMutableString *textViewString = [self.textView.text mutableCopy];
 		for (MIKMIDIChannelVoiceCommand *command in commands) {
 			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
-			[textViewString appendFormat:@"Received command: %d %d from %@ on channel %d\n", command.dataByte1, command.dataByte2, source.name, command.channel];
+			[textViewString appendFormat:@"Received: %@\n", command];
 			NSLog(@"Received: %@", command);
 		}
 		self.textView.text = textViewString;
