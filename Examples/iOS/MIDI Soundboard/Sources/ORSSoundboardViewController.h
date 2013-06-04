@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "ORSAvailableDevicesTableViewController.h"
+#import <AVFoundation/AVFoundation.h>
 
-@interface ORSSoundboardViewController : UIViewController <ORSAvailableDevicesTableViewControllerDelegate>
+@interface ORSSoundboardViewController : UIViewController <ORSAvailableDevicesTableViewControllerDelegate, AVAudioPlayerDelegate>
+
+- (IBAction)pianoKeyDown:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UITextView *textView;

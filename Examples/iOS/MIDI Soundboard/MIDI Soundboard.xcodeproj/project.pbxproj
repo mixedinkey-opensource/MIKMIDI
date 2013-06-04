@@ -9,6 +9,22 @@
 /* Begin PBXBuildFile section */
 		9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */; };
 		9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */; };
+		9D6BF5E2175EA60E00DF6B15 /* Black.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5E1175EA60E00DF6B15 /* Black.png */; };
+		9D6BF5E5175EA67B00DF6B15 /* ORSPianoButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */; };
+		9D6BF5E7175EA6F300DF6B15 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */; };
+		9D6BF5F6175EA9A600DF6B15 /* 0.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5EA175EA9A600DF6B15 /* 0.aiff */; };
+		9D6BF5F7175EA9A600DF6B15 /* 1.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5EB175EA9A600DF6B15 /* 1.aiff */; };
+		9D6BF5F8175EA9A600DF6B15 /* 2.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5EC175EA9A600DF6B15 /* 2.aiff */; };
+		9D6BF5F9175EA9A600DF6B15 /* 3.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5ED175EA9A600DF6B15 /* 3.aiff */; };
+		9D6BF5FA175EA9A600DF6B15 /* 4.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5EE175EA9A600DF6B15 /* 4.aiff */; };
+		9D6BF5FB175EA9A600DF6B15 /* 5.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5EF175EA9A600DF6B15 /* 5.aiff */; };
+		9D6BF5FC175EA9A600DF6B15 /* 6.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F0175EA9A600DF6B15 /* 6.aiff */; };
+		9D6BF5FD175EA9A600DF6B15 /* 7.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F1175EA9A600DF6B15 /* 7.aiff */; };
+		9D6BF5FE175EA9A600DF6B15 /* 8.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F2175EA9A600DF6B15 /* 8.aiff */; };
+		9D6BF5FF175EA9A600DF6B15 /* 9.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F3175EA9A600DF6B15 /* 9.aiff */; };
+		9D6BF600175EA9A600DF6B15 /* 10.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F4175EA9A600DF6B15 /* 10.aiff */; };
+		9D6BF601175EA9A600DF6B15 /* 11.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9D6BF5F5175EA9A600DF6B15 /* 11.aiff */; };
+		9D6BF603175EAFE500DF6B15 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */; };
 		9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B2175C1A6A006546F6 /* UIKit.framework */; };
 		9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B4175C1A6A006546F6 /* Foundation.framework */; };
 		9D8E68B7175C1A6A006546F6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E68B6175C1A6A006546F6 /* CoreGraphics.framework */; };
@@ -48,6 +64,23 @@
 		9D6BF5AB175C3A0D00DF6B15 /* ORSSplitViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSplitViewManager.m; sourceTree = "<group>"; };
 		9D6BF5AD175C3C9900DF6B15 /* ORSSoundboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSSoundboardViewController.h; sourceTree = "<group>"; };
 		9D6BF5AE175C3C9900DF6B15 /* ORSSoundboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSSoundboardViewController.m; sourceTree = "<group>"; };
+		9D6BF5E1175EA60E00DF6B15 /* Black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Black.png; sourceTree = "<group>"; };
+		9D6BF5E3175EA67B00DF6B15 /* ORSPianoButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSPianoButton.h; sourceTree = "<group>"; };
+		9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSPianoButton.m; sourceTree = "<group>"; };
+		9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		9D6BF5EA175EA9A600DF6B15 /* 0.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 0.aiff; sourceTree = "<group>"; };
+		9D6BF5EB175EA9A600DF6B15 /* 1.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 1.aiff; sourceTree = "<group>"; };
+		9D6BF5EC175EA9A600DF6B15 /* 2.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 2.aiff; sourceTree = "<group>"; };
+		9D6BF5ED175EA9A600DF6B15 /* 3.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 3.aiff; sourceTree = "<group>"; };
+		9D6BF5EE175EA9A600DF6B15 /* 4.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 4.aiff; sourceTree = "<group>"; };
+		9D6BF5EF175EA9A600DF6B15 /* 5.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 5.aiff; sourceTree = "<group>"; };
+		9D6BF5F0175EA9A600DF6B15 /* 6.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 6.aiff; sourceTree = "<group>"; };
+		9D6BF5F1175EA9A600DF6B15 /* 7.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 7.aiff; sourceTree = "<group>"; };
+		9D6BF5F2175EA9A600DF6B15 /* 8.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 8.aiff; sourceTree = "<group>"; };
+		9D6BF5F3175EA9A600DF6B15 /* 9.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 9.aiff; sourceTree = "<group>"; };
+		9D6BF5F4175EA9A600DF6B15 /* 10.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 10.aiff; sourceTree = "<group>"; };
+		9D6BF5F5175EA9A600DF6B15 /* 11.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = 11.aiff; sourceTree = "<group>"; };
+		9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9D8E68AF175C1A6A006546F6 /* MIDI Soundboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Soundboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D8E68B2175C1A6A006546F6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9D8E68B4175C1A6A006546F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -116,6 +149,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D6BF603175EAFE500DF6B15 /* AVFoundation.framework in Frameworks */,
+				9D6BF5E7175EA6F300DF6B15 /* AudioToolbox.framework in Frameworks */,
 				9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */,
 				9D8E68B3175C1A6A006546F6 /* UIKit.framework in Frameworks */,
 				9D8E68B5175C1A6A006546F6 /* Foundation.framework in Frameworks */,
@@ -126,6 +161,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D6BF5E9175EA9A600DF6B15 /* PianoNotes */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BF5EA175EA9A600DF6B15 /* 0.aiff */,
+				9D6BF5EB175EA9A600DF6B15 /* 1.aiff */,
+				9D6BF5EC175EA9A600DF6B15 /* 2.aiff */,
+				9D6BF5ED175EA9A600DF6B15 /* 3.aiff */,
+				9D6BF5EE175EA9A600DF6B15 /* 4.aiff */,
+				9D6BF5EF175EA9A600DF6B15 /* 5.aiff */,
+				9D6BF5F0175EA9A600DF6B15 /* 6.aiff */,
+				9D6BF5F1175EA9A600DF6B15 /* 7.aiff */,
+				9D6BF5F2175EA9A600DF6B15 /* 8.aiff */,
+				9D6BF5F3175EA9A600DF6B15 /* 9.aiff */,
+				9D6BF5F4175EA9A600DF6B15 /* 10.aiff */,
+				9D6BF5F5175EA9A600DF6B15 /* 11.aiff */,
+			);
+			path = PianoNotes;
+			sourceTree = "<group>";
+		};
 		9D8E68A6175C1A6A006546F6 = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +201,8 @@
 		9D8E68B1175C1A6A006546F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */,
+				9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */,
 				9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */,
 				9D8E68B2175C1A6A006546F6 /* UIKit.framework */,
 				9D8E68B4175C1A6A006546F6 /* Foundation.framework */,
@@ -171,6 +227,7 @@
 		9D8E68E2175C1AB3006546F6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9D6BF5E9175EA9A600DF6B15 /* PianoNotes */,
 				9D8E68F5175C1ABA006546F6 /* Storyboards and XIBs */,
 				9D8E68E9175C1AB3006546F6 /* Images */,
 				9D8E68ED175C1AB3006546F6 /* MIDI Soundboard-Info.plist */,
@@ -182,6 +239,7 @@
 		9D8E68E9175C1AB3006546F6 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9D6BF5E1175EA60E00DF6B15 /* Black.png */,
 				9D8E68EA175C1AB3006546F6 /* Default-568h@2x.png */,
 				9D8E68EB175C1AB3006546F6 /* Default.png */,
 				9D8E68EC175C1AB3006546F6 /* Default@2x.png */,
@@ -274,6 +332,8 @@
 		9D8E693A175C1CA7006546F6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9D6BF5E3175EA67B00DF6B15 /* ORSPianoButton.h */,
+				9D6BF5E4175EA67B00DF6B15 /* ORSPianoButton.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -336,6 +396,19 @@
 				9D8E68F1175C1AB3006546F6 /* Default-568h@2x.png in Resources */,
 				9D8E68F2175C1AB3006546F6 /* Default.png in Resources */,
 				9D8E68F3175C1AB3006546F6 /* Default@2x.png in Resources */,
+				9D6BF5E2175EA60E00DF6B15 /* Black.png in Resources */,
+				9D6BF5F6175EA9A600DF6B15 /* 0.aiff in Resources */,
+				9D6BF5F7175EA9A600DF6B15 /* 1.aiff in Resources */,
+				9D6BF5F8175EA9A600DF6B15 /* 2.aiff in Resources */,
+				9D6BF5F9175EA9A600DF6B15 /* 3.aiff in Resources */,
+				9D6BF5FA175EA9A600DF6B15 /* 4.aiff in Resources */,
+				9D6BF5FB175EA9A600DF6B15 /* 5.aiff in Resources */,
+				9D6BF5FC175EA9A600DF6B15 /* 6.aiff in Resources */,
+				9D6BF5FD175EA9A600DF6B15 /* 7.aiff in Resources */,
+				9D6BF5FE175EA9A600DF6B15 /* 8.aiff in Resources */,
+				9D6BF5FF175EA9A600DF6B15 /* 9.aiff in Resources */,
+				9D6BF600175EA9A600DF6B15 /* 10.aiff in Resources */,
+				9D6BF601175EA9A600DF6B15 /* 11.aiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +443,7 @@
 				9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */,
 				9D6BF5AC175C3A0D00DF6B15 /* ORSSplitViewManager.m in Sources */,
 				9D6BF5AF175C3C9900DF6B15 /* ORSSoundboardViewController.m in Sources */,
+				9D6BF5E5175EA67B00DF6B15 /* ORSPianoButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

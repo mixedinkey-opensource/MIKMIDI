@@ -14,9 +14,30 @@
 @property (nonatomic, strong) MIKMIDIDeviceManager *deviceManager;
 @property (nonatomic, strong) MIKMIDIDevice	*device;
 
+@property (nonatomic, strong) NSMutableSet *audioPlayers;
+
 @end
 
 @implementation ORSSoundboardViewController
+
+- (IBAction)pianoKeyDown:(id)sender
+{
+	NSString *fileName = [NSString stringWithFormat:@"%li", (long)[sender tag]];
+	NSURL *fileURL = [[NSBundle mainBundle] URLForResource:fileName withExtension:@"aiff"];
+	if (!fileURL) return;
+	
+	NSError *error = nil;
+	AVAudioPlayer *audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
+	if (!audioPlayer) {
+		NSLog(@"Unable to load %@ into audio player: %@", fileURL, error);
+		return;
+	}
+	
+	audioPlayer.delegate = self;
+	audioPlayer.volume = 1.0;
+	[audioPlayer play];
+	[self.audioPlayers addObject:audioPlayer];
+}
 
 #pragma mark - Private
 
@@ -48,6 +69,13 @@
 		self.textView.text = textViewString;
 	}];
 	if (!success) NSLog(@"Unable to connect to input: %@", error);
+}
+
+#pragma mark - AVAudioPlayerDelegate
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+	[self.audioPlayers removeObject:player];
 }
 
 #pragma mark ORSAvailableDevicesTableViewControllerDelegate
@@ -96,6 +124,14 @@
 		_device = device;
 		[self connectToDevice:_device];
 	}
+}
+
+- (NSMutableSet *)audioPlayers
+{
+	if (!_audioPlayers) {
+		_audioPlayers = [NSMutableSet set];
+	}
+	return _audioPlayers;
 }
 
 @end
