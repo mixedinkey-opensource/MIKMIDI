@@ -11,6 +11,8 @@
 #import "MIKMIDI.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIDevice.h"
