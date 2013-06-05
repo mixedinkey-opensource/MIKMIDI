@@ -7,19 +7,45 @@
 //
 
 #import "ORSPianoButton.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation ORSPianoButton
+
+- (void)drawRect:(CGRect)rect
+{
+	[[UIColor darkGrayColor] set];
+	[[UIBezierPath bezierPathWithRect:[self bounds]] stroke];
+}
 
 #pragma mark - MIKMIDIResponder
 
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command
 {
-	return NO;
+	if (command.commandType != MIKMIDICommandTypeNoteOn) return NO;
+	
+	MIKMIDINoteOnCommand *noteCommand = (MIKMIDINoteOnCommand *)command;
+	return (noteCommand.note - 60) == self.tag;
 }
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command
 {
-	NSLog(@"%s %@", __PRETTY_FUNCTION__, command);
+	if (command.commandType != MIKMIDICommandTypeNoteOn) return;
+	
+	MIKMIDINoteOnCommand *noteCommand = (MIKMIDINoteOnCommand *)command;
+	if (noteCommand.velocity == 0) return;
+	
+	[self sendActionsForControlEvents:UIControlEventTouchUpInside];
+	
+	UIColor *backgroundColor = self.backgroundColor;
+	[CATransaction begin];
+	[CATransaction setAnimationDuration:0.0];
+	self.backgroundColor = [UIColor blueColor];
+	[CATransaction commit];
+	
+	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC));
+	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+		self.backgroundColor = backgroundColor;
+	});
 }
 
 @end

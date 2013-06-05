@@ -50,7 +50,9 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 {
+	NSLog(@"%s %@", __PRETTY_FUNCTION__, command);
 	for (id<MIKMIDIResponder> responder in [self respondersForMIDICommand:command]) {
+		NSLog(@"Sending to %@", responder);
 		[responder handleMIDICommand:command];
 	}
 }

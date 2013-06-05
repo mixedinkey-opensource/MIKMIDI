@@ -16,6 +16,11 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDINoteOffCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDINoteOffCommand class]; }
 
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
+}
+
 #pragma mark - Properties
 
 - (NSUInteger)note { return self.dataByte1; }
@@ -27,6 +32,11 @@
 
 + (Class)immutableCounterpartClass; { return [MIKMIDINoteOffCommand immutableCounterpartClass]; }
 + (Class)mutableCounterpartClass; { return [MIKMIDINoteOffCommand mutableCounterpartClass]; }
+
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
+}
 
 #pragma mark - Properties
 

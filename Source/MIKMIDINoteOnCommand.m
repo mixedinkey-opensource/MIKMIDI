@@ -23,7 +23,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ note: %lu velcocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
+	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
 }
 
 @end
@@ -35,7 +35,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ note: %lu velcocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
+	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
 }
 
 #pragma mark - Properties

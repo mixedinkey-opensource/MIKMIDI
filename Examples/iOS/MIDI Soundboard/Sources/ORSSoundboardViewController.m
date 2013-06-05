@@ -60,9 +60,13 @@
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
 	NSError *error = nil;
 	BOOL success = [self.deviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+		
 		NSMutableString *textViewString = [self.textView.text mutableCopy];
 		for (MIKMIDIChannelVoiceCommand *command in commands) {
 			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
+			
+			[[UIApplication sharedApplication] handleMIDICommand:command];
+			
 			[textViewString appendFormat:@"Received: %@\n", command];
 			NSLog(@"Received: %@", command);
 		}

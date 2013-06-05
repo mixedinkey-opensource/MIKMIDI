@@ -94,9 +94,10 @@
                                     <navigationItem title="MIDI Soundboard" id="03w-jN-PGX"/>
                                 </items>
                             </navigationBar>
-                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f4Z-Cb-kZZ">
+                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f4Z-Cb-kZZ" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="161" id="JSt-ya-Qen"/>
+                                    <constraint firstAttribute="height" constant="161" type="user" id="JSt-ya-Qen"/>
                                     <constraint firstAttribute="width" constant="38" type="user" id="ORs-x1-iTl"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" size="button"/>
@@ -111,7 +112,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ohY-Rc-5vH"/>
                                 </connections>
                             </button>
-                            <button tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhj-JA-aPC">
+                            <button tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhj-JA-aPC" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" type="user" id="My4-pU-gdh"/>
                                 </constraints>
@@ -127,7 +129,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="jTw-ja-Dp5"/>
                                 </connections>
                             </button>
-                            <button tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZZ-o7-o2w">
+                            <button tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZZ-o7-o2w" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" type="user" id="Qp3-ly-uNs"/>
                                 </constraints>
@@ -143,7 +146,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ge9-8c-wVQ"/>
                                 </connections>
                             </button>
-                            <button tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aMe-Nz-qwu">
+                            <button tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aMe-Nz-qwu" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" type="user" id="Tjl-B3-Li3"/>
                                 </constraints>
@@ -159,7 +163,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="bmN-xg-QPX"/>
                                 </connections>
                             </button>
-                            <button tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7E8-vN-yfV">
+                            <button tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7E8-vN-yfV" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="2bF-dz-Q4r"/>
                                 </constraints>
@@ -175,7 +180,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="xFr-Sp-wkI"/>
                                 </connections>
                             </button>
-                            <button tag="9" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4rq-Kh-Yvw">
+                            <button tag="9" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4rq-Kh-Yvw" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="CE9-9d-bCf"/>
                                 </constraints>
@@ -191,7 +197,8 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="1Zz-z1-D1j"/>
                                 </connections>
                             </button>
-                            <button tag="11" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sX0-pj-Xfu">
+                            <button tag="11" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sX0-pj-Xfu" customClass="ORSPianoButton">
+                                <color key="backgroundColor" white="0.91422001008064513" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="38" id="ddD-TI-0EJ"/>
                                 </constraints>
@@ -207,7 +214,7 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="LLJ-pS-Yo3"/>
                                 </connections>
                             </button>
-                            <button tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gfs-vh-kba">
+                            <button tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gfs-vh-kba" customClass="ORSPianoButton">
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="34" type="user" id="WbM-J4-1T0"/>
@@ -225,7 +232,7 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="2D5-8x-ebO"/>
                                 </connections>
                             </button>
-                            <button tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N8T-r9-xSH">
+                            <button tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N8T-r9-xSH" customClass="ORSPianoButton">
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="34" type="user" id="zG1-WD-mw8"/>
@@ -242,7 +249,7 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="B6K-sh-PeC"/>
                                 </connections>
                             </button>
-                            <button tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n1g-ks-U0D">
+                            <button tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n1g-ks-U0D" customClass="ORSPianoButton">
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="34" type="user" id="AbU-Pk-Aj3"/>
@@ -259,7 +266,7 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ESN-wP-EZ5"/>
                                 </connections>
                             </button>
-                            <button tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Qc-n7-Mnz">
+                            <button tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Qc-n7-Mnz" customClass="ORSPianoButton">
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="34" type="user" id="rO0-wL-uu4"/>
@@ -276,7 +283,7 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="KlH-NE-oLr"/>
                                 </connections>
                             </button>
-                            <button tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7OE-Vl-5wE">
+                            <button tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7OE-Vl-5wE" customClass="ORSPianoButton">
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="34" type="user" id="L5G-lj-T3X"/>
@@ -293,24 +300,28 @@
                                     <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="Exe-Jy-DUa"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A0s-zq-3yp">
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="vhj-JA-aPC" firstAttribute="leading" secondItem="f4Z-Cb-kZZ" secondAttribute="trailing" type="user" id="0Fh-wJ-SM1"/>
-                            <constraint firstItem="f4Z-Cb-kZZ" firstAttribute="top" secondItem="Gfs-vh-kba" secondAttribute="bottom" constant="-1" type="user" id="0Qz-bH-UtN"/>
                             <constraint firstItem="7OE-Vl-5wE" firstAttribute="top" secondItem="6Qc-n7-Mnz" secondAttribute="top" type="default" id="3rQ-mJ-gvI"/>
-                            <constraint firstItem="vhj-JA-aPC" firstAttribute="top" secondItem="f4Z-Cb-kZZ" secondAttribute="top" type="user" id="6PL-cY-eJp"/>
                             <constraint firstItem="n1g-ks-U0D" firstAttribute="bottom" secondItem="N8T-r9-xSH" secondAttribute="bottom" type="default" id="7j6-fi-lk1"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="bottom" secondItem="Maz-Ib-b4y" secondAttribute="bottom" type="user" id="9ii-P7-zDT"/>
                             <constraint firstItem="7E8-vN-yfV" firstAttribute="top" secondItem="aMe-Nz-qwu" secondAttribute="top" type="default" id="Aly-VK-sSK"/>
-                            <constraint firstItem="f4Z-Cb-kZZ" firstAttribute="top" secondItem="Maz-Ib-b4y" secondAttribute="top" constant="202" type="user" id="CBZ-Wu-ZWW"/>
                             <constraint firstItem="7OE-Vl-5wE" firstAttribute="bottom" secondItem="6Qc-n7-Mnz" secondAttribute="bottom" type="default" id="D2q-MG-D6f"/>
-                            <constraint firstItem="vhj-JA-aPC" firstAttribute="top" secondItem="N8T-r9-xSH" secondAttribute="bottom" constant="-1" type="user" id="Dup-Vb-2Qp"/>
                             <constraint firstItem="7E8-vN-yfV" firstAttribute="leading" secondItem="aMe-Nz-qwu" secondAttribute="trailing" type="user" id="EIi-FC-S7a"/>
                             <constraint firstItem="4rq-Kh-Yvw" firstAttribute="bottom" secondItem="sX0-pj-Xfu" secondAttribute="bottom" type="default" id="G2H-bf-B9R"/>
                             <constraint firstItem="aMe-Nz-qwu" firstAttribute="leading" secondItem="pZZ-o7-o2w" secondAttribute="trailing" type="user" id="GM0-V7-ljD"/>
+                            <constraint firstItem="Gfs-vh-kba" firstAttribute="top" secondItem="Maz-Ib-b4y" secondAttribute="top" constant="111" id="Ged-IF-KsI"/>
                             <constraint firstItem="CfH-Nu-sMX" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" type="default" id="Jkt-qd-JHZ"/>
-                            <constraint firstItem="N8T-r9-xSH" firstAttribute="bottom" secondItem="Gfs-vh-kba" secondAttribute="bottom" type="user" id="KBX-5b-v5d"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="trailing" secondItem="Maz-Ib-b4y" secondAttribute="trailing" type="user" id="KIL-bB-LGm"/>
                             <constraint firstItem="N8T-r9-xSH" firstAttribute="leading" secondItem="Gfs-vh-kba" secondAttribute="trailing" constant="4" type="user" id="OlU-tM-9qZ"/>
+                            <constraint firstItem="N8T-r9-xSH" firstAttribute="bottom" secondItem="Gfs-vh-kba" secondAttribute="bottom" type="default" id="P8C-kJ-rbt"/>
                             <constraint firstItem="N8T-r9-xSH" firstAttribute="top" secondItem="Gfs-vh-kba" secondAttribute="top" type="default" id="PJv-f6-Ok4"/>
                             <constraint firstItem="7OE-Vl-5wE" firstAttribute="leading" secondItem="6Qc-n7-Mnz" secondAttribute="trailing" constant="4" type="user" id="QfN-iB-RPr"/>
                             <constraint firstItem="n1g-ks-U0D" firstAttribute="leading" secondItem="N8T-r9-xSH" secondAttribute="trailing" constant="42" type="user" id="Qkq-RK-ngY"/>
@@ -322,23 +333,30 @@
                             <constraint firstItem="4rq-Kh-Yvw" firstAttribute="bottom" secondItem="7E8-vN-yfV" secondAttribute="bottom" type="default" id="XOy-0m-UcU"/>
                             <constraint firstItem="4rq-Kh-Yvw" firstAttribute="leading" secondItem="7E8-vN-yfV" secondAttribute="trailing" type="user" id="XfN-5Z-DFR"/>
                             <constraint firstItem="Gfs-vh-kba" firstAttribute="leading" secondItem="f4Z-Cb-kZZ" secondAttribute="trailing" constant="-17" type="user" id="a3v-iT-29m"/>
-                            <constraint firstItem="pZZ-o7-o2w" firstAttribute="bottom" secondItem="aMe-Nz-qwu" secondAttribute="bottom" type="default" id="afn-Cr-sdh"/>
+                            <constraint firstItem="pZZ-o7-o2w" firstAttribute="bottom" secondItem="aMe-Nz-qwu" secondAttribute="bottom" type="user" id="afn-Cr-sdh"/>
                             <constraint firstItem="pZZ-o7-o2w" firstAttribute="top" secondItem="vhj-JA-aPC" secondAttribute="top" type="default" id="b0f-ol-niS"/>
                             <constraint firstItem="7E8-vN-yfV" firstAttribute="bottom" secondItem="aMe-Nz-qwu" secondAttribute="bottom" type="default" id="bJB-tU-aKn"/>
-                            <constraint firstItem="Gfs-vh-kba" firstAttribute="top" secondItem="Maz-Ib-b4y" secondAttribute="top" constant="112" type="user" id="bZr-Iz-Vb9"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="trailing" secondItem="Maz-Ib-b4y" secondAttribute="trailing" type="user" id="cOg-Oo-623"/>
                             <constraint firstItem="n1g-ks-U0D" firstAttribute="top" secondItem="6Qc-n7-Mnz" secondAttribute="top" type="default" id="dGb-Hk-HNa"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" type="user" id="fgv-DO-KaS"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="top" secondItem="aMe-Nz-qwu" secondAttribute="bottom" constant="41" type="user" id="hcw-J7-te9"/>
+                            <constraint firstItem="f4Z-Cb-kZZ" firstAttribute="top" secondItem="Maz-Ib-b4y" secondAttribute="top" constant="202" type="user" id="hhN-UD-Je5"/>
                             <constraint firstItem="4rq-Kh-Yvw" firstAttribute="top" secondItem="7E8-vN-yfV" secondAttribute="top" type="default" id="hxf-dn-cUZ"/>
                             <constraint firstItem="n1g-ks-U0D" firstAttribute="top" secondItem="N8T-r9-xSH" secondAttribute="top" type="default" id="ode-Fh-rAw"/>
-                            <constraint firstItem="vhj-JA-aPC" firstAttribute="bottom" secondItem="f4Z-Cb-kZZ" secondAttribute="bottom" type="default" id="pZx-Ln-YB2"/>
+                            <constraint firstItem="vhj-JA-aPC" firstAttribute="bottom" secondItem="f4Z-Cb-kZZ" secondAttribute="bottom" type="user" id="pZx-Ln-YB2"/>
                             <constraint firstItem="6Qc-n7-Mnz" firstAttribute="bottom" secondItem="n1g-ks-U0D" secondAttribute="bottom" type="default" id="qGz-QC-lSy"/>
-                            <constraint firstItem="pZZ-o7-o2w" firstAttribute="bottom" secondItem="vhj-JA-aPC" secondAttribute="bottom" type="default" id="ret-EK-FnV"/>
+                            <constraint firstItem="pZZ-o7-o2w" firstAttribute="bottom" secondItem="vhj-JA-aPC" secondAttribute="bottom" type="user" id="ret-EK-FnV"/>
                             <constraint firstItem="6Qc-n7-Mnz" firstAttribute="leading" secondItem="n1g-ks-U0D" secondAttribute="trailing" constant="4" type="user" id="sCw-PI-y6a"/>
+                            <constraint firstItem="vhj-JA-aPC" firstAttribute="top" secondItem="f4Z-Cb-kZZ" secondAttribute="top" type="default" id="sTb-PZ-dRy"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="bottom" secondItem="Maz-Ib-b4y" secondAttribute="bottom" type="user" id="uUG-x3-bCz"/>
+                            <constraint firstItem="A0s-zq-3yp" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" type="user" id="yMN-1s-kdW"/>
                             <constraint firstItem="sX0-pj-Xfu" firstAttribute="leading" secondItem="4rq-Kh-Yvw" secondAttribute="trailing" type="user" id="zOq-er-WvP"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <connections>
                         <outlet property="navigationBar" destination="CfH-Nu-sMX" id="ucT-n1-VFw"/>
+                        <outlet property="textView" destination="A0s-zq-3yp" id="olH-xg-ONW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5nn-Z8-fCu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -352,6 +370,9 @@
         </class>
         <class className="ORSAvailableDevicesTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ORSAvailableDevicesTableViewController.h"/>
+        </class>
+        <class className="ORSPianoButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ORSPianoButton.h"/>
         </class>
         <class className="ORSSoundboardViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ORSSoundboardViewController.h"/>
