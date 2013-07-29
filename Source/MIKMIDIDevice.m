@@ -30,7 +30,7 @@
 
 @implementation MIKMIDIDevice
 
-+(void)load { [MIKMIDIObject registerSubclass:[self class]]; }
++ (void)load { [MIKMIDIObject registerSubclass:[self class]]; }
 
 + (NSArray *)representedMIDIObjectTypes; { return @[@(kMIDIObjectType_Device)]; }
 
@@ -112,6 +112,13 @@
 		self.model = value;
 	}
 	return _model;
+}
+
+- (NSString *)name
+{
+	NSString *result = [super name];
+	if (result) return result;
+	return self.model;
 }
 
 - (NSString *)displayName

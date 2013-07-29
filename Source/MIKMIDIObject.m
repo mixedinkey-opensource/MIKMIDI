@@ -132,13 +132,7 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 - (NSString *)name
 {
 	if (!_name) {
-		NSError *error = nil;
-		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, &error);
-		if (!value) {
-			NSLog(@"Unable to get MIDI device name: %@", error);
-			return nil;
-		}
-		self.name = value;
+		self.name = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, NULL);
 	}
 	return _name;
 }
@@ -148,11 +142,7 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 	if (!_displayName) {
 		NSError *error = nil;
 		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyDisplayName, &error);
-		if (!value) {
-			NSLog(@"Unable to get MIDI device display name: %@", error);
-		} else {
-		self.displayName = value;
-		}
+		if (value) self.displayName = value;
 	}
 	
 	return _displayName ? _displayName : self.name;

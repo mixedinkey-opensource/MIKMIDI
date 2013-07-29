@@ -11,7 +11,7 @@
 
 @implementation MIKMIDIDestinationEndpoint
 
-+(void)load { [MIKMIDIObject registerSubclass:[self class]]; }
++ (void)load { [MIKMIDIObject registerSubclass:[self class]]; }
 
 + (NSArray *)representedMIDIObjectTypes; { return @[@(kMIDIObjectType_Destination)]; }
 

@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @property (nonatomic, readonly) UInt8 dataByte2;
 
 @property (nonatomic, readonly) MIDITimeStamp midiTimestamp;
-@property (nonatomic, strong, readonly) NSData *data;
+@property (nonatomic, copy, readonly) NSData *data;
 
 @end
 
@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, strong, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite) NSData *data;
 
 @end
 
