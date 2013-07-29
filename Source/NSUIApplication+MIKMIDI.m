@@ -22,12 +22,12 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 @implementation MIK_APPLICATION_CLASS (MIKMIDI)
 
-+(NSHashTable *)registeredMIKMIDIResponders
++ (NSHashTable *)registeredMIKMIDIResponders
 {
     static NSHashTable *registeredMIKMIDIResponders = nil;
     static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		NSPointerFunctionsOptions options = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
+		NSPointerFunctionsOptions options = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsObjectPersonality;
 		registeredMIKMIDIResponders = [[NSHashTable alloc] initWithOptions:options capacity:0];
 	});
     return registeredMIKMIDIResponders;
@@ -50,37 +50,52 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 {
-	NSLog(@"%s %@", __PRETTY_FUNCTION__, command);
 	for (id<MIKMIDIResponder> responder in [self respondersForMIDICommand:command]) {
-		NSLog(@"Sending to %@", responder);
 		[responder handleMIDICommand:command];
 	}
+}
+
+- (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+{
+	NSSet *responders = [self allMIDIResponders];
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"MIDIIdentifier LIKE %@", identifier];
+	return [[responders filteredSetUsingPredicate:predicate] anyObject];
 }
 
 #pragma mark - Private
 
 - (NSSet *)respondersForMIDICommand:(MIKMIDICommand *)command
 {
+	NSSet *allMIDIResponders = [self allMIDIResponders];
+	
+	NSMutableSet *result = [NSMutableSet set];
+	for (id<MIKMIDIResponder> responder in allMIDIResponders) {
+		if (MIKObjectRespondsToMIDICommand(responder, command)) [result addObject:responder];
+	}
+	return result;
+}
+
+- (NSSet *)allMIDIResponders
+{
 	NSMutableSet *result = [NSMutableSet set];
 	
 	// Go through the entire view hierarchy
 	for (MIK_WINDOW_CLASS *window in [self windows]) {
-		if (MIKObjectRespondsToMIDICommand(window, command)) [result addObject:window];
+		if ([window conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:window];
 #if !TARGET_OS_IPHONE
-		if (MIKObjectRespondsToMIDICommand([window delegate], command)) [result addObject:[window delegate]];
-		if (MIKObjectRespondsToMIDICommand([window windowController], command)) [result addObject:[window windowController]];
-		for (MIK_VIEW_CLASS *subview in [[window contentView] mik_allSubviews]) {
+		if ([[window delegate] conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:[window delegate]];
+		if ([[window windowController] conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:[window windowController]];
+		NSSet *allSubviews = [[window contentView] mik_allSubviews];
 #else
-		for (MIK_VIEW_CLASS *subview in [window.rootViewController.view mik_allSubviews]) {		
+		NSSet *allSubviews = [window.rootViewController.view mik_allSubviews];
 #endif
-			if (MIKObjectRespondsToMIDICommand(subview, command)) [result addObject:subview];
+		for (MIK_VIEW_CLASS *subview in allSubviews) {
+			if ([subview conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:subview];
 		}
 	}
 	
-	// Go through registered responders
-	for (id<MIKMIDIResponder> responder in [[self class] registeredMIKMIDIResponders]) {
-		if (MIKObjectRespondsToMIDICommand(responder, command)) [result addObject:responder];
-	}
+	// Add registered responders
+	[result unionSet:[[[self class] registeredMIKMIDIResponders] setRepresentation]];
 	
 	return result;
 }
