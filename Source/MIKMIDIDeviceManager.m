@@ -96,6 +96,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint
 {
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
+	if (!port) return; // Not connected
 	[port removeAllEventHandlers];
 	[port disconnectFromSource:endpoint];
 	[self removeInternalConnectedInputPortsObject:port];
@@ -177,6 +178,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 		if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) return;
 		
 		MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:changeNotification->object];
+		if (!changedObject) return;
 		
 		if (changedObject.isOnline && ![self.internalDevices containsObject:changedObject]) {
 			[self addInternalDevicesObject:changedObject];
