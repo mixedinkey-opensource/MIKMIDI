@@ -38,7 +38,7 @@ MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autore
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	MIDIUniqueID uniqueID = MIKIntegerPropertyFromMIDIObject(object, kMIDIPropertyUniqueID, error);
-	if (uniqueID == NSNotFound) return -2;
+	if (*error) return -2;
 	
 	MIDIObjectRef resultObject;
 	MIDIObjectType objectType;
