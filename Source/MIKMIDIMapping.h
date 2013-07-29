@@ -15,10 +15,11 @@
 
 @interface MIKMIDIMapping : NSObject
 
+#if !TARGET_OS_IPHONE
 - (instancetype)initWithFileAtURL:(NSURL *)url;
 - (instancetype)initWithXMLDocument:(NSXMLDocument *)xmlDocument;
-
 - (NSXMLDocument *)XMLRepresentation;
+#endif
 
 - (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier;
 - (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
@@ -40,8 +41,10 @@ typedef NS_ENUM(NSInteger, MIKMIDIMappingInteractionType) {
 
 @interface MIKMIDIMappingItem : NSObject
 
+#if !TARGET_OS_IPHONE
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;
 - (NSXMLElement *)XMLRepresentation;
+#endif
 
 // Properties
 

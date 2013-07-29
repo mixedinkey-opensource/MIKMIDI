@@ -35,7 +35,12 @@ static MIKMIDIMappingManager *sharedManager = nil;
         [self loadAvailableMappings];
 		
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-		[nc addObserverForName:NSApplicationWillTerminateNotification
+#if !TARGET_OS_IPHONE
+		NSString *appTerminateNotification = NSApplicationWillTerminateNotification;
+#else
+		NSString *appTerminateNotification = UIApplicationWillTerminateNotification;
+#endif
+		[nc addObserverForName:appTerminateNotification
 						object:nil
 						 queue:[NSOperationQueue mainQueue]
 					usingBlock:^(NSNotification *note) {
@@ -89,6 +94,9 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)loadAvailableMappings
 {
+	NSMutableSet *mappings = [NSMutableSet set];
+	
+#if !TARGET_OS_IPHONE
 	NSURL *mappingsFolder = [self storedMappingsFolder];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSError *error = nil;
@@ -98,7 +106,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		return;
 	}
 	
-	NSMutableSet *mappings = [NSMutableSet set];
 	for (NSURL *file in contents) {
 		if (![[file pathExtension] isEqualToString:@"midimap"]) continue;
 		
@@ -106,6 +113,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
 		if (mapping) [mappings addObject:mapping];
 	}
+#endif
 	
 	self.internalMappings = mappings;
 }
@@ -119,6 +127,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)saveMappingsToDisk
 {
+#if !TARGET_OS_IPHONE
 	for (MIKMIDIMapping *mapping in self.mappings) {
 		NSURL *fileURL = [self fileURLForMapping:mapping];
 		if (!fileURL) {
@@ -132,6 +141,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 			NSLog(@"Error saving MIDI mapping %@: %@", [mapping name], error);
 		}
 	}
+#endif
 }
 
 #pragma mark - Properties

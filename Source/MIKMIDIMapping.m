@@ -17,6 +17,8 @@
 
 @implementation MIKMIDIMapping
 
+#if !TARGET_OS_IPHONE
+
 - (instancetype)initWithFileAtURL:(NSURL *)url
 {
 	NSError *error = nil;
@@ -45,6 +47,8 @@
 	return self;
 }
 
+#endif
+
 - (id)init
 {
     self = [super init];
@@ -54,6 +58,7 @@
     return self;
 }
 
+#if !TARGET_OS_IPHONE
 - (NSXMLDocument *)XMLRepresentation;
 {
 	NSXMLElement *controllerName = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
@@ -74,6 +79,7 @@
 	[result setCharacterEncoding:@"UTF-8"];
 	return result;
 }
+#endif
 
 - (NSString *)description
 {
@@ -96,6 +102,7 @@
 
 #pragma mark - Private
 
+#if !TARGET_OS_IPHONE
 - (BOOL)loadPropertiesFromXMLDocument:(NSXMLDocument *)xmlDocument
 {
 	NSError *error = nil;
@@ -129,6 +136,7 @@
 	
 	return YES;
 }
+#endif
 
 #pragma mark - Properties
 
@@ -167,6 +175,7 @@
 
 @implementation MIKMIDIMappingItem
 
+#if !TARGET_OS_IPHONE
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;
 {
 	self = [self init];
@@ -241,6 +250,7 @@
 								children:@[commandIdentifier, channel, commandType, controlNumber]
 							  attributes:@[interactionType, flippedStatus]];
 }
+#endif
 
 - (NSString *)description
 {
