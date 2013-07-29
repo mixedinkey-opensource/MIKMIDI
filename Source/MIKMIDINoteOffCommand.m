@@ -24,7 +24,7 @@
 #pragma mark - Properties
 
 - (NSUInteger)note { return self.dataByte1; }
-- (NSUInteger)velocity { return self.dataByte2; }
+- (NSUInteger)velocity { return self.value; }
 
 @end
 
@@ -42,7 +42,7 @@
 
 - (NSUInteger)note { return self.dataByte1; }
 - (void)setNote:(NSUInteger)value { self.dataByte1 = value; }
-- (NSUInteger)velocity { return self.dataByte2; }
-- (void)setVelocity:(NSUInteger)value { self.dataByte2 = value; }
+- (NSUInteger)velocity { return self.value; }
+- (void)setVelocity:(NSUInteger)value { self.value = value; }
 
 @end

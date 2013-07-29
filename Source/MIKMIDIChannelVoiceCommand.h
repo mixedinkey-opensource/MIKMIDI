@@ -11,11 +11,13 @@
 @interface MIKMIDIChannelVoiceCommand : MIKMIDICommand
 
 @property (nonatomic, readonly) UInt8 channel;
+@property (nonatomic, readonly) NSUInteger value;
 
 @end
 
 @interface MIKMutableMIDIChannelVoiceCommand : MIKMutableMIDICommand
 
 @property (nonatomic, readwrite) UInt8 channel;
+@property (nonatomic, readwrite) NSUInteger value;
 
 @end

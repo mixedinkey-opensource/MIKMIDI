@@ -20,7 +20,7 @@
 
 - (NSUInteger)controllerNumber { return self.dataByte1; }
 
-- (NSUInteger)controllerValue { return self.dataByte2; }
+- (NSUInteger)controllerValue { return self.value; }
 
 @end
 
@@ -35,7 +35,7 @@
 - (NSUInteger)controllerNumber { return self.dataByte1; }
 - (void)setControllerNumber:(NSUInteger)value { self.dataByte1 = value; }
 
-- (NSUInteger)controllerValue { return self.dataByte2; }
-- (void)setControllerValue:(NSUInteger)value { self.dataByte2 = value; }
+- (NSUInteger)controllerValue { return self.value; }
+- (void)setControllerValue:(NSUInteger)value { self.value = value; }
 
 @end

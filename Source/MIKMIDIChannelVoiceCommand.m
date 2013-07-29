@@ -38,6 +38,8 @@
 	return data[0] & 0x0F;
 }
 
+- (NSUInteger)value { return self.dataByte2 & 0x7F; }
+
 @end
 
 @implementation MIKMutableMIDIChannelVoiceCommand
@@ -71,5 +73,9 @@
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
 	data[0] |= (channel & 0x0F);
 }
+
+- (NSUInteger)value { return self.dataByte2 & 0x7F; }
+
+- (void)setValue:(NSUInteger)value { self.dataByte2 = value & 0x7F; }
 
 @end
