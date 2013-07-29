@@ -177,6 +177,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 		if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) return;
 		
 		MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:changeNotification->object];
+		
 		if (changedObject.isOnline && ![self.internalDevices containsObject:changedObject]) {
 			[self addInternalDevicesObject:changedObject];
 			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -269,13 +270,13 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (NSArray *)connectedInputSources
 {
-	NSMutableArray *result = [NSMutableArray array];
+	NSMutableSet *result = [NSMutableSet set];
 	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
 		NSArray *connectedSources = port.connectedSources;
 		if (![connectedSources count]) continue;
 		[result addObjectsFromArray:connectedSources];
 	}
-	return result;
+	return [result allObjects];
 }
 
 - (void)addInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port
