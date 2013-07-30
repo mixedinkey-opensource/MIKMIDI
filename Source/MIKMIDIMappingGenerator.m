@@ -119,6 +119,87 @@
 	}
 }
 
+#pragma mark Messages to Mapping Item
+
+- (MIKMIDIMappingItem *)buttonMappingItemFromMessages:(NSArray *)messages
+{
+	if (![messages count]) return nil;
+	if ([messages count] > 2) return nil;
+	
+	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
+	
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
+	result.channel = firstMessage.channel;
+	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+
+	// Tap type button
+	if ([messages count] == 1) {
+		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < kMIKMIDILearningTimeoutInterval) return nil; // Need to keep waiting for another message
+		
+		result.interactionType = MIKMIDIMappingInteractionTypeTap;
+	}
+	
+	// Key type button
+	if ([messages count] == 2) {		
+		MIKMIDIChannelVoiceCommand *secondMessage = [messages objectAtIndex:1];
+		BOOL firstIsZero = firstMessage.value == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
+		BOOL secondIsZero = secondMessage.value == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
+		
+		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIMappingInteractionTypeKey : MIKMIDIMappingInteractionTypeTap;
+	}
+	
+	return result;
+}
+
+- (MIKMIDIMappingItem *)relativeKnobMappingItemFromMessages:(NSArray *)messages
+{
+	if ([messages count] < 3) return nil;
+	
+	// Disallow non-control change messages
+	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
+	
+	NSSet *messageValues = [NSSet setWithArray:[messages valueForKey:@"value"]];
+	// If there are more than 2 message values, it's more likely an absolute knob.
+	if ([messages count] == [messageValues count] || [messageValues count] > 2) return nil;
+	
+	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
+	
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	result.interactionType = MIKMIDIMappingInteractionTypeJogWheel;
+	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
+	result.channel = firstMessage.channel;
+	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
+	return result;
+}
+
+- (MIKMIDIMappingItem *)absoluteKnobSliderMappingItemFromMessages:(NSArray *)messages
+{
+	if ([messages count] < 3) return nil;
+	
+	// Disallow non-control change messages
+	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
+	
+	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	result.interactionType = MIKMIDIMappingInteractionTypeAbsoluteKnobSlider;
+	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
+	result.channel = firstMessage.channel;
+	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	
+	// Figure out which direction it goes
+	NSInteger directionCounter = 0;
+	MIKMIDIChannelVoiceCommand *lastMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
+	for (MIKMIDIChannelVoiceCommand *message in messages) {
+		if (message.value > lastMessage.value) directionCounter++;
+		if (message.value < lastMessage.value) directionCounter--;
+	}
+	result.flipped = (directionCounter < 0);
+	
+	return result;
+}
+
 - (MIKMIDIMappingItem *)mappingItemForControl:(id<MIKMIDIResponder>)responder fromReceivedMessages:(NSArray *)messages
 {
 	if (![messages count]) return nil;
@@ -142,74 +223,22 @@
 		responderType = [responder MIDIResponderType];
 	}
 	
-	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
-	NSUInteger controllerNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
-	
-	// Tap type button
-	if ([messages count] == 1 &&
-		(responderType & MIKMIDIResponderTypeButton)) {
-		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < kMIKMIDILearningTimeoutInterval) return nil; // Need to keep waiting for another message
-		
-		MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-		result.interactionType = MIKMIDIMappingInteractionTypeTap;
-		result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
-		result.channel = firstMessage.channel;
-		result.controlNumber = controllerNumber;
-		return result;
+	// Button
+	if (responderType & MIKMIDIResponderTypeButton) {
+		MIKMIDIMappingItem *buttonMappingItem = [self buttonMappingItemFromMessages:messages];
+		if (buttonMappingItem) return buttonMappingItem;
 	}
-	
-	// Key type button
-	if ([messages count] == 2 &&
-		(responderType & MIKMIDIResponderTypeButton)) {
-		
-		MIKMIDIChannelVoiceCommand *secondMessage = [messages objectAtIndex:1];
-		BOOL firstIsZero = firstMessage.value == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
-		BOOL secondIsZero = secondMessage.value == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
-		
-		MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIMappingInteractionTypeKey : MIKMIDIMappingInteractionTypeTap;
-		result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
-		result.channel = firstMessage.channel;
-		result.controlNumber = controllerNumber;
-		return result;
-	}
-	
-	NSSet *messageValues = [NSSet setWithArray:[messages valueForKey:@"value"]];
 	
 	// Relative knob/jog wheel
-	if ([messages count] > [messageValues count] &&
-		[messageValues count] <= 2 &&
-		(responderType & MIKMIDIResponderTypeRelativeKnob)) {
-
-		MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-		result.interactionType = MIKMIDIMappingInteractionTypeJogWheel;
-		result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
-		result.channel = firstMessage.channel;
-		result.controlNumber = controllerNumber;
-		result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
-		return result;
+	if (responderType & MIKMIDIResponderTypeRelativeKnob) {
+		MIKMIDIMappingItem *relativeKnobMappingItem = [self relativeKnobMappingItemFromMessages:messages];
+		if (relativeKnobMappingItem) return relativeKnobMappingItem;
 	}
 	
 	// Absolute knob/slider
-	if ([messages count] >= 3 &&
-		responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) {
-		
-		MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-		result.interactionType = MIKMIDIMappingInteractionTypeAbsoluteKnobSlider;
-		result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
-		result.channel = firstMessage.channel;
-		result.controlNumber = controllerNumber;
-		
-		// Figure out which direction it goes
-		NSInteger directionCounter = 0;
-		MIKMIDIChannelVoiceCommand *lastMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
-		for (MIKMIDIChannelVoiceCommand *message in messages) {
-			if (message.value > lastMessage.value) directionCounter++;
-			if (message.value < lastMessage.value) directionCounter--;
-		}
-		result.flipped = (directionCounter < 0);
-		
-		return result;
+	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) {
+		MIKMIDIMappingItem *absoluteKnobSliderMappingItem = [self absoluteKnobSliderMappingItemFromMessages:messages];
+		if (absoluteKnobSliderMappingItem) return absoluteKnobSliderMappingItem;
 	}
 	
 	return nil;
