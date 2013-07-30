@@ -186,7 +186,7 @@
 		result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 		result.channel = firstMessage.channel;
 		result.controlNumber = controllerNumber;
-		result.flipped = ([[messages lastObject] controllerValue] < 64);
+		result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
 		return result;
 	}
 	
