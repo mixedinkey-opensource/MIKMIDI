@@ -190,10 +190,11 @@
 	
 	// Figure out which direction it goes
 	NSInteger directionCounter = 0;
-	MIKMIDIChannelVoiceCommand *lastMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
+	MIKMIDIChannelVoiceCommand *previousMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
 	for (MIKMIDIChannelVoiceCommand *message in messages) {
-		if (message.value > lastMessage.value) directionCounter++;
-		if (message.value < lastMessage.value) directionCounter--;
+		if (message.value > previousMessage.value) directionCounter++;
+		if (message.value < previousMessage.value) directionCounter--;
+		previousMessage = message;
 	}
 	result.flipped = (directionCounter < 0);
 	
