@@ -11,56 +11,56 @@
 		9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EEBE17A712E900BEE89F /* MIKMIDI-Prefix.pch */; };
 		9D74EEC417A712F100BEE89F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D74EEC117A712F100BEE89F /* InfoPlist.strings */; };
 		9D74EF2E17A7133900BEE89F /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
-		9D74EF6317A713A100BEE89F /* MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3017A713A100BEE89F /* MIKMIDI.h */; };
-		9D74EF6417A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */; };
+		9D74EF6317A713A100BEE89F /* MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3017A713A100BEE89F /* MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D74EF6417A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6517A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */; };
-		9D74EF6617A713A100BEE89F /* MIKMIDICommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3317A713A100BEE89F /* MIKMIDICommand.h */; };
+		9D74EF6617A713A100BEE89F /* MIKMIDICommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3317A713A100BEE89F /* MIKMIDICommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6717A713A100BEE89F /* MIKMIDICommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3417A713A100BEE89F /* MIKMIDICommand.m */; };
 		9D74EF6817A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; };
-		9D74EF6917A713A100BEE89F /* MIKMIDIControlChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */; };
+		9D74EF6917A713A100BEE89F /* MIKMIDIControlChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6A17A713A100BEE89F /* MIKMIDIControlChangeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */; };
-		9D74EF6B17A713A100BEE89F /* MIKMIDIDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3817A713A100BEE89F /* MIKMIDIDestinationEndpoint.h */; };
+		9D74EF6B17A713A100BEE89F /* MIKMIDIDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3817A713A100BEE89F /* MIKMIDIDestinationEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6C17A713A100BEE89F /* MIKMIDIDestinationEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3917A713A100BEE89F /* MIKMIDIDestinationEndpoint.m */; };
-		9D74EF6D17A713A100BEE89F /* MIKMIDIDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3A17A713A100BEE89F /* MIKMIDIDevice.h */; };
+		9D74EF6D17A713A100BEE89F /* MIKMIDIDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3A17A713A100BEE89F /* MIKMIDIDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6E17A713A100BEE89F /* MIKMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3B17A713A100BEE89F /* MIKMIDIDevice.m */; };
-		9D74EF6F17A713A100BEE89F /* MIKMIDIDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3C17A713A100BEE89F /* MIKMIDIDeviceManager.h */; };
+		9D74EF6F17A713A100BEE89F /* MIKMIDIDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3C17A713A100BEE89F /* MIKMIDIDeviceManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7017A713A100BEE89F /* MIKMIDIDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */; };
-		9D74EF7117A713A100BEE89F /* MIKMIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3E17A713A100BEE89F /* MIKMIDIEndpoint.h */; };
+		9D74EF7117A713A100BEE89F /* MIKMIDIEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3E17A713A100BEE89F /* MIKMIDIEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7217A713A100BEE89F /* MIKMIDIEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3F17A713A100BEE89F /* MIKMIDIEndpoint.m */; };
-		9D74EF7317A713A100BEE89F /* MIKMIDIEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4017A713A100BEE89F /* MIKMIDIEntity.h */; };
+		9D74EF7317A713A100BEE89F /* MIKMIDIEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4017A713A100BEE89F /* MIKMIDIEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7417A713A100BEE89F /* MIKMIDIEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4117A713A100BEE89F /* MIKMIDIEntity.m */; };
-		9D74EF7517A713A100BEE89F /* MIKMIDIErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4217A713A100BEE89F /* MIKMIDIErrors.h */; };
+		9D74EF7517A713A100BEE89F /* MIKMIDIErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4217A713A100BEE89F /* MIKMIDIErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7617A713A100BEE89F /* MIKMIDIErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4317A713A100BEE89F /* MIKMIDIErrors.m */; };
-		9D74EF7717A713A100BEE89F /* MIKMIDIInputPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4417A713A100BEE89F /* MIKMIDIInputPort.h */; };
+		9D74EF7717A713A100BEE89F /* MIKMIDIInputPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4417A713A100BEE89F /* MIKMIDIInputPort.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7817A713A100BEE89F /* MIKMIDIInputPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4517A713A100BEE89F /* MIKMIDIInputPort.m */; };
-		9D74EF7917A713A100BEE89F /* MIKMIDIMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4617A713A100BEE89F /* MIKMIDIMapping.h */; };
+		9D74EF7917A713A100BEE89F /* MIKMIDIMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4617A713A100BEE89F /* MIKMIDIMapping.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7A17A713A100BEE89F /* MIKMIDIMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4717A713A100BEE89F /* MIKMIDIMapping.m */; };
-		9D74EF7B17A713A100BEE89F /* MIKMIDIMappingGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4817A713A100BEE89F /* MIKMIDIMappingGenerator.h */; };
+		9D74EF7B17A713A100BEE89F /* MIKMIDIMappingGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4817A713A100BEE89F /* MIKMIDIMappingGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7C17A713A100BEE89F /* MIKMIDIMappingGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4917A713A100BEE89F /* MIKMIDIMappingGenerator.m */; };
-		9D74EF7D17A713A100BEE89F /* MIKMIDIMappingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4A17A713A100BEE89F /* MIKMIDIMappingManager.h */; };
+		9D74EF7D17A713A100BEE89F /* MIKMIDIMappingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4A17A713A100BEE89F /* MIKMIDIMappingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF7E17A713A100BEE89F /* MIKMIDIMappingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4B17A713A100BEE89F /* MIKMIDIMappingManager.m */; };
-		9D74EF7F17A713A100BEE89F /* MIKMIDINoteOffCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4C17A713A100BEE89F /* MIKMIDINoteOffCommand.h */; };
+		9D74EF7F17A713A100BEE89F /* MIKMIDINoteOffCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4C17A713A100BEE89F /* MIKMIDINoteOffCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8017A713A100BEE89F /* MIKMIDINoteOffCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4D17A713A100BEE89F /* MIKMIDINoteOffCommand.m */; };
-		9D74EF8117A713A100BEE89F /* MIKMIDINoteOnCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4E17A713A100BEE89F /* MIKMIDINoteOnCommand.h */; };
+		9D74EF8117A713A100BEE89F /* MIKMIDINoteOnCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF4E17A713A100BEE89F /* MIKMIDINoteOnCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8217A713A100BEE89F /* MIKMIDINoteOnCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF4F17A713A100BEE89F /* MIKMIDINoteOnCommand.m */; };
-		9D74EF8317A713A100BEE89F /* MIKMIDIObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5017A713A100BEE89F /* MIKMIDIObject.h */; };
+		9D74EF8317A713A100BEE89F /* MIKMIDIObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5017A713A100BEE89F /* MIKMIDIObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8417A713A100BEE89F /* MIKMIDIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5117A713A100BEE89F /* MIKMIDIObject.m */; };
 		9D74EF8517A713A100BEE89F /* MIKMIDIObject_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5217A713A100BEE89F /* MIKMIDIObject_SubclassMethods.h */; };
-		9D74EF8617A713A100BEE89F /* MIKMIDIOutputPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5317A713A100BEE89F /* MIKMIDIOutputPort.h */; };
+		9D74EF8617A713A100BEE89F /* MIKMIDIOutputPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5317A713A100BEE89F /* MIKMIDIOutputPort.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8717A713A100BEE89F /* MIKMIDIOutputPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5417A713A100BEE89F /* MIKMIDIOutputPort.m */; };
-		9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5517A713A100BEE89F /* MIKMIDIPort.h */; };
+		9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5517A713A100BEE89F /* MIKMIDIPort.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8917A713A100BEE89F /* MIKMIDIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5617A713A100BEE89F /* MIKMIDIPort.m */; };
 		9D74EF8A17A713A100BEE89F /* MIKMIDIPort_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5717A713A100BEE89F /* MIKMIDIPort_SubclassMethods.h */; };
-		9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; };
-		9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5917A713A100BEE89F /* MIKMIDISourceEndpoint.h */; };
+		9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5917A713A100BEE89F /* MIKMIDISourceEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8D17A713A100BEE89F /* MIKMIDISourceEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5A17A713A100BEE89F /* MIKMIDISourceEndpoint.m */; };
-		9D74EF8E17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5B17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h */; };
+		9D74EF8E17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5B17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF8F17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5C17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m */; };
-		9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5D17A713A100BEE89F /* MIKMIDISystemMessageCommand.h */; };
+		9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5D17A713A100BEE89F /* MIKMIDISystemMessageCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9117A713A100BEE89F /* MIKMIDISystemMessageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF5E17A713A100BEE89F /* MIKMIDISystemMessageCommand.m */; };
-		9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */; };
+		9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9317A713A100BEE89F /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */; };
-		9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */; };
+		9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9517A713A100BEE89F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */; };
 /* End PBXBuildFile section */
 
@@ -210,10 +210,10 @@
 			isa = PBXGroup;
 			children = (
 				9D74EF3017A713A100BEE89F /* MIKMIDI.h */,
-				9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */,
-				9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */,
 				9D74EF3317A713A100BEE89F /* MIKMIDICommand.h */,
 				9D74EF3417A713A100BEE89F /* MIKMIDICommand.m */,
+				9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */,
+				9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */,
 				9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */,
 				9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */,
 				9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */,

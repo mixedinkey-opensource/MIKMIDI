@@ -8,7 +8,7 @@
 
 #import "MIKMIDIMappingGenerator.h"
 
-#import "MIKMIDI.h"
+#import <MIKMIDI/MIKMIDI.h>
 #import "MIKMIDIMapping.h"
 
 #define kMIKMIDILearningTimeoutInterval 0.6

@@ -7,7 +7,11 @@
 //
 
 #import "MIKMIDIMapping.h"
-#import "MIKMIDI.h"
+#import "MIKMIDICommand.h"
+#import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIControlChangeCommand.h"
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
 
 @interface MIKMIDIMapping ()
 

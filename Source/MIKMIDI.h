@@ -8,7 +8,6 @@
 
 /* Umbrella header for MIKMIDI public interface. */
 
-#import "MIKMIDI.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
@@ -27,6 +26,9 @@
 #import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
+#import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingManager.h"
+#import "MIKMIDIMappingGenerator.h"
 #import "MIKMIDIUtilities.h"
 #import "NSUIApplication+MIKMIDI.h"
 #import "MIKMIDIErrors.h"
