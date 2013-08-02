@@ -259,9 +259,12 @@
 - (void)finishMappingItem:(MIKMIDIMappingItem *)mappingItem error:(NSError *)errorOrNil
 {
 	MIKMIDIMappingGeneratorMappingCompletionBlock completionBlock = self.currentMappingCompletionBlock;
+	
 	self.currentMappingCompletionBlock = nil;
+	self.controlBeingLearned = nil;
 	[self.receivedMessages removeAllObjects];
 	self.messagesTimeoutTimer = nil;
+	
 	if (mappingItem) [self.mapping addMappingItemsObject:mappingItem];
 	if (completionBlock) completionBlock(mappingItem, errorOrNil);
 }
