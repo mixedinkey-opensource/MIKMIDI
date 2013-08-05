@@ -265,21 +265,21 @@
 
 #pragma mark - Private
 
-- (NSString *)stringForInteractionType:(MIKMIDIMappingInteractionType)type
+- (NSString *)stringForInteractionType:(MIKMIDIResponderType)type
 {
-	NSDictionary *map = @{@(MIKMIDIMappingInteractionTypeKey) : @"Key",
-					   @(MIKMIDIMappingInteractionTypeTap) : @"Tap",
-					   @(MIKMIDIMappingInteractionTypeAbsoluteKnobSlider) : @"KnobSlider",
-					   @(MIKMIDIMappingInteractionTypeJogWheel) : @"JogWheel"};
+	NSDictionary *map = @{@(MIKMIDIResponderTypePressReleaseButton) : @"Key",
+					   @(MIKMIDIResponderTypePressButton) : @"Tap",
+					   @(MIKMIDIResponderTypeAbsoluteSliderOrKnob) : @"KnobSlider",
+					   @(MIKMIDIResponderTypeRelativeKnob) : @"JogWheel"};
 	return [map objectForKey:@(type)];
 }
 
-- (MIKMIDIMappingInteractionType)interactionTypeForString:(NSString *)string
+- (MIKMIDIResponderType)interactionTypeForString:(NSString *)string
 {
-	NSDictionary *map = @{@"Key" : @(MIKMIDIMappingInteractionTypeKey),
-					   @"Tap" : @(MIKMIDIMappingInteractionTypeTap),
-					   @"KnobSlider" : @(MIKMIDIMappingInteractionTypeAbsoluteKnobSlider),
-					   @"JogWheel" : @(MIKMIDIMappingInteractionTypeJogWheel)};
+	NSDictionary *map = @{@"Key" : @(MIKMIDIResponderTypePressReleaseButton),
+					   @"Tap" : @(MIKMIDIResponderTypePressButton),
+					   @"KnobSlider" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob),
+					   @"JogWheel" : @(MIKMIDIResponderTypeRelativeKnob)};
 	return [[map objectForKey:string] integerValue];
 }
 

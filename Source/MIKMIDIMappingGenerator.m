@@ -152,7 +152,7 @@
 	if ([messages count] == 1) {
 		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < kMIKMIDILearningTimeoutInterval) return nil; // Need to keep waiting for another message
 		
-		result.interactionType = MIKMIDIMappingInteractionTypeTap;
+		result.interactionType = MIKMIDIResponderTypePressButton;
 	}
 	
 	// Key type button
@@ -161,7 +161,7 @@
 		BOOL firstIsZero = firstMessage.value == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
 		BOOL secondIsZero = secondMessage.value == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
 		
-		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIMappingInteractionTypeKey : MIKMIDIMappingInteractionTypeTap;
+		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIResponderTypePressReleaseButton : MIKMIDIResponderTypePressButton;
 	}
 	
 	return result;
@@ -181,7 +181,7 @@
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-	result.interactionType = MIKMIDIMappingInteractionTypeJogWheel;
+	result.interactionType = MIKMIDIResponderTypeRelativeKnob;
 	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
@@ -198,7 +198,7 @@
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-	result.interactionType = MIKMIDIMappingInteractionTypeAbsoluteKnobSlider;
+	result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob;
 	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);

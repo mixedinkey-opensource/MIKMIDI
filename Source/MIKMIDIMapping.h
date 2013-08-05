@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "MIKMIDICommand.h"
+#import "MIKMIDIResponder.h"
 
 @class MIKMIDIChannelVoiceCommand;
 @class MIKMIDIMappingItem;
@@ -32,13 +33,6 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, MIKMIDIMappingInteractionType) {
-	MIKMIDIMappingInteractionTypeKey,
-	MIKMIDIMappingInteractionTypeTap,
-	MIKMIDIMappingInteractionTypeAbsoluteKnobSlider,
-	MIKMIDIMappingInteractionTypeJogWheel,
-};
-
 @interface MIKMIDIMappingItem : NSObject
 
 #if !TARGET_OS_IPHONE
@@ -48,7 +42,7 @@ typedef NS_ENUM(NSInteger, MIKMIDIMappingInteractionType) {
 
 // Properties
 
-@property (nonatomic) MIKMIDIMappingInteractionType interactionType;
+@property (nonatomic) MIKMIDIResponderType interactionType;
 @property (nonatomic, getter = isFlipped) BOOL flipped; // If yes, value decreases as slider/knob goes left->right or top->bottom
 @property (nonatomic, copy) NSString *commandIdentifier;
 @property (nonatomic) NSInteger channel;
