@@ -32,6 +32,8 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 	MIKMIDICommandTypeSystemKeepAlive = 0xfe,
 };
 
+@class MIKMIDIMappingItem;
+
 @interface MIKMIDICommand : NSObject <NSCopying>
 
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
@@ -44,6 +46,9 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @property (nonatomic, readonly) MIDITimeStamp midiTimestamp;
 @property (nonatomic, copy, readonly) NSData *data;
 
+// Must be set by client code that handles receiving MIDI commands. Allows responders to understand how a command was mapped, especially useful to determine interaction type.
+@property (nonatomic, strong) MIKMIDIMappingItem *mappingItem;
+
 @end
 
 @interface MIKMutableMIDICommand : MIKMIDICommand
@@ -55,6 +60,9 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
 @property (nonatomic, copy, readwrite) NSData *data;
+
+// Must be set by client code that handles receiving MIDI commands. Allows responders to understand how a command was mapped, especially useful to determine interaction type.
+@property (nonatomic, strong) MIKMIDIMappingItem *mappingItem;
 
 @end
 
