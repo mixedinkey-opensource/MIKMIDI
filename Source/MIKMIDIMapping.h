@@ -22,7 +22,7 @@
 - (NSXMLDocument *)XMLRepresentation;
 #endif
 
-- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier;
 - (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
 
 @property (nonatomic, copy) NSString *name;

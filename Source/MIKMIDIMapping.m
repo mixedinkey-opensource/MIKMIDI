@@ -90,11 +90,11 @@
 	return [NSString stringWithFormat:@"%@ %@ for %@ Mapping Items: %@", [super description], self.name, self.controllerName, self.mappingItems];
 }
 
-- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier;
 {
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"commandIdentifier LIKE %@", identifier];
 	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
-	return [matches anyObject];
+	return matches;
 }
 
 - (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
