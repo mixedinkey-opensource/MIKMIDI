@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
+	MIKMIDIResponderTypeNone = 0,
+	
 	MIKMIDIResponderTypeAbsoluteSliderOrKnob = 1 << 0,	/* Absolute position knob or slider */
 	MIKMIDIResponderTypeRelativeKnob = 1 << 1,			/* Relative (ie. jog wheel) knob */
 	MIKMIDIResponderTypeButton = 1 << 2,				/* Button */

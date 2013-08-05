@@ -18,6 +18,7 @@
 @property (nonatomic, strong, readwrite) MIKMIDIMapping *mapping;
 
 @property (nonatomic, strong) id<MIKMIDIResponder> controlBeingLearned;
+@property (nonatomic) MIKMIDIResponderType responderTypeOfControlBeingLearned;
 @property (nonatomic, strong) MIKMIDIMappingGeneratorMappingCompletionBlock currentMappingCompletionBlock;
 
 @property (nonatomic, strong) NSTimer *messagesTimeoutTimer;
@@ -81,10 +82,24 @@
 
 #pragma mark - Public
 
-- (void)learnMappingForControl:(id<MIKMIDIResponder>)control completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
+- (void)learnMappingForControl:(id<MIKMIDIResponder>)control
+			 withResponderType:(MIKMIDIResponderType)responderType
+			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
+	if ([control respondsToSelector:@selector(MIDIResponderType)]) {
+		MIKMIDIResponderType controlResponderType = [control MIDIResponderType];
+		responderType &= controlResponderType;
+		if (responderType == MIKMIDIResponderTypeNone) {
+			NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(@"MIDI Mapping Failed", @"MIDI Mapping Failed")};
+			NSError *error = [NSError MIKMIDIErrorWithCode:MIKMIDIMappingFailedErrorCode userInfo:userInfo];
+			[self finishMappingItem:nil error:error];
+			return;
+		}
+	}
+	
 	self.currentMappingCompletionBlock = completionBlock;
 	self.controlBeingLearned = control;
+	self.responderTypeOfControlBeingLearned = responderType;
 }
 
 #pragma mark - Private
@@ -219,10 +234,7 @@
 	 If we've gotten two messages, with the second having value 0, the button is a key type button.
 	 */
 	
-	MIKMIDIResponderType responderType = MIKMIDIResponderTypeAll;
-	if ([responder respondsToSelector:@selector(MIDIResponderType)]) {
-		responderType = [responder MIDIResponderType];
-	}
+	MIKMIDIResponderType responderType = self.responderTypeOfControlBeingLearned;
 	
 	// Button
 	if (responderType & MIKMIDIResponderTypeButton) {

@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "MIKMIDIResponder.h"
+
 @class MIKMIDIDevice;
 @class MIKMIDIMapping;
 @class MIKMIDIMappingItem;
-@protocol MIKMIDIResponder;
 
 typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSError *error);
 
@@ -21,7 +22,9 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 + (instancetype)mappingGeneratorWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
 - (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
 
-- (void)learnMappingForControl:(id<MIKMIDIResponder>)control completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
+- (void)learnMappingForControl:(id<MIKMIDIResponder>)control
+			 withResponderType:(MIKMIDIResponderType)responderType
+			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 
 // Properties
 
