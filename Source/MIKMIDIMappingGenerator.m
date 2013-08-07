@@ -82,14 +82,14 @@
 
 #pragma mark - Public
 
-- (void)learnMappingForControl:(id<MIKMIDIResponder>)control
-			 withResponderType:(MIKMIDIResponderType)responderType
+- (void)learnMappingForControl:(id<MIKMIDIMappableResponder>)control
+		 withCommandIdentifier:(NSString *)commandID
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
-	if ([control respondsToSelector:@selector(MIDIResponderType)]) {
-		MIKMIDIResponderType controlResponderType = [control MIDIResponderType];
-		responderType &= controlResponderType;
-		if (responderType == MIKMIDIResponderTypeNone) {
+	MIKMIDIResponderType controlResponderType = MIKMIDIResponderTypeAll;
+	if ([control respondsToSelector:@selector(MIDIResponderTypeForCommandIdentifier:)]) {
+		controlResponderType = [control MIDIResponderTypeForCommandIdentifier:commandID];
+		if (controlResponderType == MIKMIDIResponderTypeNone) {
 			NSDictionary *userInfo = @{NSLocalizedDescriptionKey : NSLocalizedString(@"MIDI Mapping Failed", @"MIDI Mapping Failed")};
 			NSError *error = [NSError MIKMIDIErrorWithCode:MIKMIDIMappingFailedErrorCode userInfo:userInfo];
 			[self finishMappingItem:nil error:error];
@@ -99,7 +99,7 @@
 	
 	self.currentMappingCompletionBlock = completionBlock;
 	self.controlBeingLearned = control;
-	self.responderTypeOfControlBeingLearned = responderType;
+	self.responderTypeOfControlBeingLearned = controlResponderType;
 }
 
 #pragma mark - Private
@@ -147,7 +147,7 @@
 	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
-
+	
 	// Tap type button
 	if ([messages count] == 1) {
 		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < kMIKMIDILearningTimeoutInterval) return nil; // Need to keep waiting for another message
@@ -156,7 +156,7 @@
 	}
 	
 	// Key type button
-	if ([messages count] == 2) {		
+	if ([messages count] == 2) {
 		MIKMIDIChannelVoiceCommand *secondMessage = [messages objectAtIndex:1];
 		BOOL firstIsZero = firstMessage.value == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
 		BOOL secondIsZero = secondMessage.value == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;

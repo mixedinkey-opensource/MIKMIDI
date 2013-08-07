@@ -11,6 +11,8 @@
 #import "MIKMIDICommand.h"
 #import "MIKMIDIResponder.h"
 
+@protocol MIKMIDIMappableResponder;
+
 @class MIKMIDIChannelVoiceCommand;
 @class MIKMIDIMappingItem;
 
@@ -52,3 +54,13 @@
 @end
 
 NSUInteger MIKMIDIMappingControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command);
+
+@protocol MIKMIDIMappableResponder <MIKMIDIResponder>
+
+@required
+- (NSArray *)commandIdentifiers;
+
+@optional
+- (MIKMIDIResponderType)MIDIResponderTypeForCommandIdentifier:(NSString *)commandID; // Optional. If not implemented, MIKMIDIResponderTypeAll will be assumed.
+
+@end

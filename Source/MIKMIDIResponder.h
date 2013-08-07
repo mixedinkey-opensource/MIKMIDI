@@ -29,7 +29,4 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
-@optional
-- (MIKMIDIResponderType)MIDIResponderType; // Optional. If not implemented, only MIKMIDIResponderTypeAll will be assumed.
-
 @end
