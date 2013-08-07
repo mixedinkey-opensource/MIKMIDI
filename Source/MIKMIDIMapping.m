@@ -90,11 +90,22 @@
 	return [NSString stringWithFormat:@"%@ %@ for %@ Mapping Items: %@", [super description], self.name, self.controllerName, self.mappingItems];
 }
 
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier;
+- (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
 {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"commandIdentifier LIKE %@", identifier];
+	NSPredicate *commandPredicate = [NSPredicate predicateWithFormat:@"commandIdentifier IN %@", [responder commandIdentifiers]];
+	NSPredicate *responderPredicate = [NSPredicate predicateWithFormat:@"MIDIResponderIdentifier LIKE %@", [responder MIDIIdentifier]];
+	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[commandPredicate, responderPredicate]];
 	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
 	return matches;
+}
+
+- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
+{
+	NSPredicate *commandPredicate = [NSPredicate predicateWithFormat:@"commandIdentifier LIKE %@", identifier];
+	NSPredicate *responderPredicate = [NSPredicate predicateWithFormat:@"MIDIResponderIdentifier LIKE %@", [responder MIDIIdentifier]];
+	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[commandPredicate, responderPredicate]];
+	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
+	return [matches anyObject];
 }
 
 - (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
@@ -185,6 +196,14 @@
 	self = [self init];
 	if (self) {
 		NSError *error = nil;
+		
+		NSXMLElement *responderIdentifier = [[element nodesForXPath:@"ResponderIdentifier" error:&error] lastObject];
+		if (!responderIdentifier) {
+			NSLog(@"Unable to read responder identifier from %@: %@", element, error);
+			self = nil;
+			return nil;
+		}
+		
 		NSXMLElement *commandIdentifier = [[element nodesForXPath:@"CommandIdentifier" error:&error] lastObject];
 		if (!commandIdentifier) {
 			NSLog(@"Unable to read command identifier from %@: %@", element, error);
@@ -220,6 +239,7 @@
 		
 		NSXMLElement *flippedStatus = [[element nodesForXPath:@"@Flipped" error:&error] lastObject];
 		
+		self.MIDIResponderIdentifier = [responderIdentifier stringValue];
 		self.commandIdentifier = [commandIdentifier stringValue];
 		self.channel = [[channel stringValue] integerValue];
 		self.commandType = [[commandType stringValue] integerValue];
@@ -232,6 +252,7 @@
 
 - (NSXMLElement *)XMLRepresentation;
 {
+	NSXMLElement *responderIdentifier = [NSXMLElement elementWithName:@"ResponderIdentifier" stringValue:self.MIDIResponderIdentifier];
 	NSXMLElement *commandIdentifier = [NSXMLElement elementWithName:@"CommandIdentifier" stringValue:self.commandIdentifier];
 	NSXMLElement *channel = [NSXMLElement elementWithName:@"Channel"];
 	[channel setStringValue:[@(self.channel) stringValue]];
@@ -251,14 +272,14 @@
 	[flippedStatus setStringValue:flippedStatusString];
 	
 	return [NSXMLElement elementWithName:@"MappingItem"
-								children:@[commandIdentifier, channel, commandType, controlNumber]
+								children:@[responderIdentifier, commandIdentifier, channel, commandType, controlNumber]
 							  attributes:@[interactionType, flippedStatus]];
 }
 #endif
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ %@ %@ Channel %li Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
+	return [NSString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
 }
 
 #pragma mark - Public

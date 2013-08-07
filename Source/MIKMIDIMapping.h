@@ -24,7 +24,8 @@
 - (NSXMLDocument *)XMLRepresentation;
 #endif
 
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier;
+- (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
+- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
 - (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
 
 @property (nonatomic, copy) NSString *name;
@@ -46,6 +47,7 @@
 
 @property (nonatomic) MIKMIDIResponderType interactionType;
 @property (nonatomic, getter = isFlipped) BOOL flipped; // If yes, value decreases as slider/knob goes left->right or top->bottom
+@property (nonatomic, copy) NSString *MIDIResponderIdentifier;
 @property (nonatomic, copy) NSString *commandIdentifier;
 @property (nonatomic) NSInteger channel;
 @property (nonatomic) MIKMIDICommandType commandType;
@@ -59,8 +61,6 @@ NSUInteger MIKMIDIMappingControlNumberFromCommand(MIKMIDIChannelVoiceCommand *co
 
 @required
 - (NSArray *)commandIdentifiers;
-
-@optional
 - (MIKMIDIResponderType)MIDIResponderTypeForCommandIdentifier:(NSString *)commandID; // Optional. If not implemented, MIKMIDIResponderTypeAll will be assumed.
 
 @end

@@ -17,7 +17,8 @@
 
 @property (nonatomic, strong, readwrite) MIKMIDIMapping *mapping;
 
-@property (nonatomic, strong) id<MIKMIDIResponder> controlBeingLearned;
+@property (nonatomic, strong) id<MIKMIDIMappableResponder> controlBeingLearned;
+@property (nonatomic, copy) NSString *commandIdentifierBeingLearned;
 @property (nonatomic) MIKMIDIResponderType responderTypeOfControlBeingLearned;
 @property (nonatomic, strong) MIKMIDIMappingGeneratorMappingCompletionBlock currentMappingCompletionBlock;
 
@@ -99,6 +100,7 @@
 	
 	self.currentMappingCompletionBlock = completionBlock;
 	self.controlBeingLearned = control;
+	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
 }
 
@@ -108,6 +110,12 @@
 {
 	NSUInteger controllerNumber = MIKMIDIMappingControlNumberFromCommand(command);
 	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForControlNumber:controllerNumber];
+	BOOL isForControlBeingMapped = ([existingMappingItem.MIDIResponderIdentifier isEqualToString:[self.controlBeingLearned MIDIIdentifier]] &&
+											  [existingMappingItem.commandIdentifier isEqualToString:self.commandIdentifierBeingLearned]);
+	if (isForControlBeingMapped) {
+		[self.mapping removeMappingItemsObject:existingMappingItem];
+		existingMappingItem = nil;
+	}
 	if (existingMappingItem) return; // This commmand is already mapped so ignore it
 	
 	if ([self.receivedMessages count]) {
@@ -129,7 +137,9 @@
 																repeats:NO];
 	
 	if ([self.receivedMessages count] > 3) { // Don't try to finish unless we've received several messages (eg. from a knob) already
-		MIKMIDIMappingItem *mappingItem = [self mappingItemForControl:self.controlBeingLearned fromReceivedMessages:self.receivedMessages];
+		MIKMIDIMappingItem *mappingItem = [self mappingItemForCommandIdentifier:self.commandIdentifierBeingLearned
+																	  inControl:self.controlBeingLearned
+														   fromReceivedMessages:self.receivedMessages];
 		if (mappingItem) [self finishMappingItem:mappingItem error:nil];
 	}
 }
@@ -144,7 +154,6 @@
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
-	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	
@@ -182,7 +191,6 @@
 	
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
 	result.interactionType = MIKMIDIResponderTypeRelativeKnob;
-	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
@@ -199,7 +207,6 @@
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
 	result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob;
-	result.commandIdentifier = [self.controlBeingLearned MIDIIdentifier];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	
@@ -216,7 +223,7 @@
 	return result;
 }
 
-- (MIKMIDIMappingItem *)mappingItemForControl:(id<MIKMIDIResponder>)responder fromReceivedMessages:(NSArray *)messages
+- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)commandID inControl:(id<MIKMIDIMappableResponder>)responder fromReceivedMessages:(NSArray *)messages
 {
 	if (![messages count]) return nil;
 	/* The logic here is as follows:
@@ -234,32 +241,36 @@
 	 If we've gotten two messages, with the second having value 0, the button is a key type button.
 	 */
 	
-	MIKMIDIResponderType responderType = self.responderTypeOfControlBeingLearned;
+	MIKMIDIResponderType responderType = [responder MIDIResponderTypeForCommandIdentifier:commandID];
 	
-	// Button
+	MIKMIDIMappingItem *result = nil;
+	
 	if (responderType & MIKMIDIResponderTypeButton) {
-		MIKMIDIMappingItem *buttonMappingItem = [self buttonMappingItemFromMessages:messages];
-		if (buttonMappingItem) return buttonMappingItem;
+		result = [self buttonMappingItemFromMessages:messages];
 	}
+	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
-	// Relative knob/jog wheel
 	if (responderType & MIKMIDIResponderTypeRelativeKnob) {
-		MIKMIDIMappingItem *relativeKnobMappingItem = [self relativeKnobMappingItemFromMessages:messages];
-		if (relativeKnobMappingItem) return relativeKnobMappingItem;
+		result = [self relativeKnobMappingItemFromMessages:messages];
 	}
+	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
-	// Absolute knob/slider
 	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) {
-		MIKMIDIMappingItem *absoluteKnobSliderMappingItem = [self absoluteKnobSliderMappingItemFromMessages:messages];
-		if (absoluteKnobSliderMappingItem) return absoluteKnobSliderMappingItem;
+		result = [self absoluteKnobSliderMappingItemFromMessages:messages];
 	}
+
+FINALIZE_RESULT_AND_RETURN:
+	result.MIDIResponderIdentifier = [responder MIDIIdentifier];
+	result.commandIdentifier = commandID;
 	
-	return nil;
+	return result;
 }
 
 - (void)timeoutTimerFired:(NSTimer *)timer
 {
-	MIKMIDIMappingItem *mappingItem = [self mappingItemForControl:self.controlBeingLearned fromReceivedMessages:self.receivedMessages];
+	MIKMIDIMappingItem *mappingItem = [self mappingItemForCommandIdentifier:self.commandIdentifierBeingLearned
+																  inControl:self.controlBeingLearned
+													   fromReceivedMessages:self.receivedMessages];
 	if (mappingItem) {
 		[self finishMappingItem:mappingItem error:nil];
 	} else {
