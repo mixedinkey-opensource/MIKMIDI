@@ -15,12 +15,12 @@
 
 @interface MIKMIDIMappingGenerator ()
 
-@property (nonatomic, strong, readwrite) MIKMIDIMapping *mapping;
-
 @property (nonatomic, strong) id<MIKMIDIMappableResponder> controlBeingLearned;
 @property (nonatomic, copy) NSString *commandIdentifierBeingLearned;
 @property (nonatomic) MIKMIDIResponderType responderTypeOfControlBeingLearned;
 @property (nonatomic, strong) MIKMIDIMappingGeneratorMappingCompletionBlock currentMappingCompletionBlock;
+
+@property (nonatomic, strong) MIKMIDIMappingItem *existingMappingItem;
 
 @property (nonatomic, strong) NSTimer *messagesTimeoutTimer;
 @property (nonatomic, strong) NSMutableArray *receivedMessages;
@@ -87,6 +87,10 @@
 		 withCommandIdentifier:(NSString *)commandID
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
+	// Remove an existing mapping item if there is one for this control
+	self.existingMappingItem = [self.mapping mappingItemForCommandIdentifier:commandID responder:control];
+	if (self.existingMappingItem) [self.mapping removeMappingItemsObject:self.existingMappingItem];
+
 	MIKMIDIResponderType controlResponderType = MIKMIDIResponderTypeAll;
 	if ([control respondsToSelector:@selector(MIDIResponderTypeForCommandIdentifier:)]) {
 		controlResponderType = [control MIDIResponderTypeForCommandIdentifier:commandID];
@@ -102,6 +106,17 @@
 	self.controlBeingLearned = control;
 	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
+}
+
+- (void)cancelCurrentControlLearning
+{
+	if (!self.controlBeingLearned) return;
+	
+	if (self.existingMappingItem) [self.mapping addMappingItemsObject:self.existingMappingItem];
+	
+	NSDictionary *userInfo = self.existingMappingItem ? @{@"PreviouslyExistingMapping" : self.existingMappingItem} : nil;
+	NSError *error = [NSError MIKMIDIErrorWithCode:NSUserCancelledError userInfo:userInfo];
+	[self finishMappingItem:nil error:error];
 }
 
 #pragma mark - Private
@@ -279,7 +294,7 @@ FINALIZE_RESULT_AND_RETURN:
 	}
 }
 
-- (void)finishMappingItem:(MIKMIDIMappingItem *)mappingItem error:(NSError *)errorOrNil
+- (void)finishMappingItem:(MIKMIDIMappingItem *)mappingItemOrNil error:(NSError *)errorOrNil
 {
 	MIKMIDIMappingGeneratorMappingCompletionBlock completionBlock = self.currentMappingCompletionBlock;
 	
@@ -288,8 +303,8 @@ FINALIZE_RESULT_AND_RETURN:
 	[self.receivedMessages removeAllObjects];
 	self.messagesTimeoutTimer = nil;
 	
-	if (mappingItem) [self.mapping addMappingItemsObject:mappingItem];
-	if (completionBlock) completionBlock(mappingItem, errorOrNil);
+	if (mappingItemOrNil) [self.mapping addMappingItemsObject:mappingItemOrNil];
+	if (completionBlock) completionBlock(mappingItemOrNil, errorOrNil);
 }
 
 #pragma mark Device Connection/Disconnection

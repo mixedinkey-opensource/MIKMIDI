@@ -25,10 +25,11 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 - (void)learnMappingForControl:(id<MIKMIDIMappableResponder>)control
 		 withCommandIdentifier:(NSString *)commandID
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
+- (void)cancelCurrentControlLearning;
 
 // Properties
 
 @property (nonatomic, strong) MIKMIDIDevice *device;
-@property (nonatomic, strong, readonly) MIKMIDIMapping *mapping;
+@property (nonatomic, strong) MIKMIDIMapping *mapping; // Assign before mapping starts to modify existing mapping
 
 @end
