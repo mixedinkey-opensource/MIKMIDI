@@ -108,9 +108,11 @@
 	return [matches anyObject];
 }
 
-- (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber;
+- (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber channel:(UInt8)channel;
 {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controlNumber == %@", @(controlNumber)];
+	NSPredicate *controlNumberPredicate = [NSPredicate predicateWithFormat:@"controlNumber == %@", @(controlNumber)];
+	NSPredicate *channelPredicate = [NSPredicate predicateWithFormat:@"channel == %@", @(channel)];
+	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[controlNumberPredicate, channelPredicate]];
 	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
 	return [matches anyObject];
 }

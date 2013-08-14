@@ -124,9 +124,9 @@
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
 {
 	NSUInteger controllerNumber = MIKMIDIMappingControlNumberFromCommand(command);
-	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForControlNumber:controllerNumber];
+	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForControlNumber:controllerNumber channel:command.channel];
 	BOOL isForControlBeingMapped = ([existingMappingItem.MIDIResponderIdentifier isEqualToString:[self.controlBeingLearned MIDIIdentifier]] &&
-											  [existingMappingItem.commandIdentifier isEqualToString:self.commandIdentifierBeingLearned]);
+									[existingMappingItem.commandIdentifier isEqualToString:self.commandIdentifierBeingLearned]);
 	if (isForControlBeingMapped) {
 		[self.mapping removeMappingItemsObject:existingMappingItem];
 		existingMappingItem = nil;
