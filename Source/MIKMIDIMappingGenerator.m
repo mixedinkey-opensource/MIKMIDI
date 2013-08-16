@@ -123,8 +123,7 @@
 
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
 {
-	NSUInteger controllerNumber = MIKMIDIMappingControlNumberFromCommand(command);
-	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForControlNumber:controllerNumber channel:command.channel];
+	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForMIDICommand:command];
 	BOOL isForControlBeingMapped = ([existingMappingItem.MIDIResponderIdentifier isEqualToString:[self.controlBeingLearned MIDIIdentifier]] &&
 									[existingMappingItem.commandIdentifier isEqualToString:self.commandIdentifierBeingLearned]);
 	if (isForControlBeingMapped) {
@@ -171,7 +170,6 @@
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
-	result.commandType = firstMessage.commandType;
 	
 	// Tap type button
 	if ([messages count] == 1) {
@@ -278,6 +276,7 @@
 FINALIZE_RESULT_AND_RETURN:
 	result.MIDIResponderIdentifier = [responder MIDIIdentifier];
 	result.commandIdentifier = commandID;
+	result.commandType = [messages[0] commandType];
 	
 	return result;
 }

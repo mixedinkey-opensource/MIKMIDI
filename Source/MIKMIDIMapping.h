@@ -26,7 +26,7 @@
 
 - (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
 - (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
-- (MIKMIDIMappingItem *)mappingItemForControlNumber:(NSUInteger)controlNumber channel:(UInt8)channel;
+- (MIKMIDIMappingItem *)mappingItemForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *controllerName;
