@@ -25,7 +25,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 - (void)learnMappingForControl:(id<MIKMIDIMappableResponder>)control
 		 withCommandIdentifier:(NSString *)commandID
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
-- (void)cancelCurrentControlLearning;
+- (void)cancelCurrentCommandLearning;
 
 // Properties
 

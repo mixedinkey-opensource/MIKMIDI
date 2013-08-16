@@ -108,9 +108,9 @@
 	self.responderTypeOfControlBeingLearned = controlResponderType;
 }
 
-- (void)cancelCurrentControlLearning
+- (void)cancelCurrentCommandLearning;
 {
-	if (!self.controlBeingLearned) return;
+	if (!self.commandIdentifierBeingLearned) return;
 	
 	if (self.existingMappingItem) [self.mapping addMappingItemsObject:self.existingMappingItem];
 	
