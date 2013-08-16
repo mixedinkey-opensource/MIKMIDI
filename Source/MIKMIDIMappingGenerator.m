@@ -171,6 +171,7 @@
 	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.commandType = firstMessage.commandType;
 	
 	// Tap type button
 	if ([messages count] == 1) {
