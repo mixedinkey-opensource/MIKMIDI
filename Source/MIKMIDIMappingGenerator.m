@@ -134,9 +134,17 @@
 	
 	if ([self.receivedMessages count]) {
 		MIKMIDIChannelVoiceCommand *firstMessage = [self.receivedMessages objectAtIndex:0];
-		// If we get a message from a different controller number, restart the mapping
+		// If we get a message from a different controller number, channel,
+		// or command type (not counting note on vs note off), restart the mapping
+		
+		BOOL isDifferentCommandType = firstMessage.commandType != command.commandType;
+		BOOL areNoteCommands = (firstMessage.commandType == MIKMIDICommandTypeNoteOn || firstMessage.commandType == MIKMIDICommandTypeNoteOff) &&
+		(command.commandType == MIKMIDICommandTypeNoteOn || command.commandType == MIKMIDICommandTypeNoteOff);
+		isDifferentCommandType &= !areNoteCommands;
+		
 		if (MIKMIDIMappingControlNumberFromCommand(firstMessage) != MIKMIDIMappingControlNumberFromCommand(command) ||
-			firstMessage.channel != command.channel) {
+			firstMessage.channel != command.channel ||
+			isDifferentCommandType) {
 			[self.receivedMessages removeAllObjects];
 		}
 	}
