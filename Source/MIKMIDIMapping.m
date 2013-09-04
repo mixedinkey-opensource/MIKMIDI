@@ -252,7 +252,16 @@
 		self.commandType = [[commandType stringValue] integerValue];
 		self.controlNumber = [[controlNumber stringValue] integerValue];
 		self.interactionType = [self interactionTypeForString:[interactionType stringValue]];
-		self.flipped = ([[flippedStatus stringValue] boolValue] != 0);
+		self.flipped = [[flippedStatus stringValue] boolValue];
+		
+		NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+		for (NSXMLNode *attribute in [element attributes]) {
+			if (![[attribute stringValue] length]) continue;
+			if ([[attribute name] isEqualToString:@"InteractionType"]) continue;
+			if ([[attribute name] isEqualToString:@"Flipped"]) continue;
+			[attributes setObject:[attribute stringValue] forKey:[attribute name]];
+		}
+		self.additionalAttributes = attributes;
 	}
 	return self;
 }
@@ -278,9 +287,22 @@
 	NSString *flippedStatusString = self.flipped ? @"Yes" : @"No";
 	[flippedStatus setStringValue:flippedStatusString];
 	
+	NSMutableArray *attributes = [NSMutableArray arrayWithArray:@[interactionType, flippedStatus]];
+	for (NSString *key in self.additionalAttributes) {
+		NSXMLElement *attributeElement = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
+		NSString *stringValue = self.additionalAttributes[key];
+		if (![stringValue isKindOfClass:[NSString class]]) {
+			NSLog(@"Ignoring additional attribute %@ : %@ because it is not a string.", key, stringValue);
+			continue;
+		}
+		[attributeElement setName:key];
+		[attributeElement setStringValue:stringValue];
+		[attributes addObject:attributeElement];
+	}
+	
 	return [NSXMLElement elementWithName:@"MappingItem"
 								children:@[responderIdentifier, commandIdentifier, channel, commandType, controlNumber]
-							  attributes:@[interactionType, flippedStatus]];
+							  attributes:attributes];
 }
 #endif
 

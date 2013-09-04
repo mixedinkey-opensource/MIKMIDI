@@ -1,4 +1,4 @@
-;;//
+//
 //  MIKMIDIMapping.h
 //  Energetic
 //
@@ -52,6 +52,11 @@
 @property (nonatomic) NSInteger channel;
 @property (nonatomic) MIKMIDICommandType commandType;
 @property (nonatomic) NSUInteger controlNumber;
+
+/**
+ *  Optional additional key value pairs, which will be saved as attributes in this item's XML representation. Keys and values must be NSStrings.
+ */
+@property (nonatomic, copy) NSDictionary *additionalAttributes;
 
 @end
 
