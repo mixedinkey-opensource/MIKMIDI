@@ -29,4 +29,10 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
+@optional
+// Should return a flat (non-recursive) array of subresponders.
+// Return nil, empty array, or don't implement if you don't want subresponders to be
+// included in any case where the receiver would be considered for receiving MIDI
+- (NSArray *)subresponders;
+
 @end

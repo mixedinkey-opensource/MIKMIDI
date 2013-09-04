@@ -85,21 +85,45 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	
 	// Go through the entire view hierarchy
 	for (MIK_WINDOW_CLASS *window in [self windows]) {
-		if ([window conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:window];
+		if ([window conformsToProtocol:@protocol(MIKMIDIResponder)]) {
+			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)window]];
+		}
 #if !TARGET_OS_IPHONE
-		if ([[window delegate] conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:[window delegate]];
-		if ([[window windowController] conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:[window windowController]];
+		if ([[window delegate] conformsToProtocol:@protocol(MIKMIDIResponder)]) {
+			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)[window delegate]]];
+		}
+		if ([[window windowController] conformsToProtocol:@protocol(MIKMIDIResponder)]) {
+			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:[window windowController]]];
+		}
 		NSSet *allSubviews = [[window contentView] mik_allSubviews];
 #else
 		NSSet *allSubviews = [window.rootViewController.view mik_allSubviews];
 #endif
 		for (MIK_VIEW_CLASS *subview in allSubviews) {
-			if ([subview conformsToProtocol:@protocol(MIKMIDIResponder)]) [result addObject:subview];
+			if ([subview conformsToProtocol:@protocol(MIKMIDIResponder)]) {
+				[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)subview]];
+			}
 		}
 	}
 	
-	// Add registered responders
-	[result unionSet:[[[self class] registeredMIKMIDIResponders] setRepresentation]];
+	for (id<MIKMIDIResponder> responder in [[self class] registeredMIKMIDIResponders]) {
+		[result unionSet:[self recursiveSubrespondersOfMIDIResponder:responder]];
+	}
+	
+	return result;
+}
+
+- (NSSet *)recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)responder
+{
+	if (![responder respondsToSelector:@selector(subresponders)]) return [NSSet set];
+	
+	NSMutableSet *result = [NSMutableSet setWithObject:responder];
+	
+	NSArray *subresponders = [responder subresponders];
+	[result addObjectsFromArray:subresponders];
+	for (id<MIKMIDIResponder>subresponder in subresponders) {
+		[result unionSet:[self recursiveSubrespondersOfMIDIResponder:subresponder]];
+	}
 	
 	return result;
 }
