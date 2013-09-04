@@ -284,7 +284,7 @@
 	
 	NSXMLElement *flippedStatus = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[flippedStatus setName:@"Flipped"];
-	NSString *flippedStatusString = self.flipped ? @"Yes" : @"No";
+	NSString *flippedStatusString = self.flipped ? @"true" : @"false";
 	[flippedStatus setStringValue:flippedStatusString];
 	
 	NSMutableArray *attributes = [NSMutableArray arrayWithArray:@[interactionType, flippedStatus]];
