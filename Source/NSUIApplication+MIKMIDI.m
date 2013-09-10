@@ -66,19 +66,6 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	return [[responders filteredSetUsingPredicate:predicate] anyObject];
 }
 
-#pragma mark - Private
-
-- (NSSet *)respondersForMIDICommand:(MIKMIDICommand *)command
-{
-	NSSet *allMIDIResponders = [self allMIDIResponders];
-	
-	NSMutableSet *result = [NSMutableSet set];
-	for (id<MIKMIDIResponder> responder in allMIDIResponders) {
-		if (MIKObjectRespondsToMIDICommand(responder, command)) [result addObject:responder];
-	}
-	return result;
-}
-
 - (NSSet *)allMIDIResponders
 {
 	NSMutableSet *result = [NSMutableSet set];
@@ -110,6 +97,19 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 		[result unionSet:[self recursiveSubrespondersOfMIDIResponder:responder]];
 	}
 	
+	return result;
+}
+
+#pragma mark - Private
+
+- (NSSet *)respondersForMIDICommand:(MIKMIDICommand *)command
+{
+	NSSet *allMIDIResponders = [self allMIDIResponders];
+	
+	NSMutableSet *result = [NSMutableSet set];
+	for (id<MIKMIDIResponder> responder in allMIDIResponders) {
+		if (MIKObjectRespondsToMIDICommand(responder, command)) [result addObject:responder];
+	}
 	return result;
 }
 

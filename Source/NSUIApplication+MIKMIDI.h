@@ -35,5 +35,6 @@
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+- (NSSet *)allMIDIResponders;
 
 @end
