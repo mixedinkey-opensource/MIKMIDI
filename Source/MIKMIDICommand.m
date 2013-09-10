@@ -36,14 +36,21 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	MIKMIDICommandType commandType = packet->data[0];
 	
 	Class subclass = [[self class] subclassForCommandType:commandType];
-	if (!subclass) {
-		// Try again ignoring lower 4 bits
-		commandType |= 0x0f;
-		subclass = [[self class] subclassForCommandType:commandType];
-	}
 	if (!subclass) subclass = self;
 	if ([self isSubclassOfClass:[MIKMutableMIDICommand class]]) subclass = [subclass mutableCounterpartClass];
-	MIKMIDICommand *result = [[subclass alloc] initWithMIDIPacket:packet];
+	return [[subclass alloc] initWithMIDIPacket:packet];
+}
+
++ (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
+{
+	Class subclass = [[self class] subclassForCommandType:commandType];
+	if (!subclass) subclass = self;
+	if ([self isSubclassOfClass:[MIKMutableMIDICommand class]]) subclass = [subclass mutableCounterpartClass];
+	MIKMIDICommand *result = [[subclass alloc] init];
+	
+	if ([result.internalData length] < 2) [result.internalData increaseLengthBy:2-[result.internalData length]];
+	UInt8 *data = (UInt8 *)[result.internalData bytes];
+	data[0] = commandType;
 	return result;
 }
 
@@ -78,10 +85,24 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (Class)subclassForCommandType:(MIKMIDICommandType)commandType
 {
+	Class result = nil;
 	for (Class subclass in registeredMIKMIDICommandSubclasses) {
-		if ([subclass supportsMIDICommandType:commandType]) return subclass;
+		if ([subclass supportsMIDICommandType:commandType]) {
+			result = subclass;
+			break;
+		}
 	}
-	return nil;
+	if (!result) {
+		// Try again ignoring lower 4 bits
+		commandType |= 0x0f;
+		for (Class subclass in registeredMIKMIDICommandSubclasses) {
+			if ([subclass supportsMIDICommandType:commandType]) {
+				result = subclass;
+				break;
+			}
+		}
+	}
+	return result;
 }
 
 #pragma mark - NSCopying

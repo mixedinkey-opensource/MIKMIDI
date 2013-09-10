@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @interface MIKMIDICommand : NSObject <NSCopying>
 
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
++ (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
 
 @property (nonatomic, strong, readonly) NSDate *timestamp;
 @property (nonatomic, readonly) MIKMIDICommandType commandType;
