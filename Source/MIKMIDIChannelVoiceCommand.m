@@ -1,3 +1,4 @@
+
 //
 //  MIKMIDIChannelVoiceCommand.m
 //  MIDI Testbed
@@ -53,10 +54,10 @@
 
 - (void)setCommandType:(MIKMIDICommandType)commandType
 {
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= (commandType & 0xF0); // Need to avoid changing channel
+	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
 }
 
 - (UInt8)channel
@@ -68,10 +69,10 @@
 
 - (void)setChannel:(UInt8)channel
 {
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= (channel & 0x0F);
+	data[0] &= 0xF0 | (channel & 0x0F);
 }
 
 - (NSUInteger)value { return self.dataByte2 & 0x7F; }
