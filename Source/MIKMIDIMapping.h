@@ -61,6 +61,7 @@
 @end
 
 NSUInteger MIKMIDIMappingControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command);
+float MIKMIDIMappingControlValueFromCommand(MIKMIDIChannelVoiceCommand *command);
 
 @protocol MIKMIDIMappableResponder <MIKMIDIResponder>
 

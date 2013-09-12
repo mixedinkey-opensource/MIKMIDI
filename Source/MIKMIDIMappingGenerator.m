@@ -147,7 +147,7 @@
 			isDifferentCommandType) {
 			[self.receivedMessages removeAllObjects];
 		}
-	}
+	} 
 	
 	if (![self.controlBeingLearned respondsToMIDICommand:command]) return;
 	
@@ -189,8 +189,8 @@
 	// Key type button
 	if ([messages count] == 2) {
 		MIKMIDIChannelVoiceCommand *secondMessage = [messages objectAtIndex:1];
-		BOOL firstIsZero = firstMessage.value == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
-		BOOL secondIsZero = secondMessage.value == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
+		BOOL firstIsZero = MIKMIDIMappingControlValueFromCommand(firstMessage) == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
+		BOOL secondIsZero = MIKMIDIMappingControlValueFromCommand(secondMessage) == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
 		
 		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIResponderTypePressReleaseButton : MIKMIDIResponderTypePressButton;
 	}
@@ -205,7 +205,10 @@
 	// Disallow non-control change messages
 	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
 	
-	NSSet *messageValues = [NSSet setWithArray:[messages valueForKey:@"value"]];
+	NSMutableSet *messageValues = [NSMutableSet set];
+	for (MIKMIDIChannelVoiceCommand *message in messages) {
+		[messageValues addObject:@(MIKMIDIMappingControlValueFromCommand(message))];
+	}
 	// If there are more than 2 message values, it's more likely an absolute knob.
 	if ([messages count] == [messageValues count] || [messageValues count] > 2) return nil;
 	
@@ -236,8 +239,8 @@
 	NSInteger directionCounter = 0;
 	MIKMIDIChannelVoiceCommand *previousMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
 	for (MIKMIDIChannelVoiceCommand *message in messages) {
-		if (message.value > previousMessage.value) directionCounter++;
-		if (message.value < previousMessage.value) directionCounter--;
+		if (MIKMIDIMappingControlValueFromCommand(message) > MIKMIDIMappingControlValueFromCommand(previousMessage)) directionCounter++;
+		if (MIKMIDIMappingControlValueFromCommand(message) < MIKMIDIMappingControlValueFromCommand(previousMessage)) directionCounter--;
 		previousMessage = message;
 	}
 	result.flipped = (directionCounter < 0);

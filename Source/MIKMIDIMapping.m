@@ -308,7 +308,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
+	return [NSString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i interaction type %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
 }
 
 #pragma mark - Public
@@ -343,4 +343,11 @@ NSUInteger MIKMIDIMappingControlNumberFromCommand(MIKMIDIChannelVoiceCommand *co
 	if ([command respondsToSelector:@selector(note)]) return [(MIKMIDINoteOnCommand *)command note];
 	
 	return (command.dataByte1 & 0x7F);
+}
+
+float MIKMIDIMappingControlValueFromCommand(MIKMIDIChannelVoiceCommand *command)
+{
+	if ([command respondsToSelector:@selector(fourteenBitValue)]) return (float)[(MIKMIDIControlChangeCommand *)command fourteenBitValue] / 127.0f;
+	
+	return (float)command.value;
 }
