@@ -63,10 +63,12 @@
 
 #pragma mark - Properties
 
-- (NSUInteger)value
+- (NSUInteger)controllerNumber { return self.dataByte1; }
+
+- (NSUInteger)controllerValue { return self.value; }
+
+- (NSUInteger)fourteenBitValue
 {
-	if (!self.isFourteenBitCommand) return [super value];
-	
 	NSUInteger MSB = ([super value] << 7) & 0x3F80;
 	NSUInteger LSB = 0;
 	if ([self.data length] > 3) {
@@ -76,10 +78,6 @@
 	
 	return MSB + LSB;
 }
-
-- (NSUInteger)controllerNumber { return self.dataByte1; }
-
-- (NSUInteger)controllerValue { return self.value; }
 
 @end
 
@@ -105,10 +103,8 @@
 
 #pragma mark - Properties
 
-- (NSUInteger)value
+- (NSUInteger)fourteenBitValue
 {
-	if (!self.isFourteenBitCommand) return [super value];
-	
 	NSUInteger MSB = ([super value] << 7) & 0x3F80;
 	NSUInteger LSB = 0;
 	if ([self.data length] > 3) {
@@ -119,12 +115,10 @@
 	return MSB + LSB;
 }
 
-- (void)setValue:(NSUInteger)value
+- (void)setFourteenBitValue:(NSUInteger)value
 {
-	if (!self.isFourteenBitCommand) return [super setValue:value];
-	
 	NSUInteger MSB = (value >> 7) & 0x7F;
-	NSUInteger LSB = value & 0x7F;
+	NSUInteger LSB = self.isFourteenBitCommand ? value & 0x7F : 0;
 	
 	[super setValue:MSB];
 	if ([self.internalData length] < 4) [self.internalData increaseLengthBy:4-[self.internalData length]];
