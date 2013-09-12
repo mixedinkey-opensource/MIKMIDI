@@ -9,6 +9,12 @@
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
 
+@interface MIKMIDIControlChangeCommand ()
+
+@property (nonatomic, readwrite, getter = isFourteenBitCommand) BOOL fourteenBitCommand;
+
+@end
+
 @implementation MIKMIDIControlChangeCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
@@ -16,7 +22,60 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDIControlChangeCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIControlChangeCommand class]; }
 
++ (instancetype)commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)msbCommand andLSBCommand:(MIKMIDIControlChangeCommand *)lsbCommand;
+{
+	if (!msbCommand || !lsbCommand) return nil;
+	
+	if (![msbCommand isKindOfClass:[MIKMIDIControlChangeCommand class]] ||
+		![lsbCommand isKindOfClass:[MIKMIDIControlChangeCommand class]]) return nil;
+	
+	if (msbCommand.controllerNumber > 31) return nil;
+	if (lsbCommand.controllerNumber < 32 || lsbCommand.controllerNumber > 63) return nil;
+	
+	if (lsbCommand.controllerNumber - msbCommand.controllerNumber != 32) return nil;
+	
+	MIKMIDIControlChangeCommand *result = [[MIKMIDIControlChangeCommand alloc] init];
+	result.internalData = [msbCommand.data mutableCopy];
+	result.fourteenBitCommand = YES;
+	[result.internalData appendData:[lsbCommand.data subdataWithRange:NSMakeRange(2, 1)]];
+
+	return result;
+}
+
+-(NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ control number: %lu value: %lu 14-bit? %i", [super description], (unsigned long)self.controllerNumber, (unsigned long)self.controllerValue, self.isFourteenBitCommand];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+	MIKMIDIControlChangeCommand *result = [super copyWithZone:zone];
+	result.fourteenBitCommand = self.isFourteenBitCommand;
+	return result;
+}
+
+- (id)mutableCopy
+{
+	MIKMIDIControlChangeCommand *result = [super mutableCopy];
+	result.fourteenBitCommand = self.isFourteenBitCommand;
+	return result;
+}
+
 #pragma mark - Properties
+
+- (NSUInteger)value
+{
+	if (!self.isFourteenBitCommand) return [super value];
+	
+	NSUInteger MSB = ([super value] << 7) & 0x3F80;
+	NSUInteger LSB = 0;
+	if ([self.data length] > 3) {
+		UInt8 *data = (UInt8 *)[self.data bytes];
+		LSB = data[3] & 0x7F;
+	}
+	
+	return MSB + LSB;
+}
 
 - (NSUInteger)controllerNumber { return self.dataByte1; }
 
@@ -30,7 +89,47 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDIControlChangeCommand immutableCounterpartClass]; }
 + (Class)mutableCounterpartClass; { return [MIKMIDIControlChangeCommand mutableCounterpartClass]; }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+	MIKMutableMIDIControlChangeCommand *result = [super copyWithZone:zone];
+	result.fourteenBitCommand = self.isFourteenBitCommand;
+	return result;
+}
+
+- (id)mutableCopy
+{
+	MIKMutableMIDIControlChangeCommand *result = [super mutableCopy];
+	result.fourteenBitCommand = self.isFourteenBitCommand;
+	return result;
+}
+
 #pragma mark - Properties
+
+- (NSUInteger)value
+{
+	if (!self.isFourteenBitCommand) return [super value];
+	
+	NSUInteger MSB = ([super value] << 7) & 0x3F80;
+	NSUInteger LSB = 0;
+	if ([self.data length] > 3) {
+		UInt8 *data = (UInt8 *)[self.data bytes];
+		LSB = data[3] & 0x7F;
+	}
+	
+	return MSB + LSB;
+}
+
+- (void)setValue:(NSUInteger)value
+{
+	if (!self.isFourteenBitCommand) return [super setValue:value];
+	
+	NSUInteger MSB = (value >> 7) & 0x7F;
+	NSUInteger LSB = value & 0x7F;
+	
+	[super setValue:MSB];
+	if ([self.internalData length] < 4) [self.internalData increaseLengthBy:4-[self.internalData length]];
+	[self.internalData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&LSB length:1];
+}
 
 - (NSUInteger)controllerNumber { return self.dataByte1; }
 - (void)setControllerNumber:(NSUInteger)value { self.dataByte1 = value; }

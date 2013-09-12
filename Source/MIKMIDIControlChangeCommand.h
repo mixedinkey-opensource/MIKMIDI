@@ -10,8 +10,12 @@
 
 @interface MIKMIDIControlChangeCommand : MIKMIDIChannelVoiceCommand
 
++ (instancetype)commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)msbCommand andLSBCommand:(MIKMIDIControlChangeCommand *)lsbCommand;
+
 @property (nonatomic, readonly) NSUInteger controllerNumber;
 @property (nonatomic, readonly) NSUInteger controllerValue;
+
+@property (nonatomic, readonly, getter = isFourteenBitCommand) BOOL fourteenBitCommand;
 
 @end
 
@@ -19,5 +23,7 @@
 
 @property (nonatomic, readwrite) NSUInteger controllerNumber;
 @property (nonatomic, readwrite) NSUInteger controllerValue;
+
+@property (nonatomic, readwrite, getter = isFourteenBitCommand) BOOL fourteenBitCommand;
 
 @end

@@ -11,11 +11,15 @@
 #import "MIKMIDIInputPort.h"
 #import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDICommand.h"
+#import "MIKMIDIControlChangeCommand.h"
 
 @interface MIKMIDIInputPort ()
 
 @property (nonatomic, strong) NSMutableArray *internalSources;
 @property (nonatomic, strong, readwrite) NSSet *eventHandlers;
+
+@property (nonatomic, strong) NSMutableArray *bufferedMSBCommands;
+@property (nonatomic) dispatch_queue_t bufferedCommandQueue;
 
 @end
 
@@ -37,10 +41,22 @@
 											 &port);
 		if (error != noErr) { self = nil; return nil; }
 		self.portRef = port; // MIKMIDIPort will take care of disposing of the port when needed
-		self.eventHandlers = [[NSMutableSet alloc] init];
-		self.internalSources = [[NSMutableArray alloc] init];
+		_eventHandlers = [[NSMutableSet alloc] init];
+		_internalSources = [[NSMutableArray alloc] init];
+		_coalesces14BitControlChangeCommands = YES;
+		
+		_bufferedCommandQueue = dispatch_queue_create("com.mixedinkey.MIKMIDI.MIKMIDIInputPort.bufferedCommandQueue", DISPATCH_QUEUE_SERIAL);
+		dispatch_async(self.bufferedCommandQueue, ^{ self.bufferedMSBCommands = [[NSMutableArray alloc] init]; });
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	if (_bufferedCommandQueue) {
+		dispatch_release(_bufferedCommandQueue);
+		_bufferedCommandQueue = NULL;
+	}
 }
 
 #pragma mark - Public
@@ -84,6 +100,57 @@
 
 #pragma mark - Private
 
+- (BOOL)commandIsPossibleMSBOf14BitCommand:(MIKMIDICommand *)command
+{
+	if (command.commandType != MIKMIDICommandTypeControlChange) return NO;
+	
+	MIKMIDIControlChangeCommand *controlChange = (MIKMIDIControlChangeCommand *)command;
+	
+	if (controlChange.isFourteenBitCommand) return NO; // Already coalesced
+	return controlChange.controllerNumber < 32;
+}
+
+- (BOOL)command:(MIKMIDICommand *)lsbCommand isPossibleLSBOfMSBCommand:(MIKMIDICommand *)msbCommand;
+{
+	if (lsbCommand.commandType != MIKMIDICommandTypeControlChange) return NO;
+	if (msbCommand.commandType != MIKMIDICommandTypeControlChange) return NO;
+	
+	MIKMIDIControlChangeCommand *lsbControlChange = (MIKMIDIControlChangeCommand *)lsbCommand;
+	MIKMIDIControlChangeCommand *msbControlChange = (MIKMIDIControlChangeCommand *)msbCommand;
+	
+	if (msbControlChange.controllerNumber > 31) return NO;
+	if (lsbControlChange.controllerNumber < 32 || lsbControlChange.controllerNumber > 63) return NO;
+	
+	return (lsbControlChange.controllerNumber - msbControlChange.controllerNumber) == 32;
+}
+
+- (NSArray *)commandsByCoalescingCommands:(NSArray *)commands
+{
+	NSMutableArray *coalescedCommands = [commands mutableCopy];
+	MIKMIDICommand *lastCommand = nil;
+	for (MIKMIDICommand *command in commands) {
+		MIKMIDIControlChangeCommand *coalesced =
+		[MIKMIDIControlChangeCommand commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)lastCommand
+													 andLSBCommand:(MIKMIDIControlChangeCommand *)command];
+		if (coalesced) {
+			[coalescedCommands removeObject:command];
+			NSUInteger lastCommandIndex = [coalescedCommands indexOfObject:lastCommand];
+			[coalescedCommands replaceObjectAtIndex:lastCommandIndex withObject:coalesced];
+		}
+		lastCommand = command;
+	}
+	return [coalescedCommands copy];
+}
+
+- (void)sendCommands:(NSArray *)commands toEventHandlersFromSource:(MIKMIDISourceEndpoint *)source
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		for (MIKMIDIEventHandlerBlock handler in self.eventHandlers) {
+			handler(source, commands);
+		}
+	});
+}
+
 #pragma mark - Callbacks
 
 // May be called on a background thread!
@@ -100,12 +167,36 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			if (command) [commands addObject:command];
 			packet = MIDIPacketNext(packet);
 		}
+		
+		if (![commands count]) return;
+		
+		if (self.coalesces14BitControlChangeCommands) {
+			dispatch_sync(self.bufferedCommandQueue, ^{
+				if ([self.bufferedMSBCommands count]) {
+					[commands insertObject:[self.bufferedMSBCommands objectAtIndex:0] atIndex:0];
+					[self.bufferedMSBCommands removeObjectAtIndex:0];
+				}
+			});
+			commands = [[self commandsByCoalescingCommands:commands] mutableCopy];
+			MIKMIDICommand *finalCommand = [commands lastObject];
+			if ([self commandIsPossibleMSBOf14BitCommand:finalCommand]) {
+				// Hold back and wait for a possible LSB command to come in.
+				dispatch_sync(self.bufferedCommandQueue, ^{ [self.bufferedMSBCommands addObject:finalCommand]; });
+				[commands removeLastObject];
 				
-		dispatch_async(dispatch_get_main_queue(), ^{
-			for (MIKMIDIEventHandlerBlock handler in self.eventHandlers) {
-				handler(source, commands);
+				// Wait 4ms, then send the buffered command if it hasn't been coalesced (and therefore set to nil)
+				dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_MSEC));
+				dispatch_after(popTime, self.bufferedCommandQueue, ^(void){
+					if (![self.bufferedMSBCommands containsObject:finalCommand]) return;
+					[self.bufferedMSBCommands removeObject:finalCommand];
+					[self sendCommands:@[finalCommand] toEventHandlersFromSource:source];
+				});
 			}
-		});
+		}
+		
+		if (![commands count]) return;
+		
+		[self sendCommands:commands toEventHandlersFromSource:source];
 	}
 }
 
@@ -154,6 +245,15 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 - (void)removeEventHandlersObject:(MIKMIDIEventHandlerBlock)eventHandler;
 {
 	[_eventHandlers removeObject:eventHandler];
+}
+
+@synthesize bufferedCommandQueue = _bufferedCommandQueue;
+
+- (void)setCommandsBufferQueue:(dispatch_queue_t)commandsBufferQueue
+{
+	dispatch_retain(commandsBufferQueue);
+	dispatch_release(_bufferedCommandQueue);
+	_bufferedCommandQueue = commandsBufferQueue;
 }
 
 @end
