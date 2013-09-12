@@ -19,7 +19,8 @@ NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef prop
 		return nil;
 	}
 	
-	return (__bridge NSString *)result;
+	NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];	
+	return [(__bridge NSString *)result stringByTrimmingCharactersInSet:controlCharacters];
 }
 
 SInt32 MIKIntegerPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error)
