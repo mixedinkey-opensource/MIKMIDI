@@ -477,6 +477,7 @@
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "99D0E57C-100E-4B8C-B68C-03B03A7CFE4A";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -494,6 +495,7 @@
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "99D0E57C-100E-4B8C-B68C-03B03A7CFE4A";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
