@@ -70,6 +70,25 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return [[self.mappings filteredSetUsingPredicate:predicate] anyObject];
 }
 
+- (void)saveMappingsToDisk
+{
+#if !TARGET_OS_IPHONE
+	for (MIKMIDIMapping *mapping in self.mappings) {
+		NSURL *fileURL = [self fileURLForMapping:mapping];
+		if (!fileURL) {
+			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
+			continue;
+		}
+		
+		NSData *mappingXMLData = [[mapping XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
+		NSError *error = nil;
+		if (![mappingXMLData writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
+			NSLog(@"Error saving MIDI mapping %@: %@", [mapping name], error);
+		}
+	}
+#endif
+}
+
 #pragma mark - Private
 
 - (NSURL *)storedMappingsFolder
@@ -123,25 +142,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	NSURL *mappingsFolder = [self storedMappingsFolder];
 	NSString *filename = [mapping.name stringByAppendingPathExtension:@"midimap"];
 	return [mappingsFolder URLByAppendingPathComponent:filename];
-}
-
-- (void)saveMappingsToDisk
-{
-#if !TARGET_OS_IPHONE
-	for (MIKMIDIMapping *mapping in self.mappings) {
-		NSURL *fileURL = [self fileURLForMapping:mapping];
-		if (!fileURL) {
-			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
-			continue;
-		}
-		
-		NSData *mappingXMLData = [[mapping XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
-		NSError *error = nil;
-		if (![mappingXMLData writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
-			NSLog(@"Error saving MIDI mapping %@: %@", [mapping name], error);
-		}
-	}
-#endif
 }
 
 #pragma mark - Properties

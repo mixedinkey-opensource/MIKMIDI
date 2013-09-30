@@ -17,6 +17,10 @@
 - (NSSet *)mappingsForControllerName:(NSString *)name;
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
 
+#if !TARGET_OS_IPHONE
+- (void)saveMappingsToDisk;
+#endif
+
 // Properties
 
 @property (nonatomic, strong, readonly) NSSet *mappings;
