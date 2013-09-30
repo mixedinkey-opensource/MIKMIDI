@@ -169,12 +169,12 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *refCon)
 {
 	MIKMIDIDeviceManager *self = (__bridge MIKMIDIDeviceManager *)refCon;
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 	
 	if (message->messageID == kMIDIMsgPropertyChanged) {
 		MIDIObjectPropertyChangeNotification *changeNotification = (MIDIObjectPropertyChangeNotification *)message;
 		if (changeNotification->objectType != kMIDIObjectType_Device) return;
 		NSString *changedProperty = (__bridge NSString *)changeNotification->propertyName;
-		
 		if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) return;
 		
 		MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:changeNotification->object];
@@ -182,19 +182,17 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 		
 		if (changedObject.isOnline && ![self.internalDevices containsObject:changedObject]) {
 			[self addInternalDevicesObject:changedObject];
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 			[nc postNotificationName:MIKMIDIDeviceWasAddedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
 		}
 		if (!changedObject.isOnline) {
 			[self removeInternalDevicesObject:changedObject];
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 			[nc postNotificationName:MIKMIDIDeviceWasRemovedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
 		}
 	}
 	
 	if (message->messageID == kMIDIMsgObjectRemoved) {
 		MIDIObjectAddRemoveNotification *removeMessage = (MIDIObjectAddRemoveNotification *)message;
-		if (!removeMessage->childType == kMIDIObjectType_Device) return;
+		if (removeMessage->childType != kMIDIObjectType_Device) return;
 		MIKMIDIDevice *removedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:removeMessage->child];
 		if (!removedDevice) return;
 		[self removeInternalDevicesObject:removedDevice];
@@ -202,10 +200,12 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 	
 	if (message->messageID == kMIDIMsgObjectAdded) {
 		MIDIObjectAddRemoveNotification *addMessage = (MIDIObjectAddRemoveNotification *)message;
-		if (!addMessage->childType == kMIDIObjectType_Device) return;
+		if (addMessage->childType != kMIDIObjectType_Device) return;
 		MIKMIDIDevice *addedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:addMessage->child];
-		if (!addedDevice) return;
-		[self addInternalDevicesObject:addedDevice];
+		if (addedDevice && ![self.internalDevices containsObject:addedDevice]) {
+			[self addInternalDevicesObject:addedDevice];
+			[nc postNotificationName:MIKMIDIDeviceWasAddedNotification object:self userInfo:@{MIKMIDIDeviceKey : addedDevice}];
+		}
 	}
 }
 		 
