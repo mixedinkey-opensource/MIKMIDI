@@ -15,7 +15,7 @@
 
 @end
 
-@interface MIKMutableMIDINoteOffCommand : MIKMutableMIDIChannelVoiceCommand
+@interface MIKMutableMIDINoteOffCommand : MIKMIDINoteOffCommand
 
 @property (nonatomic, readwrite) NSUInteger note;
 @property (nonatomic, readwrite) NSUInteger velocity;

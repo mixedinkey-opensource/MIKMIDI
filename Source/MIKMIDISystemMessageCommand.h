@@ -12,6 +12,6 @@
 
 @end
 
-@interface MIKMutableMIDISystemMessageCommand : MIKMIDICommand
+@interface MIKMutableMIDISystemMessageCommand : MIKMIDISystemMessageCommand
 
 @end

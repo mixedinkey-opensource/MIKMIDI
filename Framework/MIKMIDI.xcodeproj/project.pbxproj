@@ -125,6 +125,7 @@
 		9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIUtilities.m; sourceTree = "<group>"; };
 		9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUIApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUIApplication+MIKMIDI.m"; sourceTree = "<group>"; };
+		9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand_SubclassMethods.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,10 +212,11 @@
 			children = (
 				9D74EF3017A713A100BEE89F /* MIKMIDI.h */,
 				9D74EF3317A713A100BEE89F /* MIKMIDICommand.h */,
+				9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */,
 				9D74EF3417A713A100BEE89F /* MIKMIDICommand.m */,
 				9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */,
+				9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */,
 				9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */,
-				9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */,
 				9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */,
 				9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */,
 				9D74EF3817A713A100BEE89F /* MIKMIDIDestinationEndpoint.h */,

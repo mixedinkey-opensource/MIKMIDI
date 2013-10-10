@@ -15,7 +15,7 @@
 
 @end
 
-@interface MIKMutableMIDIChannelVoiceCommand : MIKMutableMIDICommand
+@interface MIKMutableMIDIChannelVoiceCommand : MIKMIDIChannelVoiceCommand
 
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) NSUInteger value;

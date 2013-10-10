@@ -46,7 +46,7 @@
 
 @end
 
-@interface MIKMutableMIDIControlChangeCommand : MIKMutableMIDIChannelVoiceCommand
+@interface MIKMutableMIDIControlChangeCommand : MIKMIDIControlChangeCommand
 
 @property (nonatomic, readwrite) NSUInteger controllerNumber;
 @property (nonatomic, readwrite) NSUInteger controllerValue;

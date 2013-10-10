@@ -7,10 +7,14 @@
 //
 
 #import "MIKMIDIControlChangeCommand.h"
-#import "MIKMIDICommand_SubclassMethods.h"
+#import "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
 
 @interface MIKMIDIControlChangeCommand ()
 
+@property (nonatomic, readwrite) NSUInteger controllerNumber;
+@property (nonatomic, readwrite) NSUInteger controllerValue;
+
+@property (nonatomic, readwrite) NSUInteger fourteenBitValue;
 @property (nonatomic, readwrite, getter = isFourteenBitCommand) BOOL fourteenBitCommand;
 
 @end
@@ -65,43 +69,20 @@
 
 - (NSUInteger)controllerNumber { return self.dataByte1; }
 
+- (void)setControllerNumber:(NSUInteger)value
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	self.dataByte1 = value;
+}
+
 - (NSUInteger)controllerValue { return self.value; }
 
-- (NSUInteger)fourteenBitValue
+- (void)setControllerValue:(NSUInteger)value
 {
-	NSUInteger MSB = ([super value] << 7) & 0x3F80;
-	NSUInteger LSB = 0;
-	if ([self.data length] > 3) {
-		UInt8 *data = (UInt8 *)[self.data bytes];
-		LSB = data[3] & 0x7F;
-	}
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
-	return MSB + LSB;
+	self.value = value;
 }
-
-@end
-
-@implementation MIKMutableMIDIControlChangeCommand
-
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [MIKMIDIControlChangeCommand supportsMIDICommandType:type]; }
-+ (Class)immutableCounterpartClass; { return [MIKMIDIControlChangeCommand immutableCounterpartClass]; }
-+ (Class)mutableCounterpartClass; { return [MIKMIDIControlChangeCommand mutableCounterpartClass]; }
-
-- (id)copyWithZone:(NSZone *)zone
-{
-	MIKMutableMIDIControlChangeCommand *result = [super copyWithZone:zone];
-	result.fourteenBitCommand = self.isFourteenBitCommand;
-	return result;
-}
-
-- (id)mutableCopy
-{
-	MIKMutableMIDIControlChangeCommand *result = [super mutableCopy];
-	result.fourteenBitCommand = self.isFourteenBitCommand;
-	return result;
-}
-
-#pragma mark - Properties
 
 - (NSUInteger)fourteenBitValue
 {
@@ -117,6 +98,8 @@
 
 - (void)setFourteenBitValue:(NSUInteger)value
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	NSUInteger MSB = (value >> 7) & 0x7F;
 	NSUInteger LSB = self.isFourteenBitCommand ? value & 0x7F : 0;
 	
@@ -125,10 +108,10 @@
 	[self.internalData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&LSB length:1];
 }
 
-- (NSUInteger)controllerNumber { return self.dataByte1; }
-- (void)setControllerNumber:(NSUInteger)value { self.dataByte1 = value; }
+@end
 
-- (NSUInteger)controllerValue { return self.value; }
-- (void)setControllerValue:(NSUInteger)value { self.value = value; }
+@implementation MIKMutableMIDIControlChangeCommand
+
++ (BOOL)isMutable { return YES; }
 
 @end

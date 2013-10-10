@@ -12,6 +12,7 @@
 @interface MIKMIDISystemExclusiveCommand ()
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;
+@property (nonatomic, strong, readwrite) NSData *sysexData;
 
 @end
 
@@ -40,18 +41,16 @@
 	return [self.internalData subdataWithRange:NSMakeRange(2, [self.internalData length]-2)];
 }
 
+- (void)setSysexData:(NSData *)sysexData
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	[self.internalData replaceBytesInRange:NSMakeRange(2, [self.internalData length]-2) withBytes:[sysexData bytes] length:[sysexData length]];
+}
+
 @end
 
 @implementation MIKMutableMIDISystemExclusiveCommand
 
-+ (Class)immutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand immutableCounterpartClass]; }
-+ (Class)mutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand mutableCounterpartClass]; }
-
-#pragma mark - Properties
-
-- (void)setSysexData:(NSData *)sysexData
-{
-	[self.internalData replaceBytesInRange:NSMakeRange(2, [self.internalData length]-2) withBytes:[sysexData bytes] length:[sysexData length]];
-}
++ (BOOL)isMutable { return YES; }
 
 @end

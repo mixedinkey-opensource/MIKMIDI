@@ -15,7 +15,7 @@
 
 @end
 
-@interface MIKMutableMIDISystemExclusiveCommand : MIKMutableMIDISystemMessageCommand
+@interface MIKMutableMIDISystemExclusiveCommand : MIKMIDISystemExclusiveCommand
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;
 @property (nonatomic, strong, readwrite) NSData *sysexData;
