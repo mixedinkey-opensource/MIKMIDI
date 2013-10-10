@@ -226,7 +226,11 @@
 	[self.internalMappingItems removeObject:mappingItem];
 }
 
-- (NSString *)name { return self.controllerName; } // Temporary (when remmoving, also remove KVO dependency)
+- (NSString *)name
+{
+	if (![_name length]) return self.controllerName;
+	return _name;
+}
 
 @end
 
