@@ -102,6 +102,26 @@
 
 #endif
 
+- (BOOL)isEqual:(MIKMIDIMapping *)otherMapping
+{
+	if (![self.name isEqualToString:otherMapping.name]) return NO;
+	if (![self.controllerName isEqualToString:otherMapping.controllerName]) return NO;
+	
+	return [self.mappingItems isEqualToSet:otherMapping.mappingItems];
+}
+
+- (NSUInteger)hash
+{
+	NSUInteger result = [self.name hash];
+	result += [self.controllerName hash];
+	
+	for (MIKMIDIMappingItem *mappingItem in self.mappingItems) {
+		result += [mappingItem hash];
+	}
+	
+	return result;
+}
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"%@ %@ for %@ Mapping Items: %@", [super description], self.name, self.controllerName, self.mappingItems];
@@ -322,6 +342,34 @@
 							  attributes:attributes];
 }
 #endif
+
+- (BOOL)isEqual:(MIKMIDIMappingItem *)otherMappingItem
+{
+	if (self.interactionType != otherMappingItem.interactionType) return NO;
+	if (self.flipped != otherMappingItem.flipped) return NO;
+	if (self.channel != otherMappingItem.channel) return NO;
+	if (self.commandType != otherMappingItem.commandType) return NO;
+	if (self.controlNumber != otherMappingItem.controlNumber) return NO;
+	if (![self.MIDIResponderIdentifier isEqualToString:otherMappingItem.MIDIResponderIdentifier]) return NO;
+	if (![self.commandIdentifier isEqualToString:otherMappingItem.commandIdentifier]) return NO;
+	if (![self.additionalAttributes isEqual:otherMappingItem.additionalAttributes]) return NO;
+	
+	return YES;
+}
+
+- (NSUInteger)hash
+{
+	NSUInteger result = self.interactionType;
+	result += self.isFlipped;
+	result += self.channel;
+	result += self.commandType;
+	result += self.controlNumber;
+	result += [self.MIDIResponderIdentifier hash];
+	result += [self.commandIdentifier hash];
+	result += [self.additionalAttributes hash];
+	
+	return result;
+}
 
 - (NSString *)description
 {
