@@ -25,10 +25,15 @@
 
 - (instancetype)initWithFileAtURL:(NSURL *)url
 {
-	NSError *error = nil;
-	NSXMLDocument *xmlDocument = [[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:&error];
+	return [self initWithFileAtURL:url error:NULL];
+}
+
+- (instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	NSXMLDocument *xmlDocument = [[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:error];
 	if (!xmlDocument) {
-		NSLog(@"Unable to read MIDI map XML file at %@: %@", url, error);
+		NSLog(@"Unable to read MIDI map XML file at %@: %@", url, *error);
 		self = nil;
 		return nil;
 	}
@@ -83,6 +88,18 @@
 	[result setCharacterEncoding:@"UTF-8"];
 	return result;
 }
+
+- (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	NSData *mappingXMLData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
+	if (![mappingXMLData writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
+		NSLog(@"Error saving MIDI mapping %@ to %@: %@", self.name, fileURL, *error);
+		return NO;
+	}
+	return YES;
+}
+
 #endif
 
 - (NSString *)description

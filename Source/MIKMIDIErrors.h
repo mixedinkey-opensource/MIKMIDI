@@ -15,6 +15,8 @@ typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	MIKMIDIDeviceConnectionLostErrorCode,
 	
 	MIKMIDIMappingFailedErrorCode,
+	
+	MIKMIDIMappingIncorrectFileExtensionErrorCode,
 };
 
 @interface NSError (MIKMIDI)

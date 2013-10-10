@@ -19,9 +19,11 @@
 @interface MIKMIDIMapping : NSObject
 
 #if !TARGET_OS_IPHONE
+- (instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
 - (instancetype)initWithFileAtURL:(NSURL *)url;
 - (instancetype)initWithXMLDocument:(NSXMLDocument *)xmlDocument;
 - (NSXMLDocument *)XMLRepresentation;
+- (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 #endif
 
 - (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;

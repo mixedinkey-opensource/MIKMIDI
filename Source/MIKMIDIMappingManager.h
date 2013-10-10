@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define kMIKMIDIMappingFileExtension @"midimap"
+
 @class MIKMIDIMapping;
 
 @interface MIKMIDIMappingManager : NSObject
@@ -18,6 +20,7 @@
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
+- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL error:(NSError **)error;
 - (void)saveMappingsToDisk;
 #endif
 

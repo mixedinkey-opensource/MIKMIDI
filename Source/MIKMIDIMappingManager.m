@@ -8,6 +8,7 @@
 
 #import "MIKMIDIMappingManager.h"
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIErrors.h"
 
 @interface MIKMIDIMappingManager ()
 
@@ -70,21 +71,43 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return [[self.mappings filteredSetUsingPredicate:predicate] anyObject];
 }
 
+- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL error:(NSError **)error;
+{
+#if TARGET_OS_IPHONE
+	return nil;
+#endif
+	
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	if (![[URL pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) {
+		NSString *recoverySuggestion = [NSString stringWithFormat:NSLocalizedString(@"%1$@ can't be imported, because it does not have the file extension %2$@.", @"MIDI mapping import failed because of incorrect file extension message. Placeholder 1 is the filename, 2 is the required extension (e.g. 'midimap')")];
+		NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"Incorrect File Extension", @"Incorrect File Extension"),
+								   NSLocalizedRecoverySuggestionErrorKey : recoverySuggestion};
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIMappingIncorrectFileExtensionErrorCode userInfo:userInfo];
+		return nil;
+	}
+	
+	MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:URL error:error];;
+	if (!mapping) return nil;
+	
+	NSFileManager *fm = [NSFileManager defaultManager];
+	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:YES];
+	if (![fm copyItemAtURL:URL toURL:destinationURL error:error]) return nil;
+	
+	[self addMappingsObject:mapping];
+	return mapping;
+}
+
 - (void)saveMappingsToDisk
 {
 #if !TARGET_OS_IPHONE
 	for (MIKMIDIMapping *mapping in self.mappings) {
-		NSURL *fileURL = [self fileURLForMapping:mapping];
+		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
 		if (!fileURL) {
 			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
 			continue;
 		}
 		
-		NSData *mappingXMLData = [[mapping XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
-		NSError *error = nil;
-		if (![mappingXMLData writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
-			NSLog(@"Error saving MIDI mapping %@: %@", [mapping name], error);
-		}
+		[mapping writeToFileAtURL:fileURL error:NULL];
 	}
 #endif
 }
@@ -126,7 +149,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	}
 	
 	for (NSURL *file in contents) {
-		if (![[file pathExtension] isEqualToString:@"midimap"]) continue;
+		if (![[file pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) continue;
 		
 		// process the mapping file
 		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
@@ -137,11 +160,25 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	self.internalMappings = mappings;
 }
 
-- (NSURL *)fileURLForMapping:(MIKMIDIMapping *)mapping
+- (NSURL *)fileURLForMapping:(MIKMIDIMapping *)mapping shouldBeUnique:(BOOL)unique
 {
 	NSURL *mappingsFolder = [self storedMappingsFolder];
-	NSString *filename = [mapping.name stringByAppendingPathExtension:@"midimap"];
-	return [mappingsFolder URLByAppendingPathComponent:filename];
+	NSString *filename = [mapping.name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
+	
+	NSURL *result = [mappingsFolder URLByAppendingPathComponent:filename];
+	
+	if (unique) {
+		NSFileManager *fm = [NSFileManager defaultManager];
+		unsigned long numberSuffix = 0;
+		while ([fm fileExistsAtPath:[result path]]) {
+			if (numberSuffix > 1000) return nil; // Don't go crazy
+			NSString *name = [mapping.name stringByAppendingFormat:@" %lu", ++numberSuffix];
+			filename = [name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
+			result = [mappingsFolder URLByAppendingPathComponent:filename];
+		}
+	}
+	
+	return result;
 }
 
 #pragma mark - Properties
@@ -173,7 +210,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	[self.internalMappings removeObject:mapping];
 	
 	// Remove XML file for mapping from disk
-	NSURL *mappingURL = [self fileURLForMapping:mapping];
+	NSURL *mappingURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
 	if (!mappingURL) return;
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSError *error = nil;
