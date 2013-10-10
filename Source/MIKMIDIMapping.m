@@ -39,7 +39,7 @@
 	}
 	self = [self initWithXMLDocument:xmlDocument];
 	if (self) {
-		
+		if (![_name length]) _name = [[url lastPathComponent] stringByDeletingPathExtension];
 	}
 	return self;
 }
