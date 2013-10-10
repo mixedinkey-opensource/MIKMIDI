@@ -88,6 +88,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	
 	MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:URL error:error];;
 	if (!mapping) return nil;
+	if ([self.mappings containsObject:mapping]) return mapping; // Already have it, so don't copy the file.
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:YES];
