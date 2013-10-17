@@ -12,9 +12,13 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 	MIKMIDIResponderTypeNone = 0,
 	
 	MIKMIDIResponderTypeAbsoluteSliderOrKnob = 1 << 0,	/* Absolute position knob or slider */
-	MIKMIDIResponderTypeRelativeKnob = 1 << 1,			/* Relative (ie. jog wheel) knob */
-	MIKMIDIResponderTypePressButton = 1 << 3,			/* Button that sends message only on press down*/
-	MIKMIDIResponderTypePressReleaseButton = 1 << 2,	/* Button that sends message on press down, and another when released*/
+	MIKMIDIResponderTypeRelativeKnob = 1 << 1,			/* Relative (e.g. Browse) knob */
+	MIKMIDIResponderTypeTurntableKnob = 1 << 2,			/* Relatiive turntable-style knob */
+	MIKMIDIResponderTypePressReleaseButton = 1 << 3,	/* Button that sends message on press down, and another when released*/
+	MIKMIDIResponderTypePressButton = 1 << 4,			/* Button that sends message only on press down*/
+	
+	/* Any kind of knob */
+	MIKMIDIResponderTypeKnob = (MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob | MIKMIDIResponderTypeTurntableKnob),
 	MIKMIDIResponderTypeButton = (MIKMIDIResponderTypePressButton | MIKMIDIResponderTypePressReleaseButton), /* Either kind of button */
 	
 	MIKMIDIResponderTypeAll = NSUIntegerMax,
