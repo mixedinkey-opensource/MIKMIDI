@@ -54,7 +54,6 @@
 @property (nonatomic) NSInteger channel;
 @property (nonatomic) MIKMIDICommandType commandType;
 @property (nonatomic) NSUInteger controlNumber;
-@property (nonatomic) NSUInteger scale; // Discard this many messages for every message passed through
 
 /**
  *  Optional additional key value pairs, which will be saved as attributes in this item's XML representation. Keys and values must be NSStrings.

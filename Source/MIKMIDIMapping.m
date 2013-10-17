@@ -277,9 +277,7 @@
 			self = nil;
 			return nil;
 		}
-		
-		NSXMLElement *scale = [[element nodesForXPath:@"Scale" error:&error] lastObject];
-		
+				
 		NSXMLElement *interactionType = [[element nodesForXPath:@"@InteractionType" error:&error] lastObject];
 		if (!interactionType) {
 			NSLog(@"Unable to read interaction type from %@: %@", element, error);
@@ -296,7 +294,6 @@
 		self.controlNumber = [[controlNumber stringValue] integerValue];
 		self.interactionType = [self interactionTypeForString:[interactionType stringValue]];
 		self.flipped = [[flippedStatus stringValue] boolValue];
-		self.scale = scale ? (NSUInteger)[[scale stringValue] integerValue] : 1;
 		
 		NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 		for (NSXMLNode *attribute in [element attributes]) {
@@ -320,8 +317,6 @@
 	[commandType setStringValue:[@(self.commandType) stringValue]];
 	NSXMLElement *controlNumber = [NSXMLElement elementWithName:@"ControlNumber"];
 	[controlNumber setStringValue:[@(self.controlNumber) stringValue]];
-	NSXMLElement *scale = [NSXMLElement elementWithName:@"Scale"];
-	[scale setStringValue:[@(self.scale) stringValue]];
 	
 	NSXMLElement *interactionType = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[interactionType setName:@"InteractionType"];
@@ -347,7 +342,7 @@
 	}
 	
 	return [NSXMLElement elementWithName:@"MappingItem"
-								children:@[responderIdentifier, commandIdentifier, channel, commandType, controlNumber, scale]
+								children:@[responderIdentifier, commandIdentifier, channel, commandType, controlNumber]
 							  attributes:attributes];
 }
 #endif
@@ -382,7 +377,14 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
+	NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
+	if ([self.additionalAttributes count]) {
+		for (NSString *key in self.additionalAttributes) {
+			NSString *value = self.additionalAttributes[key];
+			[result appendFormat:@" %@: %@", key, value];
+		}
+	}
+	return result;
 }
 
 #pragma mark - Public
