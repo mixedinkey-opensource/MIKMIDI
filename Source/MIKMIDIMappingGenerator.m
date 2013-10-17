@@ -11,8 +11,6 @@
 #import <MIKMIDI/MIKMIDI.h>
 #import "MIKMIDIMapping.h"
 
-#define kMIKMIDILearningTimeoutInterval 0.6
-
 @interface MIKMIDIMappingGenerator ()
 
 @property (nonatomic, strong) id<MIKMIDIMappableResponder> controlBeingLearned;
@@ -22,7 +20,9 @@
 
 @property (nonatomic, strong) MIKMIDIMappingItem *existingMappingItem;
 
+@property (nonatomic) NSTimeInterval timeoutInteveral;
 @property (nonatomic, strong) NSTimer *messagesTimeoutTimer;
+@property (nonatomic) NSUInteger numMessagesRequired;
 @property (nonatomic, strong) NSMutableArray *receivedMessages;
 
 @end
@@ -85,6 +85,8 @@
 
 - (void)learnMappingForControl:(id<MIKMIDIMappableResponder>)control
 		 withCommandIdentifier:(NSString *)commandID
+	 requiringNumberOfMessages:(NSUInteger)numMessages
+		   withTimeoutInterval:(NSTimeInterval)timeout
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
 	// Remove an existing mapping item if there is one for this control
@@ -106,6 +108,8 @@
 	self.controlBeingLearned = control;
 	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
+	self.numMessagesRequired = numMessages ? numMessages : 3;
+	self.timeoutInteveral = timeout ? timeout : 0.6;
 }
 
 - (void)cancelCurrentCommandLearning;
@@ -152,13 +156,13 @@
 	if (![self.controlBeingLearned respondsToMIDICommand:command]) return;
 	
 	[self.receivedMessages addObject:command];
-	self.messagesTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kMIKMIDILearningTimeoutInterval
+	self.messagesTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:self.timeoutInteveral
 																 target:self
 															   selector:@selector(timeoutTimerFired:)
 															   userInfo:nil
 																repeats:NO];
 	
-	if ([self.receivedMessages count] > 3) { // Don't try to finish unless we've received several messages (eg. from a knob) already
+	if ([self.receivedMessages count] > self.numMessagesRequired) { // Don't try to finish unless we've received several messages (eg. from a knob) already
 		MIKMIDIMappingItem *mappingItem = [self mappingItemForCommandIdentifier:self.commandIdentifierBeingLearned
 																	  inControl:self.controlBeingLearned
 														   fromReceivedMessages:self.receivedMessages];
@@ -181,7 +185,7 @@
 	
 	// Tap type button
 	if ([messages count] == 1) {
-		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < kMIKMIDILearningTimeoutInterval) return nil; // Need to keep waiting for another message
+		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < self.timeoutInteveral) return nil; // Need to keep waiting for another message
 		
 		result.interactionType = MIKMIDIResponderTypePressButton;
 	}
