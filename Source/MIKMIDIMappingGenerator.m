@@ -86,13 +86,13 @@
 - (void)learnMappingForControl:(id<MIKMIDIMappableResponder>)control
 		 withCommandIdentifier:(NSString *)commandID
 	 requiringNumberOfMessages:(NSUInteger)numMessages
-		   withTimeoutInterval:(NSTimeInterval)timeout
+			 orTimeoutInterval:(NSTimeInterval)timeout
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
 	// Remove an existing mapping item if there is one for this control
 	self.existingMappingItem = [self.mapping mappingItemForCommandIdentifier:commandID responder:control];
 	if (self.existingMappingItem) [self.mapping removeMappingItemsObject:self.existingMappingItem];
-
+	
 	MIKMIDIResponderType controlResponderType = MIKMIDIResponderTypeAll;
 	if ([control respondsToSelector:@selector(MIDIResponderTypeForCommandIdentifier:)]) {
 		controlResponderType = [control MIDIResponderTypeForCommandIdentifier:commandID];
@@ -108,7 +108,7 @@
 	self.controlBeingLearned = control;
 	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
-	self.numMessagesRequired = numMessages ? numMessages : 3;
+	self.numMessagesRequired = numMessages ? numMessages : [self defaultMinimumNumberOfMessagesRequiredForResponderType:controlResponderType];
 	self.timeoutInteveral = timeout ? timeout : 0.6;
 }
 
@@ -151,7 +151,7 @@
 			isDifferentCommandType) {
 			[self.receivedMessages removeAllObjects];
 		}
-	} 
+	}
 	
 	if (![self.controlBeingLearned respondsToMIDICommand:command]) return;
 	
@@ -204,7 +204,7 @@
 
 - (MIKMIDIMappingItem *)relativeKnobMappingItemFromMessages:(NSArray *)messages
 {
-	if ([messages count] < 3) return nil;
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeRelativeKnob]) return nil;
 	
 	// Disallow non-control change messages
 	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
@@ -226,9 +226,27 @@
 	return result;
 }
 
+- (MIKMIDIMappingItem *)turntableKnobMappingItemFromMessages:(NSArray *)messages
+{
+	// Filter non-control change messages
+	NSPredicate *controlChangePredicate = [NSPredicate predicateWithFormat:@"commandType == %@", @(MIKMIDICommandTypeControlChange)];
+	messages = [messages filteredArrayUsingPredicate:controlChangePredicate];
+	
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) return nil;
+	
+	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
+	
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	result.interactionType = MIKMIDIResponderTypeTurntableKnob;
+	result.channel = firstMessage.channel;
+	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
+	return result;
+}
+
 - (MIKMIDIMappingItem *)absoluteKnobSliderMappingItemFromMessages:(NSArray *)messages
 {
-	if ([messages count] < 3) return nil;
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeAbsoluteSliderOrKnob]) return nil;
 	
 	// Disallow non-control change messages
 	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
@@ -279,6 +297,11 @@
 	}
 	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
+	if (responderType & MIKMIDIResponderTypeTurntableKnob) {
+		result = [self turntableKnobMappingItemFromMessages:messages];
+	}
+	if (result) goto FINALIZE_RESULT_AND_RETURN;
+	
 	if (responderType & MIKMIDIResponderTypeRelativeKnob) {
 		result = [self relativeKnobMappingItemFromMessages:messages];
 	}
@@ -287,7 +310,7 @@
 	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) {
 		result = [self absoluteKnobSliderMappingItemFromMessages:messages];
 	}
-
+	
 FINALIZE_RESULT_AND_RETURN:
 	result.MIDIResponderIdentifier = [responder MIDIIdentifier];
 	result.commandIdentifier = commandID;
@@ -315,11 +338,20 @@ FINALIZE_RESULT_AND_RETURN:
 	
 	self.currentMappingCompletionBlock = nil;
 	self.controlBeingLearned = nil;
+	NSArray *receivedMessages = [self.receivedMessages copy];
 	[self.receivedMessages removeAllObjects];
 	self.messagesTimeoutTimer = nil;
 	
 	if (mappingItemOrNil) [self.mapping addMappingItemsObject:mappingItemOrNil];
-	if (completionBlock) completionBlock(mappingItemOrNil, errorOrNil);
+	if (completionBlock) completionBlock(mappingItemOrNil, receivedMessages, errorOrNil);
+}
+
+#pragma mark Utility
+
+- (NSUInteger)defaultMinimumNumberOfMessagesRequiredForResponderType:(MIKMIDIResponderType)responderType
+{
+	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 20;
+	return 3;
 }
 
 #pragma mark Device Connection/Disconnection
