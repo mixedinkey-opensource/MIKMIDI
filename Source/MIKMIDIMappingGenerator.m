@@ -137,19 +137,21 @@
 	if (existingMappingItem) return; // This commmand is already mapped so ignore it
 	
 	if ([self.receivedMessages count]) {
-		MIKMIDIChannelVoiceCommand *firstMessage = [self.receivedMessages objectAtIndex:0];
 		// If we get a message from a different controller number, channel,
 		// or command type (not counting note on vs note off), restart the mapping
 		
-		BOOL isDifferentCommandType = firstMessage.commandType != command.commandType;
-		BOOL areNoteCommands = (firstMessage.commandType == MIKMIDICommandTypeNoteOn || firstMessage.commandType == MIKMIDICommandTypeNoteOff) &&
-		(command.commandType == MIKMIDICommandTypeNoteOn || command.commandType == MIKMIDICommandTypeNoteOff);
-		isDifferentCommandType &= !areNoteCommands;
+		BOOL allowDifferentMessages = NO;
 		
-		if (MIKMIDIMappingControlNumberFromCommand(firstMessage) != MIKMIDIMappingControlNumberFromCommand(command) ||
-			firstMessage.channel != command.channel ||
-			isDifferentCommandType) {
-			[self.receivedMessages removeAllObjects];
+		// Ignore different message types if we're trying to map a turntable,
+		// since they often send note on/off commands for touch sensing.
+		if (self.responderTypeOfControlBeingLearned & MIKMIDIResponderTypeTurntableKnob &&
+			[self.receivedMessages count] > [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) {
+			allowDifferentMessages = YES;
+		}
+		
+		if (!allowDifferentMessages) {
+			MIKMIDIChannelVoiceCommand *firstMessage = [self.receivedMessages objectAtIndex:0];
+			if (![self command:firstMessage isSameTypeChannelNumberAsCommand:command]) [self.receivedMessages removeAllObjects];
 		}
 	}
 	
@@ -352,6 +354,20 @@ FINALIZE_RESULT_AND_RETURN:
 {
 	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 20;
 	return 3;
+}
+
+- (BOOL)command:(MIKMIDIChannelVoiceCommand *)command1 isSameTypeChannelNumberAsCommand:(MIKMIDIChannelVoiceCommand *)command2
+{
+	if (command1.channel != command2.channel) return NO;
+	if (MIKMIDIMappingControlNumberFromCommand(command1) != MIKMIDIMappingControlNumberFromCommand(command2)) return NO;
+	
+	BOOL isDifferentCommandType = command1.commandType != command2.commandType;
+	BOOL areNoteCommands = (command1.commandType == MIKMIDICommandTypeNoteOn || command1.commandType == MIKMIDICommandTypeNoteOff) &&
+	(command2.commandType == MIKMIDICommandTypeNoteOn || command2.commandType == MIKMIDICommandTypeNoteOff);
+	isDifferentCommandType &= !areNoteCommands;
+	if (isDifferentCommandType) return NO;
+	
+	return YES;
 }
 
 #pragma mark Device Connection/Disconnection

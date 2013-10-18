@@ -44,6 +44,10 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 	 requiringNumberOfMessages:(NSUInteger)numMessages
 			 orTimeoutInterval:(NSTimeInterval)timeout
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
+
+/**
+ *  Cancels the mapping previously started by calling -learnMappingForControl:withCommandIdentifier:requiringNumberOfMessages:orTimeoutInterval:completionBlock:.
+ */
 - (void)cancelCurrentCommandLearning;
 
 // Properties
