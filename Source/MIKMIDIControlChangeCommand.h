@@ -48,6 +48,9 @@
 
 @interface MIKMutableMIDIControlChangeCommand : MIKMIDIControlChangeCommand
 
+@property (nonatomic, readwrite) UInt8 channel;
+@property (nonatomic, readwrite) NSUInteger value;
+
 @property (nonatomic, readwrite) NSUInteger controllerNumber;
 @property (nonatomic, readwrite) NSUInteger controllerValue;
 
