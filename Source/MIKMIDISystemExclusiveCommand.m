@@ -12,16 +12,22 @@
 @interface MIKMIDISystemExclusiveCommand ()
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;
+@property (nonatomic, readwrite) UInt8 sysexChannel;
 @property (nonatomic, strong, readwrite) NSData *sysexData;
 
 @end
 
 @implementation MIKMIDISystemExclusiveCommand
+{
+	BOOL _has3ByteManufacturerID;
+}
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return type == MIKMIDICommandTypeSystemExclusive; }
 + (Class)immutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDISystemExclusiveCommand class]; }
+
+#pragma mark - Private
 
 #pragma mark - Properties
 
@@ -36,15 +42,76 @@
 	return result;
 }
 
+- (void)setManufacturerID:(UInt32)manufacturerID
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	NSUInteger numExistingBytes = _has3ByteManufacturerID ? 3 : 1;
+	NSUInteger numNewBytes = (manufacturerID & 0xFFFF00) != 0 ? 3 : 1;
+	UInt8 manufacturerIDBytes[3] = {(manufacturerID >> 2) & 0x7F, (manufacturerID >> 1) & 0x7F, manufacturerID & 0x7F};
+	if ([self.internalData length] < numNewBytes+1) [self.internalData increaseLengthBy:numNewBytes-[self.internalData length]+1];
+	
+	UInt8 *replacementBytes = manufacturerIDBytes + 3 - numNewBytes;
+	[self.internalData replaceBytesInRange:NSMakeRange(1, numExistingBytes) withBytes:replacementBytes length:numNewBytes];
+	
+	_has3ByteManufacturerID = (numNewBytes == 3);
+}
+
+- (UInt8)sysexChannel
+{
+	if ([self.sysexData length] < 1) return 0;
+	
+	NSData *sysexChannelData = [self.sysexData subdataWithRange:NSMakeRange(0, 1)];
+	return *(UInt8 *)[sysexChannelData bytes];
+}
+
+- (void)setSysexChannel:(UInt8)sysexChannel
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	NSUInteger sysexChannelLocation = _has3ByteManufacturerID ? 4 : 2;
+	NSUInteger requiredLength = sysexChannelLocation+1;
+	[self.internalData setLength:requiredLength];
+	
+	[self.internalData replaceBytesInRange:NSMakeRange(sysexChannelLocation, 1) withBytes:&sysexChannel length:1];
+}
+
 - (NSData *)sysexData
 {
-	return [self.internalData subdataWithRange:NSMakeRange(2, [self.internalData length]-2)];
+	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 5 : 3;
+	return [self.internalData subdataWithRange:NSMakeRange(sysexStartLocation, [self.internalData length]-sysexStartLocation-1)];
 }
 
 - (void)setSysexData:(NSData *)sysexData
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	[self.internalData replaceBytesInRange:NSMakeRange(2, [self.internalData length]-2) withBytes:[sysexData bytes] length:[sysexData length]];
+	
+	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 5 : 3;
+	
+	NSRange destinationRange = NSMakeRange(sysexStartLocation, [self.internalData length] - sysexStartLocation);
+	[self.internalData replaceBytesInRange:destinationRange withBytes:[sysexData bytes] length:[sysexData length]];
+}
+
+- (NSData *)data
+{
+	NSMutableData *result = [[super data] mutableCopy];
+	[result appendBytes:&(UInt8){kMIKMIDISysexEndDelimiter} length:1];
+	return result;
+}
+
+- (void)setData:(NSData *)data
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	if (![data length]) return [self setInternalData:[data mutableCopy]];
+	
+	UInt8 *bytes = (UInt8 *)[data bytes];
+	UInt8 lastByte = bytes[[data length]-1];
+	if (lastByte == kMIKMIDISysexEndDelimiter) {
+		data = [data subdataWithRange:NSMakeRange(0, [data length]-1)];
+	}
+	
+	self.internalData = [data mutableCopy];
 }
 
 @end
