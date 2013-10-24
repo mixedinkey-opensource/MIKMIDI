@@ -62,9 +62,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
 @property (nonatomic, copy, readwrite) NSData *data;
 
-// Must be set by client code that handles receiving MIDI commands. Allows responders to understand how a command was mapped, especially useful to determine interaction type.
-@property (nonatomic, strong) MIKMIDIMappingItem *mappingItem;
-
 @end
 
 // Pass 0 for listSize to use standard MIDIPacketList size (i.e. sizeof(MIDIPacketList) )

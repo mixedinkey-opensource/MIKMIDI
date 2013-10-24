@@ -51,7 +51,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	MIKMIDICommand *result = [[subclass alloc] init];
 	
 	if ([result.internalData length] < 2) [result.internalData increaseLengthBy:2-[result.internalData length]];
-	UInt8 *data = (UInt8 *)[result.internalData bytes];
+	UInt8 *data = (UInt8 *)[result.internalData mutableBytes];
 	data[0] = commandType;
 	return result;
 }
@@ -195,7 +195,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
 	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	data[0] = commandType;
 }
 

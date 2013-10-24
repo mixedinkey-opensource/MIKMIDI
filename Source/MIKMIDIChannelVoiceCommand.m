@@ -42,7 +42,7 @@
 - (UInt8)channel
 {
 	if ([self.internalData length] < 1) return 0;
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	return data[0] & 0x0F;
 }
 
@@ -52,7 +52,7 @@
 	
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	data[0] &= 0xF0 | (channel & 0x0F);
 }
 
@@ -82,7 +82,7 @@
 {
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
 }
 
