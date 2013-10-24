@@ -685,7 +685,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="560">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="560">
                         <rect key="frame" x="357" y="9" width="109" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Send Sysex" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="561">
@@ -726,7 +726,9 @@
                     <constraint firstAttribute="trailing" secondItem="536" secondAttribute="trailing" constant="-1" id="544"/>
                     <constraint firstItem="565" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="571"/>
                     <constraint firstItem="565" firstAttribute="top" secondItem="536" secondAttribute="bottom" constant="8" id="573"/>
+                    <constraint firstAttribute="trailing" secondItem="560" secondAttribute="trailing" constant="20" id="pIE-Zr-JuP"/>
                     <constraint firstAttribute="bottom" secondItem="565" secondAttribute="bottom" constant="16" id="up5-Cz-3tq"/>
+                    <constraint firstAttribute="bottom" secondItem="560" secondAttribute="bottom" constant="16" id="xxy-43-3Hq"/>
                 </constraints>
             </view>
         </window>

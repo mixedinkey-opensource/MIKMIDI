@@ -13,8 +13,7 @@
 
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
-- (IBAction)ledCheckboxChanged:(id)sender;
-- (IBAction)flash:(id)sender;
+- (IBAction)sendSysex:(id)sender;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;

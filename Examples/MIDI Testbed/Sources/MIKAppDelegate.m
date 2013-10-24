@@ -42,7 +42,7 @@
 	BOOL success = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		NSMutableString *textFieldString = self.textView.textStorage.mutableString;
 		for (MIKMIDIChannelVoiceCommand *command in commands) {
-			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
+//			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
 			[textFieldString appendFormat:@"Received: %@\n", command];
 		}
 	}];
@@ -54,50 +54,19 @@
 	NSLog(@"%@'s %@ changed to: %@", object, keyPath, [object valueForKeyPath:keyPath]);
 }
 
-- (IBAction)ledCheckboxChanged:(id)sender
+- (IBAction)sendSysex:(id)sender
 {
-	NSButton *checkbox = (NSButton *)sender;
-	
-	MIKMutableMIDIControlChangeCommand *command = [[MIKMutableMIDIControlChangeCommand alloc] init];
-	command.commandType = MIKMIDICommandTypeControlChange;
-	command.channel = 0;
-	command.controllerNumber = 0x28;
-	command.controllerValue = checkbox.state == NSOnState ? 0xFF : 0x00;
+	MIKMutableMIDISystemExclusiveCommand *command = [MIKMutableMIDISystemExclusiveCommand commandForCommandType:MIKMIDICommandTypeSystemExclusive];
+	command.manufacturerID = kMIKMIDISysexNonRealtimeManufacturerID;
+	command.sysexChannel = kMIKMIDISysexChannelDisregard;
+	command.sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x01} length:2];
+	NSLog(@"Sending idenity request command: %@", command);
 	
 	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
 	if (![destinations count]) return;
 	MIKMIDIDestinationEndpoint *destination = destinations[0];
 	NSError *error = nil;
 	if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
-		NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
-	}
-}
-
-- (IBAction)flash:(id)sender
-{
-	MIKMutableMIDIControlChangeCommand *command = [[MIKMutableMIDIControlChangeCommand alloc] init];
-	command.commandType = MIKMIDICommandTypeControlChange;
-	command.timestamp = [NSDate date];
-	command.channel = 0;
-	command.controllerNumber = 0x28;
-	command.controllerValue = 0xFF;
-	
-	NSMutableArray *commands = [NSMutableArray arrayWithObject:command];
-	
-	for (NSUInteger i=0; i<10; i++) {
-		command = [command mutableCopy];
-		command.controllerValue = ~command.controllerValue;
-
-		command.timestamp = [NSDate dateWithTimeInterval:0.5 sinceDate:command.timestamp];
-		
-		[commands addObject:command];
-	}
-	
-	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
-	if (![destinations count]) return;
-	MIKMIDIDestinationEndpoint *destination = destinations[0];
-	NSError *error = nil;
-	if (![self.midiDeviceManager sendCommands:commands toEndpoint:destination error:&error]) {
 		NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
 	}
 }
