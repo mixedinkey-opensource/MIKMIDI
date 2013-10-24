@@ -661,17 +661,17 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <clipView key="contentView" id="oxt-mr-Iqe">
                             <rect key="frame" x="1" y="1" width="480" height="314"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" smartInsertDelete="YES" id="537">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="314"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <size key="minSize" width="480" height="314"/>
-                                    <size key="maxSize" width="480" height="10000000"/>
+                                    <size key="maxSize" width="482" height="10000000"/>
                                     <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <size key="minSize" width="480" height="314"/>
-                                    <size key="maxSize" width="480" height="10000000"/>
+                                    <size key="maxSize" width="482" height="10000000"/>
                                 </textView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -685,26 +685,15 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <button translatesAutoresizingMaskIntoConstraints="NO" id="555">
-                        <rect key="frame" x="416" y="18" width="46" height="18"/>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="560">
+                        <rect key="frame" x="357" y="9" width="109" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="LED" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="556">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="ledCheckboxChanged:" target="494" id="559"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="560">
-                        <rect key="frame" x="344" y="10" width="72" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Flash" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="561">
+                        <buttonCell key="cell" type="push" title="Send Sysex" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="561">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="flash:" target="494" id="564"/>
+                            <action selector="sendSysex:" target="494" id="z1k-hN-Glf"/>
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="565">
@@ -715,7 +704,7 @@
                         </constraints>
                         <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="568" id="566">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" title="OtherViews" id="567">
                                 <items>
                                     <menuItem title="Item 1" state="on" id="568"/>
@@ -725,9 +714,9 @@
                             </menu>
                         </popUpButtonCell>
                         <connections>
+                            <binding destination="494" name="selectedObject" keyPath="device" previousBinding="586" id="587"/>
                             <binding destination="494" name="content" keyPath="midiDeviceManager.availableDevices" id="585"/>
                             <binding destination="494" name="contentValues" keyPath="midiDeviceManager.availableDevices.model" previousBinding="585" id="586"/>
-                            <binding destination="494" name="selectedObject" keyPath="device" previousBinding="586" id="587"/>
                         </connections>
                     </popUpButton>
                 </subviews>
@@ -735,13 +724,9 @@
                     <constraint firstItem="536" firstAttribute="top" secondItem="372" secondAttribute="top" constant="-1" id="542"/>
                     <constraint firstItem="536" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="-1" id="543"/>
                     <constraint firstAttribute="trailing" secondItem="536" secondAttribute="trailing" constant="-1" id="544"/>
-                    <constraint firstAttribute="trailing" secondItem="555" secondAttribute="trailing" constant="20" symbolic="YES" id="557"/>
-                    <constraint firstAttribute="bottom" secondItem="555" secondAttribute="bottom" constant="20" symbolic="YES" id="558"/>
-                    <constraint firstItem="560" firstAttribute="centerY" secondItem="555" secondAttribute="centerY" id="562"/>
-                    <constraint firstItem="555" firstAttribute="leading" secondItem="560" secondAttribute="trailing" constant="8" symbolic="YES" id="563"/>
                     <constraint firstItem="565" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="571"/>
-                    <constraint firstItem="565" firstAttribute="baseline" secondItem="555" secondAttribute="baseline" id="572"/>
                     <constraint firstItem="565" firstAttribute="top" secondItem="536" secondAttribute="bottom" constant="8" id="573"/>
+                    <constraint firstAttribute="bottom" secondItem="565" secondAttribute="bottom" constant="16" id="up5-Cz-3tq"/>
                 </constraints>
             </view>
         </window>
