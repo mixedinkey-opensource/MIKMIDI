@@ -80,7 +80,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ command: %lu data: %@", [super description], (unsigned long)self.commandType, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
+	return [NSString stringWithFormat:@"%@ command: %lu data: %@", [super description], (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
 }
 
 #pragma mark - Private
