@@ -122,7 +122,9 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	NSArray *appSupportFolders = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	if (![appSupportFolders count]) return nil;
 	
-	NSString *mappingsFolder = [[[appSupportFolders lastObject] stringByAppendingPathComponent:@"Mixedinkey"] stringByAppendingPathComponent:@"MIDI Mappings"];
+	NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
+	if (![bundleID length]) bundleID = @"com.mixedinkey.MIKMIDI"; // Shouldn't happen, except perhaps in command line app.
+	NSString *mappingsFolder = [[[appSupportFolders lastObject] stringByAppendingPathComponent:bundleID] stringByAppendingPathComponent:@"MIDI Mappings"];
 	BOOL isDirectory;
 	BOOL folderExists = [fm fileExistsAtPath:mappingsFolder isDirectory:&isDirectory];
 	if (!folderExists) {
