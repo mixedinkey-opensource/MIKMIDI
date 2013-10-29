@@ -44,10 +44,13 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
     static NSHashTable *registeredMIKMIDIResponders = nil;
     static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-#if !TARGET_OS_IPHONE
+		
+#if TARGET_OS_IPHONE
+		NSPointerFunctionsOptions options = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
+#elif (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_7)
 		NSPointerFunctionsOptions options = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsObjectPersonality;
 #else
-		NSPointerFunctionsOptions options = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
+		NSPointerFunctionsOptions options = NSHashTableWeakMemory | NSPointerFunctionsObjectPersonality;
 #endif
 		registeredMIKMIDIResponders = [[NSHashTable alloc] initWithOptions:options capacity:0];
 	});

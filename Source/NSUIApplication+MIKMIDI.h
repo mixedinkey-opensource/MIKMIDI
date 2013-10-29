@@ -37,7 +37,12 @@
 /**
  *  Register a MIDI responder for receipt of incoming MIDI messages.
  *
- *  The application maintains a zeroing weak reference to the responder, so unregistering the responder on deallocate is not necessary.
+ *  If targeting OS X 10.8 or higher, or iOS, the application maintains a zeroing weak
+ *  reference to the responder, so unregistering the responder on deallocate is not necessary.
+ *
+ *  For applications targeting OS X 10.7, registered responders must be explicitly
+ *  unregistered (e.g. in their -dealloc method) by calling -unregisterMIDIResponder before
+ *  being deallocated.
  *
  *  @param responder The responder to register.
  */
