@@ -62,6 +62,7 @@
 		9D74EF9317A713A100BEE89F /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */; };
 		9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9517A713A100BEE89F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */; };
+		9DFDC2B81820305C00C4C66D /* MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -126,6 +127,7 @@
 		9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUIApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUIApplication+MIKMIDI.m"; sourceTree = "<group>"; };
 		9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand_SubclassMethods.h; sourceTree = "<group>"; };
+		9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				9D74EF3017A713A100BEE89F /* MIKMIDI.h */,
+				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
 				9D74EF3317A713A100BEE89F /* MIKMIDICommand.h */,
 				9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */,
 				9D74EF3417A713A100BEE89F /* MIKMIDICommand.m */,
@@ -293,6 +296,7 @@
 				9D74EF7F17A713A100BEE89F /* MIKMIDINoteOffCommand.h in Headers */,
 				9D74EF8117A713A100BEE89F /* MIKMIDINoteOnCommand.h in Headers */,
 				9D74EF8317A713A100BEE89F /* MIKMIDIObject.h in Headers */,
+				9DFDC2B81820305C00C4C66D /* MIKMIDIPrivate.h in Headers */,
 				9D74EF8517A713A100BEE89F /* MIKMIDIObject_SubclassMethods.h in Headers */,
 				9D74EF8617A713A100BEE89F /* MIKMIDIOutputPort.h in Headers */,
 				9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */,

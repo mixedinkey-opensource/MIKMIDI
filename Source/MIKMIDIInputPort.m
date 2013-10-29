@@ -9,6 +9,7 @@
 #import "MIKMIDIPort_SubclassMethods.h"
 #import <CoreMIDI/CoreMIDI.h>
 #import "MIKMIDIInputPort.h"
+#import "MIKMIDIPrivate.h"
 #import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDIControlChangeCommand.h"
@@ -54,7 +55,7 @@
 - (void)dealloc
 {
 	if (_bufferedCommandQueue) {
-		dispatch_release(_bufferedCommandQueue);
+		MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 		_bufferedCommandQueue = NULL;
 	}
 }
@@ -251,8 +252,8 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 
 - (void)setCommandsBufferQueue:(dispatch_queue_t)commandsBufferQueue
 {
-	dispatch_retain(commandsBufferQueue);
-	dispatch_release(_bufferedCommandQueue);
+	MIKMIDI_GCD_RETAIN(commandsBufferQueue);
+	MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 	_bufferedCommandQueue = commandsBufferQueue;
 }
 
