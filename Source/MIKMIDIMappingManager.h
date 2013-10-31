@@ -26,6 +26,15 @@
 
 // Properties
 
+@property (nonatomic, strong, readonly) NSSet *bundledMappings;
+@property (nonatomic, strong, readonly) NSSet *userMappings;
+
+/**
+ *  All mappings, including both user and bundled mappings.
+ *
+ *  The value of this property is the same as the union of -bundledMappings and -userMappings
+ *
+ */
 @property (nonatomic, strong, readonly) NSSet *mappings;
 - (void)addMappingsObject:(MIKMIDIMapping *)mapping;
 - (void)removeMappingsObject:(MIKMIDIMapping *)mapping; // Deletes mapping from disk

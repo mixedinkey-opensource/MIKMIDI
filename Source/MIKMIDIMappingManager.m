@@ -12,7 +12,8 @@
 
 @interface MIKMIDIMappingManager ()
 
-@property (nonatomic, strong) NSMutableSet *internalMappings;
+@property (nonatomic, strong, readwrite) NSSet *bundledMappings;
+@property (nonatomic, strong) NSMutableSet *internalUserMappings;
 
 @end
 
@@ -33,7 +34,8 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
     self = [super init];
     if (self) {
-        [self loadAvailableMappings];
+		[self loadBundledMappings];
+        [self loadAvailableUserMappings];
 		
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 #if !TARGET_OS_IPHONE
@@ -118,7 +120,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 #pragma mark - Private
 
-- (NSURL *)storedMappingsFolder
+- (NSURL *)userMappingsFolder
 {
 	NSFileManager *fm = [NSFileManager defaultManager];
 	
@@ -140,35 +142,52 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return [NSURL fileURLWithPath:mappingsFolder isDirectory:YES];
 }
 
-- (void)loadAvailableMappings
+- (void)loadAvailableUserMappings
+{
+	NSMutableSet *mappings = [NSMutableSet set];
+
+#if !TARGET_OS_IPHONE
+	
+	NSURL *mappingsFolder = [self userMappingsFolder];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	NSError *error = nil;
+	NSArray *userMappingFileURLs = [fm contentsOfDirectoryAtURL:mappingsFolder includingPropertiesForKeys:nil options:0 error:&error];
+	if (userMappingFileURLs) {
+		for (NSURL *file in userMappingFileURLs) {
+			if (![[file pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) continue;
+			
+			// process the mapping file
+			MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+			if (mapping) [mappings addObject:mapping];
+		}
+	} else {
+		NSLog(@"Unable to get contents of directory at %@: %@", mappingsFolder, error);
+	}
+	
+#endif
+	
+	self.internalUserMappings = mappings;
+}
+
+- (void)loadBundledMappings
 {
 	NSMutableSet *mappings = [NSMutableSet set];
 	
 #if !TARGET_OS_IPHONE
-	NSURL *mappingsFolder = [self storedMappingsFolder];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSError *error = nil;
-	NSArray *contents = [fm contentsOfDirectoryAtURL:mappingsFolder includingPropertiesForKeys:nil options:0 error:&error];
-	if (!contents) {
-		NSLog(@"Unable to get contents of directory at %@: %@", mappingsFolder, error);
-		return;
-	}
-	
-	for (NSURL *file in contents) {
-		if (![[file pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) continue;
-		
-		// process the mapping file
+	NSBundle *bundle = [NSBundle mainBundle];
+	NSArray *bundledMappingFileURLs = [bundle URLsForResourcesWithExtension:kMIKMIDIMappingFileExtension subdirectory:nil];
+	for (NSURL *file in bundledMappingFileURLs) {
 		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
 		if (mapping) [mappings addObject:mapping];
 	}
 #endif
 	
-	self.internalMappings = mappings;
+	self.bundledMappings = mappings;
 }
 
 - (NSURL *)fileURLForMapping:(MIKMIDIMapping *)mapping shouldBeUnique:(BOOL)unique
 {
-	NSURL *mappingsFolder = [self storedMappingsFolder];
+	NSURL *mappingsFolder = [self userMappingsFolder];
 	NSString *filename = [mapping.name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
 	
 	NSURL *result = [mappingsFolder URLByAppendingPathComponent:filename];
@@ -193,27 +212,33 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
+	if ([key isEqualToString:@"userMappings"]) {
+		keyPaths = [keyPaths setByAddingObject:@"internalUserMappings"];
+	}
+	
 	if ([key isEqualToString:@"mappings"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalMappings"];
+		keyPaths = [keyPaths setByAddingObjectsFromArray:@[@"userMappings", @"bundledMappings"]];
 	}
 	
 	return keyPaths;
 }
 
-- (NSSet *)mappings { return [self.internalMappings copy]; }
+- (NSSet *)userMappings { return [self.internalUserMappings copy]; }
+
+- (NSSet *)mappings { return [self.bundledMappings setByAddingObjectsFromSet:self.userMappings]; }
 
 - (void)addMappingsObject:(MIKMIDIMapping *)mapping
 {
 	MIKMIDIMapping *existing = [self mappingWithName:mapping.name];
-	if (existing) [self.internalMappings removeObject:existing];
-	[self.internalMappings addObject:mapping];
+	if (existing) [self.internalUserMappings removeObject:existing];
+	[self.internalUserMappings addObject:mapping];
 	
 	[self saveMappingsToDisk];
 }
 
 - (void)removeMappingsObject:(MIKMIDIMapping *)mapping
 {
-	[self.internalMappings removeObject:mapping];
+	[self.internalUserMappings removeObject:mapping];
 	
 	// Remove XML file for mapping from disk
 	NSURL *mappingURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
