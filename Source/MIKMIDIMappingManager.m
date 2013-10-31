@@ -71,7 +71,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return [[self.mappings filteredSetUsingPredicate:predicate] anyObject];
 }
 
-- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL error:(NSError **)error;
+- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 {
 #if TARGET_OS_IPHONE
 	return nil;
@@ -91,7 +91,10 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	if ([self.mappings containsObject:mapping]) return mapping; // Already have it, so don't copy the file.
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:YES];
+	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:!shouldOverwrite];
+	if (shouldOverwrite && [fm fileExistsAtPath:[destinationURL path]]) {
+		if (![fm removeItemAtURL:destinationURL error:error]) return nil;
+	}
 	if (![fm copyItemAtURL:URL toURL:destinationURL error:error]) return nil;
 	
 	[self addMappingsObject:mapping];

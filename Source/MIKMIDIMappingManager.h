@@ -20,7 +20,7 @@
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
-- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL error:(NSError **)error;
+- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 - (void)saveMappingsToDisk;
 #endif
 
