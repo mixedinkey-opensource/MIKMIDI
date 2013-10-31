@@ -53,6 +53,10 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 // Properties
 
 @property (nonatomic, strong) MIKMIDIDevice *device;
-@property (nonatomic, strong) MIKMIDIMapping *mapping; // Assign before mapping starts to modify existing mapping
+
+/**
+ *  The mapping being generated. Assign before mapping starts to modify existing mapping.
+ */
+@property (nonatomic, strong) MIKMIDIMapping *mapping;
 
 @end
