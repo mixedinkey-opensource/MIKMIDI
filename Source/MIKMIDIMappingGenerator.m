@@ -381,7 +381,11 @@ FINALIZE_RESULT_AND_RETURN:
 	}
 	
 	NSArray *sources = [self.device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	if (![sources count]) return NO;
+	if (![sources count]) {
+		NSString *description = NSLocalizedString(@"MIDI Device has no sources", @"MIDI Device has no sources");
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceHasNoSourcesErrorCode userInfo:@{NSLocalizedDescriptionKey: description}];
+		return NO;
+	}
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
 	
 	MIKMIDIDeviceManager *manager = [MIKMIDIDeviceManager sharedDeviceManager];

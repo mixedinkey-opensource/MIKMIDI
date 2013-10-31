@@ -13,6 +13,7 @@ static NSString * const MIKMIDIErrorDomain;
 typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	MIKMIDIUnknownErrorCode = 1,
 	MIKMIDIDeviceConnectionLostErrorCode,
+	MIKMIDIDeviceHasNoSourcesErrorCode,
 	
 	MIKMIDIMappingFailedErrorCode,
 	
