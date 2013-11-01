@@ -99,7 +99,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	}
 	if (![fm copyItemAtURL:URL toURL:destinationURL error:error]) return nil;
 	
-	[self addMappingsObject:mapping];
+	[self addUserMappingsObject:mapping];
 	return mapping;
 }
 
@@ -227,7 +227,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (NSSet *)mappings { return [self.bundledMappings setByAddingObjectsFromSet:self.userMappings]; }
 
-- (void)addMappingsObject:(MIKMIDIMapping *)mapping
+- (void)addUserMappingsObject:(MIKMIDIMapping *)mapping
 {
 	MIKMIDIMapping *existing = [self mappingWithName:mapping.name];
 	if (existing) [self.internalUserMappings removeObject:existing];
@@ -236,9 +236,11 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	[self saveMappingsToDisk];
 }
 
-- (void)removeMappingsObject:(MIKMIDIMapping *)mapping
+- (void)removeUserMappingsObject:(MIKMIDIMapping *)mapping
 {
 	[self.internalUserMappings removeObject:mapping];
+	
+	if ([self.bundledMappings containsObject:mapping]) return;
 	
 	// Remove XML file for mapping from disk
 	NSURL *mappingURL = [self fileURLForMapping:mapping shouldBeUnique:NO];

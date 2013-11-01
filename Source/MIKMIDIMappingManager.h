@@ -28,6 +28,8 @@
 
 @property (nonatomic, strong, readonly) NSSet *bundledMappings;
 @property (nonatomic, strong, readonly) NSSet *userMappings;
+- (void)addUserMappingsObject:(MIKMIDIMapping *)mapping;
+- (void)removeUserMappingsObject:(MIKMIDIMapping *)mapping; // Deletes mapping from disk
 
 /**
  *  All mappings, including both user and bundled mappings.
@@ -36,7 +38,5 @@
  *
  */
 @property (nonatomic, strong, readonly) NSSet *mappings;
-- (void)addMappingsObject:(MIKMIDIMapping *)mapping;
-- (void)removeMappingsObject:(MIKMIDIMapping *)mapping; // Deletes mapping from disk
 
 @end
