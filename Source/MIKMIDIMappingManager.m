@@ -106,7 +106,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (void)saveMappingsToDisk
 {
 #if !TARGET_OS_IPHONE
-	for (MIKMIDIMapping *mapping in self.mappings) {
+	for (MIKMIDIMapping *mapping in self.userMappings) {
 		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
 		if (!fileURL) {
 			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
