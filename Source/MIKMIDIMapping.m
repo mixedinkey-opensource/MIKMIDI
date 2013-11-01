@@ -104,6 +104,7 @@
 
 - (BOOL)isEqual:(MIKMIDIMapping *)otherMapping
 {
+	if (self == otherMapping) return YES;
 	if (![self.name isEqualToString:otherMapping.name]) return NO;
 	if (![self.controllerName isEqualToString:otherMapping.controllerName]) return NO;
 	
@@ -349,14 +350,16 @@
 
 - (BOOL)isEqual:(MIKMIDIMappingItem *)otherMappingItem
 {
-	if (self.interactionType != otherMappingItem.interactionType) return NO;
-	if (self.flipped != otherMappingItem.flipped) return NO;
+	if (self == otherMappingItem) return YES;
+	
+	if (self.controlNumber != otherMappingItem.controlNumber) return NO;
 	if (self.channel != otherMappingItem.channel) return NO;
 	if (self.commandType != otherMappingItem.commandType) return NO;
-	if (self.controlNumber != otherMappingItem.controlNumber) return NO;
+	if (self.interactionType != otherMappingItem.interactionType) return NO;
+	if (self.flipped != otherMappingItem.flipped) return NO;
 	if (![self.MIDIResponderIdentifier isEqualToString:otherMappingItem.MIDIResponderIdentifier]) return NO;
 	if (![self.commandIdentifier isEqualToString:otherMappingItem.commandIdentifier]) return NO;
-	if (![self.additionalAttributes isEqual:otherMappingItem.additionalAttributes]) return NO;
+	if (![self.additionalAttributes isEqualToDictionary:otherMappingItem.additionalAttributes]) return NO;
 	
 	return YES;
 }
