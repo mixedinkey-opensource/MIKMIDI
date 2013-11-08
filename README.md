@@ -1,6 +1,6 @@
 MIKMIDI
 =============
-MIKMIDI is an easy-to-use Objective-C MIDI library by [Mixed In Key](http://www.mixedinkey.com/). It's a Cocoa-like set of Objective-C classes useful for programmers writing Objective-C OS X or iOS apps that communicate with external MIDI devices, including DJ controllers, keyboards, etc. MIKMIDI is still under heavy development, and more features will be added in the coming days and weeks.
+MIKMIDI is an easy-to-use Objective-C MIDI library by [Mixed In Key](http://www.mixedinkey.com/). It's a Cocoa-like set of Objective-C classes useful for programmers writing Objective-C OS X or iOS apps that communicate with external MIDI devices, including DJ controllers, keyboards, etc. MIKMIDI is still under heavy development, but it is being used in a production OS X app.
 
 MIKMIDI can be used in projects targeting Mac OS X 10.7 and later, and iOS 6 and later.
     
