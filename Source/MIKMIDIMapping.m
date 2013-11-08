@@ -137,16 +137,16 @@
 	return matches;
 }
 
-- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
 {
 	NSPredicate *commandPredicate = [NSPredicate predicateWithFormat:@"commandIdentifier LIKE %@", identifier];
 	NSPredicate *responderPredicate = [NSPredicate predicateWithFormat:@"MIDIResponderIdentifier LIKE %@", [responder MIDIIdentifier]];
 	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[commandPredicate, responderPredicate]];
 	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
-	return [matches anyObject];
+	return matches;
 }
 
-- (MIKMIDIMappingItem *)mappingItemForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
+- (NSSet *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 {
 	NSUInteger controlNumber = MIKMIDIMappingControlNumberFromCommand(command);
 	UInt8 channel = command.channel;
@@ -157,7 +157,7 @@
 	NSPredicate *commandTypePredicate = [NSPredicate predicateWithFormat:@"commandType == %@", @(commandType)];
 	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[controlNumberPredicate, channelPredicate, commandTypePredicate]];
 	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
-	return [matches anyObject];
+	return matches;
 }
 
 #pragma mark - Private
@@ -222,9 +222,19 @@
 	[self.internalMappingItems addObject:mappingItem];
 }
 
+- (void)addMappingItems:(NSSet *)mappingItems
+{
+	[self.internalMappingItems unionSet:mappingItems];
+}
+
 - (void)removeMappingItemsObject:(MIKMIDIMappingItem *)mappingItem
 {
 	[self.internalMappingItems removeObject:mappingItem];
+}
+
+- (void)removeMappingItems:(NSSet *)mappingItems
+{
+	[self.internalMappingItems minusSet:mappingItems];
 }
 
 - (NSString *)name
@@ -239,71 +249,90 @@
 
 @implementation MIKMIDIMappingItem
 
+- (instancetype)initWithMIDIResponderIdentifier:(NSString *)MIDIResponderIdentifier andCommandIdentifier:(NSString *)commandIdentifier;
+{
+	self = [super init];
+	
+	if (self) {
+		_MIDIResponderIdentifier = [MIDIResponderIdentifier copy];
+		_commandIdentifier = [commandIdentifier copy];
+	}
+	
+	return self;
+}
+
+- (id)init
+{
+	[NSException raise:NSInternalInconsistencyException format:@"-[MIKMIDIMappingItem init] is deprecated and should be replaced with a call to -initWithMIDIResponderIdentifier:andCommandIdentifier:."];
+    return [self initWithMIDIResponderIdentifier:@"Unknown" andCommandIdentifier:@"Unknown"];
+}
+
 #if !TARGET_OS_IPHONE
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;
 {
-	self = [self init];
+	if (!element) { self = nil; return self; }
+	
+	NSError *error = nil;
+	
+	NSXMLElement *responderIdentifier = [[element nodesForXPath:@"ResponderIdentifier" error:&error] lastObject];
+	if (!responderIdentifier) {
+		NSLog(@"Unable to read responder identifier from %@: %@", element, error);
+		self = nil;
+		return nil;
+	}
+	
+	NSXMLElement *commandIdentifier = [[element nodesForXPath:@"CommandIdentifier" error:&error] lastObject];
+	if (!commandIdentifier) {
+		NSLog(@"Unable to read command identifier from %@: %@", element, error);
+		self = nil;
+		return nil;
+	}
+	
+	NSXMLElement *channel = [[element nodesForXPath:@"Channel" error:&error] lastObject];
+	if (!channel) {
+		NSLog(@"Unable to read channel from %@: %@", element, error);
+		self = nil;
+		return nil;
+	}
+	
+	NSXMLElement *commandType = [[element nodesForXPath:@"CommandType" error:&error] lastObject];
+	if (!commandType) {
+		NSLog(@"Unable to read command type from %@: %@", element, error);
+	}
+	
+	NSXMLElement *controlNumber = [[element nodesForXPath:@"ControlNumber" error:&error] lastObject];
+	if (!controlNumber) {
+		NSLog(@"Unable to read control number from %@: %@", element, error);
+		self = nil;
+		return nil;
+	}
+	
+	NSXMLElement *interactionType = [[element nodesForXPath:@"@InteractionType" error:&error] lastObject];
+	if (!interactionType) {
+		NSLog(@"Unable to read interaction type from %@: %@", element, error);
+		self = nil;
+		return nil;
+	}
+	
+	NSXMLElement *flippedStatus = [[element nodesForXPath:@"@Flipped" error:&error] lastObject];
+	
+	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+	for (NSXMLNode *attribute in [element attributes]) {
+		if (![[attribute stringValue] length]) continue;
+		if ([[attribute name] isEqualToString:@"InteractionType"]) continue;
+		if ([[attribute name] isEqualToString:@"Flipped"]) continue;
+		[attributes setObject:[attribute stringValue] forKey:[attribute name]];
+	}
+	
+	self = [self initWithMIDIResponderIdentifier:[responderIdentifier stringValue] andCommandIdentifier:[commandIdentifier stringValue]];
 	if (self) {
-		NSError *error = nil;
+		_channel = [[channel stringValue] integerValue];
+		_commandType = [[commandType stringValue] integerValue];
+		_controlNumber = [[controlNumber stringValue] integerValue];
+		_interactionType = [self interactionTypeForString:[interactionType stringValue]];
+		_flipped = [[flippedStatus stringValue] boolValue];
 		
-		NSXMLElement *responderIdentifier = [[element nodesForXPath:@"ResponderIdentifier" error:&error] lastObject];
-		if (!responderIdentifier) {
-			NSLog(@"Unable to read responder identifier from %@: %@", element, error);
-			self = nil;
-			return nil;
-		}
-		
-		NSXMLElement *commandIdentifier = [[element nodesForXPath:@"CommandIdentifier" error:&error] lastObject];
-		if (!commandIdentifier) {
-			NSLog(@"Unable to read command identifier from %@: %@", element, error);
-			self = nil;
-			return nil;
-		}
-		
-		NSXMLElement *channel = [[element nodesForXPath:@"Channel" error:&error] lastObject];
-		if (!channel) {
-			NSLog(@"Unable to read channel from %@: %@", element, error);
-			self = nil;
-			return nil;
-		}
-		
-		NSXMLElement *commandType = [[element nodesForXPath:@"CommandType" error:&error] lastObject];
-		if (!commandType) {
-			NSLog(@"Unable to read command type from %@: %@", element, error);
-		}
-		
-		NSXMLElement *controlNumber = [[element nodesForXPath:@"ControlNumber" error:&error] lastObject];
-		if (!controlNumber) {
-			NSLog(@"Unable to read control number from %@: %@", element, error);
-			self = nil;
-			return nil;
-		}
-				
-		NSXMLElement *interactionType = [[element nodesForXPath:@"@InteractionType" error:&error] lastObject];
-		if (!interactionType) {
-			NSLog(@"Unable to read interaction type from %@: %@", element, error);
-			self = nil;
-			return nil;
-		}
-		
-		NSXMLElement *flippedStatus = [[element nodesForXPath:@"@Flipped" error:&error] lastObject];
-		
-		self.MIDIResponderIdentifier = [responderIdentifier stringValue];
-		self.commandIdentifier = [commandIdentifier stringValue];
-		self.channel = [[channel stringValue] integerValue];
-		self.commandType = [[commandType stringValue] integerValue];
-		self.controlNumber = [[controlNumber stringValue] integerValue];
-		self.interactionType = [self interactionTypeForString:[interactionType stringValue]];
-		self.flipped = [[flippedStatus stringValue] boolValue];
-		
-		NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-		for (NSXMLNode *attribute in [element attributes]) {
-			if (![[attribute stringValue] length]) continue;
-			if ([[attribute name] isEqualToString:@"InteractionType"]) continue;
-			if ([[attribute name] isEqualToString:@"Flipped"]) continue;
-			[attributes setObject:[attribute stringValue] forKey:[attribute name]];
-		}
-		self.additionalAttributes = attributes;
+		_additionalAttributes = [attributes copy];
 	}
 	return self;
 }
@@ -366,14 +395,9 @@
 
 - (NSUInteger)hash
 {
-	NSUInteger result = self.interactionType;
-	result += self.isFlipped;
-	result += self.channel;
-	result += self.commandType;
-	result += self.controlNumber;
-	result += [self.MIDIResponderIdentifier hash];
-	result += [self.commandIdentifier hash];
-	result += [self.additionalAttributes hash];
+	// Only depend on non-mutable properties
+	NSUInteger result = [_MIDIResponderIdentifier hash];
+	result += [_commandIdentifier hash];
 	
 	return result;
 }

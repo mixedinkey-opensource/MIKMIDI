@@ -27,18 +27,22 @@
 #endif
 
 - (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
-- (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
-- (MIKMIDIMappingItem *)mappingItemForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
+- (NSSet *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *controllerName;
 @property (nonatomic, readonly) NSSet *mappingItems;
 - (void)addMappingItemsObject:(MIKMIDIMappingItem *)mappingItem;
+- (void)addMappingItems:(NSSet *)mappingItems;
 - (void)removeMappingItemsObject:(MIKMIDIMappingItem *)mappingItem;
+- (void)removeMappingItems:(NSSet *)mappingItems;
 
 @end
 
 @interface MIKMIDIMappingItem : NSObject
+
+- (instancetype)initWithMIDIResponderIdentifier:(NSString *)MIDIResponderIdentifier andCommandIdentifier:(NSString *)commandIdentifier;
 
 #if !TARGET_OS_IPHONE
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;
@@ -47,10 +51,10 @@
 
 // Properties
 
+@property (nonatomic, readonly) NSString *MIDIResponderIdentifier;
+@property (nonatomic, readonly) NSString *commandIdentifier;
 @property (nonatomic) MIKMIDIResponderType interactionType;
 @property (nonatomic, getter = isFlipped) BOOL flipped; // If yes, value decreases as slider/knob goes left->right or top->bottom
-@property (nonatomic, copy) NSString *MIDIResponderIdentifier;
-@property (nonatomic, copy) NSString *commandIdentifier;
 @property (nonatomic) NSInteger channel;
 @property (nonatomic) MIKMIDICommandType commandType;
 @property (nonatomic) NSUInteger controlNumber;

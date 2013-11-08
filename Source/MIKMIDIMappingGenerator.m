@@ -18,7 +18,7 @@
 @property (nonatomic) MIKMIDIResponderType responderTypeOfControlBeingLearned;
 @property (nonatomic, strong) MIKMIDIMappingGeneratorMappingCompletionBlock currentMappingCompletionBlock;
 
-@property (nonatomic, strong) MIKMIDIMappingItem *existingMappingItem;
+@property (nonatomic, strong) NSSet *existingMappingItems;
 
 @property (nonatomic) NSTimeInterval timeoutInteveral;
 @property (nonatomic, strong) NSTimer *messagesTimeoutTimer;
@@ -89,9 +89,16 @@
 			 orTimeoutInterval:(NSTimeInterval)timeout
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
-	// Remove an existing mapping item if there is one for this control
-	self.existingMappingItem = [self.mapping mappingItemForCommandIdentifier:commandID responder:control];
-	if (self.existingMappingItem) [self.mapping removeMappingItemsObject:self.existingMappingItem];
+	self.existingMappingItems = [self.mapping mappingItemsForCommandIdentifier:commandID responder:control];
+	// Determine if existing mapping items for this control should be removed.
+	BOOL shouldRemoveExisting = YES;
+	if ([self.existingMappingItems count] &&
+		[self.delegate respondsToSelector:@selector(mappingGenerator:shouldRemoveExistingMappingItems:forResponderBeingMapped:)]) {
+		shouldRemoveExisting = [self.delegate mappingGenerator:self
+							  shouldRemoveExistingMappingItems:self.existingMappingItems
+									   forResponderBeingMapped:self.controlBeingLearned];
+	}
+	if (shouldRemoveExisting && [self.existingMappingItems count]) [self.mapping removeMappingItems:self.existingMappingItems];
 	
 	MIKMIDIResponderType controlResponderType = MIKMIDIResponderTypeAll;
 	if ([control respondsToSelector:@selector(MIDIResponderTypeForCommandIdentifier:)]) {
@@ -110,15 +117,16 @@
 	self.responderTypeOfControlBeingLearned = controlResponderType;
 	self.numMessagesRequired = numMessages ? numMessages : [self defaultMinimumNumberOfMessagesRequiredForResponderType:controlResponderType];
 	self.timeoutInteveral = timeout ? timeout : 0.6;
+	self.messagesTimeoutTimer = nil;
 }
 
 - (void)cancelCurrentCommandLearning;
 {
 	if (!self.commandIdentifierBeingLearned) return;
 	
-	if (self.existingMappingItem) [self.mapping addMappingItemsObject:self.existingMappingItem];
+	if ([self.existingMappingItems count]) [self.mapping addMappingItems:self.existingMappingItems];
 	
-	NSDictionary *userInfo = self.existingMappingItem ? @{@"PreviouslyExistingMapping" : self.existingMappingItem} : nil;
+	NSDictionary *userInfo = [self.existingMappingItems count] ? @{@"PreviouslyExistingMappings" : self.existingMappingItems} : nil;
 	NSError *error = [NSError MIKMIDIErrorWithCode:NSUserCancelledError userInfo:userInfo];
 	[self finishMappingItem:nil error:error];
 }
@@ -127,14 +135,31 @@
 
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
 {
-	MIKMIDIMappingItem *existingMappingItem = [self.mapping mappingItemForMIDICommand:command];
-	BOOL isForControlBeingMapped = ([existingMappingItem.MIDIResponderIdentifier isEqualToString:[self.controlBeingLearned MIDIIdentifier]] &&
-									[existingMappingItem.commandIdentifier isEqualToString:self.commandIdentifierBeingLearned]);
-	if (isForControlBeingMapped) {
-		[self.mapping removeMappingItemsObject:existingMappingItem];
-		existingMappingItem = nil;
+	NSSet *existingMappingItemsForOtherControls = [self existingMappingItemsForRespondersOtherThanCurrentForCommand:command];
+	
+	if ([existingMappingItemsForOtherControls count]) {
+		MIKMIDIMappingGeneratorRemapBehavior behavior = MIKMIDIMappingGeneratorRemapDefault;
+		if ([self.delegate respondsToSelector:@selector(mappingGenerator:behaviorForRemappingCommandMappedToResponders:toNewResponder:)]) {
+			NSArray *otherResponders = [existingMappingItemsForOtherControls valueForKeyPath:@"MIDIResponderIdentifier"];
+			behavior = [self.delegate mappingGenerator:self
+		 behaviorForRemappingCommandMappedToResponders:[NSSet setWithArray:otherResponders]
+										toNewResponder:self.controlBeingLearned];
+		}
+		
+		switch (behavior) {
+			default:
+			case MIKMIDIMappingGeneratorRemapDisallow:
+				return; // Ignore this command
+				break;
+			case MIKMIDIMappingGeneratorRemapAllowDuplicate:
+				// Do nothing special
+				break;
+			case MIKMIDIMappingGeneratorRemapReplace:
+				// Remove the existing mapping items.
+				[self.mapping removeMappingItems:existingMappingItemsForOtherControls];
+				break;
+		}
 	}
-	if (existingMappingItem) return; // This commmand is already mapped so ignore it
 	
 	if ([self.receivedMessages count]) {
 		// If we get a message from a different controller number, channel,
@@ -174,20 +199,20 @@
 
 #pragma mark Messages to Mapping Item
 
-- (MIKMIDIMappingItem *)buttonMappingItemFromMessages:(NSArray *)messages
+- (BOOL)fillInButtonMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
-	if (![messages count]) return nil;
-	if ([messages count] > 2) return nil;
+	if (![messages count]) return NO;
+	if ([messages count] > 2) return NO;
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
-	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	MIKMIDIMappingItem *result = *mappingItem;
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	
 	// Tap type button
 	if ([messages count] == 1) {
-		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < self.timeoutInteveral) return nil; // Need to keep waiting for another message
+		if ([[NSDate date] timeIntervalSinceDate:firstMessage.timestamp] < self.timeoutInteveral) return NO; // Need to keep waiting for another message
 		
 		result.interactionType = MIKMIDIResponderTypePressButton;
 	}
@@ -201,60 +226,60 @@
 		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIResponderTypePressReleaseButton : MIKMIDIResponderTypePressButton;
 	}
 	
-	return result;
+	return YES;
 }
 
-- (MIKMIDIMappingItem *)relativeKnobMappingItemFromMessages:(NSArray *)messages
+- (BOOL)fillInRelativeKnobMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
-	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeRelativeKnob]) return nil;
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeRelativeKnob]) return NO;
 	
 	// Disallow non-control change messages
-	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
+	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return NO; }
 	
 	NSMutableSet *messageValues = [NSMutableSet set];
 	for (MIKMIDIChannelVoiceCommand *message in messages) {
 		[messageValues addObject:@(MIKMIDIMappingControlValueFromCommand(message))];
 	}
 	// If there are more than 2 message values, it's more likely an absolute knob.
-	if ([messages count] == [messageValues count] || [messageValues count] > 2) return nil;
+	if ([messages count] == [messageValues count] || [messageValues count] > 2) return NO;
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
-	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeRelativeKnob;
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
-	return result;
+	return YES;
 }
 
-- (MIKMIDIMappingItem *)turntableKnobMappingItemFromMessages:(NSArray *)messages
+- (BOOL)fillInTurntableKnobMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
 	// Filter non-control change messages
 	NSPredicate *controlChangePredicate = [NSPredicate predicateWithFormat:@"commandType == %@", @(MIKMIDICommandTypeControlChange)];
 	messages = [messages filteredArrayUsingPredicate:controlChangePredicate];
 	
-	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) return nil;
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) return NO;
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
-	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeTurntableKnob;
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
 	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
-	return result;
+	return YES;
 }
 
-- (MIKMIDIMappingItem *)absoluteKnobSliderMappingItemFromMessages:(NSArray *)messages
+- (BOOL)fillInAbsoluteKnobSliderMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
-	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeAbsoluteSliderOrKnob]) return nil;
+	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeAbsoluteSliderOrKnob]) return NO;
 	
 	// Disallow non-control change messages
-	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return nil; }
+	for (MIKMIDIChannelVoiceCommand *message in messages) { if (message.commandType != MIKMIDICommandTypeControlChange) return NO; }
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
-	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] init];
+	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob;
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
@@ -269,7 +294,7 @@
 	}
 	result.flipped = (directionCounter < 0);
 	
-	return result;
+	return YES;
 }
 
 - (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)commandID inControl:(id<MIKMIDIMappableResponder>)responder fromReceivedMessages:(NSArray *)messages
@@ -292,30 +317,29 @@
 	
 	MIKMIDIResponderType responderType = [responder MIDIResponderTypeForCommandIdentifier:commandID];
 	
-	MIKMIDIMappingItem *result = nil;
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] initWithMIDIResponderIdentifier:[responder MIDIIdentifier] andCommandIdentifier:commandID];
 	
-	if (responderType & MIKMIDIResponderTypeButton) {
-		result = [self buttonMappingItemFromMessages:messages];
+	if (responderType & MIKMIDIResponderTypeButton &&
+		[self fillInButtonMappingItem:&result fromMessages:messages]) {
+		goto FINALIZE_RESULT_AND_RETURN;
 	}
-	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
-	if (responderType & MIKMIDIResponderTypeTurntableKnob) {
-		result = [self turntableKnobMappingItemFromMessages:messages];
+	if (responderType & MIKMIDIResponderTypeTurntableKnob &&
+		[self fillInTurntableKnobMappingItem:&result fromMessages:messages]) {
+		goto FINALIZE_RESULT_AND_RETURN;
 	}
-	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
-	if (responderType & MIKMIDIResponderTypeRelativeKnob) {
-		result = [self relativeKnobMappingItemFromMessages:messages];
+	if (responderType & MIKMIDIResponderTypeRelativeKnob &&
+		[self fillInRelativeKnobMappingItem:&result fromMessages:messages]) {
+		goto FINALIZE_RESULT_AND_RETURN;
 	}
-	if (result) goto FINALIZE_RESULT_AND_RETURN;
 	
-	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) {
-		result = [self absoluteKnobSliderMappingItemFromMessages:messages];
+	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob &&
+		[self fillInAbsoluteKnobSliderMappingItem:&result fromMessages:messages]) {
+		goto FINALIZE_RESULT_AND_RETURN;
 	}
 	
 FINALIZE_RESULT_AND_RETURN:
-	result.MIDIResponderIdentifier = [responder MIDIIdentifier];
-	result.commandIdentifier = commandID;
 	result.commandType = [messages[0] commandType];
 	
 	return result;
@@ -368,6 +392,19 @@ FINALIZE_RESULT_AND_RETURN:
 	if (isDifferentCommandType) return NO;
 	
 	return YES;
+}
+
+- (NSSet *)existingMappingItemsForRespondersOtherThanCurrentForCommand:(MIKMIDIChannelVoiceCommand *)command
+{
+	if (!command) return [NSMutableSet set];
+	
+	NSSet *existingMappingItems = [self.mapping mappingItemsForMIDICommand:command];
+	NSMutableSet *result = [existingMappingItems mutableCopy];
+	if ([self.commandIdentifierBeingLearned length] && self.controlBeingLearned) {
+		NSSet *existingForCurrentResponder = [self.mapping mappingItemsForCommandIdentifier:self.commandIdentifierBeingLearned responder:self.controlBeingLearned];
+		[result minusSet:existingForCurrentResponder];
+	}
+	return result;
 }
 
 #pragma mark Device Connection/Disconnection
