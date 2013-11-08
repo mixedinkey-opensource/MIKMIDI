@@ -139,11 +139,11 @@
 	
 	if ([existingMappingItemsForOtherControls count]) {
 		MIKMIDIMappingGeneratorRemapBehavior behavior = MIKMIDIMappingGeneratorRemapDefault;
-		if ([self.delegate respondsToSelector:@selector(mappingGenerator:behaviorForRemappingCommandMappedToResponders:toNewResponder:)]) {
-			NSArray *otherResponders = [existingMappingItemsForOtherControls valueForKeyPath:@"MIDIResponderIdentifier"];
+		if ([self.delegate respondsToSelector:@selector(mappingGenerator:behaviorForRemappingControlMappedWithItems:toNewResponder:commandIdentifier:)]) {
 			behavior = [self.delegate mappingGenerator:self
-		 behaviorForRemappingCommandMappedToResponders:[NSSet setWithArray:otherResponders]
-										toNewResponder:self.controlBeingLearned];
+			behaviorForRemappingControlMappedWithItems:existingMappingItemsForOtherControls
+										toNewResponder:self.controlBeingLearned
+									 commandIdentifier:self.commandIdentifierBeingLearned];
 		}
 		
 		switch (behavior) {

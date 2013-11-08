@@ -114,25 +114,27 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  *  Used to determine behavior when attempting to map a physical control that has been previously mapped to a new responder.
  *
  *  When MIKMIDIMappingGenerator receives mappable messages from a physical control and finds that that control has already
- *  been mapped to one or more other virtual controls (responders), it will call this method to ask what to do. One of the options
- *  specified in MIKMIDIMappingGeneratorRemapBehavior should be returned.
+ *  been mapped to one or more other virtual controls (responder/command combinations), it will call this method to ask what
+ *  to do. One of the options specified in MIKMIDIMappingGeneratorRemapBehavior should be returned.
  *
  *  To use the default behavior, (currently MIKMIDIMappingGeneratorRemapDisallow) return MIKMIDIMappingGeneratorRemapDefault. If the
  *  delegate does not respond to this method, the default behavior is used.
  *
- *  @param generator    The mapping generator performing the mapping.
- *  @param responders   The responder identifiers for responders previously mapped to the physical control in question.
- *  @param newResponder The responder for which a mapping is currently being generated.
+ *  @param generator         The mapping generator performing the mapping.
+ *  @param mappingItems      The mapping items for commands previously mapped to the physical control in question.
+ *  @param newResponder      The responder for which a mapping is currently being generated.
+ *  @param commandIdentifier The command identifier of newResponder that is being mapped.
  *
  *  @return The behavior to use when mapping the newResponder. See MIKMIDIMappingGeneratorRemapBehavior for a list of possible values.
  */
 - (MIKMIDIMappingGeneratorRemapBehavior)mappingGenerator:(MIKMIDIMappingGenerator *)generator
-			 behaviorForRemappingCommandMappedToResponders:(NSSet *)responders
-											toNewResponder:(id<MIKMIDIMappableResponder>)newResponder;
+			  behaviorForRemappingControlMappedWithItems:(NSSet *)mappingItems
+										  toNewResponder:(id<MIKMIDIMappableResponder>)newResponder
+									   commandIdentifier:(NSString *)commandIdentifier;
 
 /**
  *  Used to determine whether the existing mapping item for a responder should be superceeded by a new mapping item.
- *  
+ *
  *  The default behavior is to remove existing mapping items (return value of YES). If the delegate does not respond to
  *  this method, the default behavior is used.
  *
@@ -144,6 +146,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  */
 - (BOOL)mappingGenerator:(MIKMIDIMappingGenerator *)generator
 shouldRemoveExistingMappingItems:(NSSet *)mappingItems
-   forResponderBeingMapped:(id<MIKMIDIMappableResponder>)responder;
+ forResponderBeingMapped:(id<MIKMIDIMappableResponder>)responder;
 
 @end
