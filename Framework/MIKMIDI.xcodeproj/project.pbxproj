@@ -62,6 +62,10 @@
 		9D74EF9317A713A100BEE89F /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */; };
 		9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9517A713A100BEE89F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */; };
+		9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DF99E7A1831841A004EE5F4 /* MIKMIDICommandThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */; };
+		9DF99E7D18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */; };
+		9DF99E7E18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */; };
 		9DFDC2B81820305C00C4C66D /* MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */; };
 /* End PBXBuildFile section */
 
@@ -127,6 +131,10 @@
 		9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUIApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUIApplication+MIKMIDI.m"; sourceTree = "<group>"; };
 		9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand_SubclassMethods.h; sourceTree = "<group>"; };
+		9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDICommandThrottler.h; sourceTree = "<group>"; };
+		9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDICommandThrottler.m; sourceTree = "<group>"; };
+		9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivateUtilities.h; sourceTree = "<group>"; };
+		9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPrivateUtilities.m; sourceTree = "<group>"; };
 		9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -221,6 +229,7 @@
 				9DF99E731831837C004EE5F4 /* Core */,
 				9DF99E75183183AF004EE5F4 /* Commands */,
 				9DF99E7418318395004EE5F4 /* Mapping */,
+				9DF99E76183183F6004EE5F4 /* Utilities */,
 			);
 			name = Source;
 			path = ../Source;
@@ -294,6 +303,17 @@
 			name = Commands;
 			sourceTree = "<group>";
 		};
+		9DF99E76183183F6004EE5F4 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */,
+				9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */,
+				9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */,
+				9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -311,6 +331,7 @@
 				9D74EF6D17A713A100BEE89F /* MIKMIDIDevice.h in Headers */,
 				9D74EF6F17A713A100BEE89F /* MIKMIDIDeviceManager.h in Headers */,
 				9D74EF7117A713A100BEE89F /* MIKMIDIEndpoint.h in Headers */,
+				9DF99E7D18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h in Headers */,
 				9D74EF7317A713A100BEE89F /* MIKMIDIEntity.h in Headers */,
 				9D74EF7517A713A100BEE89F /* MIKMIDIErrors.h in Headers */,
 				9D74EF7717A713A100BEE89F /* MIKMIDIInputPort.h in Headers */,
@@ -328,6 +349,7 @@
 				9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */,
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
 				9D74EF8E17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h in Headers */,
+				9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */,
 				9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */,
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
@@ -412,6 +434,8 @@
 				9D74EF7E17A713A100BEE89F /* MIKMIDIMappingManager.m in Sources */,
 				9D74EF8017A713A100BEE89F /* MIKMIDINoteOffCommand.m in Sources */,
 				9D74EF8217A713A100BEE89F /* MIKMIDINoteOnCommand.m in Sources */,
+				9DF99E7A1831841A004EE5F4 /* MIKMIDICommandThrottler.m in Sources */,
+				9DF99E7E18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m in Sources */,
 				9D74EF8417A713A100BEE89F /* MIKMIDIObject.m in Sources */,
 				9D74EF8717A713A100BEE89F /* MIKMIDIOutputPort.m in Sources */,
 				9D74EF8917A713A100BEE89F /* MIKMIDIPort.m in Sources */,

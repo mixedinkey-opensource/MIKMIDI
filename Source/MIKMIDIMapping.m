@@ -12,6 +12,7 @@
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
+#import "MIKMIDIPrivateUtilities.h"
 
 @interface MIKMIDIMapping ()
 
@@ -148,7 +149,7 @@
 
 - (NSSet *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 {
-	NSUInteger controlNumber = MIKMIDIMappingControlNumberFromCommand(command);
+	NSUInteger controlNumber = MIKMIDIControlNumberFromCommand(command);
 	UInt8 channel = command.channel;
 	MIKMIDICommandType commandType = command.commandType;
 	
@@ -441,18 +442,3 @@
 #pragma mark - Properties
 
 @end
-
-NSUInteger MIKMIDIMappingControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command)
-{
-	if ([command respondsToSelector:@selector(controllerNumber)]) return [(id)command controllerNumber];
-	if ([command respondsToSelector:@selector(note)]) return [(MIKMIDINoteOnCommand *)command note];
-	
-	return (command.dataByte1 & 0x7F);
-}
-
-float MIKMIDIMappingControlValueFromCommand(MIKMIDIChannelVoiceCommand *command)
-{
-	if ([command respondsToSelector:@selector(fourteenBitValue)]) return (float)[(MIKMIDIControlChangeCommand *)command fourteenBitValue] / 127.0f;
-	
-	return (float)command.value;
-}

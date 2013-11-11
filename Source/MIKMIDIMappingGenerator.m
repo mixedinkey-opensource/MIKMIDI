@@ -10,6 +10,7 @@
 
 #import <MIKMIDI/MIKMIDI.h>
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIPrivateUtilities.h"
 
 @interface MIKMIDIMappingGenerator ()
 
@@ -208,7 +209,7 @@
 	
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.channel = firstMessage.channel;
-	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.controlNumber = MIKMIDIControlNumberFromCommand(firstMessage);
 	
 	// Tap type button
 	if ([messages count] == 1) {
@@ -220,8 +221,8 @@
 	// Key type button
 	if ([messages count] == 2) {
 		MIKMIDIChannelVoiceCommand *secondMessage = [messages objectAtIndex:1];
-		BOOL firstIsZero = MIKMIDIMappingControlValueFromCommand(firstMessage) == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
-		BOOL secondIsZero = MIKMIDIMappingControlValueFromCommand(secondMessage) == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
+		BOOL firstIsZero = MIKMIDIControlValueFromChannelVoiceCommand(firstMessage) == 0 || firstMessage.commandType == MIKMIDICommandTypeNoteOff;
+		BOOL secondIsZero = MIKMIDIControlValueFromChannelVoiceCommand(secondMessage) == 0 || secondMessage.commandType == MIKMIDICommandTypeNoteOff;
 		
 		result.interactionType = (!firstIsZero && secondIsZero) ? MIKMIDIResponderTypePressReleaseButton : MIKMIDIResponderTypePressButton;
 	}
@@ -238,7 +239,7 @@
 	
 	NSMutableSet *messageValues = [NSMutableSet set];
 	for (MIKMIDIChannelVoiceCommand *message in messages) {
-		[messageValues addObject:@(MIKMIDIMappingControlValueFromCommand(message))];
+		[messageValues addObject:@(MIKMIDIControlValueFromChannelVoiceCommand(message))];
 	}
 	// If there are more than 2 message values, it's more likely an absolute knob.
 	if ([messages count] == [messageValues count] || [messageValues count] > 2) return NO;
@@ -248,7 +249,7 @@
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeRelativeKnob;
 	result.channel = firstMessage.channel;
-	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.controlNumber = MIKMIDIControlNumberFromCommand(firstMessage);
 	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
 	return YES;
 }
@@ -266,7 +267,7 @@
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeTurntableKnob;
 	result.channel = firstMessage.channel;
-	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.controlNumber = MIKMIDIControlNumberFromCommand(firstMessage);
 	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
 	return YES;
 }
@@ -282,14 +283,14 @@
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob;
 	result.channel = firstMessage.channel;
-	result.controlNumber = MIKMIDIMappingControlNumberFromCommand(firstMessage);
+	result.controlNumber = MIKMIDIControlNumberFromCommand(firstMessage);
 	
 	// Figure out which direction it goes
 	NSInteger directionCounter = 0;
 	MIKMIDIChannelVoiceCommand *previousMessage = (MIKMIDIChannelVoiceCommand *)firstMessage;
 	for (MIKMIDIChannelVoiceCommand *message in messages) {
-		if (MIKMIDIMappingControlValueFromCommand(message) > MIKMIDIMappingControlValueFromCommand(previousMessage)) directionCounter++;
-		if (MIKMIDIMappingControlValueFromCommand(message) < MIKMIDIMappingControlValueFromCommand(previousMessage)) directionCounter--;
+		if (MIKMIDIControlValueFromChannelVoiceCommand(message) > MIKMIDIControlValueFromChannelVoiceCommand(previousMessage)) directionCounter++;
+		if (MIKMIDIControlValueFromChannelVoiceCommand(message) < MIKMIDIControlValueFromChannelVoiceCommand(previousMessage)) directionCounter--;
 		previousMessage = message;
 	}
 	result.flipped = (directionCounter < 0);
@@ -383,7 +384,7 @@ FINALIZE_RESULT_AND_RETURN:
 - (BOOL)command:(MIKMIDIChannelVoiceCommand *)command1 isSameTypeChannelNumberAsCommand:(MIKMIDIChannelVoiceCommand *)command2
 {
 	if (command1.channel != command2.channel) return NO;
-	if (MIKMIDIMappingControlNumberFromCommand(command1) != MIKMIDIMappingControlNumberFromCommand(command2)) return NO;
+	if (MIKMIDIControlNumberFromCommand(command1) != MIKMIDIControlNumberFromCommand(command2)) return NO;
 	
 	BOOL isDifferentCommandType = command1.commandType != command2.commandType;
 	BOOL areNoteCommands = (command1.commandType == MIKMIDICommandTypeNoteOn || command1.commandType == MIKMIDICommandTypeNoteOff) &&
