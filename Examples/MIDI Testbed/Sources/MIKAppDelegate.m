@@ -21,6 +21,23 @@
 {
 	self.midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
 	[self.midiDeviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
+	
+	NSLog(@"Virtual sources: %@", [self.midiDeviceManager virtualSources]);
+}
+
+- (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source
+{
+	if (!source) return;
+	[self.midiDeviceManager disconnectInput:source];
+}
+
+- (void)connectToSource:(MIKMIDISourceEndpoint *)source
+{
+	NSError *error = nil;
+	BOOL success = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+		for (MIKMIDIChannelVoiceCommand *command in commands) { [self handleMIDICommand:command]; }
+	}];
+	if (!success) NSLog(@"Unable to connect to input: %@", error);
 }
 
 - (void)disconnectFromDevice:(MIKMIDIDevice *)device
@@ -38,15 +55,13 @@
 	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	if (![sources count]) return;
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
-	NSError *error = nil;
-	BOOL success = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
-		NSMutableString *textFieldString = self.textView.textStorage.mutableString;
-		for (MIKMIDIChannelVoiceCommand *command in commands) {
-//			if ((command.commandType | 0x0F) == MIKMIDICommandTypeSystemMessage) continue;
-			[textFieldString appendFormat:@"Received: %@\n", command];
-		}
-	}];
-	if (!success) NSLog(@"Unable to connect to input: %@", error);
+	[self connectToSource:source];
+}
+
+- (void)handleMIDICommand:(MIKMIDICommand *)command
+{
+	NSMutableString *textFieldString = self.textView.textStorage.mutableString;
+	[textFieldString appendFormat:@"Received: %@\n", command];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -79,6 +94,15 @@
 		[self disconnectFromDevice:_device];
 		_device = device;
 		[self connectToDevice:_device];
+	}
+}
+
+- (void)setSource:(MIKMIDISourceEndpoint *)source
+{
+	if (source != _source) {
+		[self disconnectFromSource:_source];
+		_source = source;
+		[self connectToSource:_source];
 	}
 }
 

@@ -10,6 +10,7 @@
 
 @class MIKMIDIDeviceManager;
 @class MIKMIDIDevice;
+@class MIKMIDISourceEndpoint;
 
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
@@ -19,5 +20,6 @@
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
 @property (nonatomic, strong) MIKMIDIDevice *device;
+@property (nonatomic, strong) MIKMIDISourceEndpoint *source;
 
 @end
