@@ -120,6 +120,7 @@
 	
 	// Now we need to try to associate each source with its corresponding destination on the same device
 	NSMapTable *destinationToSourceMap = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
+	NSMapTable *deviceNamesBySource = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
 	NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
 	for (MIKMIDIEndpoint *source in devicelessSources) {
 		NSMutableArray *sourceNameComponents = [[source.name componentsSeparatedByCharactersInSet:whitespace] mutableCopy];
@@ -131,6 +132,9 @@
 			if ([sourceNameComponents isEqualToArray:destinationNameComponents]) {
 				// Source and destination match
 				[destinationToSourceMap setObject:destination forKey:source];
+
+				NSString *deviceName = [sourceNameComponents componentsJoinedByString:@" "];
+				[deviceNamesBySource setObject:deviceName forKey:source];
 				break;
 			}
 		}
@@ -142,6 +146,7 @@
 		[devicelessDestinations removeObject:destination];
 		
 		MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[source, destination]];
+		device.name = [deviceNamesBySource objectForKey:source];
 	 	if (device) [result addObject:device];
 	}
 	for (MIKMIDIEndpoint *endpoint in devicelessSources) {
