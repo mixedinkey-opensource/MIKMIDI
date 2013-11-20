@@ -165,9 +165,9 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 - (NSString *)displayName
 {
-	if (!_displayName) {
+	if (!_displayName && _objectRef != 0) {
 		NSError *error = nil;
-		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyDisplayName, &error);
+		NSString *value = MIKStringPropertyFromMIDIObject(_objectRef, kMIDIPropertyDisplayName, &error);
 		if (value) self.displayName = value;
 	}
 	
