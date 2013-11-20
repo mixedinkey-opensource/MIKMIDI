@@ -714,9 +714,9 @@
                             </menu>
                         </popUpButtonCell>
                         <connections>
-                            <binding destination="494" name="content" keyPath="midiDeviceManager.virtualSources" id="AVn-lJ-j40"/>
-                            <binding destination="494" name="contentValues" keyPath="midiDeviceManager.virtualSources.name" previousBinding="AVn-lJ-j40" id="WQt-s3-DFb"/>
-                            <binding destination="494" name="selectedObject" keyPath="source" previousBinding="WQt-s3-DFb" id="HYy-0Y-gVX"/>
+                            <binding destination="494" name="content" keyPath="availableDevices" id="EKS-yS-cjg"/>
+                            <binding destination="494" name="contentValues" keyPath="availableDevices.name" previousBinding="EKS-yS-cjg" id="7FF-5F-GGD"/>
+                            <binding destination="494" name="selectedObject" keyPath="source" previousBinding="7FF-5F-GGD" id="oMa-Bq-T3v"/>
                         </connections>
                     </popUpButton>
                 </subviews>

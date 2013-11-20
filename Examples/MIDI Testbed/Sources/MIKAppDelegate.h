@@ -18,7 +18,7 @@
 
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
-@property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
+@property (nonatomic, strong, readonly) NSArray *availableDevices;
 @property (nonatomic, strong) MIKMIDIDevice *device;
 @property (nonatomic, strong) MIKMIDISourceEndpoint *source;
 
