@@ -37,6 +37,6 @@
  *  @seealso -[MIKMIDIDeviceManager virtualSources]
  *  @seealso -[MIKMIDIDeviceManager virtualDestinations]
  */
-@property (nonatomic, readonly, getter=isVirtual) BOOL virtual;
+@property (nonatomic, readonly) BOOL isVirtual;
 
 @end
