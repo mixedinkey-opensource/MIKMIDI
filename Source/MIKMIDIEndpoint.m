@@ -24,11 +24,11 @@
 	ItemCount numSources = MIDIGetNumberOfSources();
 	for (ItemCount i=0; i<numSources; i++) {
 		MIDIEndpointRef sourceRef = MIDIGetSource(i);
-		MIKMIDISourceEndpoint *source = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:sourceRef];
+		MIKMIDIEndpoint *source = [MIKMIDIEndpoint MIDIObjectWithObjectRef:sourceRef];
 		if (!source) continue;
 		[sources addObject:source];
 	}
-	self.internalVirtualSources = sources;
+	return sources;
 }
 
 + (NSArray *)virtualDestinationEndpoints
@@ -37,11 +37,11 @@
 	ItemCount numDestinations = MIDIGetNumberOfDestinations();
 	for (ItemCount i=0; i<numDestinations; i++) {
 		MIDIEndpointRef destinationRef = MIDIGetDestination(i);
-		MIKMIDISourceEndpoint *destination = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:destinationRef];
+		MIKMIDIEndpoint *destination = [MIKMIDIEndpoint MIDIObjectWithObjectRef:destinationRef];
 		if (!destination) continue;
 		[destinations addObject:destination];
 	}
-	self.internalVirtualDestinations = destinations;
+	return destinations;
 }
 
 // Abstract. Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
