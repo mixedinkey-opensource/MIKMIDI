@@ -87,6 +87,7 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 - (BOOL)isEqual:(id)object
 {
+	if (object == self) return YES;
 	if (![[object class] isEqual:[self class]]) return NO;
 	
 	return self.uniqueID == [(MIKMIDIObject *)object uniqueID];
