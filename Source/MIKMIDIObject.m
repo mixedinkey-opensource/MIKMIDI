@@ -101,6 +101,17 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 	return [NSString stringWithFormat:@"%@ %@", [super description], name];
 }
 
+#pragma mark - Public
+
+- (NSDictionary *)propertiesDictionary
+{
+	CFPropertyListRef properties = NULL;
+	OSStatus err = MIDIObjectGetProperties(self.objectRef, &properties, true);
+	if (err) return nil;
+	if (![(__bridge id)properties isKindOfClass:[NSDictionary class]]) return nil;
+	return (__bridge NSDictionary *)properties;
+}
+
 #pragma mark - Private
 
 #pragma mark - Properties

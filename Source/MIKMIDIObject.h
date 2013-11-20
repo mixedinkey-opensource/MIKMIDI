@@ -14,6 +14,8 @@
 + (instancetype)MIDIObjectWithObjectRef:(MIDIObjectRef)objectRef; // Returns a subclass of MIKMIDIObject (device, entity, or endpoint)
 - (id)initWithObjectRef:(MIDIObjectRef)objectRef;
 
+- (NSDictionary *)propertiesDictionary;
+
 @property (nonatomic, readonly) MIDIObjectRef objectRef;
 @property (nonatomic, readonly) MIDIUniqueID uniqueID;
 @property (nonatomic, readonly, getter = isOnline) BOOL online;
