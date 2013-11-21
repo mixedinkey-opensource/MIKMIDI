@@ -233,7 +233,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 				// Sometimes that fails even though the MIDIObjectRef is for an object we already have an instance for
 				// FIXME: It might be better to have MIKMIDIObject maintain a table of instances and return an existing
 				// instance if a known object ref is passed into MIDIObjectWithObjectRef:
-				[self.virtualSources enumerateObjectsUsingBlock:<#^(id obj, NSUInteger idx, BOOL *stop)block#>]
 				for (MIKMIDISourceEndpoint *source in self.virtualSources) {
 					if (source.objectRef == notification->child) {
 						removedSource = source;
