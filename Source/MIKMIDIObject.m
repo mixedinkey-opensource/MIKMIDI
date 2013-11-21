@@ -18,7 +18,6 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @property (nonatomic, readwrite) MIDIObjectRef objectRef;
 @property (nonatomic, readwrite) MIDIUniqueID uniqueID;
-@property (nonatomic, readwrite, getter = isOnline) BOOL online;
 @property (nonatomic, strong, readwrite) NSString *name;
 @property (nonatomic, strong, readwrite) NSString *displayName;
 
