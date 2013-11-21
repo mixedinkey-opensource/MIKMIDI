@@ -17,4 +17,6 @@
 
 @property (nonatomic, weak, readonly) MIKMIDIEntity *entity;
 
+@property (nonatomic, readonly, getter=isPrivate) BOOL private;
+
 @end

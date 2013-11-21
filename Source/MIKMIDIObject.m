@@ -19,7 +19,6 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @property (nonatomic, readwrite) MIDIObjectRef objectRef;
 @property (nonatomic, readwrite) MIDIUniqueID uniqueID;
-@property (nonatomic, readwrite, getter = isOnline) BOOL online;
 @property (nonatomic, strong, readwrite) NSString *displayName;
 
 @end
@@ -147,14 +146,14 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 {
 	if (self.isVirtual && _name) return _name;
 	return MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, NULL);
-}
+	}
 
 - (void)setName:(NSString *)name
 {
 	if (self.isVirtual) {
 		if (name != _name) {
 			_name = name;
-		}
+}
 	} else {
 		NSError *error = nil;
 		if (!MIKSetStringPropertyOnMIDIObject(self.objectRef, kMIDIPropertyName, name, &error)) {
