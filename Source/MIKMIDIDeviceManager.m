@@ -267,7 +267,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations addObject:destination];
+	[self.internalVirtualDestinations removeObject:destination];
 }
 
 - (NSArray *)connectedInputSources
