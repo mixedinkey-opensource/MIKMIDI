@@ -19,7 +19,7 @@
 @property (nonatomic, readonly) MIDIObjectRef objectRef;
 @property (nonatomic, readonly) MIDIUniqueID uniqueID;
 @property (nonatomic, readonly, getter = isOnline) BOOL online;
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong, readonly) NSString *displayName;
 
 /**
