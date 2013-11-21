@@ -18,6 +18,17 @@
 
 @implementation MIKMIDIEndpoint
 
-// Abstract. Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
+// Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
+
+- (BOOL)isPrivate
+{
+	NSError *error = nil;
+	SInt32 result = MIKIntegerPropertyFromMIDIObject(self.objectRef, kMIDIPropertyPrivate, &error);
+	if (result == INT32_MIN) {
+		NSLog(@"Error getting private status for MIDI endpoint %@: %@", self, error);
+		return NO;
+	}
+	return (result != 0);
+}
 
 @end
