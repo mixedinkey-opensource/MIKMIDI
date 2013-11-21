@@ -21,8 +21,15 @@
 {
 	self.midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
 	[self.midiDeviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
-	
-	NSLog(@"Virtual sources: %@", [self.midiDeviceManager virtualSources]);
+	[self.midiDeviceManager addObserver:self forKeyPath:@"virtualSources" options:NSKeyValueObservingOptionInitial context:NULL];
+	[self.midiDeviceManager addObserver:self forKeyPath:@"virtualDestinations" options:NSKeyValueObservingOptionInitial context:NULL];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+	[self.midiDeviceManager removeObserver:self forKeyPath:@"availableDevices"];
+	[self.midiDeviceManager removeObserver:self forKeyPath:@"virtualSources"];
+	[self.midiDeviceManager removeObserver:self forKeyPath:@"virtualDestinations"];
 }
 
 - (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source
