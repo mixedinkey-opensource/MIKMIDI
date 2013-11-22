@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDIObject_SubclassMethods.h"
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIEntity.h"
 #import "MIKMIDIEndpoint.h"
@@ -18,7 +19,6 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @property (nonatomic, readwrite) MIDIObjectRef objectRef;
 @property (nonatomic, readwrite) MIDIUniqueID uniqueID;
-@property (nonatomic, strong, readwrite) NSString *name;
 @property (nonatomic, strong, readwrite) NSString *displayName;
 
 @end
@@ -140,19 +140,33 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 	return offline == 0;
 }
 
+@synthesize name = _name;
+
 - (NSString *)name
 {
-	if (!_name) {
-		self.name = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, NULL);
+	if (self.isVirtual && _name) return _name;
+	return MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, NULL);
 	}
-	return _name;
+
+- (void)setName:(NSString *)name
+{
+	if (self.isVirtual) {
+		if (name != _name) {
+			_name = name;
+}
+	} else {
+		NSError *error = nil;
+		if (!MIKSetStringPropertyOnMIDIObject(self.objectRef, kMIDIPropertyName, name, &error)) {
+			NSLog(@"Unable to set name on %@: %@", self, error);
+		}
+ 	}
 }
 
 - (NSString *)displayName
 {
-	if (!_displayName) {
+	if (!_displayName && _objectRef != 0) {
 		NSError *error = nil;
-		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyDisplayName, &error);
+		NSString *value = MIKStringPropertyFromMIDIObject(_objectRef, kMIDIPropertyDisplayName, &error);
 		if (value) self.displayName = value;
 	}
 	

@@ -10,6 +10,9 @@
 
 @interface MIKMIDIDevice : MIKMIDIObject
 
++ (instancetype)deviceWithVirtualEndpoints:(NSArray *)endpoints;
+- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+
 @property (nonatomic, strong, readonly) NSString *manufacturer;
 @property (nonatomic, strong, readonly) NSString *model;
 

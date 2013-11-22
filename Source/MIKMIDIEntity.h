@@ -12,6 +12,9 @@
 
 @interface MIKMIDIEntity : MIKMIDIObject
 
++ (instancetype)entityWithVirtualEndpoints:(NSArray *)endpoints;
+- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+
 @property (nonatomic, weak, readonly) MIKMIDIDevice *device; // May be nil (e.g. for virtual endpoints)
 
 @property (nonatomic, readonly) NSArray *sources;

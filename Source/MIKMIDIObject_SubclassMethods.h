@@ -12,5 +12,8 @@
 
 + (void)registerSubclass:(Class)subclass;
 + (NSArray *)representedMIDIObjectTypes;
++ (BOOL)canInitWithObjectRef:(MIDIObjectRef)objectRef;
+
+@property (nonatomic, readwrite) BOOL isVirtual;
 
 @end

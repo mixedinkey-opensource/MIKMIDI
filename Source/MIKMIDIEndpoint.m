@@ -18,6 +18,32 @@
 
 @implementation MIKMIDIEndpoint
 
++ (NSArray *)virtualSourceEndpoints
+{
+	NSMutableArray *sources = [NSMutableArray array];
+	ItemCount numSources = MIDIGetNumberOfSources();
+	for (ItemCount i=0; i<numSources; i++) {
+		MIDIEndpointRef sourceRef = MIDIGetSource(i);
+		MIKMIDIEndpoint *source = [MIKMIDIEndpoint MIDIObjectWithObjectRef:sourceRef];
+		if (!source) continue;
+		[sources addObject:source];
+	}
+	return sources;
+}
+
++ (NSArray *)virtualDestinationEndpoints
+{
+	NSMutableArray *destinations = [NSMutableArray array];
+	ItemCount numDestinations = MIDIGetNumberOfDestinations();
+	for (ItemCount i=0; i<numDestinations; i++) {
+		MIDIEndpointRef destinationRef = MIDIGetDestination(i);
+		MIKMIDIEndpoint *destination = [MIKMIDIEndpoint MIDIObjectWithObjectRef:destinationRef];
+		if (!destination) continue;
+		[destinations addObject:destination];
+	}
+	return destinations;
+}
+
 // Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
 
 - (BOOL)isPrivate

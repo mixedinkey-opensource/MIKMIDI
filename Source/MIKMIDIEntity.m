@@ -38,11 +38,45 @@
 
 + (NSArray *)representedMIDIObjectTypes; { return @[@(kMIDIObjectType_Entity)]; }
 
++ (BOOL)canInitWithObjectRef:(MIDIObjectRef)objectRef
+{
+	if (!objectRef) return YES; // To allow creating 'virtual' entities
+	return [super canInitWithObjectRef:objectRef];
+}
+
 - (id)initWithObjectRef:(MIDIObjectRef)objectRef
 {
 	self = [super initWithObjectRef:objectRef];
 	if (self) {
-		[self retrieveEndpoints];
+		if (objectRef) [self retrieveEndpoints];
+	}
+	return self;
+}
+
++ (instancetype)entityWithVirtualEndpoints:(NSArray *)endpoints;
+{
+	return [[self alloc] initWithVirtualEndpoints:endpoints];
+}
+
+- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+{
+	self = [self initWithObjectRef:0];
+	if (self) {
+		self.isVirtual = YES;
+		
+		NSMutableArray *sources = [NSMutableArray array];
+		NSMutableArray *destinations = [NSMutableArray array];
+		for (MIKMIDIEndpoint *endpoint in endpoints) {
+			if ([endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
+				endpoint.entity = self;
+				[sources addObject:endpoint];
+			} else if ([endpoint isKindOfClass:[MIKMIDIDestinationEndpoint class]]) {
+				endpoint.entity = self;
+				[destinations addObject:endpoint];
+			}
+		}
+		_internalSources = sources;
+		_internalDestinations = destinations;
 	}
 	return self;
 }
@@ -103,6 +137,15 @@
 	}
 	
 	return keyPaths;
+}
+
+- (MIDIObjectRef)objectRef
+{
+	if (self.isVirtual) {
+		MIKMIDIObject *endpoint = [self.sources count] ? [self.sources firstObject] : [self.destinations firstObject];
+		return endpoint.objectRef;
+	}
+	return [super objectRef];
 }
 
 - (NSArray *)sources { return [self.internalSources copy]; }
