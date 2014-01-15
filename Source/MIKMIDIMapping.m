@@ -425,7 +425,8 @@
 						  @(MIKMIDIResponderTypePressButton) : @"Tap",
 						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob) : @"KnobSlider",
 						  @(MIKMIDIResponderTypeRelativeKnob) : @"JogWheel",
-						  @(MIKMIDIResponderTypeTurntableKnob) : @"TurnTable"};
+						  @(MIKMIDIResponderTypeTurntableKnob) : @"TurnTable",
+						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob) : @"RelativeAbsoluteKnob"};
 	return [map objectForKey:@(type)];
 }
 
@@ -435,7 +436,8 @@
 						  @"Tap" : @(MIKMIDIResponderTypePressButton),
 						  @"KnobSlider" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob),
 						  @"JogWheel" : @(MIKMIDIResponderTypeRelativeKnob),
-						  @"TurnTable" : @(MIKMIDIResponderTypeTurntableKnob)};
+						  @"TurnTable" : @(MIKMIDIResponderTypeTurntableKnob),
+						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob)};
 	return [[map objectForKey:string] integerValue];
 }
 

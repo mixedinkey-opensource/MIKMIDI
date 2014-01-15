@@ -295,6 +295,22 @@
 	}
 	result.flipped = (directionCounter < 0);
 	
+	// Determine if it's a "fake" absolute knob by looking at the time between messages.
+	NSTimeInterval averageTimeBetweenMessages = 0;
+	MIKMIDICommand *lastMessage = nil;
+	for (MIKMIDICommand *message in messages) {
+		if (lastMessage) {
+			NSTimeInterval timeBetweenMessages = [message.timestamp timeIntervalSinceDate:lastMessage.timestamp];
+			averageTimeBetweenMessages += timeBetweenMessages;
+		}
+		lastMessage = message;
+	}
+	averageTimeBetweenMessages /= (double)[messages count];
+	if (averageTimeBetweenMessages > 0.02) {
+		// Probably a "fake" absolute knob, which is actually an encoder that sends absolute messages
+		result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob;
+	}
+	
 	return YES;
 }
 
@@ -339,7 +355,7 @@
 		[self fillInAbsoluteKnobSliderMappingItem:&result fromMessages:messages]) {
 		goto FINALIZE_RESULT_AND_RETURN;
 	}
-	
+		
 FINALIZE_RESULT_AND_RETURN:
 	result.commandType = [messages[0] commandType];
 	
@@ -378,6 +394,7 @@ FINALIZE_RESULT_AND_RETURN:
 - (NSUInteger)defaultMinimumNumberOfMessagesRequiredForResponderType:(MIKMIDIResponderType)responderType
 {
 	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 20;
+	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) return 5;
 	return 3;
 }
 
