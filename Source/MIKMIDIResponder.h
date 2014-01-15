@@ -13,12 +13,14 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 	
 	MIKMIDIResponderTypeAbsoluteSliderOrKnob = 1 << 0,	/* Absolute position knob or slider */
 	MIKMIDIResponderTypeRelativeKnob = 1 << 1,			/* Relative (e.g. Browse) knob */
-	MIKMIDIResponderTypeTurntableKnob = 1 << 2,			/* Relatiive turntable-style knob */
-	MIKMIDIResponderTypePressReleaseButton = 1 << 3,	/* Button that sends message on press down, and another when released*/
-	MIKMIDIResponderTypePressButton = 1 << 4,			/* Button that sends message only on press down*/
+	MIKMIDIResponderTypeTurntableKnob = 1 << 2,			/* Relative turntable-style knob */
+	MIKMIDIResponderTypeRelativeAbsoluteKnob = 1 << 3,	/* Encoder knob that sends absolute-knob-like message */
+	MIKMIDIResponderTypePressReleaseButton = 1 << 4,	/* Button that sends message on press down, and another when released*/
+	MIKMIDIResponderTypePressButton = 1 << 5,			/* Button that sends message only on press down*/
 	
 	/* Any kind of knob */
-	MIKMIDIResponderTypeKnob = (MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob | MIKMIDIResponderTypeTurntableKnob),
+	MIKMIDIResponderTypeKnob = (MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob | \
+								MIKMIDIResponderTypeTurntableKnob | MIKMIDIResponderTypeRelativeAbsoluteKnob),
 	MIKMIDIResponderTypeButton = (MIKMIDIResponderTypePressButton | MIKMIDIResponderTypePressReleaseButton), /* Either kind of button */
 	
 	MIKMIDIResponderTypeAll = NSUIntegerMax,

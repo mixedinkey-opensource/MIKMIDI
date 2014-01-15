@@ -426,7 +426,7 @@
 						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob) : @"KnobSlider",
 						  @(MIKMIDIResponderTypeRelativeKnob) : @"JogWheel",
 						  @(MIKMIDIResponderTypeTurntableKnob) : @"TurnTable",
-						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob) : @"RelativeAbsoluteKnob"};
+						  @(MIKMIDIResponderTypeRelativeAbsoluteKnob) : @"RelativeAbsoluteKnob"};
 	return [map objectForKey:@(type)];
 }
 
@@ -437,7 +437,7 @@
 						  @"KnobSlider" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob),
 						  @"JogWheel" : @(MIKMIDIResponderTypeRelativeKnob),
 						  @"TurnTable" : @(MIKMIDIResponderTypeTurntableKnob),
-						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob)};
+						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeRelativeAbsoluteKnob)};
 	return [[map objectForKey:string] integerValue];
 }
 

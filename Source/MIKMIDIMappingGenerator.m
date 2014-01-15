@@ -314,6 +314,28 @@
 	return YES;
 }
 
+- (BOOL)fillInRelativeAbsoluteKnobSliderMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
+{
+	if (![self fillInAbsoluteKnobSliderMappingItem:mappingItem fromMessages:messages]) return NO;
+		
+	// Determine if it's a "fake" absolute knob by looking at the time between messages.
+	NSTimeInterval averageTimeBetweenMessages = 0;
+	MIKMIDICommand *lastMessage = nil;
+	for (MIKMIDICommand *message in messages) {
+		if (lastMessage) {
+			NSTimeInterval timeBetweenMessages = [message.timestamp timeIntervalSinceDate:lastMessage.timestamp];
+			averageTimeBetweenMessages += timeBetweenMessages;
+		}
+		lastMessage = message;
+	}
+	averageTimeBetweenMessages /= (double)[messages count];
+	if (averageTimeBetweenMessages < 0.02) return NO;
+
+	[*mappingItem setInteractionType:MIKMIDIResponderTypeRelativeAbsoluteKnob];
+	
+	return YES;
+}
+
 - (MIKMIDIMappingItem *)mappingItemForCommandIdentifier:(NSString *)commandID inControl:(id<MIKMIDIMappableResponder>)responder fromReceivedMessages:(NSArray *)messages
 {
 	if (![messages count]) return nil;
@@ -348,6 +370,11 @@
 	
 	if (responderType & MIKMIDIResponderTypeRelativeKnob &&
 		[self fillInRelativeKnobMappingItem:&result fromMessages:messages]) {
+		goto FINALIZE_RESULT_AND_RETURN;
+	}
+	
+	if (responderType & MIKMIDIResponderTypeRelativeAbsoluteKnob &&
+		[self fillInRelativeAbsoluteKnobSliderMappingItem:&result fromMessages:messages]) {
 		goto FINALIZE_RESULT_AND_RETURN;
 	}
 	
@@ -395,7 +422,7 @@ FINALIZE_RESULT_AND_RETURN:
 
 - (NSUInteger)defaultMinimumNumberOfMessagesRequiredForResponderType:(MIKMIDIResponderType)responderType
 {
-	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 20;
+	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 50;
 	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) return 5;
 	return 3;
 }
