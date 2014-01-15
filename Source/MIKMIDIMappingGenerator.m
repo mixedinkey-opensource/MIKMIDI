@@ -355,6 +355,8 @@
 		[self fillInAbsoluteKnobSliderMappingItem:&result fromMessages:messages]) {
 		goto FINALIZE_RESULT_AND_RETURN;
 	}
+	
+	return nil;
 		
 FINALIZE_RESULT_AND_RETURN:
 	result.commandType = [messages[0] commandType];
