@@ -319,17 +319,16 @@
 	if (![self fillInAbsoluteKnobSliderMappingItem:mappingItem fromMessages:messages]) return NO;
 		
 	// Determine if it's a "fake" absolute knob by looking at the time between messages.
-	NSTimeInterval averageTimeBetweenMessages = 0;
+	NSTimeInterval medianTimeBetweenMessages = 0;
+	NSMutableArray *timesBetweenMessages = [NSMutableArray array];
 	MIKMIDICommand *lastMessage = nil;
 	for (MIKMIDICommand *message in messages) {
-		if (lastMessage) {
-			NSTimeInterval timeBetweenMessages = [message.timestamp timeIntervalSinceDate:lastMessage.timestamp];
-			averageTimeBetweenMessages += timeBetweenMessages;
-		}
+		if (lastMessage) [timesBetweenMessages addObject:@([message.timestamp timeIntervalSinceDate:lastMessage.timestamp])];
 		lastMessage = message;
 	}
-	averageTimeBetweenMessages /= (double)[messages count];
-	if (averageTimeBetweenMessages < 0.02) return NO;
+	[timesBetweenMessages sortUsingSelector:@selector(compare:)];
+	medianTimeBetweenMessages = [[timesBetweenMessages objectAtIndex:([timesBetweenMessages count] / 2)] doubleValue];
+	if (medianTimeBetweenMessages < 0.02) return NO;
 
 	[*mappingItem setInteractionType:MIKMIDIResponderTypeRelativeAbsoluteKnob];
 	
