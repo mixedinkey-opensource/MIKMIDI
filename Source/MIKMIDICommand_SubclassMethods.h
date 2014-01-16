@@ -17,6 +17,8 @@
 + (Class)mutableCounterpartClass;
 + (BOOL)isMutable;
 
+- (id)initWithMIDIPacket:(MIDIPacket *)packet; // Designated initializer for MIKMIDICommand
+
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
 
 @property (nonatomic, readwrite) UInt8 dataByte1;
