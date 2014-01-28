@@ -11,6 +11,10 @@
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIPrivateUtilities.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIPrivateUtilities.m in the Build Phases for this target
+#endif
+
 NSUInteger MIKMIDIControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command)
 {
 	if ([command respondsToSelector:@selector(controllerNumber)]) return [(id)command controllerNumber];

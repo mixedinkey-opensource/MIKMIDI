@@ -14,6 +14,10 @@
 #import "MIKMIDINoteOffCommand.h"
 #import "MIKMIDIPrivateUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIMapping.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMapping.m in the Build Phases for this target
+#endif
+
 @interface MIKMIDIMapping ()
 
 @property (nonatomic, strong) NSMutableSet *internalMappingItems;

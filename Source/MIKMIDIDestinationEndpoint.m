@@ -9,6 +9,10 @@
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIObject_SubclassMethods.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIDestinationEndpoint.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDestinationEndpoint.m in the Build Phases for this target
+#endif
+
 @implementation MIKMIDIDestinationEndpoint
 
 + (void)load { [MIKMIDIObject registerSubclass:[self class]]; }

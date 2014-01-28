@@ -11,6 +11,10 @@
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDICommand.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIOutputPort.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIOutputPort.m in the Build Phases for this target
+#endif
+
 @implementation MIKMIDIOutputPort
 
 - (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name

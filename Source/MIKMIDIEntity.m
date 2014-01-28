@@ -12,6 +12,10 @@
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIEntity.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIEntity.m in the Build Phases for this target
+#endif
+
 @interface MIKMIDIEntity ()
 
 @property (nonatomic, weak, readwrite) MIKMIDIDevice *device;
