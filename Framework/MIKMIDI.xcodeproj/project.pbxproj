@@ -226,7 +226,8 @@
 				9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */,
 				9D74EF4217A713A100BEE89F /* MIKMIDIErrors.h */,
 				9D74EF4317A713A100BEE89F /* MIKMIDIErrors.m */,
-				9DF99E731831837C004EE5F4 /* Core */,
+				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
+				9DF99E731831837C004EE5F4 /* Device Support */,
 				9DF99E75183183AF004EE5F4 /* Commands */,
 				9DF99E7418318395004EE5F4 /* Mapping */,
 				9DF99E76183183F6004EE5F4 /* Utilities */,
@@ -235,10 +236,9 @@
 			path = ../Source;
 			sourceTree = "<group>";
 		};
-		9DF99E731831837C004EE5F4 /* Core */ = {
+		9DF99E731831837C004EE5F4 /* Device Support */ = {
 			isa = PBXGroup;
 			children = (
-				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
 				9D74EF3C17A713A100BEE89F /* MIKMIDIDeviceManager.h */,
 				9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */,
 				9D74EF5017A713A100BEE89F /* MIKMIDIObject.h */,
@@ -261,10 +261,8 @@
 				9D74EF5A17A713A100BEE89F /* MIKMIDISourceEndpoint.m */,
 				9D74EF3817A713A100BEE89F /* MIKMIDIDestinationEndpoint.h */,
 				9D74EF3917A713A100BEE89F /* MIKMIDIDestinationEndpoint.m */,
-				9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */,
-				9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */,
 			);
-			name = Core;
+			name = "Device Support";
 			sourceTree = "<group>";
 		};
 		9DF99E7418318395004EE5F4 /* Mapping */ = {
@@ -308,6 +306,8 @@
 			children = (
 				9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */,
 				9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */,
+				9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */,
+				9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */,
 				9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */,
 				9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */,
 			);
