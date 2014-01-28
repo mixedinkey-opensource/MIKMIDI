@@ -22,16 +22,43 @@
 
 #endif
 
+/**
+ *  Define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS as a non-zero value to (re)enable searching
+ *  the view hierarchy for MIDI responders. This is disabled by default because it's slow.
+ */
+//#define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS 0
+
 @protocol MIKMIDIResponder;
 
 @class MIKMIDICommand;
 
 @interface MIK_APPLICATION_CLASS (MIKMIDI)
 
+/**
+ *  Register a MIDI responder for receipt of incoming MIDI messages.
+ *
+ *  If targeting OS X 10.8 or higher, or iOS, the application maintains a zeroing weak
+ *  reference to the responder, so unregistering the responder on deallocate is not necessary.
+ *
+ *  For applications targeting OS X 10.7, registered responders must be explicitly
+ *  unregistered (e.g. in their -dealloc method) by calling -unregisterMIDIResponder before
+ *  being deallocated.
+ *
+ *  @param responder The responder to register.
+ */
 - (void)registerMIDIResponder:(id<MIKMIDIResponder>)responder;
+
+/**
+ *  Unregister a previously-registered MIDI responder so it stops receiving incoming MIDI messages.
+ *
+ *  @param responder The responder to unregister.
+ */
 - (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder;
 
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
+
+- (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+- (NSSet *)allMIDIResponders;
 
 @end

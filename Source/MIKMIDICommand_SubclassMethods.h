@@ -15,8 +15,17 @@
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type;
 + (Class)immutableCounterpartClass;
 + (Class)mutableCounterpartClass;
++ (BOOL)isMutable;
+
+- (id)initWithMIDIPacket:(MIDIPacket *)packet; // Designated initializer for MIKMIDICommand
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
+
+@property (nonatomic, readwrite) UInt8 dataByte1;
+@property (nonatomic, readwrite) UInt8 dataByte2;
+
 @property (nonatomic, strong, readwrite) NSMutableData *internalData;
 
 @end
+
+#define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])

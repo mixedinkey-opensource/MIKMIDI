@@ -1,3 +1,4 @@
+
 //
 //  MIKMIDIChannelVoiceCommand.m
 //  MIDI Testbed
@@ -8,6 +9,13 @@
 
 #import "MIKMIDIChannelVoiceCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
+
+@interface MIKMIDIChannelVoiceCommand ()
+
+@property (nonatomic, readwrite) UInt8 channel;
+@property (nonatomic, readwrite) NSUInteger value;
+
+@end
 
 @implementation MIKMIDIChannelVoiceCommand
 
@@ -34,13 +42,34 @@
 - (UInt8)channel
 {
 	if ([self.internalData length] < 1) return 0;
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	return data[0] & 0x0F;
+}
+
+- (void)setChannel:(UInt8)channel
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
+	
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
+	data[0] &= 0xF0 | (channel & 0x0F);
+}
+
+- (NSUInteger)value { return self.dataByte2 & 0x7F; }
+
+- (void)setValue:(NSUInteger)value
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	self.dataByte2 = value & 0x7F;
 }
 
 @end
 
 @implementation MIKMutableMIDIChannelVoiceCommand
+
++ (BOOL)isMutable { return YES; }
 
 - (NSString *)description
 {
@@ -51,25 +80,10 @@
 
 - (void)setCommandType:(MIKMIDICommandType)commandType
 {
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= (commandType & 0xF0); // Need to avoid changing channel
-}
-
-- (UInt8)channel
-{
-	if ([self.internalData length] < 1) return 0;
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	return data[0] & 0x0F;
-}
-
-- (void)setChannel:(UInt8)channel
-{
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
-	
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] |= (channel & 0x0F);
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
+	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
 }
 
 @end

@@ -19,7 +19,20 @@ NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef prop
 		return nil;
 	}
 	
-	return (__bridge NSString *)result;
+	NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];	
+	return [(__bridge NSString *)result stringByTrimmingCharactersInSet:controlCharacters];
+}
+
+BOOL MIKSetStringPropertyOnMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSString *string, NSError *__autoreleasing*error)
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = MIDIObjectSetStringProperty(object, propertyID, (__bridge CFStringRef)string);
+	
+	if (err) {
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
 }
 
 SInt32 MIKIntegerPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error)
@@ -34,11 +47,22 @@ SInt32 MIKIntegerPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef proper
 	return (SInt32)result;
 }
 
+BOOL MIKSetIntegerPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, SInt32 integerValue, NSError *__autoreleasing*error)
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = MIDIObjectSetIntegerProperty(object, propertyID, integerValue);
+	if (err) {
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
+}
+
 MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autoreleasing*error)
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	MIDIUniqueID uniqueID = MIKIntegerPropertyFromMIDIObject(object, kMIDIPropertyUniqueID, error);
-	if (uniqueID == NSNotFound) return -2;
+	if (*error) return -2;
 	
 	MIDIObjectRef resultObject;
 	MIDIObjectType objectType;

@@ -7,7 +7,14 @@
 //
 
 #import "MIKMIDINoteOnCommand.h"
-#import "MIKMIDICommand_SubclassMethods.h"
+#import "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
+
+@interface MIKMIDINoteOnCommand ()
+
+@property (nonatomic, readwrite) NSUInteger note;
+@property (nonatomic, readwrite) NSUInteger velocity;
+
+@end
 
 @implementation MIKMIDINoteOnCommand
 
@@ -19,7 +26,18 @@
 #pragma mark - Properties
 
 - (NSUInteger)note { return self.dataByte1; }
-- (NSUInteger)velocity { return self.dataByte2; }
+- (void)setNote:(NSUInteger)value
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	self.dataByte1 = value;
+}
+
+- (NSUInteger)velocity { return self.value; }
+- (void)setVelocity:(NSUInteger)value
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	self.value = value;
+}
 
 - (NSString *)description
 {
@@ -30,19 +48,6 @@
 
 @implementation MIKMutableMIDINoteOnCommand
 
-+ (Class)immutableCounterpartClass; { return [MIKMIDINoteOnCommand immutableCounterpartClass]; }
-+ (Class)mutableCounterpartClass; { return [MIKMIDINoteOnCommand mutableCounterpartClass]; }
-
-- (NSString *)description
-{
-	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
-}
-
-#pragma mark - Properties
-
-- (NSUInteger)note { return self.dataByte1; }
-- (void)setNote:(NSUInteger)value { self.dataByte1 = value; }
-- (NSUInteger)velocity { return self.dataByte2; }
-- (void)setVelocity:(NSUInteger)value { self.dataByte2 = value; }
++ (BOOL)isMutable { return YES; }
 
 @end

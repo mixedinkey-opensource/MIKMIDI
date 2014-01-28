@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDIObject_SubclassMethods.h"
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIEntity.h"
 #import "MIKMIDIEndpoint.h"
@@ -18,8 +19,6 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @property (nonatomic, readwrite) MIDIObjectRef objectRef;
 @property (nonatomic, readwrite) MIDIUniqueID uniqueID;
-@property (nonatomic, readwrite, getter = isOnline) BOOL online;
-@property (nonatomic, strong, readwrite) NSString *name;
 @property (nonatomic, strong, readwrite) NSString *displayName;
 
 @end
@@ -86,6 +85,7 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 - (BOOL)isEqual:(id)object
 {
+	if (object == self) return YES;
 	if (![[object class] isEqual:[self class]]) return NO;
 	
 	return self.uniqueID == [(MIKMIDIObject *)object uniqueID];
@@ -97,6 +97,17 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 {
 	NSString *name = self.displayName ? self.displayName : self.name;
 	return [NSString stringWithFormat:@"%@ %@", [super description], name];
+}
+
+#pragma mark - Public
+
+- (NSDictionary *)propertiesDictionary
+{
+	CFPropertyListRef properties = NULL;
+	OSStatus err = MIDIObjectGetProperties(self.objectRef, &properties, true);
+	if (err) return nil;
+	if (![(__bridge id)properties isKindOfClass:[NSDictionary class]]) return nil;
+	return (__bridge NSDictionary *)properties;
 }
 
 #pragma mark - Private
@@ -129,30 +140,34 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 	return offline == 0;
 }
 
+@synthesize name = _name;
+
 - (NSString *)name
 {
-	if (!_name) {
-		NSError *error = nil;
-		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, &error);
-		if (!value) {
-			NSLog(@"Unable to get MIDI device name: %@", error);
-			return nil;
-		}
-		self.name = value;
+	if (self.isVirtual && _name) return _name;
+	return MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyName, NULL);
 	}
-	return _name;
+
+- (void)setName:(NSString *)name
+{
+	if (self.isVirtual) {
+		if (name != _name) {
+			_name = name;
+}
+	} else {
+		NSError *error = nil;
+		if (!MIKSetStringPropertyOnMIDIObject(self.objectRef, kMIDIPropertyName, name, &error)) {
+			NSLog(@"Unable to set name on %@: %@", self, error);
+		}
+ 	}
 }
 
 - (NSString *)displayName
 {
-	if (!_displayName) {
+	if (!_displayName && _objectRef != 0) {
 		NSError *error = nil;
-		NSString *value = MIKStringPropertyFromMIDIObject(self.objectRef, kMIDIPropertyDisplayName, &error);
-		if (!value) {
-			NSLog(@"Unable to get MIDI device display name: %@", error);
-		} else {
-		self.displayName = value;
-		}
+		NSString *value = MIKStringPropertyFromMIDIObject(_objectRef, kMIDIPropertyDisplayName, &error);
+		if (value) self.displayName = value;
 	}
 	
 	return _displayName ? _displayName : self.name;

@@ -30,15 +30,38 @@
 
 @implementation MIKMIDIDevice
 
-+(void)load { [MIKMIDIObject registerSubclass:[self class]]; }
++ (void)load { [MIKMIDIObject registerSubclass:[self class]]; }
 
 + (NSArray *)representedMIDIObjectTypes; { return @[@(kMIDIObjectType_Device)]; }
+
++ (BOOL)canInitWithObjectRef:(MIDIObjectRef)objectRef
+{
+	if (!objectRef) return YES; // To allow creating 'virtual' devices
+	return [super canInitWithObjectRef:objectRef];
+}
 
 - (id)initWithObjectRef:(MIDIObjectRef)objectRef
 {
 	self = [super initWithObjectRef:objectRef];
 	if (self) {
-		[self retrieveEntities];
+		if (objectRef)  [self retrieveEntities];
+	}
+	return self;
+}
+
++ (instancetype)deviceWithVirtualEndpoints:(NSArray *)endpoints;
+{
+	return [[self alloc] initWithVirtualEndpoints:endpoints];
+}
+
+- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+{
+	self = [self initWithObjectRef:0];
+	if (self) {
+		self.isVirtual = YES;
+		MIKMIDIEntity *entity = [MIKMIDIEntity entityWithVirtualEndpoints:endpoints];
+		entity.device = self;
+		self.internalEntities = [NSMutableArray arrayWithObject:entity];
 	}
 	return self;
 }
@@ -86,6 +109,16 @@
 	return keyPaths;
 }
 
+- (MIDIObjectRef)objectRef
+{
+	if (self.isVirtual) {
+		MIKMIDIEntity *entity = [self.entities firstObject];
+		MIKMIDIObject *endpoint = [entity.sources count] ? [entity.sources firstObject] : [entity.destinations firstObject];
+		return endpoint.objectRef;
+	}
+	return [super objectRef];
+}
+
 - (NSString *)manufacturer
 {
 	if (!_manufacturer) {
@@ -112,6 +145,13 @@
 		self.model = value;
 	}
 	return _model;
+}
+
+- (NSString *)name
+{
+	NSString *result = [super name];
+	if (result) return result;
+	return self.model;
 }
 
 - (NSString *)displayName

@@ -16,6 +16,5 @@
 - (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name;
 
 @property (nonatomic, readonly) MIDIPortRef portRef;
-@property (nonatomic, readonly) BOOL isSourcePort;
 
 @end

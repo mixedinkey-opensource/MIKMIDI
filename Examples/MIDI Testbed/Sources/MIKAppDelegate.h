@@ -10,15 +10,16 @@
 
 @class MIKMIDIDeviceManager;
 @class MIKMIDIDevice;
+@class MIKMIDISourceEndpoint;
 
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
-- (IBAction)ledCheckboxChanged:(id)sender;
-- (IBAction)flash:(id)sender;
+- (IBAction)sendSysex:(id)sender;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
-@property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
+@property (nonatomic, strong, readonly) NSArray *availableDevices;
 @property (nonatomic, strong) MIKMIDIDevice *device;
+@property (nonatomic, strong) MIKMIDISourceEndpoint *source;
 
 @end

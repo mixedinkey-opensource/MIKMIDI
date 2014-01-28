@@ -16,9 +16,12 @@
 // Notifications
 extern NSString * const MIKMIDIDeviceWasAddedNotification;
 extern NSString * const MIKMIDIDeviceWasRemovedNotification;
+extern NSString * const MIKMIDIVirtualEndpointWasAddedNotification;
+extern NSString * const MIKMIDIVirtualEndpointWasRemovedNotification;
 
 // Notification Keys
 extern NSString * const MIKMIDIDeviceKey;
+extern NSString * const MIKMIDIEndpointKey;
 
 @interface MIKMIDIDeviceManager : NSObject
 

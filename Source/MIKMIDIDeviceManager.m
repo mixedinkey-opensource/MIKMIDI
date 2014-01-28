@@ -17,9 +17,13 @@
 // Notifications
 NSString * const MIKMIDIDeviceWasAddedNotification = @"MIKMIDIDeviceWasAddedNotification";
 NSString * const MIKMIDIDeviceWasRemovedNotification = @"MIKMIDIDeviceWasRemovedNotification";
+NSString * const MIKMIDIVirtualEndpointWasAddedNotification = @"MIKMIDIDeviceWasAddedNotification";
+NSString * const MIKMIDIVirtualEndpointWasRemovedNotification = @"MIKMIDIDeviceWasRemovedNotification";
+
 
 // Notification Keys
 NSString * const MIKMIDIDeviceKey = @"MIKMIDIDeviceKey";
+NSString * const MIKMIDIEndpointKey = @"MIKMIDIEndpointKey";
 
 static MIKMIDIDeviceManager *sharedDeviceManager;
 
@@ -96,6 +100,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint
 {
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
+	if (!port) return; // Not connected
 	[port removeAllEventHandlers];
 	[port disconnectFromSource:endpoint];
 	[self removeInternalConnectedInputPortsObject:port];
@@ -127,31 +132,14 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		if (!device || !device.isOnline) continue;
 		[devices addObject:device];
 	}
-		
+	
 	self.internalDevices = devices;
 }
 
 - (void)retrieveVirtualEndpoints
 {
-	NSMutableArray *sources = [NSMutableArray array];
-	ItemCount numSources = MIDIGetNumberOfSources();
-	for (ItemCount i=0; i<numSources; i++) {
-		MIDIEndpointRef sourceRef = MIDIGetSource(i);
-		MIKMIDISourceEndpoint *source = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:sourceRef];
-		if (!source) continue;
-		[sources addObject:source];
-	}
-	self.internalVirtualSources = sources;
-	
-	NSMutableArray *destinations = [NSMutableArray array];
-	ItemCount numDestinations = MIDIGetNumberOfDestinations();
-	for (ItemCount i=0; i<numDestinations; i++) {
-		MIDIEndpointRef destinationRef = MIDIGetDestination(i);
-		MIKMIDISourceEndpoint *destination = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:destinationRef];
-		if (!destination) continue;
-		[destinations addObject:destination];
-	}
-	self.internalVirtualDestinations = destinations;
+	self.internalVirtualSources = [[MIKMIDIEndpoint virtualSourceEndpoints] mutableCopy];
+	self.internalVirtualDestinations = [[MIKMIDIEndpoint virtualDestinationEndpoints] mutableCopy];
 }
 
 - (MIKMIDIInputPort *)inputPortConnectedToEndpoint:(MIKMIDIEndpoint *)endpoint
@@ -165,47 +153,172 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 #pragma mark - Callbacks
 
+- (void)handleMIDIObjectPropertyChangeNotification:(MIDIObjectPropertyChangeNotification *)notification
+{
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	
+	NSString *changedProperty = (__bridge NSString *)notification->propertyName;
+	
+	switch (notification->objectType) {
+		case kMIDIObjectType_Device: {
+			
+			if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) break;
+			
+			MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->object];
+			if (!changedObject) break;
+			
+			if (changedObject.isOnline && ![self.internalDevices containsObject:changedObject]) {
+				[self addInternalDevicesObject:changedObject];
+				[nc postNotificationName:MIKMIDIDeviceWasAddedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
+			}
+			if (!changedObject.isOnline) {
+				[self removeInternalDevicesObject:changedObject];
+				[nc postNotificationName:MIKMIDIDeviceWasRemovedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
+			}
+		}
+			break;
+		case kMIDIObjectType_Source: {
+			
+			if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyPrivate]) break;
+			
+			MIKMIDISourceEndpoint *changedObject = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:notification->object];
+			if (!changedObject) break;
+			
+			if (!changedObject.isPrivate && ![self.internalVirtualSources containsObject:changedObject]) {
+				[self addInternalVirtualSourcesObject:changedObject];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasAddedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
+			}
+			if (changedObject.isPrivate) {
+				[self removeInternalVirtualSourcesObject:changedObject];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
+			}
+		}
+			break;
+		case kMIDIObjectType_Destination: {
+			
+			if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyPrivate]) break;
+			
+			MIKMIDIDestinationEndpoint *changedObject = [MIKMIDIDestinationEndpoint MIDIObjectWithObjectRef:notification->object];
+			if (!changedObject) break;
+			
+			if (!changedObject.isPrivate && ![self.internalVirtualDestinations containsObject:changedObject]) {
+				[self addInternalVirtualDestinationsObject:changedObject];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasAddedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
+			}
+			if (changedObject.isPrivate) {
+				[self removeInternalVirtualDestinationsObject:changedObject];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
+			}
+		}
+			break;
+		default:
+			break;
+	}
+}
+
+- (void)handleMIDIObjectRemoveNotification:(MIDIObjectAddRemoveNotification *)notification
+{
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+
+	switch (notification->childType) {
+		case kMIDIObjectType_Device: {
+			MIKMIDIDevice *removedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->child];
+			if (!removedDevice) break;
+			[self removeInternalDevicesObject:removedDevice];
+		}
+			break;
+		case kMIDIObjectType_Source: {
+			MIKMIDISourceEndpoint *removedSource = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:notification->child];
+			if (!removedSource) {
+				// Sometimes that fails even though the MIDIObjectRef is for an object we already have an instance for
+				// FIXME: It might be better to have MIKMIDIObject maintain a table of instances and return an existing
+				// instance if a known object ref is passed into MIDIObjectWithObjectRef:
+				for (MIKMIDISourceEndpoint *source in self.virtualSources) {
+					if (source.objectRef == notification->child) {
+						removedSource = source;
+						break;
+					}
+				}
+			}
+			if (!removedSource) break;
+			[self removeInternalVirtualSourcesObject:removedSource];
+			[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : removedSource}];
+		}
+			break;
+		case kMIDIObjectType_Destination: {
+			MIKMIDIDestinationEndpoint *removedDestination = [MIKMIDIDestinationEndpoint MIDIObjectWithObjectRef:notification->child];
+			if (!removedDestination) {
+				// Sometimes that fails even though the MIDIObjectRef is for an object we already have an instance for
+				for (MIKMIDIDestinationEndpoint *destination in self.virtualDestinations) {
+					if (destination.objectRef == notification->child) {
+						removedDestination = destination;
+						break;
+					}
+				}
+			}
+			if (!removedDestination) break;
+			[self removeInternalVirtualDestinationsObject:removedDestination];
+			[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : removedDestination}];
+		}
+			break;
+		default:
+			break;
+	}
+}
+
+- (void)handleMIDIObjectAddNotification:(MIDIObjectAddRemoveNotification *)notification
+{
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	
+	switch (notification->childType) {
+		case kMIDIObjectType_Device: {
+			MIKMIDIDevice *addedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->child];
+			if (addedDevice && ![self.internalDevices containsObject:addedDevice]) {
+				[self addInternalDevicesObject:addedDevice];
+				[nc postNotificationName:MIKMIDIDeviceWasAddedNotification object:self userInfo:@{MIKMIDIDeviceKey : addedDevice}];
+			}
+		}
+			break;
+		case kMIDIObjectType_Source: {
+			MIKMIDISourceEndpoint *addedSource = [MIKMIDISourceEndpoint MIDIObjectWithObjectRef:notification->child];
+			if (addedSource && ![self.internalVirtualSources containsObject:addedSource]) {
+				[self addInternalVirtualSourcesObject:addedSource];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasAddedNotification object:self userInfo:@{MIKMIDIEndpointKey : addedSource}];
+			}
+		}
+			break;
+		case kMIDIObjectType_Destination: {
+			MIKMIDIDestinationEndpoint *addedDestination = [MIKMIDIDestinationEndpoint MIDIObjectWithObjectRef:notification->child];
+			if (addedDestination && ![self.internalVirtualDestinations containsObject:addedDestination]) {
+				[self addInternalVirtualDestinationsObject:addedDestination];
+				[nc postNotificationName:MIKMIDIVirtualEndpointWasAddedNotification object:self userInfo:@{MIKMIDIEndpointKey : addedDestination}];
+			}
+		}
+			break;
+		default:
+			break;
+	}
+}
+
 void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *refCon)
 {
 	MIKMIDIDeviceManager *self = (__bridge MIKMIDIDeviceManager *)refCon;
 	
-	if (message->messageID == kMIDIMsgPropertyChanged) {
-		MIDIObjectPropertyChangeNotification *changeNotification = (MIDIObjectPropertyChangeNotification *)message;
-		if (changeNotification->objectType != kMIDIObjectType_Device) return;
-		NSString *changedProperty = (__bridge NSString *)changeNotification->propertyName;
-		
-		if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) return;
-		
-		MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:changeNotification->object];
-		if (changedObject.isOnline && ![self.internalDevices containsObject:changedObject]) {
-			[self addInternalDevicesObject:changedObject];
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-			[nc postNotificationName:MIKMIDIDeviceWasAddedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
-		}
-		if (!changedObject.isOnline) {
-			[self removeInternalDevicesObject:changedObject];
-			NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-			[nc postNotificationName:MIKMIDIDeviceWasRemovedNotification object:self userInfo:@{MIKMIDIDeviceKey : changedObject}];
-		}
-	}
-	
-	if (message->messageID == kMIDIMsgObjectRemoved) {
-		MIDIObjectAddRemoveNotification *removeMessage = (MIDIObjectAddRemoveNotification *)message;
-		if (!removeMessage->childType == kMIDIObjectType_Device) return;
-		MIKMIDIDevice *removedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:removeMessage->child];
-		if (!removedDevice) return;
-		[self removeInternalDevicesObject:removedDevice];
-	}
-	
-	if (message->messageID == kMIDIMsgObjectAdded) {
-		MIDIObjectAddRemoveNotification *addMessage = (MIDIObjectAddRemoveNotification *)message;
-		if (!addMessage->childType == kMIDIObjectType_Device) return;
-		MIKMIDIDevice *addedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:addMessage->child];
-		if (!addedDevice) return;
-		[self addInternalDevicesObject:addedDevice];
+	switch (message->messageID) {
+		case kMIDIMsgPropertyChanged:
+			[self handleMIDIObjectPropertyChangeNotification:(MIDIObjectPropertyChangeNotification *)message];
+			break;
+		case kMIDIMsgObjectRemoved:
+			[self handleMIDIObjectRemoveNotification:(MIDIObjectAddRemoveNotification *)message];
+			break;
+		case kMIDIMsgObjectAdded:
+			[self handleMIDIObjectAddNotification:(MIDIObjectAddRemoveNotification *)message];
+			break;
+		default:
+			break;
 	}
 }
-		 
+
 #pragma mark - Properties
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
@@ -219,7 +332,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 	if ([key isEqualToString:@"virtualSources"]) {
 		keyPaths = [keyPaths setByAddingObject:@"internalVirtualSources"];
 	}
-
+	
 	if ([key isEqualToString:@"virtualDestinations"]) {
 		keyPaths = [keyPaths setByAddingObject:@"internalVirtualDestinations"];
 	}
@@ -264,18 +377,18 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations addObject:destination];
+	[self.internalVirtualDestinations removeObject:destination];
 }
 
 - (NSArray *)connectedInputSources
 {
-	NSMutableArray *result = [NSMutableArray array];
+	NSMutableSet *result = [NSMutableSet set];
 	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
 		NSArray *connectedSources = port.connectedSources;
 		if (![connectedSources count]) continue;
 		[result addObjectsFromArray:connectedSources];
 	}
-	return result;
+	return [result allObjects];
 }
 
 - (void)addInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port

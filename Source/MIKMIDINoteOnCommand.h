@@ -15,7 +15,10 @@
 
 @end
 
-@interface MIKMutableMIDINoteOnCommand : MIKMutableMIDIChannelVoiceCommand
+@interface MIKMutableMIDINoteOnCommand : MIKMIDINoteOnCommand
+
+@property (nonatomic, readwrite) UInt8 channel;
+@property (nonatomic, readwrite) NSUInteger value;
 
 @property (nonatomic, readwrite) NSUInteger note;
 @property (nonatomic, readwrite) NSUInteger velocity;

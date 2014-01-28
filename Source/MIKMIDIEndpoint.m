@@ -18,6 +18,43 @@
 
 @implementation MIKMIDIEndpoint
 
-// Abstract. Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
++ (NSArray *)virtualSourceEndpoints
+{
+	NSMutableArray *sources = [NSMutableArray array];
+	ItemCount numSources = MIDIGetNumberOfSources();
+	for (ItemCount i=0; i<numSources; i++) {
+		MIDIEndpointRef sourceRef = MIDIGetSource(i);
+		MIKMIDIEndpoint *source = [MIKMIDIEndpoint MIDIObjectWithObjectRef:sourceRef];
+		if (!source) continue;
+		[sources addObject:source];
+	}
+	return sources;
+}
+
++ (NSArray *)virtualDestinationEndpoints
+{
+	NSMutableArray *destinations = [NSMutableArray array];
+	ItemCount numDestinations = MIDIGetNumberOfDestinations();
+	for (ItemCount i=0; i<numDestinations; i++) {
+		MIDIEndpointRef destinationRef = MIDIGetDestination(i);
+		MIKMIDIEndpoint *destination = [MIKMIDIEndpoint MIDIObjectWithObjectRef:destinationRef];
+		if (!destination) continue;
+		[destinations addObject:destination];
+	}
+	return destinations;
+}
+
+// Should always be MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint
+
+- (BOOL)isPrivate
+{
+	NSError *error = nil;
+	SInt32 result = MIKIntegerPropertyFromMIDIObject(self.objectRef, kMIDIPropertyPrivate, &error);
+	if (result == INT32_MIN) {
+		NSLog(@"Error getting private status for MIDI endpoint %@: %@", self, error);
+		return NO;
+	}
+	return (result != 0);
+}
 
 @end

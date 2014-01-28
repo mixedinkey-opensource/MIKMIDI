@@ -9,6 +9,10 @@
 #import "MIKMIDISystemMessageCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
 
+@interface MIKMIDISystemMessageCommand ()
+
+@end
+
 @implementation	MIKMIDISystemMessageCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
@@ -29,7 +33,6 @@
 
 @implementation MIKMutableMIDISystemMessageCommand
 
-+ (Class)immutableCounterpartClass; { return [MIKMIDISystemMessageCommand immutableCounterpartClass]; }
-+ (Class)mutableCounterpartClass; { return [MIKMIDISystemMessageCommand mutableCounterpartClass]; }
++ (BOOL)isMutable { return YES; }
 
 @end

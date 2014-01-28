@@ -27,6 +27,8 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	[registeredMIKMIDICommandSubclasses addObject:subclass];
 }
 
++ (BOOL)isMutable { return NO; }
+
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return NO; }
 + (Class)immutableCounterpartClass; { return [MIKMIDICommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDICommand class]; }
@@ -36,14 +38,21 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	MIKMIDICommandType commandType = packet->data[0];
 	
 	Class subclass = [[self class] subclassForCommandType:commandType];
-	if (!subclass) {
-		// Try again ignoring lower 4 bits
-		commandType |= 0x0f;
-		subclass = [[self class] subclassForCommandType:commandType];
-	}
 	if (!subclass) subclass = self;
-	if ([self isSubclassOfClass:[MIKMutableMIDICommand class]]) subclass = [subclass mutableCounterpartClass];
-	MIKMIDICommand *result = [[subclass alloc] initWithMIDIPacket:packet];
+	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
+	return [[subclass alloc] initWithMIDIPacket:packet];
+}
+
++ (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
+{
+	Class subclass = [[self class] subclassForCommandType:commandType];
+	if (!subclass) subclass = self;
+	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
+	MIKMIDICommand *result = [[subclass alloc] init];
+	
+	if ([result.internalData length] < 2) [result.internalData increaseLengthBy:2-[result.internalData length]];
+	UInt8 *data = (UInt8 *)[result.internalData mutableBytes];
+	data[0] = commandType;
 	return result;
 }
 
@@ -71,17 +80,31 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ command: %lu data: %@", [super description], (unsigned long)self.commandType, [self.internalData subdataWithRange:NSMakeRange(1, [self.internalData length]-1)]];
+	return [NSString stringWithFormat:@"%@ command: %lu data: %@", [super description], (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
 }
 
 #pragma mark - Private
 
 + (Class)subclassForCommandType:(MIKMIDICommandType)commandType
 {
+	Class result = nil;
 	for (Class subclass in registeredMIKMIDICommandSubclasses) {
-		if ([subclass supportsMIDICommandType:commandType]) return subclass;
+		if ([subclass supportsMIDICommandType:commandType]) {
+			result = subclass;
+			break;
+		}
 	}
-	return nil;
+	if (!result) {
+		// Try again ignoring lower 4 bits
+		commandType |= 0x0f;
+		for (Class subclass in registeredMIKMIDICommandSubclasses) {
+			if ([subclass supportsMIDICommandType:commandType]) {
+				result = subclass;
+				break;
+			}
+		}
+	}
+	return result;
 }
 
 #pragma mark - NSCopying
@@ -139,6 +162,20 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return [NSDate dateWithTimeIntervalSinceNow:elapsedInSeconds];
 }
 
+- (void)setTimestamp:(NSDate *)date
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	NSTimeInterval elapsedInSeconds = [date timeIntervalSinceNow];
+	int64_t elapsedInNanoseconds = (int64_t)(elapsedInSeconds * (double)NSEC_PER_SEC);
+	
+	mach_timebase_info_data_t timebaseInfo;
+	mach_timebase_info(&timebaseInfo);
+	int64_t elapsed = elapsedInNanoseconds * timebaseInfo.denom / timebaseInfo.numer;
+	
+	self.midiTimestamp = mach_absolute_time() + elapsed;
+}
+
 - (MIKMIDICommandType)commandType
 {
 	if ([self.internalData length] < 1) return 0;
@@ -152,11 +189,30 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return result;
 }
 
+- (void)setCommandType:(MIKMIDICommandType)commandType
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
+	
+	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
+	data[0] = commandType;
+}
+
 - (UInt8)dataByte1
 {
 	if ([self.internalData length] < 2) return 0;
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
 	return data[1] & 0x7F;
+}
+
+- (void)setDataByte1:(UInt8)byte
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	byte &= 0x7F;
+	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
+	[self.internalData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&byte length:1];
 }
 
 - (UInt8)dataByte2
@@ -166,54 +222,33 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return data[2] & 0x7F;
 }
 
-- (NSData *)data { return [self.internalData copy]; }
-
-@end
-
-@implementation MIKMutableMIDICommand
-
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
-
-#pragma mark - Properties
-
-- (void)setTimestamp:(NSDate *)date
-{
-	NSTimeInterval elapsedInSeconds = [date timeIntervalSinceNow];
-	int64_t elapsedInNanoseconds = (int64_t)(elapsedInSeconds * (double)NSEC_PER_SEC);
-	
-	mach_timebase_info_data_t timebaseInfo;
-	mach_timebase_info(&timebaseInfo);
-	int64_t elapsed = elapsedInNanoseconds * timebaseInfo.denom / timebaseInfo.numer;
-	
-	self.midiTimestamp = mach_absolute_time() + elapsed;
-}
-
-- (void)setCommandType:(MIKMIDICommandType)commandType
-{
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:1-[self.internalData length]];
-
-	UInt8 *data = (UInt8 *)[self.internalData bytes];
-	data[0] = commandType;
-}
-
-- (void)setDataByte1:(UInt8)byte
-{
-	byte &= 0x7F;
-	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
-	[self.internalData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&byte length:1];
-}
-
 - (void)setDataByte2:(UInt8)byte
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	byte &= 0x7F;
 	if ([self.internalData length] < 3) [self.internalData increaseLengthBy:3-[self.internalData length]];
 	[self.internalData replaceBytesInRange:NSMakeRange(2, 1) withBytes:&byte length:1];
 }
 
+- (NSData *)data { return [self.internalData copy]; }
+
 - (void)setData:(NSData *)data
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.internalData = [data mutableCopy];
 }
+
+@end
+
+@implementation MIKMutableMIDICommand
+
++ (BOOL)isMutable { return YES; }
+
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
+
+#pragma mark - Properties
 
 @end
 
