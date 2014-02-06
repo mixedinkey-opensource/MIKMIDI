@@ -21,7 +21,10 @@ NSUInteger MIKMIDIControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command)
 
 float MIKMIDIControlValueFromChannelVoiceCommand(MIKMIDIChannelVoiceCommand *command)
 {
-	if ([command respondsToSelector:@selector(fourteenBitValue)]) return (float)[(MIKMIDIControlChangeCommand *)command fourteenBitValue] / 127.0f;
+	if ([command respondsToSelector:@selector(isFourteenBitCommand)] &&
+		[(MIKMIDIControlChangeCommand *)command isFourteenBitCommand]) {
+		 return (float)[(MIKMIDIControlChangeCommand *)command fourteenBitValue] / 127.0f;
+	}
 	
 	return (float)command.value;
 }
