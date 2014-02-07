@@ -78,7 +78,10 @@
 	[mappingName setName:@"MappingName"];
 	[mappingName setStringValue:self.name];
 	
-	NSArray *mappingItemXMLElements = [[self.mappingItems valueForKey:@"XMLRepresentation"] allObjects];
+	NSSortDescriptor *sortByResponderID = [NSSortDescriptor sortDescriptorWithKey:@"MIDIResponderIdentifier" ascending:YES];
+	NSSortDescriptor *sortByCommandID = [NSSortDescriptor sortDescriptorWithKey:@"commandIdentifier" ascending:YES];
+	NSArray *sortedMappingItems = [self.mappingItems sortedArrayUsingDescriptors:@[sortByResponderID, sortByCommandID]];
+	NSArray *mappingItemXMLElements = [sortedMappingItems valueForKey:@"XMLRepresentation"];
 	NSXMLElement *mappingItems = [NSXMLElement elementWithName:@"MappingItems" children:mappingItemXMLElements attributes:nil];
 	NSXMLElement *rootElement = [NSXMLElement elementWithName:@"Mapping"
 													 children:@[mappingItems]
