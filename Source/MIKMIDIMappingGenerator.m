@@ -316,6 +316,8 @@
 
 - (BOOL)fillInRelativeAbsoluteKnobSliderMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
+	if ([[messages firstObject] isFourteenBitCommand]) return NO; // For now, we're assuming that controller don't do this with 14 bit commands
+	
 	if (![self fillInAbsoluteKnobSliderMappingItem:mappingItem fromMessages:messages]) return NO;
 	
 	// Determine if it's a "fake" absolute knob by looking at the time between messages, velocity,
