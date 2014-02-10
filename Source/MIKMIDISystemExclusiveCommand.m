@@ -80,6 +80,22 @@
 	_has3ByteManufacturerID = (numNewBytes == 3);
 }
 
+- (UInt8)modelID
+{
+    NSUInteger modelIDLocation = _has3ByteManufacturerID ? 4 : 2;
+    if ([self.internalData length] <= modelIDLocation) return 0;
+    
+    NSData *modelIDData = [self.internalData subdataWithRange:NSMakeRange(modelIDLocation, 1)];
+    return *(UInt8 *)[modelIDData bytes];
+}
+
+- (void)setModelID:(UInt8)modelID {
+    NSUInteger modelIDLocation = _has3ByteManufacturerID ? 4 : 2;
+    NSMutableData *internalData = self.internalData;
+    if ([internalData length] <= modelIDLocation) [internalData increaseLengthBy:modelIDLocation - [internalData length]+1];
+    [internalData replaceBytesInRange:NSMakeRange(modelIDLocation, 1) withBytes:&modelID length:1];
+}
+
 - (UInt8)sysexChannel
 {
 	if ([self.sysexData length] < 1) return 0;
