@@ -46,6 +46,25 @@
 	return result;
 }
 
+- (id)initWithMIDIPacket:(MIDIPacket *)packet {
+    self = [super initWithMIDIPacket:packet];
+    UInt8 firstByte = self.dataByte1;
+    if (firstByte == 0) {
+        _has3ByteManufacturerID = YES;
+    }
+    return self;
+}
+
+- (UInt32)manufacturerID
+{
+    if ([self.internalData length] < 2) return 0;
+    
+    NSUInteger manufacturerIDLocation = _has3ByteManufacturerID ? 2 : 1;
+    NSUInteger manufacturerIDLength = _has3ByteManufacturerID ? 2 : 1;
+    NSData *idData = [self.internalData subdataWithRange:NSMakeRange(manufacturerIDLocation, manufacturerIDLength)];
+    return *(UInt32 *)[idData bytes];
+}
+
 - (void)setManufacturerID:(UInt32)manufacturerID
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
