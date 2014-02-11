@@ -299,43 +299,42 @@
 	}
 	result.flipped = (directionCounter < 0);
 	
-	// Determine if it's a "fake" absolute knob by looking at the time between messages.
-	NSTimeInterval averageTimeBetweenMessages = 0;
-	MIKMIDICommand *lastMessage = nil;
-	for (MIKMIDICommand *message in messages) {
-		if (lastMessage) {
-			NSTimeInterval timeBetweenMessages = [message.timestamp timeIntervalSinceDate:lastMessage.timestamp];
-			averageTimeBetweenMessages += timeBetweenMessages;
-		}
-		lastMessage = message;
-	}
-	averageTimeBetweenMessages /= (double)[messages count];
-	if (averageTimeBetweenMessages > 0.02) {
-		// Probably a "fake" absolute knob, which is actually an encoder that sends absolute messages
-		result.interactionType = MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob;
-	}
-	
 	return YES;
 }
 
 - (BOOL)fillInRelativeAbsoluteKnobSliderMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
+	if ([[messages firstObject] isFourteenBitCommand]) return NO; // For now, we're assuming that controller don't do this with 14 bit commands
+	
 	if (![self fillInAbsoluteKnobSliderMappingItem:mappingItem fromMessages:messages]) return NO;
-		
-	// Determine if it's a "fake" absolute knob by looking at the time between messages.
+	
+	// Determine if it's a "fake" absolute knob by looking at the time between messages, velocity,
+	// and whether the value increases by exactly one each time.
 	NSTimeInterval medianTimeBetweenMessages = 0;
 	NSMutableArray *timesBetweenMessages = [NSMutableArray array];
-	MIKMIDICommand *lastMessage = nil;
-	for (MIKMIDICommand *message in messages) {
-		if (lastMessage) [timesBetweenMessages addObject:@([message.timestamp timeIntervalSinceDate:lastMessage.timestamp])];
-		lastMessage = message;
+	double totalValueChange = 0;
+	MIKMIDIChannelVoiceCommand *previousMessage = nil;
+	for (MIKMIDIChannelVoiceCommand *message in messages) {
+		if (previousMessage) {
+			totalValueChange += fabs(MIKMIDIControlValueFromChannelVoiceCommand(message) - MIKMIDIControlValueFromChannelVoiceCommand(previousMessage));
+			[timesBetweenMessages addObject:@([message.timestamp timeIntervalSinceDate:previousMessage.timestamp])];
+		}
+		previousMessage = message;
 	}
 	[timesBetweenMessages sortUsingSelector:@selector(compare:)];
 	medianTimeBetweenMessages = [[timesBetweenMessages objectAtIndex:([timesBetweenMessages count] / 2)] doubleValue];
+	double valueChangePerMessage = totalValueChange / (double)([messages count] - 1);
+	
+	// If we see a big value change per message (>1.2) we assume it's a real absolute knob, despite
+	// other indicators. This is because some controllers throttle the messages coming from a absolute knobs so the
+	// time between messages is long, but there's a big value change for each message.
+	if (valueChangePerMessage > 1.1) return NO;
+	
+	// If the time between messages is short, it's probably not a relative absolute knob either.
 	if (medianTimeBetweenMessages < 0.02) return NO;
 
 	[*mappingItem setInteractionType:MIKMIDIResponderTypeRelativeAbsoluteKnob];
-	
+		
 	return YES;
 }
 

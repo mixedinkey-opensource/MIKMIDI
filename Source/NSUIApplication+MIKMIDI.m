@@ -185,9 +185,8 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (NSSet *)recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)responder
 {
-	if (![responder respondsToSelector:@selector(subresponders)]) return [NSSet set];
-	
 	NSMutableSet *result = [NSMutableSet setWithObject:responder];
+	if (![responder respondsToSelector:@selector(subresponders)]) return result;
 	
 	NSArray *subresponders = [responder subresponders];
 	[result addObjectsFromArray:subresponders];
