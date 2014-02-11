@@ -134,7 +134,12 @@
 - (NSData *)data
 {
 	NSMutableData *result = [[super data] mutableCopy];
-	[result appendBytes:&(UInt8){kMIKMIDISysexEndDelimiter} length:1];
+    
+    UInt8 lastByte;
+    [result getBytes:&lastByte range:NSMakeRange(result.length-1, 1)];
+    if (lastByte != kMIKMIDISysexEndDelimiter) {
+        [result appendBytes:&(UInt8){kMIKMIDISysexEndDelimiter} length:1];
+    }
 	return result;
 }
 
