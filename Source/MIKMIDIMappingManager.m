@@ -97,6 +97,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	if ([self.userMappings containsObject:mapping]) return mapping; // Already have it, so don't copy the file.
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
+	// FIXME: This should write the newly imported mapping file immediately.
 	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:!shouldOverwrite];
 	if (shouldOverwrite && [fm fileExistsAtPath:[destinationURL path]]) {
 		if (![fm removeItemAtURL:destinationURL error:error]) return nil;

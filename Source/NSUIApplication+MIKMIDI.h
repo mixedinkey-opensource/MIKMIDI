@@ -25,6 +25,8 @@
 /**
  *  Define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS as a non-zero value to (re)enable searching
  *  the view hierarchy for MIDI responders. This is disabled by default because it's slow.
+ *
+ *  @deprecated This feature still works, but its use is discouraged. It is deprecated and may be removed in the future.
  */
 //#define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS 0
 
@@ -32,6 +34,11 @@
 
 @class MIKMIDICommand;
 
+/**
+ *  MIKMIDI implements a category on NSApplication (on OS X) or UIApplication (on iOS)
+ *  to facilitate the creation and use of a MIDI responder hierarchy, along with the ability
+ *  to send MIDI commands to responders in that hierarchy.
+ */
 @interface MIK_APPLICATION_CLASS (MIKMIDI)
 
 /**
@@ -55,7 +62,22 @@
  */
 - (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder;
 
+/**
+ *  NSApplication (OS X) or UIApplication (iOS) itself implements to methods in the MIKMIDIResponder protocol.
+ *  This method determines if any responder in the MIDI responder chain (registered responders and their subresponders)
+ *  responds to the passed in MIDI command, and returns YES if so.
+ *
+ *  @param command An MIKMIDICommand instance.
+ *
+ *  @return YES if any registered MIDI responder responds to the command.
+ */
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
+
+/**
+ *  <#Description#>
+ *
+ *  @param command <#command description#>
+ */
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
