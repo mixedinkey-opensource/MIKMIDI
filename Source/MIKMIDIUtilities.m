@@ -8,6 +8,10 @@
 
 #import "MIKMIDIUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIUtilities.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIUtilities.m in the Build Phases for this target
+#endif
+
 NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error)
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };

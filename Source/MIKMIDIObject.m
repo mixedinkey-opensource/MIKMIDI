@@ -13,6 +13,10 @@
 #import "MIKMIDIEndpoint.h"
 #import "MIKMIDIUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIObject.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIObject.m in the Build Phases for this target
+#endif
+
 static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @interface MIKMIDIObject ()

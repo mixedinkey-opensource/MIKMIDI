@@ -10,6 +10,10 @@
 #import "MIKMIDIMapping.h"
 #import "MIKMIDIErrors.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIMappingManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#endif
+
 @interface MIKMIDIMappingManager ()
 
 @property (nonatomic, strong, readwrite) NSSet *bundledMappings;
@@ -93,6 +97,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	if ([self.userMappings containsObject:mapping]) return mapping; // Already have it, so don't copy the file.
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
+	// FIXME: This should write the newly imported mapping file immediately.
 	NSURL *destinationURL = [self fileURLForMapping:mapping shouldBeUnique:!shouldOverwrite];
 	if (shouldOverwrite && [fm fileExistsAtPath:[destinationURL path]]) {
 		if (![fm removeItemAtURL:destinationURL error:error]) return nil;

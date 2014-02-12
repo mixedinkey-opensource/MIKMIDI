@@ -9,6 +9,10 @@
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDISystemExclusiveCommand.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDISystemExclusiveCommand.m in the Build Phases for this target
+#endif
+
 @interface MIKMIDISystemExclusiveCommand ()
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;

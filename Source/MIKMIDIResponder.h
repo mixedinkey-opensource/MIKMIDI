@@ -8,37 +8,69 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
-	MIKMIDIResponderTypeNone = 0,
-	
-	MIKMIDIResponderTypeAbsoluteSliderOrKnob = 1 << 0,	/* Absolute position knob or slider */
-	MIKMIDIResponderTypeRelativeKnob = 1 << 1,			/* Relative (e.g. Browse) knob */
-	MIKMIDIResponderTypeTurntableKnob = 1 << 2,			/* Relative turntable-style knob */
-	MIKMIDIResponderTypeRelativeAbsoluteKnob = 1 << 3,	/* Encoder knob that sends absolute-knob-like message */
-	MIKMIDIResponderTypePressReleaseButton = 1 << 4,	/* Button that sends message on press down, and another when released*/
-	MIKMIDIResponderTypePressButton = 1 << 5,			/* Button that sends message only on press down*/
-	
-	/* Any kind of knob */
-	MIKMIDIResponderTypeKnob = (MIKMIDIResponderTypeAbsoluteSliderOrKnob | MIKMIDIResponderTypeRelativeKnob | \
-								MIKMIDIResponderTypeTurntableKnob | MIKMIDIResponderTypeRelativeAbsoluteKnob),
-	MIKMIDIResponderTypeButton = (MIKMIDIResponderTypePressButton | MIKMIDIResponderTypePressReleaseButton), /* Either kind of button */
-	
-	MIKMIDIResponderTypeAll = NSUIntegerMax,
-};
-
 @class MIKMIDICommand;
+
+/**
+ *  The MIKMIDIResponder protocol defines methods to be implemented by any object that wishes
+ *  to receive MIDI messages/commands.
+ *
+ *  Any class in an application can implement this protocol. To actually receive MIDI messages,
+ *  a responder object must be registered by calling -[NS/UIApplication registerMIDIResponder].
+ *  Additionally, it is the client application's responsibility to pass incoming MIDI messages to
+ *  the application instance by calling -[NS/UIApplication handleMIDICommand:]
+ */
 
 @protocol MIKMIDIResponder <NSObject>
 
 @required
+/**
+ *  Returns an NSString used to uniquely identify this MIDI responder. Need not be 
+ *  human readable, but it should be unique in the application.
+ *
+ *  This identifier can be used to find a given responder at runtime. It is also used by
+ *  MIKMIDI's MIDI mapping system to uniquely identify mapped responders.
+ *
+ *  @return An NSString containing a unique identifier for the receiver.
+ *  @see -MIDIResponderWithIdentifier:
+ */
 - (NSString *)MIDIIdentifier;
+
+/**
+ *  This method is called to determine if the receiver wants to handle the passed in
+ *  MIDI command. If this method returns YES, -handleMIDICommand: is then called.
+ *
+ *  @param command The MIDI command to be handled.
+ *
+ *  @return YES if the receiver wishes to handle command, NO to ignore.
+ */
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
+
+/**
+ *  The primary method used for MIDI message/command handling. Implmenent the real
+ *
+ *  This method is only called if the preceeding call to -respondsToMIDICommand: returns YES.
+ *
+ *  @param command The MIDI command to be handled.
+ */
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
 @optional
 // Should return a flat (non-recursive) array of subresponders.
 // Return nil, empty array, or don't implement if you don't want subresponders to be
 // included in any case where the receiver would be considered for receiving MIDI
+
+/**
+ *  An array of subresponders, which must also conform to MIKMIDIResponder.
+ *  Responders returned by this method will be eligible
+ *  to receive MIDI commands without needing to be explicitly registered with the
+ *  application, as long as the receiver (or a parent responder) is registered.
+ *
+ *  Should return a flat (non-recursive) array of subresponders.
+ *  Return nil, empty array, or don't implement if you don't want subresponders to be
+ *  included in any case where the receiver would be considered for receiving MIDI
+ *
+ *  @return An NSArray containing the receivers subresponders. Each object in the array must also conform to MIKMIDIResponder.
+ */
 - (NSArray *)subresponders;
 
 @end

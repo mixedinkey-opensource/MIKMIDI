@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-/* Umbrella header for MIKMIDI public interface. */
+/** Umbrella header for MIKMIDI public interface. */
 
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"

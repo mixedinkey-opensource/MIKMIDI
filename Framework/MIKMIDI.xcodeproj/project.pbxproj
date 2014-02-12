@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D74EEA917A7129300BEE89F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EEA817A7129300BEE89F /* Cocoa.framework */; };
 		9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EEBE17A712E900BEE89F /* MIKMIDI-Prefix.pch */; };
 		9D74EEC417A712F100BEE89F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D74EEC117A712F100BEE89F /* InfoPlist.strings */; };
-		9D74EF2E17A7133900BEE89F /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
 		9D74EF6317A713A100BEE89F /* MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3017A713A100BEE89F /* MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6417A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF6517A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */; };
@@ -143,8 +141,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D74EF2E17A7133900BEE89F /* CoreMIDI.framework in Frameworks */,
-				9D74EEA917A7129300BEE89F /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,7 +222,8 @@
 				9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */,
 				9D74EF4217A713A100BEE89F /* MIKMIDIErrors.h */,
 				9D74EF4317A713A100BEE89F /* MIKMIDIErrors.m */,
-				9DF99E731831837C004EE5F4 /* Core */,
+				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
+				9DF99E731831837C004EE5F4 /* Device Support */,
 				9DF99E75183183AF004EE5F4 /* Commands */,
 				9DF99E7418318395004EE5F4 /* Mapping */,
 				9DF99E76183183F6004EE5F4 /* Utilities */,
@@ -235,10 +232,9 @@
 			path = ../Source;
 			sourceTree = "<group>";
 		};
-		9DF99E731831837C004EE5F4 /* Core */ = {
+		9DF99E731831837C004EE5F4 /* Device Support */ = {
 			isa = PBXGroup;
 			children = (
-				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
 				9D74EF3C17A713A100BEE89F /* MIKMIDIDeviceManager.h */,
 				9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */,
 				9D74EF5017A713A100BEE89F /* MIKMIDIObject.h */,
@@ -261,10 +257,8 @@
 				9D74EF5A17A713A100BEE89F /* MIKMIDISourceEndpoint.m */,
 				9D74EF3817A713A100BEE89F /* MIKMIDIDestinationEndpoint.h */,
 				9D74EF3917A713A100BEE89F /* MIKMIDIDestinationEndpoint.m */,
-				9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */,
-				9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */,
 			);
-			name = Core;
+			name = "Device Support";
 			sourceTree = "<group>";
 		};
 		9DF99E7418318395004EE5F4 /* Mapping */ = {
@@ -308,6 +302,8 @@
 			children = (
 				9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */,
 				9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */,
+				9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */,
+				9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */,
 				9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */,
 				9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */,
 			);
@@ -467,6 +463,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -499,6 +496,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -521,6 +519,7 @@
 		9D74EEBB17A7129300BEE89F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -538,6 +537,7 @@
 		9D74EEBC17A7129300BEE89F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

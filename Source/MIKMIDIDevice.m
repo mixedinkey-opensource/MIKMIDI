@@ -11,6 +11,10 @@
 #import "MIKMIDIEntity.h"
 #import "MIKMIDIUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIDevice.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDevice.m in the Build Phases for this target
+#endif
+
 @interface MIKMIDIDevice ()
 
 @property (nonatomic, strong, readwrite) NSString *manufacturer;
