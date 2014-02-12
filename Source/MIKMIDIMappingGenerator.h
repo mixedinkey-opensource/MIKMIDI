@@ -133,7 +133,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
 									   commandIdentifier:(NSString *)commandIdentifier;
 
 /**
- *  Used to determine whether the existing mapping item for a responder should be superceeded by a new mapping item.
+ *  Used to determine whether the existing mapping item for a responder should be superceded by a new mapping item.
  *
  *  The default behavior is to remove existing mapping items (return value of YES). If the delegate does not respond to
  *  this method, the default behavior is used.
