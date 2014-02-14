@@ -1,7 +1,8 @@
 Note: This README file, along with more complete documentation for MIKMIDI is a work in progress. Questions should be directed to [the author](mailto:andrew@mixedinkey.com).
 
 MIKMIDI
-=============
+-------
+
 MIKMIDI is an easy-to-use Objective-C MIDI library by [Mixed In Key](http://www.mixedinkey.com/). It's a Cocoa-like set of Objective-C classes useful for programmers writing Objective-C OS X or iOS apps that communicate with external MIDI devices, including DJ controllers, keyboards, etc. MIKMIDI is used to provide MIDI functionality in the OS X version of our DJ app, [Flow](http://flowdjsoftware.com).
 
 MIKMIDI can be used in projects targeting Mac OS X 10.7 and later, and iOS 6 and later.
@@ -11,7 +12,7 @@ MIKMIDI is released under an MIT license, meaning you're free to use it in both 
 If you have any questions about, suggestions for, or contributions to MIKMIDI, please [contact the author](mailto:andrew@mixedinkey.com). We'd also love to hear about any cool projects you're using it in.
 
 How To Use MIKMIDI
-==================
+------------------
 
 MIKMIDI is provided as a source library for both OS X and iOS. Additionally, for OS X, a project to build a Framework is included. To use MIKMIDI in your project, add its source to your project by dragging the contents of the 'Source' folder into your Xcode project.
 
@@ -22,7 +23,7 @@ On OS X, you can also use MIKMIDI.framework instead of including the MIKMIDI sou
 Important Note: MIKMIDI relies on Automatic Reference Counting (ARC). If you'd like to use its source in a non-ARC project, you'll need to open the "Compile Sources" build phase for the target(s) you're using it in, and add the -fobjc-arc flag to the "Compiler Flags" column for all MIKMIDI implementation (.m) files. MIKMIDI will generate a compiler error if ARC is not enabled.
 
 MIKMIDI Overview
-================
+----------------
 
 MIKMIDI has an Objective-C interface -- as opposed to CoreMIDI's pure C API -- in order to make adding MIDI support to a Cocoa/Cocoa Touch app is easier. A portion of MIKMIDI consists of relatively thin Objective-C wrappers around underlying CoreMIDI APIs. Much of MIKMIDI's design is informed and driven by CoreMIDI's design. For this reason, familiarity with the high level pieces of [CoreMIDI](https://developer.apple.com/library/iOS/documentation/CoreMidi/Reference/MIDIServices_Reference/Reference/reference.html) can be helpful in understanding and using MIKMIDI.
 
