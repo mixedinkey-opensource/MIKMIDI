@@ -170,18 +170,19 @@
 		// If we get a message from a different controller number, channel,
 		// or command type (not counting note on vs note off), restart the mapping
 		
-		BOOL allowDifferentMessages = NO;
+		BOOL allowTouchSenseMessages = NO;
 		
-		// Ignore different message types if we're trying to map a turntable,
-		// since they often send note on/off commands for touch sensing.
-		if (self.responderTypeOfControlBeingLearned & MIKMIDIResponderTypeTurntableKnob &&
-			[self.receivedMessages count] > [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) {
-			allowDifferentMessages = YES;
+		// Ignore different message types if we're trying to map a knob,
+		// since they sometimes send note on/off commands for touch sensing.
+		if (self.responderTypeOfControlBeingLearned & MIKMIDIResponderTypeKnob &&
+			[self.receivedMessages count] > [self defaultMinimumNumberOfMessagesRequiredForResponderType:self.responderTypeOfControlBeingLearned]) {
+			allowTouchSenseMessages = YES;
 		}
 		
-		if (!allowDifferentMessages) {
-			MIKMIDIChannelVoiceCommand *firstMessage = [self.receivedMessages objectAtIndex:0];
-			if (![self command:firstMessage isSameTypeChannelNumberAsCommand:command]) [self.receivedMessages removeAllObjects];
+		MIKMIDIChannelVoiceCommand *firstMessage = [self.receivedMessages objectAtIndex:0];
+		BOOL firstMessageIsDifferent = ![self command:firstMessage isSameTypeChannelNumberAsCommand:command];
+		if (!allowTouchSenseMessages && firstMessageIsDifferent) {
+			[self.receivedMessages removeAllObjects];
 		}
 	}
 	
