@@ -11,6 +11,10 @@
 
 @class MIKMIDIEndpoint;
 
+/**
+ *  MIKMIDIPort is an Objective-C wrapper for CoreMIDI's MIDIPort class. It is not intended for use by clients/users of
+ *  of MIKMIDI. Rather, it should be thought of as an MIKMIDI private class.
+ */
 @interface MIKMIDIPort : NSObject
 
 - (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name;

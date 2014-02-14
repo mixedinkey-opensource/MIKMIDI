@@ -13,6 +13,11 @@
 
 typedef void(^MIKMIDIEventHandlerBlock)(MIKMIDISourceEndpoint *source, NSArray *commands); // commands in an array of MIKMIDICommands
 
+/**
+ *  MIKMIDIInputPort is an Objective-C wrapper for CoreMIDI's MIDIPort class, and is only for source ports.
+ *  It is not intended for use by clients/users of of MIKMIDI. Rather, it should be thought of as an
+ *  MIKMIDI private class.
+ */
 @interface MIKMIDIInputPort : MIKMIDIPort
 
 - (BOOL)connectToSource:(MIKMIDISourceEndpoint *)source error:(NSError **)error;

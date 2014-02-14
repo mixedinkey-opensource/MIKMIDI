@@ -14,28 +14,132 @@
 @class MIKMIDICommand;
 
 // Notifications
+/**
+ *  Posted whenever a device is added (connected) to the system.
+ */
 extern NSString * const MIKMIDIDeviceWasAddedNotification;
+
+/**
+ *  Posted whenever a device is removed (disconnected) from the system.
+ */
 extern NSString * const MIKMIDIDeviceWasRemovedNotification;
+
+/**
+ *  Posted whenever a virtual endpoint is added to the system.
+ */
 extern NSString * const MIKMIDIVirtualEndpointWasAddedNotification;
+
+/**
+ *  Posted whenever a virtual endpoint is removed from the system.
+ */
 extern NSString * const MIKMIDIVirtualEndpointWasRemovedNotification;
 
 // Notification Keys
+/**
+ *  Key whose value is the device added or removed in MIKMIDIDeviceWasAdded/RemovedNotification's userInfo dictionary.
+ */
 extern NSString * const MIKMIDIDeviceKey;
+
+/**
+ *  Key whose value is the virtual endpoint added or removed in MIKMIDIVirtualEndpointWasAdded/RemovedNotification's userInfo dictionary.
+ */
 extern NSString * const MIKMIDIEndpointKey;
 
+/**
+ *  MIKMIDIDeviceManager is used to retrieve devices and virtual endpoints available on the system, 
+ *  as well as for connecting to and disconnecting from MIDI endpoints. It is a singleton object.
+ *
+ *  To get a list of devices available on the system, call -availableDevices. Virtual sources can be
+ *  retrieved by calling -virtualSources and -virtualDevices, respectively. All three of these properties,
+ *  are KVO compliant, meaning they can be observed using KVO for changes, and (on OS X) can be bound to UI
+ *  elements using Cocoa bindings.
+ *
+ *  MIKMIDIDeviceManager is also used to connect to and disonnect from MIDI endpoints, as well as to send and receive MIDI
+ *  messages. To connect to a MIDI source endpoint, call -connectInput:error:eventHandler:. To disconnect, call -disconnectInput:.
+ *  To send MIDI messages/commands to an output endpoint, call -sendCommands:toEndpoint:error:.
+ */
 @interface MIKMIDIDeviceManager : NSObject
 
+/**
+ *  Used to obtain the shared MIKMIDIDeviceManager instance.
+ *  MIKMIDIDeviceManager should not be created directly using +alloc/-init or +new.
+ *  Rather, the singleton shared instance should always be obtained by calling this method.
+ *
+ *  @return The shared MIKMIDIDeviceManager instance.
+ */
 + (instancetype)sharedDeviceManager;
 
+/**
+ *  Used to connect to a MIDI input/source endpoint.
+ *
+ *  @param endpoint     An MIKMIDISourceEndpoint instance that should be connected.
+ *  @param error        If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
+ *  @param eventHandler A block which will be called anytime incoming MIDI messages are received from the endpoint.
+ *
+ *  @return YES if connection succeeds, NO if an error occurred.
+ */
 - (BOOL)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+
+/**
+ *  Disconnects a previously connected MIDI input/source endpoint.
+ *
+ *  @param endpoint The MIKMIDISourceEndpoint instance from which to disconnect.
+ */
 - (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint;
 
+/**
+ *  Used to send MIDI messages/commands from your application to a MIDI output endpoint. 
+ *  Use this to send messages to a connected device, or another app connected via virtual MIDI port.
+ *
+ *  @param commands An NSArray containing MIKMIDICommand instances to be sent.
+ *  @param endpoint An MIKMIDIDestinationEndpoint to which the commands should be sent.
+ *  @param error    If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
+ *
+ *  @return YES if the commands were successfully sent, NO if an error occurred.
+ */
 - (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
 
-@property (nonatomic, readonly) NSArray *availableDevices; // Array of MIKMIDIDevices
-@property (nonatomic, readonly) NSArray *virtualSources; // Array of MIKMIDISourceEndpoints
+/**
+ *  An NSArray containing MIKMIDIDevice instances representing MIDI devices connected to the system.
+ *
+ *  This property is Key Value Observing (KVO) compliant, and can be observed
+ *  to be notified when devices are connected or disconnected. It is also suitable
+ *  for binding to UI using Cocoa Bindings (OS X only).
+ *
+ *  @see MIKMIDIDeviceWasAddedNotification
+ *  @see MIKMIDIDeviceWasRemovedNotification
+ */
+@property (nonatomic, readonly) NSArray *availableDevices;
+
+/**
+ *  An NSArray containing MIKMIDISourceEndpoint instances representing virtual MIDI sources (inputs) on the system.
+ *
+ *  This property is Key Value Observing (KVO) compliant, and can be observed
+ *  to be notified when  virtual sources appear or disappear. It is also suitable
+ *  for binding to UI using Cocoa Bindings (OS X only).
+ *
+ *  @see MIKMIDIVirtualEndpointWasAddedNotification
+ *  @see MIKMIDIVirtualEndpointWasRemovedNotification
+ */
+@property (nonatomic, readonly) NSArray *virtualSources;
+
+/**
+ *  An NSArray containing MIKMIDIDestinationEndpoint instances representing virtual
+ *  MIDI destinations (outputs) on the system.
+ *
+ *  This property is Key Value Observing (KVO) compliant, and can be observed
+ *  to be notified when virtual destinations appear or disappear. It is also suitable
+ *  for binding to UI using Cocoa Bindings (OS X only).
+ *
+ *  @see MIKMIDIVirtualEndpointWasAddedNotification
+ *  @see MIKMIDIVirtualEndpointWasRemovedNotification
+ */
 @property (nonatomic, readonly) NSArray *virtualDestinations; // Array of MIKMIDIDestinationEndpoints
 
+
+/**
+ *  An NSArray of MIKMIDISourceEndpoint instances that are connected to at least one event handler.
+ */
 @property (nonatomic, readonly) NSArray *connectedInputSources; // Array of MIKMIDISourceEndpoints
 
 @end

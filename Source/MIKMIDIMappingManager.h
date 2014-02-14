@@ -19,7 +19,7 @@
  *  MIKMIDIMappingManager should not be created directly using +alloc/-init or +new.
  *  Rather, the singleton shared instance should always be obtained by calling this method.
  *
- *  @return The shared MIKMIDIMapping Manager instance.
+ *  @return The shared MIKMIDIMappingManager instance.
  */
 + (instancetype)sharedManager;
 
