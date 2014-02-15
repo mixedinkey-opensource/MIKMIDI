@@ -63,8 +63,9 @@
 	if (!device) return;
 	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	if (![sources count]) return;
-	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
-	[self connectToSource:source];
+    for (MIKMIDISourceEndpoint *source in sources) {
+        [self connectToSource:source];
+    }
 }
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command
@@ -88,11 +89,13 @@
 	
 	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
 	if (![destinations count]) return;
-	MIKMIDIDestinationEndpoint *destination = destinations[0];
-	NSError *error = nil;
-	if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
-		NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
-	}
+	for (MIKMIDIDestinationEndpoint *destination in destinations) {
+        NSError *error = nil;
+        NSLog(@"Sending identity request to: %@", destination);
+        if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
+            NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
+        }
+    }
 }
 
 #pragma mark - Devices
