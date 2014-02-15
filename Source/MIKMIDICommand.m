@@ -85,7 +85,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 - (NSString *)description
 {
     NSString *timestamp = [self.timestamp descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:[NSTimeZone systemTimeZone] locale:nil];
-	return [NSString stringWithFormat:@"%@ time: %@ command: %lu data: %@", [super description], timestamp, (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
+	return [NSString stringWithFormat:@"%@ time: %@ command: %lu data: %@", [super description], timestamp, (unsigned long)self.commandType, self.data];
 }
 
 #pragma mark - Private
