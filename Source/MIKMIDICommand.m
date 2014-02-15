@@ -84,8 +84,8 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)description
 {
-	NSDate *referenceDate = [NSDate dateWithTimeIntervalSinceReferenceDate:413154671]; // Feb 3, 2014
-	return [NSString stringWithFormat:@"%@ time: %f command: %lu data: %@", [super description], [self.timestamp timeIntervalSinceDate:referenceDate], (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
+    NSString *timestamp = [self.timestamp descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:[NSTimeZone systemTimeZone] locale:nil];
+	return [NSString stringWithFormat:@"%@ time: %@ command: %lu data: %@", [super description], timestamp, (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
 }
 
 #pragma mark - Private
