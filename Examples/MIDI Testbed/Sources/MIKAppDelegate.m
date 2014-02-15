@@ -72,6 +72,7 @@
 {
 	NSMutableString *textFieldString = self.textView.textStorage.mutableString;
 	[textFieldString appendFormat:@"Received: %@\n", command];
+    [self.textView scrollToEndOfDocument:self];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
