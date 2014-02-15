@@ -79,6 +79,10 @@
 	NSLog(@"%@'s %@ changed to: %@", object, keyPath, [object valueForKeyPath:keyPath]);
 }
 
+- (IBAction)clearOutput:(id)sender {
+    [self.textView setString:@""];
+}
+
 - (IBAction)sendSysex:(id)sender
 {
 	MIKMutableMIDISystemExclusiveCommand *command = [MIKMutableMIDISystemExclusiveCommand commandForCommandType:MIKMIDICommandTypeSystemExclusive];
