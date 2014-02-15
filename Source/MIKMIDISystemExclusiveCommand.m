@@ -48,9 +48,13 @@
 
 - (id)initWithMIDIPacket:(MIDIPacket *)packet {
     self = [super initWithMIDIPacket:packet];
-    UInt8 firstByte = self.dataByte1;
-    if (firstByte == 0) {
-        _has3ByteManufacturerID = YES;
+    if (self) {
+        if (self.internalData.length > 1) {
+            UInt8 firstByte = self.dataByte1;
+            if (firstByte == 0) {
+                _has3ByteManufacturerID = YES;
+            }
+        }
     }
     return self;
 }
