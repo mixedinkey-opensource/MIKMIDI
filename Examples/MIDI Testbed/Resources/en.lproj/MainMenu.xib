@@ -719,8 +719,8 @@
                             <binding destination="494" name="selectedObject" keyPath="device" previousBinding="7FF-5F-GGD" id="bgN-bW-dhh"/>
                         </connections>
                     </popUpButton>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HLC-mj-NJl">
-                        <rect key="frame" x="275" y="9" width="73" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HLC-mj-NJl">
+                        <rect key="frame" x="284" y="9" width="73" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Clear" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zJq-hm-hS1">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -737,6 +737,8 @@
                     <constraint firstAttribute="trailing" secondItem="536" secondAttribute="trailing" constant="-1" id="544"/>
                     <constraint firstItem="565" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="571"/>
                     <constraint firstItem="565" firstAttribute="top" secondItem="536" secondAttribute="bottom" constant="8" id="573"/>
+                    <constraint firstItem="HLC-mj-NJl" firstAttribute="baseline" secondItem="560" secondAttribute="baseline" id="Huk-WM-4q7"/>
+                    <constraint firstItem="560" firstAttribute="leading" secondItem="HLC-mj-NJl" secondAttribute="trailing" constant="12" id="JmM-Ze-XLs"/>
                     <constraint firstAttribute="trailing" secondItem="560" secondAttribute="trailing" constant="20" id="pIE-Zr-JuP"/>
                     <constraint firstAttribute="bottom" secondItem="565" secondAttribute="bottom" constant="16" id="up5-Cz-3tq"/>
                     <constraint firstAttribute="bottom" secondItem="560" secondAttribute="bottom" constant="16" id="xxy-43-3Hq"/>
