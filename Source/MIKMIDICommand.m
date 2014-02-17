@@ -84,7 +84,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)additionalCommandDescription
 {
-    return @"";
+    return nil;
 }
 
 - (NSString *)description
