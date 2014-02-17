@@ -96,7 +96,6 @@
 	if (![destinations count]) return;
 	for (MIKMIDIDestinationEndpoint *destination in destinations) {
         NSError *error = nil;
-        NSLog(@"Sending identity request to: %@", destination);
         if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
             NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
         }
