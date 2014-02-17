@@ -36,9 +36,8 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIChannelVoiceCommand class]; }
 
-- (NSString *)description
-{
-	return [NSString stringWithFormat:@"%@ channel %d", [super description], self.channel];
+- (NSString *)additionalCommandDescription {
+    return [NSString stringWithFormat:@"channel %d", self.channel];
 }
 
 #pragma mark - Properties

@@ -160,6 +160,10 @@
 	self.internalData = [data mutableCopy];
 }
 
+- (NSString *)additionalCommandDescription {
+    return [NSString stringWithFormat:@"universal: %@ sysexChannel: %u", @(self.universal), self.sysexChannel];
+}
+
 @end
 
 @implementation MIKMutableMIDISystemExclusiveCommand

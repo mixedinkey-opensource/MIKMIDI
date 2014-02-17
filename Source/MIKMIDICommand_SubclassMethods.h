@@ -26,6 +26,8 @@
 
 @property (nonatomic, strong, readwrite) NSMutableData *internalData;
 
+- (NSString *)additionalCommandDescription;
+
 @end
 
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])

@@ -82,12 +82,21 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return self;
 }
 
+- (NSString *)additionalCommandDescription
+{
+    return @"";
+}
+
 - (NSString *)description
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"HH:mm:ss.SSS";
     NSString *timestamp =[dateFormatter stringFromDate:self.timestamp];
-	return [NSString stringWithFormat:@"%@ time: %@ command: %lu data: %@", [super description], timestamp, (unsigned long)self.commandType, self.data];
+    NSString *additionalDescription = [self additionalCommandDescription];
+    if (additionalDescription.length > 0) {
+        additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
+    }
+	return [NSString stringWithFormat:@"%@ time: %@ command: %lu %@\n\tdata: %@", [super description], timestamp, (unsigned long)self.commandType, additionalDescription, self.data];
 }
 
 #pragma mark - Private
