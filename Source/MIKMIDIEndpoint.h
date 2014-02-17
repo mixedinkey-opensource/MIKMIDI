@@ -10,13 +10,23 @@
 
 @class MIKMIDIEntity;
 
+/**
+ *  Base class for MIDI endpoint objects. Not used directly, rather, in use, instances will always be
+ *  instances of MIKMIDISourceEndpoint or MIKMIDIDestinationEndpoint.
+ */
 @interface MIKMIDIEndpoint : MIKMIDIObject
 
 + (NSArray *)virtualSourceEndpoints;
 + (NSArray *)virtualDestinationEndpoints;
 
+/**
+ *  The entity that contains the receiver. Will be nil for non-wrapped virtual endpoints.
+ */
 @property (nonatomic, weak, readonly) MIKMIDIEntity *entity;
 
+/**
+ *  Whether or not the endpoint is private or hidden. See kMIDIPropertyPrivate in MIDIServices.h.
+ */
 @property (nonatomic, readonly, getter=isPrivate) BOOL private;
 
 @end
