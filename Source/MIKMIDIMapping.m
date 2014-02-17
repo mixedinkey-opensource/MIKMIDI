@@ -29,6 +29,7 @@
 
 @interface MIKMIDIMapping ()
 
+@property (nonatomic, readwrite, getter = isBundledMapping) BOOL bundledMapping;
 @property (nonatomic, strong) NSMutableSet *internalMappingItems;
 
 @end

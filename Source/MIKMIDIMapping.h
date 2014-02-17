@@ -248,6 +248,11 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 @property (nonatomic, copy) NSString *controllerName;
 
 /**
+ *  YES if the receiver was loaded from the application bundle, NO if loaded from user-accessible folder (e.g. Application Support)
+ */
+@property (nonatomic, readonly, getter = isBundledMapping) BOOL bundledMapping;
+
+/**
  *  All mapping items this mapping contains.
  */
 @property (nonatomic, readonly) NSSet *mappingItems;

@@ -14,6 +14,12 @@
 #error MIKMIDIMappingManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
 #endif
 
+@interface MIKMIDIMapping (SemiPrivate)
+
+@property (nonatomic, readwrite, getter = isBundledMapping) BOOL bundledMapping;
+
+@end
+
 @interface MIKMIDIMappingManager ()
 
 @property (nonatomic, strong, readwrite) NSSet *bundledMappings;
@@ -182,6 +188,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	NSArray *bundledMappingFileURLs = [bundle URLsForResourcesWithExtension:kMIKMIDIMappingFileExtension subdirectory:nil];
 	for (NSURL *file in bundledMappingFileURLs) {
 		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+		mapping.bundledMapping = YES;
 		if (mapping) [mappings addObject:mapping];
 	}
 #endif
