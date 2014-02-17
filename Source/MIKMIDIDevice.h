@@ -87,7 +87,7 @@
 + (instancetype)deviceWithVirtualEndpoints:(NSArray *)endpoints;
 
 /**
- *  Initializes and returns a "virtual" MIKMIDIDevice instance from one or more virtual endpoints.
+ *  Creates and initializes a "virtual" MIKMIDIDevice instance from one or more virtual endpoints.
  *
  *  MIKMIDIDevices typically represent a physical, connected piece of MIDI hardware. However,
  *  some devices (e.g. some Native Instruments DJ controllers) have drivers that present
