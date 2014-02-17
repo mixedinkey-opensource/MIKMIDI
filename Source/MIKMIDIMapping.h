@@ -253,6 +253,11 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 @property (nonatomic, readonly, getter = isBundledMapping) BOOL bundledMapping;
 
 /**
+ *  Optional additional key value pairs, which will be saved as attributes in this mapping's XML representation. Keys and values must be NSStrings.
+ */
+@property (nonatomic, copy) NSDictionary *additionalAttributes;
+
+/**
  *  All mapping items this mapping contains.
  */
 @property (nonatomic, readonly) NSSet *mappingItems;
