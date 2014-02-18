@@ -48,7 +48,9 @@
 {
 	NSSet *result = [super keyPathsForValuesAffectingValueForKey:key];
 	
-	if ([key isEqualToString:@"sysexData"]) {
+	if ([key isEqualToString:@"sysexData"]
+        || [key isEqualToString:@"sysexChannel"]
+        || [key isEqualToString:@"manufacturerID"]) {
 		result = [result setByAddingObject:@"internalData"];
 	}
 	
