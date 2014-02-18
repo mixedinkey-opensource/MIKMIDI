@@ -147,7 +147,7 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @see MIKMIDIMappingManager
  *  @see MIKMIDIMappingGenerator
  */
-@interface MIKMIDIMapping : NSObject
+@interface MIKMIDIMapping : NSObject <NSCopying>
 
 #if !TARGET_OS_IPHONE
 /**
@@ -302,7 +302,7 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  should be routed.
  *
  */
-@interface MIKMIDIMappingItem : NSObject
+@interface MIKMIDIMappingItem : NSObject <NSCopying>
 
 /**
  *  Creates and initializes a new MIKMIDIMappingItem instance.
