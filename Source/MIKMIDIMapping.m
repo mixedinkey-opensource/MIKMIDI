@@ -29,6 +29,7 @@
 
 @interface MIKMIDIMapping ()
 
+@property (nonatomic, readwrite, getter = isBundledMapping) BOOL bundledMapping;
 @property (nonatomic, strong) NSMutableSet *internalMappingItems;
 
 @end
@@ -96,9 +97,23 @@
 	NSArray *sortedMappingItems = [self.mappingItems sortedArrayUsingDescriptors:@[sortByResponderID, sortByCommandID]];
 	NSArray *mappingItemXMLElements = [sortedMappingItems valueForKey:@"XMLRepresentation"];
 	NSXMLElement *mappingItems = [NSXMLElement elementWithName:@"MappingItems" children:mappingItemXMLElements attributes:nil];
+	
+	NSMutableArray *attributes = [NSMutableArray arrayWithArray:@[mappingName, controllerName]];
+	for (NSString *key in self.additionalAttributes) {
+		NSXMLElement *attributeElement = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
+		NSString *stringValue = self.additionalAttributes[key];
+		if (![stringValue isKindOfClass:[NSString class]]) {
+			NSLog(@"Ignoring additional attribute %@ : %@ because it is not a string.", key, stringValue);
+			continue;
+		}
+		[attributeElement setName:key];
+		[attributeElement setStringValue:stringValue];
+		[attributes addObject:attributeElement];
+	}
+	
 	NSXMLElement *rootElement = [NSXMLElement elementWithName:@"Mapping"
 													 children:@[mappingItems]
-												   attributes:@[mappingName, controllerName]];
+												   attributes:attributes];
 	
 	NSXMLDocument *result = [[NSXMLDocument alloc] initWithRootElement:rootElement];
 	[result setVersion:@"1.0"];
@@ -210,6 +225,15 @@
 		if (!item) continue;
 		[self.internalMappingItems addObject:item];
 	}
+	
+	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+	for (NSXMLNode *attribute in [mapping attributes]) {
+		if (![[attribute stringValue] length]) continue;
+		if ([[attribute name] isEqualToString:@"MappingName"]) continue;
+		if ([[attribute name] isEqualToString:@"ControllerName"]) continue;
+		[attributes setObject:[attribute stringValue] forKey:[attribute name]];
+	}
+	self.additionalAttributes = attributes;
 	
 	return YES;
 }
