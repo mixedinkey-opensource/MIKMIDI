@@ -242,6 +242,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
 	MIKMIDIMapping *existing = [self mappingWithName:mapping.name];
 	if (existing) [self.internalUserMappings removeObject:existing];
+	mapping.bundledMapping = NO;
 	[self.internalUserMappings addObject:mapping];
 	
 	[self saveMappingsToDisk];
