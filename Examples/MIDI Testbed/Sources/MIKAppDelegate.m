@@ -170,8 +170,10 @@
 	}
 }
 
-#pragma mark - Command execution
-- (IBAction)clearOutput:(id)sender {
+#pragma mark - Command Execution
+
+- (IBAction)clearOutput:(id)sender 
+{
     [self.textView setString:@""];
 }
 
@@ -207,9 +209,10 @@
     }
 }
 
-- (NSArray *)availableCommands {
+- (NSArray *)availableCommands 
+{
     if (_availableCommands == nil) {
-        MIKMIDISystemExclusiveCommand *identityRequest = [MIKMIDISystemExclusiveCommand identityRequest];
+        MIKMIDISystemExclusiveCommand *identityRequest = [MIKMIDISystemExclusiveCommand identityRequestCommand];
         NSString *identityRequestString = [NSString stringWithFormat:@"%@", identityRequest.data];
         identityRequestString = [identityRequestString substringWithRange:NSMakeRange(1, identityRequestString.length-2)];
         _availableCommands = @[
@@ -220,7 +223,8 @@
     return _availableCommands;
 }
 
-- (IBAction)commandTextFieldDidSelect:(id)sender {
+- (IBAction)commandTextFieldDidSelect:(id)sender 
+{
     NSComboBox *comboBox = (NSComboBox *)sender;
     NSString *selectedValue = [comboBox objectValueOfSelectedItem];
     NSArray *availableCommands = [self availableCommands];

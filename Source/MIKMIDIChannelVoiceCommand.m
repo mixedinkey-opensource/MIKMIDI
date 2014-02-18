@@ -36,7 +36,8 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIChannelVoiceCommand class]; }
 
-- (NSString *)additionalCommandDescription {
+- (NSString *)additionalCommandDescription
+{
     return [NSString stringWithFormat:@"channel %d", self.channel];
 }
 

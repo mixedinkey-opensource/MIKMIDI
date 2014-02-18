@@ -84,7 +84,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSString *)additionalCommandDescription
 {
-    return nil;
+    return @"";
 }
 
 - (NSString *)description
@@ -93,7 +93,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
     dateFormatter.dateFormat = @"HH:mm:ss.SSS";
     NSString *timestamp =[dateFormatter stringFromDate:self.timestamp];
     NSString *additionalDescription = [self additionalCommandDescription];
-    if (additionalDescription.length > 0) {
+    if ([additionalDescription length] > 0) {
         additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
     }
 	return [NSString stringWithFormat:@"%@ time: %@ command: %lu %@\n\tdata: %@", [super description], timestamp, (unsigned long)self.commandType, additionalDescription, self.data];
