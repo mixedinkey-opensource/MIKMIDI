@@ -65,12 +65,12 @@
 	return self;
 }
 
--(NSString *)description
+-(NSString *)additionalCommandDescription
 {
 	if (self.isFourteenBitCommand) {
-		return [NSString stringWithFormat:@"%@ control number: %lu value: %f 14-bit? %i", [super description], (unsigned long)self.controllerNumber, (float)self.fourteenBitValue / 128.0f, self.isFourteenBitCommand];
+		return [NSString stringWithFormat:@"%@ control number: %lu value: %f 14-bit? %i", [super additionalCommandDescription], (unsigned long)self.controllerNumber, (float)self.fourteenBitValue / 128.0f, self.isFourteenBitCommand];
 	} else {
-		return [NSString stringWithFormat:@"%@ control number: %lu value: %lu 14-bit? %i", [super description], (unsigned long)self.controllerNumber, (unsigned long)self.controllerValue, self.isFourteenBitCommand];
+		return [NSString stringWithFormat:@"%@ control number: %lu value: %lu 14-bit? %i", [super additionalCommandDescription], (unsigned long)self.controllerNumber, (unsigned long)self.controllerValue, self.isFourteenBitCommand];
 	}
 }
 

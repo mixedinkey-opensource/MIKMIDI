@@ -19,6 +19,8 @@
 
 @implementation MIKAppDelegate
 
+@synthesize availableCommands = _availableCommands;
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	self.midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
@@ -39,6 +41,8 @@
 	if (!source) return;
 	[self.midiDeviceManager disconnectInput:source];
 }
+
+#pragma mark - Connections
 
 - (void)connectToSource:(MIKMIDISourceEndpoint *)source
 {
@@ -63,36 +67,21 @@
 	if (!device) return;
 	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	if (![sources count]) return;
-	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
-	[self connectToSource:source];
+    for (MIKMIDISourceEndpoint *source in sources) {
+        [self connectToSource:source];
+    }
 }
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command
 {
 	NSMutableString *textFieldString = self.textView.textStorage.mutableString;
 	[textFieldString appendFormat:@"Received: %@\n", command];
+    [self.textView scrollToEndOfDocument:self];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	NSLog(@"%@'s %@ changed to: %@", object, keyPath, [object valueForKeyPath:keyPath]);
-}
-
-- (IBAction)sendSysex:(id)sender
-{
-	MIKMutableMIDISystemExclusiveCommand *command = [MIKMutableMIDISystemExclusiveCommand commandForCommandType:MIKMIDICommandTypeSystemExclusive];
-	command.manufacturerID = kMIKMIDISysexNonRealtimeManufacturerID;
-	command.sysexChannel = kMIKMIDISysexChannelDisregard;
-	command.sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x01} length:2];
-	NSLog(@"Sending idenity request command: %@", command);
-	
-	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
-	if (![destinations count]) return;
-	MIKMIDIDestinationEndpoint *destination = destinations[0];
-	NSError *error = nil;
-	if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
-		NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
-	}
 }
 
 #pragma mark - Devices
@@ -179,6 +168,68 @@
 		_source = source;
 		[self connectToSource:_source];
 	}
+}
+
+#pragma mark - Command execution
+- (IBAction)clearOutput:(id)sender {
+    [self.textView setString:@""];
+}
+
+- (IBAction)sendSysex:(id)sender
+{
+    NSComboBox *comboBox = self.commandComboBox;
+    NSString *commandString = [[comboBox stringValue] stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if (!commandString || commandString.length == 0) {
+        return;
+    }
+    
+    struct MIDIPacket packet;
+    packet.timeStamp = mach_absolute_time();
+    packet.length = commandString.length / 2;
+    
+    char byte_chars[3] = {'\0','\0','\0'};
+    for (int i = 0; i < packet.length; i++) {
+        byte_chars[0] = [commandString characterAtIndex:i*2];
+        byte_chars[1] = [commandString characterAtIndex:i*2+1];
+        packet.data[i] = strtol(byte_chars, NULL, 16);;
+    }
+
+    MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:&packet];
+	NSLog(@"Sending idenity request command: %@", command);
+	
+	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
+	if (![destinations count]) return;
+	for (MIKMIDIDestinationEndpoint *destination in destinations) {
+        NSError *error = nil;
+        if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {
+            NSLog(@"Unable to send command %@ to endpoint %@: %@", command, destination, error);
+        }
+    }
+}
+
+- (NSArray *)availableCommands {
+    if (_availableCommands == nil) {
+        MIKMIDISystemExclusiveCommand *identityRequest = [MIKMIDISystemExclusiveCommand identityRequest];
+        NSString *identityRequestString = [NSString stringWithFormat:@"%@", identityRequest.data];
+        identityRequestString = [identityRequestString substringWithRange:NSMakeRange(1, identityRequestString.length-2)];
+        _availableCommands = @[
+                               @{@"name": @"Identity Request",
+                                 @"value": identityRequestString}
+                               ];
+    }
+    return _availableCommands;
+}
+
+- (IBAction)commandTextFieldDidSelect:(id)sender {
+    NSComboBox *comboBox = (NSComboBox *)sender;
+    NSString *selectedValue = [comboBox objectValueOfSelectedItem];
+    NSArray *availableCommands = [self availableCommands];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"name=\"%@\"", selectedValue]];
+    NSDictionary *selectedObject = [[availableCommands filteredArrayUsingPredicate:predicate] firstObject];
+    if (selectedObject) {
+        [comboBox setStringValue:selectedObject[@"value"]];
+    }
+    [self sendSysex:sender];
 }
 
 @end

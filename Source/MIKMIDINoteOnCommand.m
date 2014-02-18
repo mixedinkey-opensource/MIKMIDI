@@ -43,9 +43,9 @@
 	self.value = value;
 }
 
-- (NSString *)description
+- (NSString *)additionalCommandDescription
 {
-	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super description], (unsigned long)self.note, (unsigned long)self.velocity];
+	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super additionalCommandDescription], (unsigned long)self.note, (unsigned long)self.velocity];
 }
 
 @end

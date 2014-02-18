@@ -19,6 +19,9 @@
 @property (nonatomic, readonly) UInt32 manufacturerID;
 @property (nonatomic, readonly) UInt8 sysexChannel;
 @property (nonatomic, strong, readonly) NSData *sysexData;
+@property (nonatomic, readonly, getter = isUniversal) BOOL universal;
+
++ (instancetype) identityRequest;
 
 @end
 

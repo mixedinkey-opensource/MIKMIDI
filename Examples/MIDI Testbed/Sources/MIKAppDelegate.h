@@ -21,5 +21,7 @@
 @property (nonatomic, strong, readonly) NSArray *availableDevices;
 @property (nonatomic, strong) MIKMIDIDevice *device;
 @property (nonatomic, strong) MIKMIDISourceEndpoint *source;
+@property (nonatomic, readonly) NSArray *availableCommands;
+@property (weak) IBOutlet NSComboBox *commandComboBox;
 
 @end
