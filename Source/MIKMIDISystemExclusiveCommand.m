@@ -31,6 +31,15 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDISystemExclusiveCommand class]; }
 
+#pragma mark - Specialized instances
++ (instancetype)identityRequest {
+    MIKMutableMIDISystemExclusiveCommand *identityRequest = [[self mutableCounterpartClass] commandForCommandType:MIKMIDICommandTypeSystemExclusive];
+	identityRequest.manufacturerID = kMIKMIDISysexNonRealtimeManufacturerID;
+	identityRequest.sysexChannel = kMIKMIDISysexChannelDisregard;
+	identityRequest.sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x01} length:2];
+    return identityRequest;
+}
+
 #pragma mark - Private
 
 #pragma mark - Properties

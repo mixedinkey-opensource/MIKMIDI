@@ -21,6 +21,8 @@
 @property (nonatomic, strong, readonly) NSData *sysexData;
 @property (nonatomic, readonly, getter = isUniversal) BOOL universal;
 
++ (instancetype) identityRequest;
+
 @end
 
 @interface MIKMutableMIDISystemExclusiveCommand : MIKMIDISystemExclusiveCommand
