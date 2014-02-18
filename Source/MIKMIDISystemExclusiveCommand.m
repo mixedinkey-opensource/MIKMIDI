@@ -31,6 +31,15 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDISystemExclusiveCommand class]; }
 
+#pragma mark - Specialized instances
++ (instancetype)identityRequest {
+    MIKMutableMIDISystemExclusiveCommand *identityRequest = [[self mutableCounterpartClass] commandForCommandType:MIKMIDICommandTypeSystemExclusive];
+	identityRequest.manufacturerID = kMIKMIDISysexNonRealtimeManufacturerID;
+	identityRequest.sysexChannel = kMIKMIDISysexChannelDisregard;
+	identityRequest.sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x01} length:2];
+    return identityRequest;
+}
+
 #pragma mark - Private
 
 #pragma mark - Properties
@@ -39,11 +48,36 @@
 {
 	NSSet *result = [super keyPathsForValuesAffectingValueForKey:key];
 	
-	if ([key isEqualToString:@"sysexData"]) {
+	if ([key isEqualToString:@"sysexData"]
+        || [key isEqualToString:@"sysexChannel"]
+        || [key isEqualToString:@"manufacturerID"]) {
 		result = [result setByAddingObject:@"internalData"];
 	}
 	
 	return result;
+}
+
+- (id)initWithMIDIPacket:(MIDIPacket *)packet {
+    self = [super initWithMIDIPacket:packet];
+    if (self) {
+        if (self.internalData.length > 1) {
+            UInt8 firstByte = self.dataByte1;
+            if (firstByte == 0) {
+                _has3ByteManufacturerID = YES;
+            }
+        }
+    }
+    return self;
+}
+
+- (UInt32)manufacturerID
+{
+    if ([self.internalData length] < 2) return 0;
+    
+    NSUInteger manufacturerIDLocation = _has3ByteManufacturerID ? 2 : 1;
+    NSUInteger manufacturerIDLength = _has3ByteManufacturerID ? 2 : 1;
+    NSData *idData = [self.internalData subdataWithRange:NSMakeRange(manufacturerIDLocation, manufacturerIDLength)];
+    return *(UInt32 *)[idData bytes];
 }
 
 - (void)setManufacturerID:(UInt32)manufacturerID
@@ -61,11 +95,17 @@
 	_has3ByteManufacturerID = (numNewBytes == 3);
 }
 
+- (BOOL)isUniversal {
+    UInt8 firstByte = self.dataByte1;
+    return (firstByte == kMIKMIDISysexRealtimeManufacturerID
+            || firstByte == kMIKMIDISysexNonRealtimeManufacturerID);
+}
+
 - (UInt8)sysexChannel
 {
-	if ([self.sysexData length] < 1) return 0;
+	if ([self.internalData length] < 3 || !self.universal) return 0;
 	
-	NSData *sysexChannelData = [self.sysexData subdataWithRange:NSMakeRange(0, 1)];
+	NSData *sysexChannelData = [self.internalData subdataWithRange:NSMakeRange(2, 1)];
 	return *(UInt8 *)[sysexChannelData bytes];
 }
 
@@ -80,9 +120,17 @@
 	[self.internalData replaceBytesInRange:NSMakeRange(sysexChannelLocation, 1) withBytes:&sysexChannel length:1];
 }
 
+- (NSUInteger)sysexDataStartLocation {
+    NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 4 : 2;
+    if (self.universal) {
+        sysexStartLocation++;
+    }
+    return sysexStartLocation;
+}
+
 - (NSData *)sysexData
 {
-	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 5 : 3;
+	NSUInteger sysexStartLocation = [self sysexDataStartLocation];
 	return [self.internalData subdataWithRange:NSMakeRange(sysexStartLocation, [self.internalData length]-sysexStartLocation-1)];
 }
 
@@ -90,7 +138,7 @@
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
-	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 5 : 3;
+	NSUInteger sysexStartLocation = [self sysexDataStartLocation];
 	
 	NSRange destinationRange = NSMakeRange(sysexStartLocation, [self.internalData length] - sysexStartLocation);
 	[self.internalData replaceBytesInRange:destinationRange withBytes:[sysexData bytes] length:[sysexData length]];
@@ -99,7 +147,12 @@
 - (NSData *)data
 {
 	NSMutableData *result = [[super data] mutableCopy];
-	[result appendBytes:&(UInt8){kMIKMIDISysexEndDelimiter} length:1];
+    
+    UInt8 lastByte;
+    [result getBytes:&lastByte range:NSMakeRange(result.length-1, 1)];
+    if (lastByte != kMIKMIDISysexEndDelimiter) {
+        [result appendBytes:&(UInt8){kMIKMIDISysexEndDelimiter} length:1];
+    }
 	return result;
 }
 
@@ -116,6 +169,10 @@
 	}
 	
 	self.internalData = [data mutableCopy];
+}
+
+- (NSString *)additionalCommandDescription {
+    return [NSString stringWithFormat:@"universal: %@ sysexChannel: %u", @(self.universal), self.sysexChannel];
 }
 
 @end

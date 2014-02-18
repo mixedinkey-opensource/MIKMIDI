@@ -82,10 +82,21 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return self;
 }
 
+- (NSString *)additionalCommandDescription
+{
+    return nil;
+}
+
 - (NSString *)description
 {
-	NSDate *referenceDate = [NSDate dateWithTimeIntervalSinceReferenceDate:413154671]; // Feb 3, 2014
-	return [NSString stringWithFormat:@"%@ time: %f command: %lu data: %@", [super description], [self.timestamp timeIntervalSinceDate:referenceDate], (unsigned long)self.commandType, [self.data subdataWithRange:NSMakeRange(1, [self.data length]-1)]];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"HH:mm:ss.SSS";
+    NSString *timestamp =[dateFormatter stringFromDate:self.timestamp];
+    NSString *additionalDescription = [self additionalCommandDescription];
+    if (additionalDescription.length > 0) {
+        additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
+    }
+	return [NSString stringWithFormat:@"%@ time: %@ command: %lu %@\n\tdata: %@", [super description], timestamp, (unsigned long)self.commandType, additionalDescription, self.data];
 }
 
 #pragma mark - Private
