@@ -82,6 +82,21 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+	MIKMIDIMapping *result = [[[self class] alloc] init];
+	result.name = self.name;
+	result.controllerName = self.controllerName;
+	result.bundledMapping = self.bundledMapping;
+	result.additionalAttributes = self.additionalAttributes;
+	
+	for (MIKMIDIMappingItem *item in self.mappingItems) {
+		[result addMappingItemsObject:[item copy]];
+	}
+	
+	return result;
+}
+
 #if !TARGET_OS_IPHONE
 - (NSXMLDocument *)XMLRepresentation;
 {
@@ -417,6 +432,19 @@
 							  attributes:attributes];
 }
 #endif
+
+- (id)copyWithZone:(NSZone *)zone
+{
+	MIKMIDIMappingItem *result = [[MIKMIDIMappingItem alloc] initWithMIDIResponderIdentifier:self.MIDIResponderIdentifier andCommandIdentifier:self.commandIdentifier];
+	result.interactionType = self.interactionType;
+	result.flipped = self.flipped;
+	result.channel = self.channel;
+	result.commandType = self.commandType;
+	result.controlNumber = self.controlNumber;
+	result.additionalAttributes = self.additionalAttributes;
+	
+	return result;
+}
 
 - (BOOL)isEqual:(MIKMIDIMappingItem *)otherMappingItem
 {
