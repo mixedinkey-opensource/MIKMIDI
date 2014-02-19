@@ -49,6 +49,41 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
  *  by your application.
  *
  *  To create a new command, typically, you should use +commandForCommandType:.
+ *
+ *  Subclass MIKMIDICommand
+ *  -----------------------
+ *
+ *  Support for the various MIDI message types is provided by type-specific subclasses of MIKMIDICommand.
+ *  For example, Control Change messages are represented using MIKMIDIControlChangeCommand. MIKMIDI
+ *  includes a limited number of MIKMIDICommand subclasses to support the most common MIDI message types.
+ *  To support a new command type, you should create a new subclass of MIKMIDICommand (and please consider
+ *  contributing it to the main MIKMIDI repository!). If you implement this subclass according to the rules
+ *  explained below, it will automatically be used to represent incoming MIDI commands matching its MIDI command type.
+ *
+ *  To successfully subclass MIKMIDICommand, you *must* override at least the following methods:
+ *  
+ *  - `+supportsMIDICommandType:` - Return YES when passed the MIKMIDICommandType value your subclass supports.
+ *  - `+immutableCounterPartClass` - Return the subclass itself (eg. `return [MIKMIDINewTypeCommand class];`)
+ *  - `+mutableCounterPartClass` - Return the mutable counterpart class (eg. `return [MIKMIDIMutableNewTypeCommand class;]`)
+ *
+ *  Optionally, override `-additionalCommandDescription` to provide an additional, type-specific description string.
+ *
+ *  You must also implement `+load` and call `[MIKMIDICommand registerSubclass:self]` to register your subclass with
+ *  the MIKMIDICommand machinery.
+ *
+ *  When creating a subclass of MIKMIDICommand, you should also create a mutable variant which is itself
+ *  a subclass of your type-specific MIKMIDICommand subclass. The mutable subclass should override `+isMutable`
+ *  and return YES.
+ *  
+ *  If your subclass adds additional properties, beyond those supported by MIKMIDICommand itself, those properties
+ *  should only be settable on instances of the mutable variant class. The preferred way to accomplish this is to 
+ *  implement the setters on the *immutable*, base subclass. In their implementations, check to see if self is
+ *  mutable, and if not, raise an exception. Use the following line of code:
+ *
+ *		if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+ *
+ *  For a straightforward example of a MIKMIDICommand subclass, see MIKMIDINoteOnCommand.
+ *
  */
 @interface MIKMIDICommand : NSObject <NSCopying>
 
