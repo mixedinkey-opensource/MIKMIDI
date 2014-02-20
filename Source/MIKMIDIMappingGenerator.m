@@ -30,6 +30,8 @@
 @property (nonatomic) NSUInteger numMessagesRequired;
 @property (nonatomic, strong) NSMutableArray *receivedMessages;
 
+@property (nonatomic, strong) id connectionToken;
+
 @end
 
 @implementation MIKMIDIMappingGenerator
@@ -483,13 +485,14 @@ FINALIZE_RESULT_AND_RETURN:
 	
 	MIKMIDIDeviceManager *manager = [MIKMIDIDeviceManager sharedDeviceManager];
 	__weak MIKMIDIMappingGenerator *weakSelf = self;
-	BOOL success = [manager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+	id connectionToken = [manager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		for (MIKMIDICommand *command in commands) {
 			if (![command isKindOfClass:[MIKMIDIChannelVoiceCommand class]]) continue;
 			[weakSelf handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command];
 		}
 	}];
-	return success;
+	self.connectionToken = connectionToken;
+	return connectionToken != nil;
 }
 
 - (void)disconnectFromDevice
@@ -497,7 +500,7 @@ FINALIZE_RESULT_AND_RETURN:
 	NSArray *sources = [self.device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	if (![sources count]) return;
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
-	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:source];
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:source forConnectionToken:self.connectionToken];
 }
 
 #pragma mark - Properties
