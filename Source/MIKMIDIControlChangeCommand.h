@@ -8,8 +8,27 @@
 
 #import "MIKMIDIChannelVoiceCommand.h"
 
+/**
+ *  A MIDI control change message.
+ */
 @interface MIKMIDIControlChangeCommand : MIKMIDIChannelVoiceCommand
 
+/**
+ *  Convience method for creating a single, 14-bit control change command from its component
+ *  messages. The two commands passed into this method must comply with the MIDI specification
+ *  for 14-bit control change messages.
+ *
+ *  The MIDI spec allows for 14-bit control change commands. These are actually sent as two
+ *  sequential commands where the second command has a controller number equal to the first
+ *  message's controllerNumber plus 32, and whose value is the least significant 7-bits of 
+ *  the 14-bit value.
+ *
+ *  @param msbCommand The command containing the most significant 7 bits of value data (ie. the first command).
+ *  @param lsbCommand The command containing the least significant 7 bits of value data (ie. the second command).
+ *
+ *  @return A new, single MIKMIDIControlChangeCommand instance containing 14-bit value data, and whose 
+ *  fourteenBitCommand property is set to YES.
+ */
 + (instancetype)commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)msbCommand andLSBCommand:(MIKMIDIControlChangeCommand *)lsbCommand;
 
 /**
@@ -31,21 +50,25 @@
  *  The 14-bit value of the command.
  *
  *  This property always returns a 14-bit value (ranging from 0-16383). If the receiver is
- *  not a coalesced 14-bit command (-isFourteenBitCommand returns NO), the 7 least significant
+ *  not a 14-bit command (-isFourteenBitCommand returns NO), the 7 least significant
  *  bits will always be 0.
  */
 @property (nonatomic, readonly) NSUInteger fourteenBitValue;
 
 /**
- *  YES if the command is coalesced from two commands making up a 14-bit MIDI control change
- *  command.
+ *  YES if the command contains 14-bit value data.
  *
- *  If this property returns YES, -fourteenBitValue will return a precision, 
+ *  If this property returns YES, -fourteenBitValue will return a precision value in the range 0-16383
+ *
+ *  @see +commandByCoalescingMSBCommand:andLSBCommand:
  */
 @property (nonatomic, readonly, getter = isFourteenBitCommand) BOOL fourteenBitCommand;
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIControlChangeCommand.
+ */
 @interface MIKMutableMIDIControlChangeCommand : MIKMIDIControlChangeCommand
 
 @property (nonatomic, readwrite) UInt8 channel;
@@ -58,8 +81,11 @@
  *  The 14-bit value of the command.
  *
  *  This property always returns a 14-bit value (ranging from 0-16383). If the receiver is
- *  not a coalesced 14-bit command (-isFourteenBitCommand returns NO), the 7 least significant
+ *  not a 14-bit command (-isFourteenBitCommand returns NO), the 7 least significant
  *  bits will always be 0, and will be discarded when setting this property.
+ *
+ *  When setting this property, if the fourteenBitCommand property has not been set to YES,
+ *  the 7 LSbs will be discarded/ignored.
  */
 @property (nonatomic, readwrite) NSUInteger fourteenBitValue;
 
