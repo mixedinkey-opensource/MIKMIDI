@@ -16,7 +16,7 @@ static NSString * const MIKMIDIErrorDomain = @"MIKMIDIErrorDomain";
 
 @implementation NSError (MIKMIDI)
 
-+ (instancetype)MIKMIDIErrorWithCode:(NSInteger)code userInfo:(NSDictionary *)userInfo
++ (instancetype)MIKMIDIErrorWithCode:(MIKMIDIErrorCode)code userInfo:(NSDictionary *)userInfo;
 {
 	return [NSError errorWithDomain:MIKMIDIErrorDomain code:code userInfo:userInfo];
 }
