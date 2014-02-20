@@ -12,6 +12,16 @@
 
 @class MIKMIDIMapping;
 
+/**
+ *  MIKMIDIMappingManager provides a centralized way to manage an application's
+ *  MIDI mappings. It handles both bundled (built in) mapping files, as well
+ *  as user-customized mappings. It will automatically load both bundled and
+ *  user mappings from disk. It will also save user mappings to an appropriate
+ *  location on disk, providing an easy to way to support the ability to import user
+ *  mappings to an applicaation.
+ *
+ *  MIKMIDIMappingManager is a singleton.
+ */
 @interface MIKMIDIMappingManager : NSObject
 
 /**
@@ -77,9 +87,31 @@
 
 // Properties
 
+/**
+ *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
+ *  with the application.
+ */
 @property (nonatomic, strong, readonly) NSSet *bundledMappings;
+
+/**
+ *  MIDI mappings loaded from the user mappings folder on disk, as well as added at runtime.
+ */
 @property (nonatomic, strong, readonly) NSSet *userMappings;
+
+/**
+ *  Add a new user mapping. The mapping will automatically be saved to a file in the
+ *  user mappings folder on disk, to be loaded automatically the next time the application is run.
+ *
+ *  @param mapping An MIKMIDIMapping instance.
+ */
 - (void)addUserMappingsObject:(MIKMIDIMapping *)mapping;
+
+/**
+ *  Remove an existing user mapping. If the mapping is already saved in a file in
+ *  the user mappings folder on disk, the mapping's file will be deleted.
+ *
+ *  @param mapping An MIKMIDIMapping instance.
+ */
 - (void)removeUserMappingsObject:(MIKMIDIMapping *)mapping; // Deletes mapping from disk
 
 /**
