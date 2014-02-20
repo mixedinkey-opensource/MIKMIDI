@@ -285,14 +285,14 @@
 				9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */,
 				9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */,
 				9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */,
-				9D74EF4C17A713A100BEE89F /* MIKMIDINoteOffCommand.h */,
-				9D74EF4D17A713A100BEE89F /* MIKMIDINoteOffCommand.m */,
 				9D74EF4E17A713A100BEE89F /* MIKMIDINoteOnCommand.h */,
 				9D74EF4F17A713A100BEE89F /* MIKMIDINoteOnCommand.m */,
-				9D74EF5B17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h */,
-				9D74EF5C17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m */,
+				9D74EF4C17A713A100BEE89F /* MIKMIDINoteOffCommand.h */,
+				9D74EF4D17A713A100BEE89F /* MIKMIDINoteOffCommand.m */,
 				9D74EF5D17A713A100BEE89F /* MIKMIDISystemMessageCommand.h */,
 				9D74EF5E17A713A100BEE89F /* MIKMIDISystemMessageCommand.m */,
+				9D74EF5B17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h */,
+				9D74EF5C17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
