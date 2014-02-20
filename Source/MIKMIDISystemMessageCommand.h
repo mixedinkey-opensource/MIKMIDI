@@ -8,10 +8,17 @@
 
 #import "MIKMIDICommand.h"
 
+/**
+ *  A MIDI system message command. This class is also the base class for
+ *  subclasses representing specific system message subtypes (e.g. SysEx).
+ */
 @interface MIKMIDISystemMessageCommand : MIKMIDICommand
 
 @end
 
+/**
+ *  Mutable counterpart for MIKMIDISystemMessageCommand.
+ */
 @interface MIKMutableMIDISystemMessageCommand : MIKMIDISystemMessageCommand
 
 @property (nonatomic, strong, readwrite) NSDate *timestamp;
