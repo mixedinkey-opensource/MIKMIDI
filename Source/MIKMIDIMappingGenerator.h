@@ -23,12 +23,47 @@
  *  @param messages    The messages used to generate the mapping. May not include all messages received during mapping.
  *  @param error       If mapping failed, an NSError explaing the failure, nil if mapping succeeded.
  */
-
 typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSArray *messages, NSError *error);
 
+/**
+ *  MIKMIDIMappingGenerator is used to map incoming commands from a MIDI device to MIDI responders in an application.
+ *  It is intended to be used as the basis for a MIDI learning interface, where the application steps through controls/features
+ *  and for each control, the user simply activates the hardware MIDI control (button, knob, etc.) to map it to that
+ *  application function.
+ *
+ *  MIKMIDIMappingGenerator is able to interpret messages coming from a device to determine characteristics of the control
+ *  sending the messages. This information is stored in the generated mapping for later use in correctly responding
+ *  to incomding messages from each control. For example, some buttons on MIDI devices send a single message when 
+ *  pressed down, while other button send a message on press, and another on release. MIKMIDIMappingGenerator can
+ *  determine the behavior for a button during mapping, so that an application knows to expect two messages from the
+ *  mapped button during later use.
+ */
 @interface MIKMIDIMappingGenerator : NSObject
 
+/**
+ *  Convenience method for creating a mapping generator for a MIKMIDIDevice. 
+ *  The mapping generator will connect to the device's
+ *  source endpoint(s) in order to receive MIDI messages from it.
+ *
+ *  @param device  The MIDI device for which a mapping is to be generated.
+ *  @param error   If an error occurs, upon returns contains an NSError object that describes the problem. 
+ *  If you are not interested in possible errors, you may pass in NULL.
+ *
+ *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
+ */
 + (instancetype)mappingGeneratorWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
+
+/**
+ *  Creates and initializes a mapping generator for a MIKMIDIDevice. 
+ *  The mapping generator will connect to the device's
+ *  source endpoint(s) in order to receive MIDI messages from it.
+ *
+ *  @param device  The MIDI device for which a mapping is to be generated.
+ *  @param error   If an error occurs, upon returns contains an NSError object that describes the problem.
+ *  If you are not interested in possible errors, you may pass in NULL.
+ *
+ *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
+ */
 - (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
 
 /**
@@ -106,6 +141,10 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
 	MIKMIDIMappingGeneratorRemapDefault = MIKMIDIMappingGeneratorRemapDisallow,
 };
 
+/**
+ *  Defines methods to be implemented by the delegate of an MIKMIDIMappingGenerator in order
+ *  to customize mapping generation behavior.
+ */
 @protocol MIKMIDIMappingGeneratorDelegate <NSObject>
 
 @optional
