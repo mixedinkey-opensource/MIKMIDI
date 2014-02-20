@@ -88,26 +88,28 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 #pragma mark - Public
 
-- (BOOL)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
 {
-	OSStatus err = noErr;
-	
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
-	if (!port) port = [[MIKMIDIInputPort alloc] initWithClient:self.client name:endpoint.name];
-	if (![port connectToSource:endpoint error:error]) return NO;
-	[self addInternalConnectedInputPortsObject:port];
-	[port addEventHandler:eventHandler];
+	if (!port) {
+		port = [[MIKMIDIInputPort alloc] initWithClient:self.client name:endpoint.name];
+		if (![port connectToSource:endpoint error:error]) return nil;
+	}
 	
-	return err == noErr;
+	[self addInternalConnectedInputPortsObject:port];
+	return [port addEventHandler:eventHandler];
 }
 
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint
+- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken;
 {
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
 	if (!port) return; // Not connected
-	[port removeAllEventHandlers];
-	[port disconnectFromSource:endpoint];
-	[self removeInternalConnectedInputPortsObject:port];
+	
+	[port removeEventHandlerForToken:connectionToken];
+	if (![[port eventHandlers] count]) {
+		[port disconnectFromSource:endpoint];
+		[self removeInternalConnectedInputPortsObject:port];
+	}
 }
 
 - (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
@@ -223,7 +225,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (void)handleMIDIObjectRemoveNotification:(MIDIObjectAddRemoveNotification *)notification
 {
 	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-
+	
 	switch (notification->childType) {
 		case kMIDIObjectType_Device: {
 			MIKMIDIDevice *removedDevice = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->child];

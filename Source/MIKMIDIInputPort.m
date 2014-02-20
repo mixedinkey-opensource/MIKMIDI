@@ -21,7 +21,7 @@
 @interface MIKMIDIInputPort ()
 
 @property (nonatomic, strong) NSMutableArray *internalSources;
-@property (nonatomic, strong, readwrite) NSSet *eventHandlers;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *eventHandlersByToken;
 
 @property (nonatomic, strong) NSMutableArray *bufferedMSBCommands;
 @property (nonatomic) dispatch_queue_t bufferedCommandQueue;
@@ -46,7 +46,7 @@
 											 &port);
 		if (error != noErr) { self = nil; return nil; }
 		self.portRef = port; // MIKMIDIPort will take care of disposing of the port when needed
-		_eventHandlers = [[NSMutableSet alloc] init];
+		_eventHandlersByToken = [[NSMutableDictionary alloc] init];
 		_internalSources = [[NSMutableArray alloc] init];
 		_coalesces14BitControlChangeCommands = YES;
 		
@@ -87,22 +87,36 @@
 	[self removeInternalSourcesObject:source];
 }
 
-- (void)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+- (id)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler; // Returns a token
 {
-	[self addEventHandlersObject:[eventHandler copy]];
+	CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+	NSString *uuidString = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuid));
+	CFRelease(uuid);
+	while ([self.eventHandlersByToken valueForKey:uuidString]) {
+		// Very unlikely, but just to be safe
+		uuid = CFUUIDCreate(kCFAllocatorDefault);
+		uuidString = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuid));
+		CFRelease(uuid);
+	}
+	
+	[self willChangeValueForKey:@"eventHandlers"];
+	self.eventHandlersByToken[uuidString] = [eventHandler copy];
+	[self didChangeValueForKey:@"eventHandlers"];
+	return uuidString;
 }
 
-- (void)removeEventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+- (void)removeEventHandlerForToken:(id)token;
 {
-	[self removeEventHandlersObject:[eventHandler copy]];
+	[self willChangeValueForKey:@"eventHandlers"];
+	[self.eventHandlersByToken removeObjectForKey:token];
+	[self didChangeValueForKey:@"eventHandlers"];
 }
 
 - (void)removeAllEventHandlers;
 {
-	NSSet *eventHandlers = [self eventHandlers];
-	for (MIKMIDIEventHandlerBlock handler in eventHandlers) {
-		[self removeEventHandler:handler];
-	}
+	[self willChangeValueForKey:@"eventHandlers"];
+	[self.eventHandlersByToken removeAllObjects];
+	[self didChangeValueForKey:@"eventHandlers"];
 }
 
 #pragma mark - Private
@@ -234,24 +248,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 
 - (NSSet *)eventHandlers
 {
-	return [_eventHandlers copy];
-}
-
-- (void)setEventHandlers:(NSSet *)set
-{
-	if (set != _eventHandlers) {
-		_eventHandlers = [set mutableCopy];
-	}
-}
-
-- (void)addEventHandlersObject:(MIKMIDIEventHandlerBlock)eventHandler;
-{
-	[_eventHandlers addObject:eventHandler];
-}
-
-- (void)removeEventHandlersObject:(MIKMIDIEventHandlerBlock)eventHandler;
-{
-	[_eventHandlers removeObject:eventHandler];
+	return [NSSet setWithArray:[self.eventHandlersByToken allValues]];
 }
 
 @synthesize bufferedCommandQueue = _bufferedCommandQueue;

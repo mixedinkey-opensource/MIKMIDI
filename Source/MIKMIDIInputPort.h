@@ -26,8 +26,8 @@ typedef void(^MIKMIDIEventHandlerBlock)(MIKMIDISourceEndpoint *source, NSArray *
 @property (nonatomic, strong, readonly) NSArray *connectedSources;
 
 @property (nonatomic, strong, readonly) NSSet *eventHandlers;
-- (void)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
-- (void)removeEventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (id)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler; // Returns a token
+- (void)removeEventHandlerForToken:(id)token;
 - (void)removeAllEventHandlers;
 
 @property (nonatomic) BOOL coalesces14BitControlChangeCommands; // Default is YES

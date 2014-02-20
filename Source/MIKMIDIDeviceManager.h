@@ -70,22 +70,27 @@ extern NSString * const MIKMIDIEndpointKey;
 + (instancetype)sharedDeviceManager;
 
 /**
- *  Used to connect to a MIDI input/source endpoint.
+ *  Used to connect to a MIDI input/source endpoint. Returns a token that must be kept and passed into the
+ *  -disconnectInput:forConnectionToken: method.
  *
  *  @param endpoint     An MIKMIDISourceEndpoint instance that should be connected.
- *  @param error        If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
+ *  @param error        If an error occurs, upon returns contains an NSError object that describes the problem.
+ *  If you are not interested in possible errors, you may pass in NULL.
  *  @param eventHandler A block which will be called anytime incoming MIDI messages are received from the endpoint.
  *
- *  @return YES if connection succeeds, NO if an error occurred.
+ *  @return A connection token to be used to disconnect the input, or nil if an error occurred. The connection token is opaque.
  */
-- (BOOL)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
 
 /**
- *  Disconnects a previously connected MIDI input/source endpoint.
+ *  Disconnects a previously connected MIDI input/source endpoint. The connectionToken argument
+ *  must be a token previously returned by -connectInput:error:eventHandler:. Only the
+ *  event handler block passed into the call that returned the token will be disconnected.
  *
- *  @param endpoint The MIKMIDISourceEndpoint instance from which to disconnect.
+ *  @param endpoint        The MIKMIDISourceEndpoint instance from which to disconnect.
+ *  @param connectionToken The connection token returned by -connectInput:error:eventHandler: when the input was connected.
  */
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint;
+- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint. 

@@ -14,12 +14,20 @@
 @interface MIKAppDelegate ()
 
 @property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
+@property (nonatomic, strong) NSMapTable *connectionTokensForSources;
 
 @end
 
 @implementation MIKAppDelegate
 
-@synthesize availableCommands = _availableCommands;
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.connectionTokensForSources = [NSMapTable strongToStrongObjectsMapTable];
+    }
+    return self;
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -36,30 +44,27 @@
 	[self.midiDeviceManager removeObserver:self forKeyPath:@"virtualDestinations"];
 }
 
-- (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source
-{
-	if (!source) return;
-	[self.midiDeviceManager disconnectInput:source];
-}
-
 #pragma mark - Connections
 
 - (void)connectToSource:(MIKMIDISourceEndpoint *)source
 {
 	NSError *error = nil;
-	BOOL success = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+	id connectionToken = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		for (MIKMIDIChannelVoiceCommand *command in commands) { [self handleMIDICommand:command]; }
 	}];
-	if (!success) NSLog(@"Unable to connect to input: %@", error);
+	if (!connectionToken) {
+		NSLog(@"Unable to connect to input: %@", error);
+		return;
+	}
+	[self.connectionTokensForSources setObject:connectionToken forKey:source];
 }
 
-- (void)disconnectFromDevice:(MIKMIDIDevice *)device
+- (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source
 {
-	if (!device) return;
-	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	for (MIKMIDISourceEndpoint *source in sources) {
-		[self.midiDeviceManager disconnectInput:source];
-	}
+	if (!source) return;
+	id token = [self.connectionTokensForSources objectForKey:source];
+	if (!token) return;
+	[self.midiDeviceManager disconnectInput:source forConnectionToken:token];
 }
 
 - (void)connectToDevice:(MIKMIDIDevice *)device
@@ -70,6 +75,15 @@
     for (MIKMIDISourceEndpoint *source in sources) {
         [self connectToSource:source];
     }
+}
+
+- (void)disconnectFromDevice:(MIKMIDIDevice *)device
+{
+	if (!device) return;
+	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+	for (MIKMIDISourceEndpoint *source in sources) {
+		[self disconnectFromSource:source];
+	}
 }
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command
@@ -209,6 +223,7 @@
     }
 }
 
+@synthesize availableCommands = _availableCommands;
 - (NSArray *)availableCommands 
 {
     if (_availableCommands == nil) {
