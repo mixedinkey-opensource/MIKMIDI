@@ -74,13 +74,31 @@
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
 
 /**
- *  <#Description#>
+ *  When this method is invoked with a MIDI command, the application will search its registered MIDI responders,
+ *  for responders that respond to the command, then call their -handleMIDICommand: method.
+ * 
+ *  Call this method from a MIDI source event handler block to automatically dispatch MIDI commands/messages
+ *  from that source to all interested registered responders.
  *
- *  @param command <#command description#>
+ *  @param command The command to dispatch to responders.
  */
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 
+/**
+ *  Returns a registered MIDI responder with the given MIDI identifier.
+ *
+ *  @param identifier An NSString instance containing the MIDI identifier to search for.
+ *
+ *  @return An object that conforms to MIKMIDIResponder, or nil if no registered responder for the passed in identifier 
+ *  could be found.
+ */
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+
+/**
+ *  Returns all MIDI responders that have been registered with the application.
+ *
+ *  @return An NSSet containing objects that conform to the MIKMIDIResponder protocol.
+ */
 - (NSSet *)allMIDIResponders;
 
 @end
