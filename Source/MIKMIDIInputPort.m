@@ -68,6 +68,8 @@
 
 - (BOOL)connectToSource:(MIKMIDISourceEndpoint *)source error:(NSError **)error;
 {
+	if ([self.connectedSources containsObject:source]) return YES;
+	
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	OSStatus err = MIDIPortConnectSource(self.portRef, source.objectRef, (__bridge void *)source);
 	if (err != noErr) {
