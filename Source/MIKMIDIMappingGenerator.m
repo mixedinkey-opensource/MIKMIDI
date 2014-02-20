@@ -305,7 +305,13 @@
 
 - (BOOL)fillInRelativeAbsoluteKnobSliderMappingItem:(MIKMIDIMappingItem **)mappingItem fromMessages:(NSArray *)messages
 {
-	if ([[messages firstObject] isFourteenBitCommand]) return NO; // For now, we're assuming that controller don't do this with 14 bit commands
+	for (MIKMIDICommand *message in messages) {
+		if ([message respondsToSelector:@selector(isFourteenBitCommand)] &&
+			[(MIKMIDIControlChangeCommand *)message isFourteenBitCommand]) {
+			// For now, we're assuming that controllers don't do this with 14 bit commands
+			return NO;
+		}
+	}
 	
 	if (![self fillInAbsoluteKnobSliderMappingItem:mappingItem fromMessages:messages]) return NO;
 	
