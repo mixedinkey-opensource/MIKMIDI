@@ -366,6 +366,10 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 
 @end
 
+/**
+ *  This protocol defines methods that that must be implemented by MIDI responder objects to be mapped
+ *  using MIKMIDIMappingGenerator.
+ */
 @protocol MIKMIDIMappableResponder <MIKMIDIResponder>
 
 @required
