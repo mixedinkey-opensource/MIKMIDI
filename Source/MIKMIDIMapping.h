@@ -14,7 +14,7 @@
 /**
  *  Bit-mask constants used to specify MIDI responder types for mapping.
  *  Multiple responder types can be specified by ORing them together.
- *  @see -MIDIResponderTypeForCommandIdentifier:
+ *  @see -[MIKMIDIMappableResponder MIDIResponderTypeForCommandIdentifier:]
  */
 typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 	/**
@@ -395,6 +395,8 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @param commandID A command identifier string.
  *
  *  @return A MIKMIDIResponderType bitfield specifing one or more responder type(s).
+ *
+ *  @see MIKMIDIResponderType
  */
 - (MIKMIDIResponderType)MIDIResponderTypeForCommandIdentifier:(NSString *)commandID; // Optional. If not implemented, MIKMIDIResponderTypeAll will be assumed.
 

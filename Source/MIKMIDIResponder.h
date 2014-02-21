@@ -31,7 +31,7 @@
  *  MIKMIDI's MIDI mapping system to uniquely identify mapped responders.
  *
  *  @return An NSString containing a unique identifier for the receiver.
- *  @see -MIDIResponderWithIdentifier:
+ *  @see -[MIK_APPLICATION_CLASS(MIKMIDI) MIDIResponderWithIdentifier:]
  */
 - (NSString *)MIDIIdentifier;
 
