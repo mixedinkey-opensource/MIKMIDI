@@ -144,8 +144,25 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 - (void)retrieveVirtualEndpoints
 {
-	self.internalVirtualSources = [[MIKMIDIEndpoint virtualSourceEndpoints] mutableCopy];
-	self.internalVirtualDestinations = [[MIKMIDIEndpoint virtualDestinationEndpoints] mutableCopy];
+	NSMutableArray *sources = [NSMutableArray array];
+	ItemCount numSources = MIDIGetNumberOfSources();
+	for (ItemCount i=0; i<numSources; i++) {
+		MIDIEndpointRef sourceRef = MIDIGetSource(i);
+		MIKMIDIEndpoint *source = [MIKMIDIEndpoint MIDIObjectWithObjectRef:sourceRef];
+		if (!source) continue;
+		[sources addObject:source];
+	}
+	self.internalVirtualSources = sources;
+	
+	NSMutableArray *destinations = [NSMutableArray array];
+	ItemCount numDestinations = MIDIGetNumberOfDestinations();
+	for (ItemCount i=0; i<numDestinations; i++) {
+		MIDIEndpointRef destinationRef = MIDIGetDestination(i);
+		MIKMIDIEndpoint *destination = [MIKMIDIEndpoint MIDIObjectWithObjectRef:destinationRef];
+		if (!destination) continue;
+		[destinations addObject:destination];
+	}
+	self.internalVirtualDestinations = destinations;
 }
 
 - (MIKMIDIInputPort *)inputPortConnectedToEndpoint:(MIKMIDIEndpoint *)endpoint

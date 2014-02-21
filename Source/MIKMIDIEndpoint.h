@@ -16,9 +16,6 @@
  */
 @interface MIKMIDIEndpoint : MIKMIDIObject
 
-+ (NSArray *)virtualSourceEndpoints;
-+ (NSArray *)virtualDestinationEndpoints;
-
 /**
  *  The entity that contains the receiver. Will be nil for non-wrapped virtual endpoints.
  */
