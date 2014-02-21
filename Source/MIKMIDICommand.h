@@ -16,23 +16,41 @@
  *  @note Not all of these MIDI message types are currently explicitly supported by MIKMIDI.
  */
 typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
+	/**  Note off command. */
 	MIKMIDICommandTypeNoteOff = 0x8f,
+	/**  Note on command. */
 	MIKMIDICommandTypeNoteOn = 0x9f,
+	/**  Polyphonic key pressure command. */
 	MIKMIDICommandTypePolyphonicKeyPressure = 0xaf,
+	/**  Control change command. This is the most common command sent by MIDI controllers. */
 	MIKMIDICommandTypeControlChange = 0xbf,
+	/**  Program change command. */
 	MIKMIDICommandTypeProgramChange = 0xcf,
+	/**  Channel pressure command. */
 	MIKMIDICommandTypeChannelPressure = 0xdf,
+	/**  Pitch wheel change command. */
 	MIKMIDICommandTypePitchWheelChange = 0xef,
+	/**  System message command. */
 	MIKMIDICommandTypeSystemMessage = 0xff,
+	/**  System message command. */
 	MIKMIDICommandTypeSystemExclusive = 0xf0,
+	/**  System exclusive (SysEx) command. */
 	MIKMIDICommandTypeSystemTimecodeQuarterFrame = 0xf1,
+	/**  System song position pointer command. */
 	MIKMIDICommandTypeSystemSongPositionPointer = 0xf2,
+	/**  System song select command. */
 	MIKMIDICommandTypeSystemSongSelect = 0xf3,
+	/**  System tune request command. */
 	MIKMIDICommandTypeSystemTuneRequest = 0xf6,
+	/**  System timing clock command. */
 	MIKMIDICommandTypeSystemTimingClock = 0xf8,
+	/**  System timing clock command. */
 	MIKMIDICommandTypeSystemStartSequence = 0xfa,
+	/**  System start sequence command. */
 	MIKMIDICommandTypeSystemContinueSequence = 0xfb,
+	/**  System continue sequence command. */
 	MIKMIDICommandTypeSystemStopSequence = 0xfc,
+	/**  System keep alive message. */
 	MIKMIDICommandTypeSystemKeepAlive = 0xfe,
 };
 
