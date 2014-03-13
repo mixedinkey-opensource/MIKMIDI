@@ -21,8 +21,8 @@
 // Notifications
 NSString * const MIKMIDIDeviceWasAddedNotification = @"MIKMIDIDeviceWasAddedNotification";
 NSString * const MIKMIDIDeviceWasRemovedNotification = @"MIKMIDIDeviceWasRemovedNotification";
-NSString * const MIKMIDIVirtualEndpointWasAddedNotification = @"MIKMIDIDeviceWasAddedNotification";
-NSString * const MIKMIDIVirtualEndpointWasRemovedNotification = @"MIKMIDIDeviceWasRemovedNotification";
+NSString * const MIKMIDIVirtualEndpointWasAddedNotification = @"MIKMIDIVirtualEndpointWasAddedNotification";
+NSString * const MIKMIDIVirtualEndpointWasRemovedNotification = @"MIKMIDIVirtualEndpointWasRemovedNotification";
 
 
 // Notification Keys
