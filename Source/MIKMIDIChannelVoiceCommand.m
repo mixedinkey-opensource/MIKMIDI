@@ -90,4 +90,7 @@
 	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
 }
 
+@dynamic timestamp; // MIKMIDICommand already implements a getter *and* setter for this. This keeps the compiler happy.
+@dynamic data; // // MIKMIDICommand already implements a getter *and* setter for this. This keeps the compiler happy.
+
 @end

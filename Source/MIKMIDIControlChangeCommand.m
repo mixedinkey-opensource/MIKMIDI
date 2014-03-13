@@ -168,10 +168,20 @@
 	[self.internalData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&LSB length:1];
 }
 
+@dynamic channel; // MIKMIDIChannelVoiceCommand already implements a getter *and* setter for this. This keeps the compiler happy.
+
 @end
 
 @implementation MIKMutableMIDIControlChangeCommand
 
 + (BOOL)isMutable { return YES; }
+
+#pragma mark - Properties
+
+// One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
+@dynamic channel;
+@dynamic timestamp;
+@dynamic commandType;
+@dynamic data;
 
 @end

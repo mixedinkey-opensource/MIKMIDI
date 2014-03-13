@@ -266,6 +266,11 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 #pragma mark - Properties
 
+// MIKMIDICommand already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
+@dynamic timestamp;
+@dynamic commandType;
+@dynamic data;
+
 @end
 
 BOOL MIKMIDIPacketListFromCommands(MIDIPacketList *inOutPacketList, ByteCount listSize, NSArray *commands)
