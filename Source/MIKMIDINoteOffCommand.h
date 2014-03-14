@@ -30,6 +30,10 @@
  */
 @interface MIKMutableMIDINoteOffCommand : MIKMIDINoteOffCommand
 
+@property (nonatomic, strong, readwrite) NSDate *timestamp;
+@property (nonatomic, readwrite) UInt8 channel;
+@property (nonatomic, readwrite) NSUInteger value;
+
 @property (nonatomic, readwrite) NSUInteger note;
 @property (nonatomic, readwrite) NSUInteger velocity;
 
