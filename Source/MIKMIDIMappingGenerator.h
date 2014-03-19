@@ -100,7 +100,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  *
  * The delegate must implement the MIKMIDIMappingGeneratorDelegate protocol.
  */
-@property (nonatomic, MIKMIDIMappingGeneratorWeakProperty	) id<MIKMIDIMappingGeneratorDelegate> delegate;
+@property (nonatomic, MIKMIDIMappingGeneratorWeakProperty) id<MIKMIDIMappingGeneratorDelegate> delegate;
 
 /**
  *  The device for which a mapping is being generated. Must not be nil.
