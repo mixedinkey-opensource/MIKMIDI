@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDI.h"
-
 #if OS_OBJECT_HAVE_OBJC_SUPPORT && __has_feature(objc_arc)
 #define MIKMIDI_GCD_RELEASE(x)
 #define MIKMIDI_GCD_RETAIN(x)
