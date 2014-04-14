@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDIPrivate.h"
+//#import "MIKMIDIPrivate.h"
 
 #import "MIKMIDIMapping.h"
 
