@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) MIKMIDIDeviceManager *deviceManager;
 @property (nonatomic, strong) MIKMIDIDevice	*device;
+@property (nonatomic, strong) id connectionToken;
 
 @property (nonatomic, strong) NSMutableSet *audioPlayers;
 
@@ -46,7 +47,7 @@
 	if (!device) return;
 	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
 	for (MIKMIDISourceEndpoint *source in sources) {
-		[self.deviceManager disconnectInput:source];
+		[self.deviceManager disconnectInput:source forConnectionToken:self.connectionToken];
 	}
 	
 	self.textView.text = @"";
@@ -59,7 +60,8 @@
 	if (![sources count]) return;
 	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
 	NSError *error = nil;
-	BOOL success = [self.deviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+	
+	id connectionToken = [self.deviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		
 		NSMutableString *textViewString = [self.textView.text mutableCopy];
 		for (MIKMIDIChannelVoiceCommand *command in commands) {
@@ -72,7 +74,8 @@
 		}
 		self.textView.text = textViewString;
 	}];
-	if (!success) NSLog(@"Unable to connect to input: %@", error);
+	if (!connectionToken) NSLog(@"Unable to connect to input: %@", error);
+	self.connectionToken = connectionToken;
 }
 
 #pragma mark - AVAudioPlayerDelegate

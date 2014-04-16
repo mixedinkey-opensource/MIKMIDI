@@ -19,6 +19,8 @@
 
 #pragma mark - MIKMIDIResponder
 
+- (NSString *)MIDIIdentifier { return [NSString stringWithFormat:@"PianoKey%li", (long)[self tag]]; }
+
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command
 {
 	if (command.commandType != MIKMIDICommandTypeNoteOn) return NO;
