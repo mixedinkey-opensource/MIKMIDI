@@ -8,7 +8,7 @@
 
 #import "MIKMIDIMappingGenerator.h"
 
-#import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDI.h"
 #import "MIKMIDIMapping.h"
 #import "MIKMIDIPrivateUtilities.h"
 

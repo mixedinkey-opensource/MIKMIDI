@@ -106,7 +106,7 @@
 	
 	if ([data length] != 6) return nil;
 	
-	uint8_t statusByte = *(uint8 *)([data bytes] + 3);
+	uint8_t statusByte = *(uint8_t *)([data bytes] + 3);
 	if ((statusByte & 0xF0) != (MIKMIDICommandTypeControlChange & 0xF0)) return nil; // Status byte's first nibble should be B for control change
 	
 	NSData *standardData = [data subdataWithRange:NSMakeRange(1, 2)];
