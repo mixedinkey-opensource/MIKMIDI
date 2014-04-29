@@ -25,6 +25,8 @@
 @property (nonatomic, strong, readwrite) NSSet *bundledMappings;
 @property (nonatomic, strong) NSMutableSet *internalUserMappings;
 
+@property (nonatomic, strong) NSMutableArray *blockBasedObservers;
+
 @end
 
 static MIKMIDIMappingManager *sharedManager = nil;
@@ -53,19 +55,24 @@ static MIKMIDIMappingManager *sharedManager = nil;
 #else
 		NSString *appTerminateNotification = UIApplicationWillTerminateNotification;
 #endif
-		[nc addObserverForName:appTerminateNotification
-						object:nil
-						 queue:[NSOperationQueue mainQueue]
-					usingBlock:^(NSNotification *note) {
-						[self saveMappingsToDisk];
-					}];
+		self.blockBasedObservers = [NSMutableArray array];
+		id observer = [nc addObserverForName:appTerminateNotification
+									  object:nil
+									   queue:[NSOperationQueue mainQueue]
+								  usingBlock:^(NSNotification *note) {
+									  [self saveMappingsToDisk];
+								  }];
+		[self.blockBasedObservers addObject:observer];
     }
     return self;
 }
 
 - (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	[nc removeObserver:self];
+	for (id observer in self.blockBasedObservers) { [nc removeObserver:observer]; }
+	self.blockBasedObservers = nil;
 }
 
 #pragma mark - Public
@@ -154,7 +161,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (void)loadAvailableUserMappings
 {
 	NSMutableSet *mappings = [NSMutableSet set];
-
+	
 #if !TARGET_OS_IPHONE
 	
 	NSURL *mappingsFolder = [self userMappingsFolder];
