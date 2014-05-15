@@ -31,6 +31,7 @@
 @property (nonatomic, strong) NSMutableArray *receivedMessages;
 
 @property (nonatomic, strong) id connectionToken;
+@property (nonatomic, strong) NSMutableArray *blockBasedObservers;
 
 @end
 
@@ -57,19 +58,21 @@
 		
 		self.receivedMessages = [NSMutableArray array];
 		
+		self.blockBasedObservers = [NSMutableArray array];
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 		__weak MIKMIDIMappingGenerator *weakSelf = self;
-		[nc addObserverForName:MIKMIDIDeviceWasRemovedNotification
-						object:nil
-						 queue:[NSOperationQueue mainQueue]
-					usingBlock:^(NSNotification *note) {
-						MIKMIDIDevice *device = [[note userInfo] objectForKey:MIKMIDIDeviceKey];
-						if (![device isEqual:self.device]) return;
-						[self disconnectFromDevice];
-						weakSelf.device = nil;
-						NSError *error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceConnectionLostErrorCode userInfo:nil];
-						[weakSelf finishMappingItem:nil error:error];
-					}];
+		id observer = [nc addObserverForName:MIKMIDIDeviceWasRemovedNotification
+									  object:nil
+									   queue:[NSOperationQueue mainQueue]
+								  usingBlock:^(NSNotification *note) {
+									  MIKMIDIDevice *device = [[note userInfo] objectForKey:MIKMIDIDeviceKey];
+									  if (![device isEqual:self.device]) return;
+									  [self disconnectFromDevice];
+									  weakSelf.device = nil;
+									  NSError *error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceConnectionLostErrorCode userInfo:nil];
+									  [weakSelf finishMappingItem:nil error:error];
+								  }];
+		[self.blockBasedObservers addObject:observer];
 	}
 	return self;
 }
@@ -85,7 +88,11 @@
 {
 	self.messagesTimeoutTimer = nil;
     [self disconnectFromDevice];
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	[nc removeObserver:self];
+	for (id observer in self.blockBasedObservers) { [nc removeObserver:observer]; }
+	self.blockBasedObservers = nil;
 }
 
 #pragma mark - Public
@@ -341,9 +348,9 @@
 	
 	// If the time between messages is short, it's probably not a relative absolute knob either.
 	if (medianTimeBetweenMessages < 0.02) return NO;
-
+	
 	[*mappingItem setInteractionType:MIKMIDIResponderTypeRelativeAbsoluteKnob];
-		
+	
 	return YES;
 }
 
@@ -395,7 +402,7 @@
 	}
 	
 	return nil;
-		
+	
 FINALIZE_RESULT_AND_RETURN:
 	result.commandType = [messages[0] commandType];
 	
