@@ -149,7 +149,6 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  */
 @interface MIKMIDIMapping : NSObject <NSCopying>
 
-#if !TARGET_OS_IPHONE
 /**
  *  Initializes and returns an MIKMIDIMapping object created from the XML file at url.
  *
@@ -175,6 +174,7 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  */
 - (instancetype)initWithFileAtURL:(NSURL *)url;
 
+#if !TARGET_OS_IPHONE
 /**
  *  Returns an NSXMLDocument representation of the receiver.
  *  The XML document returned by this method can be written to disk.
@@ -186,6 +186,20 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @see -writeToFileAtURL:error:
  */
 - (NSXMLDocument *)XMLRepresentation;
+#endif
+
+/**
+ *  Returns a data containing an XML string representation of the receiver.
+ *  The XML string data returned by this method can be written to disk.
+ *
+ *  @note On OS X, this method returns the same string as [[mapping XMLRepresentation] XMLData]. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2
+ *
+ *  @return An NSData instance containing an XML string representation of the receiver.
+ *
+ *  @see -XMLRepresentation
+ *  @see -writeToFileAtURL:error:
+ */
+- (NSData *)XMLData;
 
 /**
  *  Writes the receiver as an XML file to the specified URL.
@@ -198,7 +212,6 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @return YES if writing the mapping to a file succeeded, NO if an error occurred.
  */
 - (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
-#endif
 
 /**
  *  The mapping items that map controls to responder. 

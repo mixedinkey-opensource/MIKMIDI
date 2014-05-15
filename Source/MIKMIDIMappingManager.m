@@ -154,8 +154,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (void)loadAvailableUserMappings
 {
 	NSMutableSet *mappings = [NSMutableSet set];
-
-#if !TARGET_OS_IPHONE
 	
 	NSURL *mappingsFolder = [self userMappingsFolder];
 	NSFileManager *fm = [NSFileManager defaultManager];
@@ -172,9 +170,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	} else {
 		NSLog(@"Unable to get contents of directory at %@: %@", mappingsFolder, error);
 	}
-	
-#endif
-	
+		
 	self.internalUserMappings = mappings;
 }
 
@@ -182,7 +178,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
 	NSMutableSet *mappings = [NSMutableSet set];
 	
-#if !TARGET_OS_IPHONE
 	NSBundle *bundle = [NSBundle mainBundle];
 	NSArray *bundledMappingFileURLs = [bundle URLsForResourcesWithExtension:kMIKMIDIMappingFileExtension subdirectory:nil];
 	for (NSURL *file in bundledMappingFileURLs) {
@@ -190,7 +185,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		mapping.bundledMapping = YES;
 		if (mapping) [mappings addObject:mapping];
 	}
-#endif
 	
 	self.bundledMappings = mappings;
 }

@@ -83,3 +83,25 @@ MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autore
 
 	return objectType;
 }
+
+NSString *MIKMIDIMappingAttributeStringForInteractionType(MIKMIDIResponderType type)
+{
+	NSDictionary *map = @{@(MIKMIDIResponderTypePressReleaseButton) : @"Key",
+						  @(MIKMIDIResponderTypePressButton) : @"Tap",
+						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob) : @"KnobSlider",
+						  @(MIKMIDIResponderTypeRelativeKnob) : @"JogWheel",
+						  @(MIKMIDIResponderTypeTurntableKnob) : @"TurnTable",
+						  @(MIKMIDIResponderTypeRelativeAbsoluteKnob) : @"RelativeAbsoluteKnob"};
+	return [map objectForKey:@(type)];
+}
+
+MIKMIDIResponderType MIKMIDIMappingInteractionTypeForAttributeString(NSString *string)
+{
+	NSDictionary *map = @{@"Key" : @(MIKMIDIResponderTypePressReleaseButton),
+						  @"Tap" : @(MIKMIDIResponderTypePressButton),
+						  @"KnobSlider" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob),
+						  @"JogWheel" : @(MIKMIDIResponderTypeRelativeKnob),
+						  @"TurnTable" : @(MIKMIDIResponderTypeTurntableKnob),
+						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeRelativeAbsoluteKnob)};
+	return [[map objectForKey:string] integerValue];
+}

@@ -13,6 +13,8 @@
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
 #import "MIKMIDIPrivateUtilities.h"
+#import "MIKMIDIUtilities.h"
+#import "MIKMIDIMappingXMLParser.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIMapping.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMapping.m in the Build Phases for this target
@@ -36,8 +38,6 @@
 
 @implementation MIKMIDIMapping
 
-#if !TARGET_OS_IPHONE
-
 - (instancetype)initWithFileAtURL:(NSURL *)url
 {
 	return [self initWithFileAtURL:url error:NULL];
@@ -46,6 +46,15 @@
 - (instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
+#if TARGET_OS_IPHONE
+	// iOS
+	NSData *data = [NSData dataWithContentsOfURL:url options:0 error:error];
+	if (!data) return nil;
+	MIKMIDIMappingXMLParser *parser = [MIKMIDIMappingXMLParser parserWithXMLData:data];
+	self = [parser.mappings firstObject];
+	return self;
+#else 
+	// OS X
 	NSXMLDocument *xmlDocument = [[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:error];
 	if (!xmlDocument) {
 		NSLog(@"Unable to read MIDI map XML file at %@: %@", url, *error);
@@ -57,8 +66,10 @@
 		if (![_name length]) _name = [[url lastPathComponent] stringByDeletingPathExtension];
 	}
 	return self;
+#endif // TARGET_OS_IPHONE
 }
 
+#if !TARGET_OS_IPHONE
 - (instancetype)initWithXMLDocument:(NSXMLDocument *)xmlDocument
 {
 	self = [self init];
@@ -70,7 +81,6 @@
 	}
 	return self;
 }
-
 #endif
 
 - (id)init
@@ -135,19 +145,32 @@
 	[result setCharacterEncoding:@"UTF-8"];
 	return result;
 }
+#endif
+
+- (NSData *)XMLData;
+{
+#if !TARGET_OS_IPHONE
+	return [[self XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
+#endif
+	
+	NSMutableString *result = [NSMutableString string];
+	
+	
+	return [result dataUsingEncoding:NSUTF8StringEncoding];
+}
 
 - (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
+#if !TARGET_OS_IPHONE
 	error = error ? error : &(NSError *__autoreleasing){ nil };
-	NSData *mappingXMLData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
-	if (![mappingXMLData writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
+	if (![[self XMLData] writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
 		NSLog(@"Error saving MIDI mapping %@ to %@: %@", self.name, fileURL, *error);
 		return NO;
 	}
 	return YES;
+	#endif
+	return NO;
 }
-
-#endif
 
 - (BOOL)isEqual:(MIKMIDIMapping *)otherMapping
 {
@@ -473,7 +496,7 @@
 
 - (NSString *)description
 {
-	NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], [self stringForInteractionType:self.interactionType], self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
+	NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@ %@ CommandID: %@ Channel %li MIDI Command %li Control Number %lu flipped %i", [super description], MIKMIDIMappingAttributeStringForInteractionType(self.interactionType), self.MIDIResponderIdentifier, self.commandIdentifier, (long)self.channel, (long)self.commandType, (unsigned long)self.controlNumber, (int)self.flipped];
 	if ([self.additionalAttributes count]) {
 		for (NSString *key in self.additionalAttributes) {
 			NSString *value = self.additionalAttributes[key];
@@ -486,28 +509,6 @@
 #pragma mark - Public
 
 #pragma mark - Private
-
-- (NSString *)stringForInteractionType:(MIKMIDIResponderType)type
-{
-	NSDictionary *map = @{@(MIKMIDIResponderTypePressReleaseButton) : @"Key",
-						  @(MIKMIDIResponderTypePressButton) : @"Tap",
-						  @(MIKMIDIResponderTypeAbsoluteSliderOrKnob) : @"KnobSlider",
-						  @(MIKMIDIResponderTypeRelativeKnob) : @"JogWheel",
-						  @(MIKMIDIResponderTypeTurntableKnob) : @"TurnTable",
-						  @(MIKMIDIResponderTypeRelativeAbsoluteKnob) : @"RelativeAbsoluteKnob"};
-	return [map objectForKey:@(type)];
-}
-
-- (MIKMIDIResponderType)interactionTypeForString:(NSString *)string
-{
-	NSDictionary *map = @{@"Key" : @(MIKMIDIResponderTypePressReleaseButton),
-						  @"Tap" : @(MIKMIDIResponderTypePressButton),
-						  @"KnobSlider" : @(MIKMIDIResponderTypeAbsoluteSliderOrKnob),
-						  @"JogWheel" : @(MIKMIDIResponderTypeRelativeKnob),
-						  @"TurnTable" : @(MIKMIDIResponderTypeTurntableKnob),
-						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeRelativeAbsoluteKnob)};
-	return [[map objectForKey:string] integerValue];
-}
 
 #pragma mark - Properties
 
