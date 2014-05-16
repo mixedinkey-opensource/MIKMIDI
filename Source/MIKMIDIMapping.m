@@ -274,7 +274,6 @@ CLEANUP_AND_EXIT:
 
 - (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
-#if !TARGET_OS_IPHONE
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	NSData *xmlData = [[self XMLStringRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
 	if (![xmlData writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
@@ -282,8 +281,6 @@ CLEANUP_AND_EXIT:
 		return NO;
 	}
 	return YES;
-#endif
-	return NO;
 }
 
 - (BOOL)isEqual:(MIKMIDIMapping *)otherMapping
