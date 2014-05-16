@@ -7,12 +7,18 @@
 //
 
 #import "ORSAppDelegate.h"
+#import "MIKMIDI.h"
 
 @implementation ORSAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+	NSSet *mappings = [[MIKMIDIMappingManager sharedManager] mappings];
+	MIKMIDIMapping *mapping = [mappings anyObject];
+	NSLog(@"mapping: %@", [mapping XMLStringRepresentation]);
+	// NSLog(@"Mappings: %@", mappings);
+	
     return YES;
 }
 							

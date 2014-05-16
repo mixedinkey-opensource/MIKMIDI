@@ -68,6 +68,11 @@
 	if ([elementName isEqualToString:@"Mapping"]) {
 		self.currentMapping =  [[MIKMIDIMapping alloc] init];
 		self.currentMapping.controllerName = attributeDict[@"ControllerName"];
+		self.currentMapping.name = attributeDict[@"MappingName"];
+		NSMutableDictionary *attributeDictScratch = [attributeDict mutableCopy];
+		[attributeDictScratch removeObjectForKey:@"ControllerName"];
+		[attributeDictScratch removeObjectForKey:@"MappingName"];
+		self.currentMapping.additionalAttributes = attributeDictScratch;
 		return;
 	}
 	
@@ -78,13 +83,13 @@
 			id attributeValue = attributeDict[key];
 			if ([key isEqualToString:@"InteractionType"]) {
 				self.currentItemInfo[@"interactionType"] = @(MIKMIDIMappingInteractionTypeForAttributeString(attributeValue));
-				return;
+				continue;
 			} else if ([key isEqualToString:@"Flipped"]) {
 				self.currentItemInfo[@"flipped"] = @([attributeValue boolValue]);
-				return;
+				continue;
 			}
 			
-			self.currentItemInfo[@"additionalAttributes"][[key mik_uncapitalizedString]] = attributeValue;
+			self.currentItemInfo[@"additionalAttributes"][key] = attributeValue;
 		}
 		return;
 	}

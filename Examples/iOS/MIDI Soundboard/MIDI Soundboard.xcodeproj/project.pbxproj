@@ -39,6 +39,7 @@
 		9D8E6939175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */; };
 		9D8E693F175C1D2F006546F6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */; };
 		9D8E6948175EBBC4006546F6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8E6947175EBBC4006546F6 /* QuartzCore.framework */; };
+		9DB1D24519256855004FD5AF /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB1D24319256840004FD5AF /* libxml2.2.dylib */; };
 		9DDC87A518FE1B2300D9D47F /* MIKMIDIChannelVoiceCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC876F18FE1B2300D9D47F /* MIKMIDIChannelVoiceCommand.m */; };
 		9DDC87A618FE1B2300D9D47F /* MIKMIDICommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC877218FE1B2300D9D47F /* MIKMIDICommand.m */; };
 		9DDC87A718FE1B2300D9D47F /* MIKMIDICommandThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC877418FE1B2300D9D47F /* MIKMIDICommandThrottler.m */; };
@@ -64,6 +65,7 @@
 		9DDC87BB18FE1B2300D9D47F /* MIKMIDISystemMessageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC87A018FE1B2300D9D47F /* MIKMIDISystemMessageCommand.m */; };
 		9DDC87BC18FE1B2300D9D47F /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC87A218FE1B2300D9D47F /* MIKMIDIUtilities.m */; };
 		9DDC87BD18FE1B2300D9D47F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC87A418FE1B2300D9D47F /* NSUIApplication+MIKMIDI.m */; };
+		9DDC87C018FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC87BF18FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,6 +109,7 @@
 		9D8E6938175C1BD6006546F6 /* ORSAvailableDevicesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSAvailableDevicesTableViewController.m; sourceTree = "<group>"; };
 		9D8E693E175C1D2F006546F6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		9D8E6947175EBBC4006546F6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		9DB1D24319256840004FD5AF /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		9DDC876C18FE1B2300D9D47F /* MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDI.h; sourceTree = "<group>"; };
 		9DDC876D18FE1B2300D9D47F /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand_SubclassMethods.h; sourceTree = "<group>"; };
 		9DDC876E18FE1B2300D9D47F /* MIKMIDIChannelVoiceCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand.h; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 		9DDC87A218FE1B2300D9D47F /* MIKMIDIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIUtilities.m; sourceTree = "<group>"; };
 		9DDC87A318FE1B2300D9D47F /* NSUIApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUIApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9DDC87A418FE1B2300D9D47F /* NSUIApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUIApplication+MIKMIDI.m"; sourceTree = "<group>"; };
+		9DDC87BE18FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingXMLParser.h; sourceTree = "<group>"; };
+		9DDC87BF18FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMappingXMLParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +176,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DB1D24519256855004FD5AF /* libxml2.2.dylib in Frameworks */,
 				9D8E6948175EBBC4006546F6 /* QuartzCore.framework in Frameworks */,
 				9D6BF603175EAFE500DF6B15 /* AVFoundation.framework in Frameworks */,
 				9D6BF5E7175EA6F300DF6B15 /* AudioToolbox.framework in Frameworks */,
@@ -224,6 +230,7 @@
 		9D8E68B1175C1A6A006546F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9DB1D24319256840004FD5AF /* libxml2.2.dylib */,
 				9D8E6947175EBBC4006546F6 /* QuartzCore.framework */,
 				9D6BF602175EAFE500DF6B15 /* AVFoundation.framework */,
 				9D6BF5E6175EA6F300DF6B15 /* AudioToolbox.framework */,
@@ -362,6 +369,8 @@
 				9DDC87A218FE1B2300D9D47F /* MIKMIDIUtilities.m */,
 				9DDC87A318FE1B2300D9D47F /* NSUIApplication+MIKMIDI.h */,
 				9DDC87A418FE1B2300D9D47F /* NSUIApplication+MIKMIDI.m */,
+				9DDC87BE18FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.h */,
+				9DDC87BF18FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.m */,
 			);
 			name = MIKMIDI;
 			path = ../../../../Source;
@@ -402,9 +411,9 @@
 		9D8E68A7175C1A6A006546F6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = ORS;
+				CLASSPREFIX = MIK;
 				LastUpgradeCheck = 0460;
-				ORGANIZATIONNAME = "Open Reel Software";
+				ORGANIZATIONNAME = "Mixed In Key";
 			};
 			buildConfigurationList = 9D8E68AA175C1A6A006546F6 /* Build configuration list for PBXProject "MIDI Soundboard" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -459,6 +468,7 @@
 			files = (
 				9DDC87A818FE1B2300D9D47F /* MIKMIDIControlChangeCommand.m in Sources */,
 				9D8E68DF175C1AAE006546F6 /* main.m in Sources */,
+				9DDC87C018FE1E3A00D9D47F /* MIKMIDIMappingXMLParser.m in Sources */,
 				9DDC87BA18FE1B2300D9D47F /* MIKMIDISystemExclusiveCommand.m in Sources */,
 				9DDC87AD18FE1B2300D9D47F /* MIKMIDIEntity.m in Sources */,
 				9D8E68E0175C1AAE006546F6 /* ORSAppDelegate.m in Sources */,
@@ -524,7 +534,7 @@
 		9D8E68D3175C1A6A006546F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -556,7 +566,7 @@
 		9D8E68D4175C1A6A006546F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -584,6 +594,11 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/MIDI Soundboard-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDK_DIR)\"/usr/include/libxml2",
+				);
 				INFOPLIST_FILE = "Resources/MIDI Soundboard-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -595,6 +610,11 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/MIDI Soundboard-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDK_DIR)\"/usr/include/libxml2",
+				);
 				INFOPLIST_FILE = "Resources/MIDI Soundboard-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
