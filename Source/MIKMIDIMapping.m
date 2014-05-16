@@ -161,8 +161,7 @@
 - (NSString *)XMLStringRepresentation;
 {
 #if !TARGET_OS_IPHONE
-	NSData *resultData = [[self privateXMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
-	return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
+	return [[self privateXMLRepresentation] XMLStringWithOptions:NSXMLNodePrettyPrint];
 #else
 	
 	xmlTextWriterPtr writer = NULL;
