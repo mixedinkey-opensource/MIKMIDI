@@ -179,14 +179,26 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  Returns an NSXMLDocument representation of the receiver.
  *  The XML document returned by this method can be written to disk.
  *
- *  @note This method is currently only available on OS X. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2
+ *  @note This method is currently only available on OS X. -XMLStringRepresentation can be used on iOS.
+ *  @deprecated This method is deprecated on OS X. Use -XMLStringRepresentation instead.
  *
  *  @return An NSXMLDocument representation of the receiver.
  *
  *  @see -writeToFileAtURL:error:
  */
-- (NSXMLDocument *)XMLRepresentation;
+- (NSXMLDocument *)XMLRepresentation DEPRECATED_ATTRIBUTE;
+
 #endif
+
+/**
+ *  Returns an NSString instance containing an XML representation of the receiver.
+ *  The XML document returned by this method can be written to disk.
+ *
+ *  @return An NSString containing an XML representation of the receiver.
+ *
+ *  @see -writeToFileAtURL:error:
+ */
+- (NSString *)XMLStringRepresentation;
 
 /**
  *  Returns a data containing an XML string representation of the receiver.
@@ -326,6 +338,16 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @return An initialized MIKMIDIMappingItem instance.
  */
 - (instancetype)initWithMIDIResponderIdentifier:(NSString *)MIDIResponderIdentifier andCommandIdentifier:(NSString *)commandIdentifier;
+
+/**
+ *  Returns an NSString instance containing an XML representation of the receiver.
+ *  The XML document returned by this method can be written to disk.
+ *
+ *  @return An NSString containing an XML representation of the receiver.
+ *
+ *  @see -writeToFileAtURL:error:
+ */
+- (NSString *)XMLStringRepresentation;
 
 // Properties
 

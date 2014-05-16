@@ -16,6 +16,10 @@
 #import "MIKMIDIUtilities.h"
 #import "MIKMIDIMappingXMLParser.h"
 
+#if TARGET_OS_IPHONE
+#import <libxml/xmlwriter.h>
+#endif
+
 #if !__has_feature(objc_arc)
 #error MIKMIDIMapping.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMapping.m in the Build Phases for this target
 #endif
@@ -53,7 +57,7 @@
 	MIKMIDIMappingXMLParser *parser = [MIKMIDIMappingXMLParser parserWithXMLData:data];
 	self = [parser.mappings firstObject];
 	return self;
-#else 
+#else
 	// OS X
 	NSXMLDocument *xmlDocument = [[NSXMLDocument alloc] initWithContentsOfURL:url options:0 error:error];
 	if (!xmlDocument) {
@@ -108,7 +112,8 @@
 }
 
 #if !TARGET_OS_IPHONE
-- (NSXMLDocument *)XMLRepresentation;
+
+- (NSXMLDocument *)XMLRepresentation
 {
 	NSXMLElement *controllerName = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[controllerName setName:@"ControllerName"];
@@ -116,12 +121,6 @@
 	NSXMLElement *mappingName = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[mappingName setName:@"MappingName"];
 	[mappingName setStringValue:self.name];
-	
-	NSSortDescriptor *sortByResponderID = [NSSortDescriptor sortDescriptorWithKey:@"MIDIResponderIdentifier" ascending:YES];
-	NSSortDescriptor *sortByCommandID = [NSSortDescriptor sortDescriptorWithKey:@"commandIdentifier" ascending:YES];
-	NSArray *sortedMappingItems = [self.mappingItems sortedArrayUsingDescriptors:@[sortByResponderID, sortByCommandID]];
-	NSArray *mappingItemXMLElements = [sortedMappingItems valueForKey:@"XMLRepresentation"];
-	NSXMLElement *mappingItems = [NSXMLElement elementWithName:@"MappingItems" children:mappingItemXMLElements attributes:nil];
 	
 	NSMutableArray *attributes = [NSMutableArray arrayWithArray:@[mappingName, controllerName]];
 	for (NSString *key in self.additionalAttributes) {
@@ -136,6 +135,12 @@
 		[attributes addObject:attributeElement];
 	}
 	
+	NSSortDescriptor *sortByResponderID = [NSSortDescriptor sortDescriptorWithKey:@"MIDIResponderIdentifier" ascending:YES];
+	NSSortDescriptor *sortByCommandID = [NSSortDescriptor sortDescriptorWithKey:@"commandIdentifier" ascending:YES];
+	NSArray *sortedMappingItems = [self.mappingItems sortedArrayUsingDescriptors:@[sortByResponderID, sortByCommandID]];
+	NSArray *mappingItemXMLElements = [sortedMappingItems valueForKey:@"XMLRepresentation"];
+	NSXMLElement *mappingItems = [NSXMLElement elementWithName:@"MappingItems" children:mappingItemXMLElements attributes:nil];
+	
 	NSXMLElement *rootElement = [NSXMLElement elementWithName:@"Mapping"
 													 children:@[mappingItems]
 												   attributes:attributes];
@@ -145,7 +150,121 @@
 	[result setCharacterEncoding:@"UTF-8"];
 	return result;
 }
+
 #endif
+
+- (NSString *)XMLStringRepresentation;
+{
+#if !TARGET_OS_IPHONE
+	NSData *resultData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
+	return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
+#endif
+	
+	xmlTextWriterPtr writer = NULL;
+	xmlBufferPtr buffer = xmlBufferCreate();
+	if (!buffer) {
+		NSLog(@"Unable to create XML buffer.");
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	writer = xmlNewTextWriterMemory(buffer, 0);
+	if (!writer) {
+		xmlBufferFree(buffer);
+		NSLog(@"Unable to create XML writer.");
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	// Start the document
+	int err = xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
+	if (err < 0) {
+		NSLog(@"Unable to start XML document: %i", err);
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	err = xmlTextWriterStartElement(writer, BAD_CAST "Mapping"); // <Mapping>
+	if (err < 0) {
+		NSLog(@"Unable to start XML Mapping element: %i", err);
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	xmlTextWriterSetIndent(writer, 1);
+	
+	err = xmlTextWriterWriteAttribute(writer, BAD_CAST "ControllerName", BAD_CAST [self.controllerName UTF8String]);
+	if (err < 0) {
+		NSLog(@"Unable to write ControllerName attribute for Mapping element: %i", err);
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	err = xmlTextWriterWriteAttribute(writer, BAD_CAST "MappingName", BAD_CAST [self.name UTF8String]);
+	if (err < 0) {
+		NSLog(@"Unable to write MappingName attribute for Mapping element: %i", err);
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	for (NSString *key in self.additionalAttributes) {
+		NSString *stringValue = self.additionalAttributes[key];
+		if (![stringValue isKindOfClass:[NSString class]]) {
+			NSLog(@"Ignoring additional attribute %@ : %@ because it is not a string.", key, stringValue);
+			continue;
+		}
+		
+		err = xmlTextWriterWriteAttribute(writer, BAD_CAST [key UTF8String], BAD_CAST [stringValue UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write MappingName attribute for Mapping element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+	}
+	
+	err = xmlTextWriterStartElement(writer, BAD_CAST "MappingItems"); // <MappingItems>
+	if (err < 0) {
+		NSLog(@"Unable to start XML Mapping Items element: %i", err);
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	{
+		// Write mapping items
+		NSSortDescriptor *sortByResponderID = [NSSortDescriptor sortDescriptorWithKey:@"MIDIResponderIdentifier" ascending:YES];
+		NSSortDescriptor *sortByCommandID = [NSSortDescriptor sortDescriptorWithKey:@"commandIdentifier" ascending:YES];
+		NSArray *sortedMappingItems = [self.mappingItems sortedArrayUsingDescriptors:@[sortByResponderID, sortByCommandID]];
+		
+		for (MIKMIDIMappingItem *item in sortedMappingItems) {
+			NSString *xmlString = [item XMLStringRepresentation];
+			err = xmlTextWriterWriteRaw(writer, BAD_CAST [xmlString UTF8String]);
+			if (err < 0) {
+				NSLog(@"Unable to write XML for mapping item %@: %i", item, err);
+				goto CLEANUP_AND_EXIT;
+			}
+		}
+		
+		err = xmlTextWriterEndElement(writer); // </MappingItems>
+		if (err < 0) {
+			NSLog(@"Unable to end XML Mapping Items element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterEndElement(writer); // </Mapping>
+		if (err < 0) {
+			NSLog(@"Unable to end XML Mapping element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterEndDocument(writer);
+		if (err < 0) {
+			NSLog(@"Unable to end XML Mapping document: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+	}
+	
+CLEANUP_AND_EXIT:
+	if (writer) xmlFreeTextWriter(writer);
+	NSString *result = nil;
+	if (buffer && err >= 0) {
+		result = [[NSString alloc] initWithCString:(const char *)buffer->content encoding:NSUTF8StringEncoding];
+		xmlBufferFree(buffer);
+	}
+	
+	return result;
+}
 
 - (NSData *)XMLData;
 {
@@ -168,7 +287,7 @@
 		return NO;
 	}
 	return YES;
-	#endif
+#endif
 	return NO;
 }
 
@@ -347,6 +466,7 @@
 }
 
 #if !TARGET_OS_IPHONE
+
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;
 {
 	if (!element) { self = nil; return self; }
@@ -454,7 +574,115 @@
 								children:@[responderIdentifier, commandIdentifier, channel, commandType, controlNumber]
 							  attributes:attributes];
 }
+
 #endif
+
+- (NSString *)XMLStringRepresentation
+{
+#if !TARGET_OS_IPHONE
+	NSData *resultData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
+	return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
+#endif
+	
+	int err = 0;
+	xmlTextWriterPtr writer = NULL;
+	xmlBufferPtr buffer = xmlBufferCreate();
+	if (!buffer) {
+		NSLog(@"Unable to create XML buffer.");
+		goto CLEANUP_AND_EXIT;
+	}
+	
+	{
+		writer = xmlNewTextWriterMemory(buffer, 0);
+		if (!writer) {
+			xmlBufferFree(buffer);
+			NSLog(@"Unable to create XML writer.");
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		xmlTextWriterSetIndent(writer, 1);
+		
+		err = xmlTextWriterStartElement(writer, BAD_CAST "MappingItem"); // <MappingItem>
+		if (err < 0) {
+			NSLog(@"Unable to start XML MappingItem element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		NSString *interactionTypeString = MIKMIDIMappingAttributeStringForInteractionType(self.interactionType);
+		err = xmlTextWriterWriteAttribute(writer, BAD_CAST "InteractionType", BAD_CAST [interactionTypeString UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write InteractionType attribute for MappingItem element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		NSString *flippedStatusString = self.flipped ? @"true" : @"false";
+		err = xmlTextWriterWriteAttribute(writer, BAD_CAST "Flipped", BAD_CAST [flippedStatusString UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write InteractionType attribute for MappingItem element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		for (NSString *key in self.additionalAttributes) {
+			NSString *stringValue = self.additionalAttributes[key];
+			if (![stringValue isKindOfClass:[NSString class]]) {
+				NSLog(@"Ignoring additional attribute %@ : %@ because it is not a string.", key, stringValue);
+				continue;
+			}
+			
+			err = xmlTextWriterWriteAttribute(writer, BAD_CAST [key UTF8String], BAD_CAST [stringValue UTF8String]);
+			if (err < 0) {
+				NSLog(@"Unable to write MappingName attribute for Mapping element: %i", err);
+				goto CLEANUP_AND_EXIT;
+			}
+		}
+		
+		err = xmlTextWriterWriteElement(writer, BAD_CAST "ResponderIdentifier", BAD_CAST [self.MIDIResponderIdentifier UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write ResponderIdentifier element for mapping %@: %i", self, err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterWriteElement(writer, BAD_CAST "CommandIdentifier", BAD_CAST [self.commandIdentifier UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write CommandIdentifier element for mapping %@: %i", self, err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterWriteElement(writer, BAD_CAST "Channel", BAD_CAST [[@(self.channel) stringValue] UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write Channel element for mapping %@: %i", self, err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterWriteElement(writer, BAD_CAST "CommandType", BAD_CAST [[@(self.commandType) stringValue] UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write CommandType element for mapping %@: %i", self, err);
+			goto CLEANUP_AND_EXIT;
+		}
+		
+		err = xmlTextWriterWriteElement(writer, BAD_CAST "ControlNumber", BAD_CAST [[@(self.controlNumber) stringValue] UTF8String]);
+		if (err < 0) {
+			NSLog(@"Unable to write ControlNumber element for mapping %@: %i", self, err);
+			goto CLEANUP_AND_EXIT;
+		}
+				
+		err = xmlTextWriterEndElement(writer); // </MappingItem>
+		if (err < 0) {
+			NSLog(@"Unable to end XML MappingItem element: %i", err);
+			goto CLEANUP_AND_EXIT;
+		}
+	}
+	
+CLEANUP_AND_EXIT:
+	if (writer) xmlFreeTextWriter(writer);
+	NSString *result = nil;
+	if (buffer && err >= 0) {
+		result = [[NSString alloc] initWithCString:(const char *)buffer->content encoding:NSUTF8StringEncoding];
+		xmlBufferFree(buffer);
+	}
+	
+	return result;
+}
 
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -505,11 +733,5 @@
 	}
 	return result;
 }
-
-#pragma mark - Public
-
-#pragma mark - Private
-
-#pragma mark - Properties
 
 @end
