@@ -25,9 +25,9 @@ Important Note: MIKMIDI relies on Automatic Reference Counting (ARC). If you'd l
 MIKMIDI Overview
 ----------------
 
-MIKMIDI has an Objective-C interface -- as opposed to CoreMIDI's pure C API -- in order to make adding MIDI support to a Cocoa/Cocoa Touch app is easier. A portion of MIKMIDI consists of relatively thin Objective-C wrappers around underlying CoreMIDI APIs. Much of MIKMIDI's design is informed and driven by CoreMIDI's design. For this reason, familiarity with the high level pieces of [CoreMIDI](https://developer.apple.com/library/iOS/documentation/CoreMidi/Reference/MIDIServices_Reference/Reference/reference.html) can be helpful in understanding and using MIKMIDI.
+MIKMIDI has an Objective-C interface -- as opposed to CoreMIDI's pure C API -- in order to make adding MIDI support to a Cocoa/Cocoa Touch app easier. A portion of MIKMIDI consists of relatively thin Objective-C wrappers around underlying CoreMIDI APIs. Much of MIKMIDI's design is informed and driven by CoreMIDI's design. For this reason, familiarity with the high level pieces of [CoreMIDI](https://developer.apple.com/library/iOS/documentation/CoreMidi/Reference/MIDIServices_Reference/Reference/reference.html) can be helpful in understanding and using MIKMIDI.
 
-MIKMIDI is not limited to Objective-C interfaces for existing CoreMIDI functionality. MIKMIDI provides a number of higher level features. This includes an easy way to receive and route MIDI messages to appropriate parts of your application. Also included is the functionality intended to facilitate implementing a MIDI learning UI so that users may create custom MIDI mapping files. These MIDI mapping files associate physical controls on a particular piece of MIDI hardware with corresponding receivers (e.g. on-screen buttons, knobs, musical instruments, etc.) in your application.
+MIKMIDI is not limited to Objective-C interfaces for existing CoreMIDI functionality. MIKMIDI provides a number of higher level features. This includes an easy way to receive and route MIDI messages to appropriate parts of your application. Also included is functionality intended to facilitate implementing a MIDI learning UI so that users may create custom MIDI mapping files. These MIDI mapping files associate physical controls on a particular piece of MIDI hardware with corresponding receivers (e.g. on-screen buttons, knobs, musical instruments, etc.) in your application.
 
 To understand MIKMIDI, it's helpful to break it down into three major subsystems:
 
@@ -45,7 +45,7 @@ MIKMIDI's device support architecture is based on the underlying CoreMIDI archit
 - MIKMIDIEntity (MIDIEntityRef) -- Groups related endpoints. Owned by MIKMIDIDevice, contains MIKMIDIEndpoints.
 - MIKMIDIEndpoint (MIDIEndpointRef) -- Abstract base class representing a MIDI endpoint. Not used directly, only via its subclasses MIKMIDISourceEndpoint and MIKMIDIDestinationEndpoint.
 - MIKMIDISourceEndpoint -- Represents a MIDI source. MIDI sources receive messages that your application can hear and process.
-- MIKMIDIDestinationEndpoint -- Represents a MIDI destination. Your passes MIDI messages to a destination endpoint in order to send them to a device.
+- MIKMIDIDestinationEndpoint -- Represents a MIDI destination. Your application passes MIDI messages to a destination endpoint in order to send them to a device.
 
 `MIKMIDIDeviceManager` is a singleton class used for device discovery, and to send and receive MIDI messages to and from endpoints. To get a list of MIDI devices available on the system, call `-availableDevices` on the shared device manager:
 
@@ -53,11 +53,9 @@ MIKMIDI's device support architecture is based on the underlying CoreMIDI archit
 
 `MIKMIDIDeviceManager` also includes the ability to retrieve 'virtual' endpoints, to enable communicating with other MIDI apps, or with devices (e.g. Native Instruments controllers) which present as virtual endpoints rather than physical devices.
 
-`MIKMIDIDeviceManager`'s `availableDevices`, and `virtualSources` and `virtualDestinations` properties are Key Value Observing (KVO) compliant. This means that for example, `availableDevices` can be bound to e.g. an `NSPopupMenu` in an OS X app to provide an automatically updated list of connected MIDI devices. They can also be directly observed using key value observing to be notified when a devices are connected or disconnected, etc. Additionally, `MIKMIDIDeviceManager` posts these notifications: `MIKMIDIDeviceWasAddedNotification`, `MIKMIDIDeviceWasRemovedNotification`, `MIKMIDIVirtualEndpointWasAddedNotification`, `MIKMIDIVirtualEndpointWasRemovedNotification`.
+`MIKMIDIDeviceManager`'s `availableDevices`, and `virtualSources` and `virtualDestinations` properties are Key Value Observing (KVO) compliant. This means that for example, `availableDevices` can be bound to an `NSPopupMenu` in an OS X app to provide an automatically updated list of connected MIDI devices. They can also be directly observed using key value observing to be notified when devices are connected or disconnected, etc. Additionally, `MIKMIDIDeviceManager` posts these notifications: `MIKMIDIDeviceWasAddedNotification`, `MIKMIDIDeviceWasRemovedNotification`, `MIKMIDIVirtualEndpointWasAddedNotification`, `MIKMIDIVirtualEndpointWasRemovedNotification`.
 
 `MIKMIDIDeviceManager` is used to sign up to receive messages from MIDI endpoints as well as to send them. To receive messages from a `MIKMIDISourceEndpoint`, you must connect the endpoint and supply an event handler block to be called anytime messages are received. This is done using the `-connectInput:error:eventHandler:` method. When you no longer want to receive messages, you must call the `-disconnectInput:` method. To send MIDI messages to an `MIKMIDIDestinationEndpoint`, call `-[MIKMIDIDeviceManager sendCommands:toEndpoint:error:]` passing an `NSArray` of `MIKMIDICommand` instances. For example:
-
-
 
 If you've used CoreMIDI before, you may be familiar with `MIDIClientRef` and `MIDIPortRef`. These are used internally by MIKMIDI, but the "public" API for MIKMIDI does not expose them -- or their Objective-C counterparts -- directly. Rather, `MIKMIDIDeviceManager` itself allows sending and receiving messages to/from `MIKMIDIEndpoint`s.
 
