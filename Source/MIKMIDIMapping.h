@@ -201,19 +201,6 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 - (NSString *)XMLStringRepresentation;
 
 /**
- *  Returns a data containing an XML string representation of the receiver.
- *  The XML string data returned by this method can be written to disk.
- *
- *  @note On OS X, this method returns the same string as [[mapping XMLRepresentation] XMLData]. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2
- *
- *  @return An NSData instance containing an XML string representation of the receiver.
- *
- *  @see -XMLRepresentation
- *  @see -writeToFileAtURL:error:
- */
-- (NSData *)XMLData;
-
-/**
  *  Writes the receiver as an XML file to the specified URL.
  *
  *  @note This method is currently only available on OS X. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2

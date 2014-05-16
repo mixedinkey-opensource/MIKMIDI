@@ -115,6 +115,11 @@
 
 - (NSXMLDocument *)XMLRepresentation
 {
+	return [self privateXMLRepresentation];
+}
+
+- (NSXMLDocument *)privateXMLRepresentation
+{
 	NSXMLElement *controllerName = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[controllerName setName:@"ControllerName"];
 	[controllerName setStringValue:self.controllerName];
@@ -156,9 +161,9 @@
 - (NSString *)XMLStringRepresentation;
 {
 #if !TARGET_OS_IPHONE
-	NSData *resultData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
+	NSData *resultData = [[self privateXMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
 	return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
-#endif
+#else
 	
 	xmlTextWriterPtr writer = NULL;
 	xmlBufferPtr buffer = xmlBufferCreate();
@@ -264,25 +269,15 @@ CLEANUP_AND_EXIT:
 	}
 	
 	return result;
-}
-
-- (NSData *)XMLData;
-{
-#if !TARGET_OS_IPHONE
-	return [[self XMLRepresentation] XMLDataWithOptions:NSXMLNodePrettyPrint];
 #endif
-	
-	NSMutableString *result = [NSMutableString string];
-	
-	
-	return [result dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (BOOL)writeToFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
 #if !TARGET_OS_IPHONE
 	error = error ? error : &(NSError *__autoreleasing){ nil };
-	if (![[self XMLData] writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
+	NSData *xmlData = [[self XMLStringRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
+	if (![xmlData writeToURL:fileURL options:NSDataWritingAtomic error:error]) {
 		NSLog(@"Error saving MIDI mapping %@ to %@: %@", self.name, fileURL, *error);
 		return NO;
 	}
@@ -528,7 +523,7 @@ CLEANUP_AND_EXIT:
 		_channel = [[channel stringValue] integerValue];
 		_commandType = [[commandType stringValue] integerValue];
 		_controlNumber = [[controlNumber stringValue] integerValue];
-		_interactionType = [self interactionTypeForString:[interactionType stringValue]];
+		_interactionType = MIKMIDIMappingInteractionTypeForAttributeString([interactionType stringValue]);
 		_flipped = [[flippedStatus stringValue] boolValue];
 		
 		_additionalAttributes = [attributes copy];
@@ -536,7 +531,12 @@ CLEANUP_AND_EXIT:
 	return self;
 }
 
-- (NSXMLElement *)XMLRepresentation;
+- (NSXMLDocument *)XMLRepresentation
+{
+	return [self privateXMLRepresentation];
+}
+
+- (NSXMLDocument *)privateXMLRepresentation
 {
 	NSXMLElement *responderIdentifier = [NSXMLElement elementWithName:@"ResponderIdentifier" stringValue:self.MIDIResponderIdentifier];
 	NSXMLElement *commandIdentifier = [NSXMLElement elementWithName:@"CommandIdentifier" stringValue:self.commandIdentifier];
@@ -549,7 +549,7 @@ CLEANUP_AND_EXIT:
 	
 	NSXMLElement *interactionType = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
 	[interactionType setName:@"InteractionType"];
-	NSString *interactionTypeString = [self stringForInteractionType:self.interactionType];
+	NSString *interactionTypeString = MIKMIDIMappingAttributeStringForInteractionType(self.interactionType);
 	[interactionType setStringValue:interactionTypeString];
 	
 	NSXMLElement *flippedStatus = [[NSXMLElement alloc] initWithKind:NSXMLAttributeKind];
@@ -580,9 +580,8 @@ CLEANUP_AND_EXIT:
 - (NSString *)XMLStringRepresentation
 {
 #if !TARGET_OS_IPHONE
-	NSData *resultData = [[self XMLRepresentation] XMLDataWithOptions:NSXMLDocumentTidyXML];
-	return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
-#endif
+	return [[self XMLRepresentation] XMLStringWithOptions:NSXMLNodePrettyPrint];
+#else
 	
 	int err = 0;
 	xmlTextWriterPtr writer = NULL;
@@ -682,6 +681,7 @@ CLEANUP_AND_EXIT:
 	}
 	
 	return result;
+#endif
 }
 
 - (id)copyWithZone:(NSZone *)zone
