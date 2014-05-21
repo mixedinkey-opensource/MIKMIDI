@@ -7,6 +7,7 @@
 //
 
 #import "MIKAppDelegate.h"
+#import "MIKMIDISequence.h"
 
 @implementation MIKAppDelegate
 
@@ -15,4 +16,22 @@
 	// Insert code here to initialize your application
 }
 
+- (IBAction)loadFile:(id)sender
+{
+	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+	[openPanel setAllowsMultipleSelection:NO];
+	[openPanel setCanChooseDirectories:NO];
+	[openPanel setAllowedFileTypes:@[@"mid", @"midi"]];
+	[openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+		if (result != NSFileHandlingPanelOKButton) return;
+		
+		NSError *error = nil;
+		MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:[openPanel URL] error:&error];
+		if (!sequence) {
+			NSLog(@"Error loading MIDI file: %@", error);
+		} else {
+			NSLog(@"Loaded MIDI file: %@", sequence);
+		}
+	}];
+}
 @end
