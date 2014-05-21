@@ -88,6 +88,12 @@
     return [self initWithFileAtURL:nil error:NULL];
 }
 
+- (void)dealloc
+{
+    DisposeMusicSequence(_musicSequence);
+	_musicSequence = (MusicSequence){0};
+}
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
