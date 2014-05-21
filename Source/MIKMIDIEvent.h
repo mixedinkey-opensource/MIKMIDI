@@ -7,7 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 @interface MIKMIDIEvent : NSObject
+
+@property (nonatomic, assign) MusicEventType eventType;
+@property (nonatomic, assign) NSUInteger channel;
+@property (nonatomic, assign) NSUInteger parameter;
+@property (nonatomic, assign) NSUInteger parameterTwo;
 
 @end

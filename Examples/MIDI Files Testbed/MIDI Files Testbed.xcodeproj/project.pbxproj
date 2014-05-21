@@ -46,6 +46,7 @@
 		9DB2A694192D19A60047A3EB /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A67A192D19A60047A3EB /* NSUIApplication+MIKMIDI.m */; };
 		9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */; };
 		9DB2A69B192D1BE30047A3EB /* MIKMIDITrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */; };
+		F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,8 @@
 		9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequence.m; sourceTree = "<group>"; };
 		9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITrack.h; sourceTree = "<group>"; };
 		9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITrack.m; sourceTree = "<group>"; };
+		F263C02C192D2A0C00F1B297 /* MIKMIDIEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIEvent.h; sourceTree = "<group>"; };
+		F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +322,8 @@
 			children = (
 				9DB2A695192D19D30047A3EB /* MIKMIDISequence.h */,
 				9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */,
+				F263C02C192D2A0C00F1B297 /* MIKMIDIEvent.h */,
+				F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */,
 				9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */,
 				9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */,
 			);
@@ -442,6 +447,7 @@
 				9DB2A686192D19A60047A3EB /* MIKMIDIMapping.m in Sources */,
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
 				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
+				F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */,
 				9DB2A68D192D19A60047A3EB /* MIKMIDIOutputPort.m in Sources */,
 				9DB2A692192D19A60047A3EB /* MIKMIDISystemMessageCommand.m in Sources */,
 				9DB2A62F192D18970047A3EB /* main.m in Sources */,
