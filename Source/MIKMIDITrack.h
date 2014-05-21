@@ -13,4 +13,13 @@
 
 - (instancetype)initWithMusicTrack:(MusicTrack)musicTrack;
 
+@property (nonatomic, readonly) BOOL doesLoop;
+@property (nonatomic, readonly) NSInteger numberOfLoops; // 0 means loops forever
+@property (nonatomic, readonly) MusicTimeStamp loopDuration;
+
+@property (nonatomic, readonly, getter = isMuted) BOOL muted;
+@property (nonatomic, readonly, getter = isSolo) BOOL solo;
+
+@property (nonatomic, readonly) MusicTimeStamp length;
+		   
 @end

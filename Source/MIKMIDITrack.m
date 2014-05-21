@@ -28,4 +28,83 @@
     if (_musicTrack) free(_musicTrack);
 }
 
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ length: %f loop duration: %f number of loops: %li solo? %i muted? %i", [super description], self.length, self.loopDuration, (long)self.numberOfLoops, self.isSolo, self.isMuted];
+}
+
+#pragma mark - Properties
+
+- (BOOL)doesLoop
+{
+	MusicTrackLoopInfo loopInfo;
+	UInt32 loopInfoLength = sizeof(MusicTrackLoopInfo);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_LoopInfo, (void *)&loopInfo, &loopInfoLength);
+	if (err) {
+		NSLog(@"Unable to get loop info for track %@: %i", self, err);
+		return NO;
+	}
+	return loopInfo.loopDuration > 0.0;
+}
+
+- (NSInteger)numberOfLoops
+{
+	MusicTrackLoopInfo loopInfo;
+	UInt32 loopInfoLength = sizeof(MusicTrackLoopInfo);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_LoopInfo, (void *)&loopInfo, &loopInfoLength);
+	if (err) {
+		NSLog(@"Unable to get loop info for track %@: %i", self, err);
+		return 0;
+	}
+	return loopInfo.numberOfLoops;
+}
+
+- (MusicTimeStamp)loopDuration
+{
+	MusicTrackLoopInfo loopInfo;
+	UInt32 loopInfoLength = sizeof(MusicTrackLoopInfo);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_LoopInfo, (void *)&loopInfo, &loopInfoLength);
+	if (err) {
+		NSLog(@"Unable to get loop info for track %@: %i", self, err);
+		return NO;
+	}
+	return (MusicTimeStamp)loopInfo.loopDuration;
+}
+
+- (BOOL)isMuted
+{
+	Boolean result = false;
+	UInt32 resultLength = sizeof(result);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_MuteStatus, (void *)&result, &resultLength);
+	if (err) {
+		NSLog(@"Unable to get mute status for track %@: %i", self, err);
+		return NO;
+	}
+	return (result != false);
+}
+
+- (BOOL)isSolo
+{
+	Boolean result = false;
+	UInt32 resultLength = sizeof(result);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_SoloStatus, (void *)&result, &resultLength);
+	if (err) {
+		NSLog(@"Unable to get solo status for track %@: %i", self, err);
+		return NO;
+	}
+	return (result != false);
+}
+
+- (MusicTimeStamp)length
+{
+	MusicTimeStamp result = 0;
+	UInt32 resultLength = sizeof(result);
+	OSStatus err = MusicTrackGetProperty(*_musicTrack, kSequenceTrackProperty_TrackLength, (void *)&result, &resultLength);
+	if (err) {
+		NSLog(@"Unable to get track length for track %@: %i", self, err);
+		return NO;
+	}
+	return result;
+}
+
 @end
