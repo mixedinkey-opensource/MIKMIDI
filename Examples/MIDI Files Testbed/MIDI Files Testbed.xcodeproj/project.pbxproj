@@ -44,6 +44,8 @@
 		9DB2A692192D19A60047A3EB /* MIKMIDISystemMessageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A676192D19A60047A3EB /* MIKMIDISystemMessageCommand.m */; };
 		9DB2A693192D19A60047A3EB /* MIKMIDIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A678192D19A60047A3EB /* MIKMIDIUtilities.m */; };
 		9DB2A694192D19A60047A3EB /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A67A192D19A60047A3EB /* NSUIApplication+MIKMIDI.m */; };
+		9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */; };
+		9DB2A69B192D1BE30047A3EB /* MIKMIDITrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +137,10 @@
 		9DB2A678192D19A60047A3EB /* MIKMIDIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIUtilities.m; sourceTree = "<group>"; };
 		9DB2A679192D19A60047A3EB /* NSUIApplication+MIKMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUIApplication+MIKMIDI.h"; sourceTree = "<group>"; };
 		9DB2A67A192D19A60047A3EB /* NSUIApplication+MIKMIDI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUIApplication+MIKMIDI.m"; sourceTree = "<group>"; };
+		9DB2A695192D19D30047A3EB /* MIKMIDISequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequence.h; sourceTree = "<group>"; };
+		9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequence.m; sourceTree = "<group>"; };
+		9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITrack.h; sourceTree = "<group>"; };
+		9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITrack.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +250,7 @@
 			isa = PBXGroup;
 			children = (
 				9DB2A640192D19A60047A3EB /* MIKMIDI.h */,
+				9DB2A698192D19DB0047A3EB /* MIDI Files */,
 				9DB2A641192D19A60047A3EB /* MIKMIDIChannelVoiceCommand.h */,
 				9DB2A642192D19A60047A3EB /* MIKMIDIChannelVoiceCommand.m */,
 				9DB2A643192D19A60047A3EB /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */,
@@ -305,6 +312,17 @@
 			);
 			name = MIKMIDI;
 			path = ../../Source;
+			sourceTree = "<group>";
+		};
+		9DB2A698192D19DB0047A3EB /* MIDI Files */ = {
+			isa = PBXGroup;
+			children = (
+				9DB2A695192D19D30047A3EB /* MIKMIDISequence.h */,
+				9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */,
+				9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */,
+				9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */,
+			);
+			name = "MIDI Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -423,10 +441,12 @@
 				9DB2A693192D19A60047A3EB /* MIKMIDIUtilities.m in Sources */,
 				9DB2A686192D19A60047A3EB /* MIKMIDIMapping.m in Sources */,
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
+				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
 				9DB2A68D192D19A60047A3EB /* MIKMIDIOutputPort.m in Sources */,
 				9DB2A692192D19A60047A3EB /* MIKMIDISystemMessageCommand.m in Sources */,
 				9DB2A62F192D18970047A3EB /* main.m in Sources */,
 				9DB2A691192D19A60047A3EB /* MIKMIDISystemExclusiveCommand.m in Sources */,
+				9DB2A69B192D1BE30047A3EB /* MIKMIDITrack.m in Sources */,
 				9DB2A683192D19A60047A3EB /* MIKMIDIEntity.m in Sources */,
 				9DB2A694192D19A60047A3EB /* NSUIApplication+MIKMIDI.m in Sources */,
 				9DB2A688192D19A60047A3EB /* MIKMIDIMappingManager.m in Sources */,
