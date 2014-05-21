@@ -8,24 +8,24 @@
 
 #import "MIKMIDITrack.h"
 
-
 @implementation MIKMIDITrack
 {
 	MusicTrack *_musicTrack;
 }
 
-- (instancetype)initWithMusicTrack:(MusicTrack *)musicTrack;
+- (instancetype)initWithMusicTrack:(MusicTrack)musicTrack;
 {
 	self = [super init];
 	if (self) {
-		_musicTrack = musicTrack;
+		_musicTrack = malloc(sizeof(MusicTrack));
+		memcpy(_musicTrack, &musicTrack, sizeof(MusicTrack));
 	}
 	return self;
 }
 
-- (void)cleanup
+- (void)dealloc
 {
-	_musicTrack = NULL;
+    if (_musicTrack) free(_musicTrack);
 }
 
 @end
