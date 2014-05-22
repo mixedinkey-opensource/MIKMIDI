@@ -12,6 +12,10 @@
 
 @implementation MIKMIDINoteEvent
 
++ (void)load { [MIKMIDIEvent registerSubclass:self]; }
++ (BOOL)supportsMusicEventType:(MusicEventType)type { return type == kMusicEventType_MIDINoteMessage; }
++ (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
++ (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
 
 - (UInt8)channel
