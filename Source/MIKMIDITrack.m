@@ -50,7 +50,6 @@
             MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
         }
         self.events = midiEvents;
-        NSLog(@"Events %@", self.events);
 	}
 	return self;
 }
@@ -62,7 +61,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ length: %f loop duration: %f number of loops: %li solo? %i muted? %i", [super description], self.length, self.loopDuration, (long)self.numberOfLoops, self.isSolo, self.isMuted];
+	return [NSString stringWithFormat:@"%@ length: %f loop duration: %f number of loops: %li solo? %i muted? %i events: %@", [super description], self.length, self.loopDuration, (long)self.numberOfLoops, self.isSolo, self.isMuted, self.events];
 }
 
 #pragma mark - Properties

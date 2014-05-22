@@ -12,6 +12,6 @@
 
 @end
 
-@interface MIKMutableMIDINoteEvent : MIKMIDIEvent
+@interface MIKMutableMIDINoteEvent : MIKMIDINoteEvent
 
 @end
