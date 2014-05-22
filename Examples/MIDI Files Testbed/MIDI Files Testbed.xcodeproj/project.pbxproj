@@ -174,6 +174,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D3A2FBC192E670E00314B49 /* MIDI Events */ = {
+			isa = PBXGroup;
+			children = (
+				F263C02C192D2A0C00F1B297 /* MIKMIDIEvent.h */,
+				F263C032192D62A600F1B297 /* MIKMIDIEvent_SubclassMethods.h */,
+				F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */,
+				F263C02F192D547B00F1B297 /* MIKMIDIEventMIDINoteMessage.h */,
+				F263C030192D547B00F1B297 /* MIKMIDIEventMIDINoteMessage.m */,
+				F263C033192D6DAD00F1B297 /* MIKMIDIEventTimeSignatureMessage.h */,
+				F263C034192D6DAD00F1B297 /* MIKMIDIEventTimeSignatureMessage.m */,
+			);
+			name = "MIDI Events";
+			sourceTree = "<group>";
+		};
 		9DB2A5EA192D184D0047A3EB = {
 			isa = PBXGroup;
 			children = (
@@ -329,13 +343,7 @@
 			children = (
 				9DB2A695192D19D30047A3EB /* MIKMIDISequence.h */,
 				9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */,
-				F263C02F192D547B00F1B297 /* MIKMIDIEventMIDINoteMessage.h */,
-				F263C030192D547B00F1B297 /* MIKMIDIEventMIDINoteMessage.m */,
-				F263C033192D6DAD00F1B297 /* MIKMIDIEventTimeSignatureMessage.h */,
-				F263C034192D6DAD00F1B297 /* MIKMIDIEventTimeSignatureMessage.m */,
-				F263C032192D62A600F1B297 /* MIKMIDIEvent_SubclassMethods.h */,
-				F263C02C192D2A0C00F1B297 /* MIKMIDIEvent.h */,
-				F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */,
+				9D3A2FBC192E670E00314B49 /* MIDI Events */,
 				9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */,
 				9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */,
 			);
