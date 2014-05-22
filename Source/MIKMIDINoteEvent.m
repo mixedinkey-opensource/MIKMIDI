@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMutableMIDINoteEvent.h"
+#import "MIKMIDINoteEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
