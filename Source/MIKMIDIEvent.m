@@ -8,6 +8,8 @@
 
 #import "MIKMIDIEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
+#import "MIKMIDIUtilities.h"
+#import "MIKMIDIUtilities.h"
 
 static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
@@ -33,45 +35,42 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
     Class subclass = [[self class] subclassForEventType:eventType];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
-	MIKMIDIEvent *result = [[subclass alloc] init];
+	MIKMIDIEvent *result = [[subclass alloc] initWithTimeStamp:timeStamp eventType:eventType data:data];
     return result;
 }
 
 - (id)init
 {
-    self = [self initWithTimeStamp:0 data:nil];
+    self = [self initWithTimeStamp:0 eventType:kMusicEventType_NULL data:nil];
     if (self) {
         self.internalData = [NSMutableData data];
     }
     return self;
 }
 
-- (id)initWithTimeStamp:(MusicTimeStamp)timeStamp data:(NSData *)data
+- (id)initWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
 	self = [super init];
 	if (self) {
-		self.internalData = [NSMutableData data];
-		if (timeStamp != 0.0) {
-			self.musicTimeStamp = timeStamp;
-		}
+		_musicTimeStamp = timeStamp;
+		_eventType = eventType;
         self.internalData = [data mutableCopy];
 	}
 	return self;
 }
 
+- (NSString *)additionalEventDescription
+{
+    return @"";
+}
 
 - (NSString *)description
 {
-    NSString *additionalDescription = [self additionalCommandDescription];
+    NSString *additionalDescription = [self additionalEventDescription];
     if ([additionalDescription length] > 0) {
         additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
     }
-    return [NSString stringWithFormat:@"Type: %u, %@", (unsigned int)self.eventType, additionalDescription];
-}
-
-- (NSString *)additionalCommandDescription
-{
-    return @"";
+    return [NSString stringWithFormat:@"%@ Timestamp: %f Type: %u, %@", [super description], self.musicTimeStamp, (unsigned int)self.eventType, additionalDescription];
 }
 
 #pragma mark - Private
@@ -94,6 +93,9 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 {
 	Class copyClass = [[self class] immutableCounterpartClass];
 	MIKMIDIEvent *result = [[copyClass alloc] init];
+	result.internalData = self.internalData;
+	result.eventType = self.eventType;
+	result.musicTimeStamp = self.musicTimeStamp;
 	return result;
 }
 
@@ -101,6 +103,9 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 {
 	Class copyClass = [[self class] mutableCounterpartClass];
 	MIKMutableMIDIEvent *result = [[copyClass alloc] init];
+	result.internalData = self.internalData;
+	result.eventType = self.eventType;
+	result.musicTimeStamp = self.musicTimeStamp;
 	return result;
 }
 
@@ -108,13 +113,12 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 - (void)setData:(NSData *)data
 {
-	//if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
 	self.internalData = [data mutableCopy];
 }
 
 @end
-
 
 @implementation MIKMutableMIDIEvent
 

@@ -57,6 +57,8 @@
 
 @property (nonatomic, readwrite) MusicTimeStamp musicTimeStamp;
 
+@property (nonatomic, readwrite) MusicEventType eventType;
+
 /**
  *  Additional description string to be appended to basic description provided by
  *  -[MIKMIDIEvent description]. Subclasses of MIKMIDIEvent can override this

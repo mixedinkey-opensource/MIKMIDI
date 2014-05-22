@@ -8,6 +8,7 @@
 
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
+#import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIControlChangeCommand.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIControlChangeCommand.m in the Build Phases for this target
