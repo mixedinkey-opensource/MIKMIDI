@@ -10,6 +10,8 @@
 
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
+- (IBAction)loadFile:(id)sender;
+
 @property (assign) IBOutlet NSWindow *window;
 
 @end

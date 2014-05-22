@@ -9,11 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
-@interface MIKMIDIEvent : NSObject
+@interface MIKMIDIEvent : NSObject <NSCopying>
 
-@property (nonatomic, assign) MusicEventType eventType;
-@property (nonatomic, assign) NSUInteger channel;
-@property (nonatomic, assign) NSUInteger parameter;
-@property (nonatomic, assign) NSUInteger parameterTwo;
+@property (nonatomic, readonly) MusicEventType eventType;
+@property (nonatomic, readonly) NSUInteger channel;
+@property (nonatomic, readonly) MusicTimeStamp musicTimeStamp;
+@property (nonatomic, readonly) NSData *data;
+
++ (instancetype)midiEventWithTimestamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
+
+
+@end
+
+@interface MIKMutableMIDIEvent : MIKMIDIEvent
+
+@property (nonatomic, readwrite) MusicEventType eventType;
+@property (nonatomic, readwrite) NSUInteger channel;
+@property (nonatomic, strong, readwrite) NSMutableData *data;
 
 @end

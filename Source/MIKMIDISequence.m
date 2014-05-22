@@ -44,7 +44,41 @@
 			NSLog(@"Unable to load MIDI file %@: %i", fileURL, err);
 			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
 			return nil;
-		}		
+		}
+		
+		
+		// Get tempo track
+		MusicTrack tempoTrack;
+		err = MusicSequenceGetTempoTrack(_musicSequence, &tempoTrack);
+		if (err) {
+			NSLog(@"Unable to get tempo track from MIDI file %@: %i", fileURL, err);
+		} else {
+			self.tempoTrack = [[MIKMIDITrack alloc] initWithMusicTrack:tempoTrack];
+		}
+		
+		// Get music tracks
+		UInt32 numTracks = 0;
+		err = MusicSequenceGetTrackCount(_musicSequence, &numTracks);
+		if (err) {
+			NSLog(@"Unable to get number of tracks in MIDI file %@: %i", fileURL, err);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return nil;
+		}
+		
+		NSMutableArray *tracks = [NSMutableArray array];
+		for (UInt32 i=0; i<numTracks; i++) {
+			MusicTrack musicTrack;
+			err = MusicSequenceGetIndTrack(_musicSequence, i, &musicTrack);
+			if (err) {
+				NSLog(@"Unable to get track %lu in MIDI file %@: %i", (unsigned long)i, fileURL, err);
+				*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+				return nil;
+			}
+			
+			MIKMIDITrack *track = [[MIKMIDITrack alloc] initWithMusicTrack:musicTrack];
+			if (track) [tracks addObject:track];
+		}
+		self.tracks = tracks;
 	}
 	return self;
 }
@@ -56,14 +90,9 @@
     return [self initWithFileAtURL:nil error:NULL];
 }
 
-- (void)dealloc
+- (NSString *)description
 {
-    for (MIKMIDITrack *track in self.tracks) {
-		[track cleanup];
-	}
-	self.tracks = nil;
-	[self.tempoTrack cleanup];
-	self.tempoTrack = nil;
+	return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
 }
 
 #pragma mark - Properties
