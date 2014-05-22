@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D3A2FBF192E85B800314B49 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */; };
 		9DB2A5F7192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
 		9DB2A616192D184D0047A3EB /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A615192D184D0047A3EB /* XCTest.framework */; };
 		9DB2A617192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
@@ -48,7 +49,6 @@
 		9DB2A69B192D1BE30047A3EB /* MIKMIDITrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */; };
 		F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */; };
 		F263C031192D547B00F1B297 /* MIKMutableMIDINoteEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C030192D547B00F1B297 /* MIKMutableMIDINoteEvent.m */; };
-		F263C035192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C034192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +62,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITempoEvent.h; sourceTree = "<group>"; };
+		9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITempoEvent.m; sourceTree = "<group>"; };
 		9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Files Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB2A5F6192D184D0047A3EB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9DB2A5F9192D184D0047A3EB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -149,8 +151,6 @@
 		F263C02F192D547B00F1B297 /* MIKMutableMIDINoteEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMutableMIDINoteEvent.h; sourceTree = "<group>"; };
 		F263C030192D547B00F1B297 /* MIKMutableMIDINoteEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMutableMIDINoteEvent.m; sourceTree = "<group>"; };
 		F263C032192D62A600F1B297 /* MIKMIDIEvent_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIEvent_SubclassMethods.h; sourceTree = "<group>"; };
-		F263C033192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITimeSignatureEvent.h; sourceTree = "<group>"; };
-		F263C034192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITimeSignatureEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,8 +182,8 @@
 				F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */,
 				F263C02F192D547B00F1B297 /* MIKMutableMIDINoteEvent.h */,
 				F263C030192D547B00F1B297 /* MIKMutableMIDINoteEvent.m */,
-				F263C033192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.h */,
-				F263C034192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.m */,
+				9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */,
+				9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */,
 			);
 			name = "MIDI Events";
 			sourceTree = "<group>";
@@ -455,7 +455,6 @@
 				9DB2A68C192D19A60047A3EB /* MIKMIDIObject.m in Sources */,
 				9DB2A67B192D19A60047A3EB /* MIKMIDIChannelVoiceCommand.m in Sources */,
 				9DB2A67F192D19A60047A3EB /* MIKMIDIDestinationEndpoint.m in Sources */,
-				F263C035192D6DAD00F1B297 /* MIKMIDITimeSignatureEvent.m in Sources */,
 				9DB2A684192D19A60047A3EB /* MIKMIDIErrors.m in Sources */,
 				9DB2A68A192D19A60047A3EB /* MIKMIDINoteOffCommand.m in Sources */,
 				9DB2A681192D19A60047A3EB /* MIKMIDIDeviceManager.m in Sources */,
@@ -479,6 +478,7 @@
 				9DB2A688192D19A60047A3EB /* MIKMIDIMappingManager.m in Sources */,
 				9DB2A687192D19A60047A3EB /* MIKMIDIMappingGenerator.m in Sources */,
 				F263C031192D547B00F1B297 /* MIKMutableMIDINoteEvent.m in Sources */,
+				9D3A2FBF192E85B800314B49 /* MIKMIDITempoEvent.m in Sources */,
 				9DB2A68E192D19A60047A3EB /* MIKMIDIPort.m in Sources */,
 				9DB2A682192D19A60047A3EB /* MIKMIDIEndpoint.m in Sources */,
 				9DB2A68B192D19A60047A3EB /* MIKMIDINoteOnCommand.m in Sources */,

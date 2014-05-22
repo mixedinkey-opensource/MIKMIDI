@@ -23,6 +23,17 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
+ *  Subclasses of MIKMIDIEvent must override this method, and return YES for any
+ *  MusicEventType values they support. MIKMIDIEvent uses this method to determine which
+ *  subclass to use to represent a particular MIDI event type.
+ *
+ *  @param type An MusicEventType value.
+ *
+ *  @return YES if the subclass supports type, NO otherwise.
+ */
++ (BOOL)supportsMusicEventType:(MusicEventType)type;
+
+/**
  *  The immutable counterpart class of the receiver.
  *
  *  @return A class object for the immutable counterpart class of the receiver, or self
@@ -48,8 +59,8 @@
 + (BOOL)isMutable;
 
 /**
- *  This is the property used internally by MIKMIDICommand to store the raw data for
- *  a MIDI packet. It is essentially the mutable backing store for MIKMIDICommand's
+ *  This is the property used internally by MIKMIDIEvent to store the raw data for
+ *  a MIDI packet. It is essentially the mutable backing store for MIKMIDIEvent's
  *  data property. Subclasses may set it. When mutating it, subclasses should manually
  *  call -will/didChangeValueForKey for the data key path.
  */
