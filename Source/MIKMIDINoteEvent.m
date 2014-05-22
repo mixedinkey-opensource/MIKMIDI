@@ -18,6 +18,22 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
 
+- (UInt8)note
+{
+    MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
+    return noteMessage->note;
+}
+
+- (void)setNote:(UInt8)note
+{
+    if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+    
+    MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
+    [self willChangeValueForKey:@"note"];
+    noteMessage->channel = note;
+    [self willChangeValueForKey:@"note"];
+}
+
 - (UInt8)channel
 {
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
