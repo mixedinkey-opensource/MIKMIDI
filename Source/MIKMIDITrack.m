@@ -50,6 +50,7 @@
             MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
         }
         self.events = midiEvents;
+        NSLog(@"Events %@", self.events);
 	}
 	return self;
 }

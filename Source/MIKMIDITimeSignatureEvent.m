@@ -6,8 +6,12 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIEventTimeSignatureMessage.h"
+#import "MIKMIDITimeSignatureEvent.h"
 
-@implementation MIKMIDIEventTimeSignatureMessage
+@implementation MIKMIDITimeSignatureEvent
+
+@end
+
+@implementation MIKMutableMIDITimeSignatureEvent
 
 @end

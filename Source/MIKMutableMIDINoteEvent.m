@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIEventMIDINoteMessage.h"
+#import "MIKMutableMIDINoteEvent.h"
 
-@implementation MIKMIDIEventMIDINoteMessage
+@implementation MIKMutableMIDINoteEvent
 
 @end

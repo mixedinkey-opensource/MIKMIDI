@@ -1,5 +1,5 @@
 //
-//  MIKMIDIEventMIDINoteMessage.h
+//  MIKTimeSignatureEvent.h
 //  MIDI Files Testbed
 //
 //  Created by Jake Gundersen on 5/21/14.
@@ -8,8 +8,10 @@
 
 #import "MIKMIDIEvent.h"
 
-@interface MIKMIDIEventMIDINoteMessage : MIKMIDIEvent
+@interface MIKMIDITimeSignatureEvent : MIKMIDIEvent
 
+@end
 
+@interface MIKMutableMIDITimeSignatureEvent : MIKMIDIEvent
 
 @end
