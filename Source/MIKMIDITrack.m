@@ -7,6 +7,13 @@
 //
 
 #import "MIKMIDITrack.h"
+#import "MIKMIDIEvent.h"
+
+@interface MIKMIDITrack()
+
+@property (nonatomic, readwrite, copy) NSArray *events;
+
+@end
 
 @implementation MIKMIDITrack
 {
@@ -26,27 +33,23 @@
 
         MusicTimeStamp timestamp = 0;
         MusicEventType eventType = 0;
-        const void *eventData = NULL;
+        const void *rawEventData = NULL;
         UInt32 eventDataSize = 0;
         Boolean hasNext = YES;
         
+        NSMutableArray *midiEvents = [NSMutableArray array];
         MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
         while (hasNext) {
-            MusicEventIteratorGetEventInfo(iterator, &timestamp, &eventType, &eventData, &eventDataSize);
-            if (eventType == kMusicEventType_MIDINoteMessage) {
-                MIDINoteMessage *noteMessage = (MIDINoteMessage*)eventData;
-                printf("Note - timestamp: %6.3f, channel: %d, note: %d, velocity: %d, release velocity: %d, duration: %f\n",
-                       timestamp,
-                       noteMessage->channel,
-                       noteMessage->note,
-                       noteMessage->velocity,
-                       noteMessage->releaseVelocity,
-                       noteMessage->duration
-                       );
-            }
+            MusicEventIteratorGetEventInfo(iterator, &timestamp, &eventType, &rawEventData, &eventDataSize);
+            
+            NSData *eventData = [[NSData alloc] initWithBytes:rawEventData length:eventDataSize];
+            MIKMIDIEvent *event = [MIKMIDIEvent midiEventWithTimestamp:timestamp eventType:eventType data:eventData];
+            [midiEvents addObject:event];
+            
             MusicEventIteratorNextEvent(iterator);
             MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
         }
+        self.events = midiEvents;
 	}
 	return self;
 }

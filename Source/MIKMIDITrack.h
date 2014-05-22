@@ -21,5 +21,6 @@
 @property (nonatomic, readonly, getter = isSolo) BOOL solo;
 
 @property (nonatomic, readonly) MusicTimeStamp length;
-		   
+@property (nonatomic, readonly, copy) NSArray *events;
+
 @end
