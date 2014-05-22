@@ -8,7 +8,7 @@
 
 #import "MIKMIDIEvent.h"
 
-@interface MIKMutableMIDINoteEvent : MIKMIDIEvent
+@interface MIKMIDINoteEvent : MIKMIDIEvent
 
 @end
 

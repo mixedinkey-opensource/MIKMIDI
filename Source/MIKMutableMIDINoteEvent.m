@@ -8,6 +8,11 @@
 
 #import "MIKMutableMIDINoteEvent.h"
 
+@implementation MIKMIDINoteEvent
+
+@end
+
+
 @implementation MIKMutableMIDINoteEvent
 
 @end
