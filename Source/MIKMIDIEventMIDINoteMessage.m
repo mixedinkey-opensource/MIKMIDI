@@ -10,6 +10,4 @@
 
 @implementation MIKMIDIEventMIDINoteMessage
 
-- (instancetype)initWith
-
 @end

@@ -10,4 +10,6 @@
 
 @interface MIKMIDIEventMIDINoteMessage : MIKMIDIEvent
 
+
+
 @end
