@@ -20,3 +20,7 @@ MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autore
 
 NSString *MIKMIDIMappingAttributeStringForInteractionType(MIKMIDIResponderType type);
 MIKMIDIResponderType MIKMIDIMappingInteractionTypeForAttributeString(NSString *string);
+
+// Subclasses of MIKMIDICommand and MIKMIDIEvent can and should use this macro to raise an exception
+// when the setter for a public property is called on an immutable object.
+#define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])

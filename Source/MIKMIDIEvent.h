@@ -18,7 +18,6 @@
 
 + (instancetype)midiEventWithTimestamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
 
-
 @end
 
 @interface MIKMutableMIDIEvent : MIKMIDIEvent
