@@ -12,7 +12,7 @@
 @interface MIKMIDIEvent : NSObject <NSCopying>
 
 @property (nonatomic, readonly) MusicEventType eventType;
-@property (nonatomic, readonly) NSUInteger channel;
+@property (nonatomic, readonly) UInt8 channel;
 @property (nonatomic, readonly) MusicTimeStamp musicTimeStamp;
 @property (nonatomic, readonly) NSData *data;
 
@@ -23,7 +23,6 @@
 @interface MIKMutableMIDIEvent : MIKMIDIEvent
 
 @property (nonatomic, readwrite) MusicEventType eventType;
-@property (nonatomic, readwrite) NSUInteger channel;
 @property (nonatomic, strong, readwrite) NSMutableData *data;
 
 @end

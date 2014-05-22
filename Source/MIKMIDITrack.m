@@ -41,7 +41,7 @@
         MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
         while (hasNext) {
             MusicEventIteratorGetEventInfo(iterator, &timestamp, &eventType, &rawEventData, &eventDataSize);
-            
+           
             NSData *eventData = [[NSData alloc] initWithBytes:rawEventData length:eventDataSize];
             MIKMIDIEvent *event = [MIKMIDIEvent midiEventWithTimestamp:timestamp eventType:eventType data:eventData];
             [midiEvents addObject:event];
