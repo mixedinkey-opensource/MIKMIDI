@@ -22,7 +22,6 @@
 
 @implementation MIKMutableMIDINoteEvent
 
-+ (void)load { [MIKMIDIEvent registerSubclass:self]; }
 + (BOOL)isMutable { return YES; }
 
 @end
