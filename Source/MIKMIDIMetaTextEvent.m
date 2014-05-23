@@ -18,6 +18,15 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTextEvent class]; }
 + (BOOL)isMutable { return NO; }
 
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+{
+    NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"string"]) {
+        [keyPaths setByAddingObject:@"metaData"];
+    }
+    return keyPaths;
+}
+
 - (NSString *)string
 {
     return [[NSString alloc] initWithData:self.metaData encoding:NSUTF8StringEncoding];
@@ -26,10 +35,12 @@
 - (void)setString:(NSString *)string
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-    
-    [self willChangeValueForKey:@"string"];
     [self setMetaData:[string dataUsingEncoding:NSUTF8StringEncoding]];
-    [self didChangeValueForKey:@"string"];
+}
+
+- (NSString *)additionalEventDescription
+{
+    return [NSString stringWithFormat:@"Metadata Type: 0x%02x, String: %@", self.metadataType, self.string];
 }
 
 @end

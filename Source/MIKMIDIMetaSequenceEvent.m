@@ -11,3 +11,7 @@
 @implementation MIKMIDIMetaSequenceEvent
 
 @end
+
+@implementation MIKMutableMIDIMetaSequenceEvent
+
+@end

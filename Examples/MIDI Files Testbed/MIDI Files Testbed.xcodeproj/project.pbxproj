@@ -60,6 +60,7 @@
 		F263C0B4192ED6B800F1B297 /* MIKMIDIMetaMarkerTextEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C0B3192ED6B800F1B297 /* MIKMIDIMetaMarkerTextEvent.m */; };
 		F263C0B7192ED6D300F1B297 /* MIKMIDIMetaInstrumentNameEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C0B6192ED6D300F1B297 /* MIKMIDIMetaInstrumentNameEvent.m */; };
 		F263C0BA192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C0B9192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.m */; };
+		F263C0C3192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C0C2192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -184,6 +185,8 @@
 		F263C0B6192ED6D300F1B297 /* MIKMIDIMetaInstrumentNameEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMetaInstrumentNameEvent.m; sourceTree = "<group>"; };
 		F263C0B8192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMetaCuePointEvent.h; sourceTree = "<group>"; };
 		F263C0B9192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMetaCuePointEvent.m; sourceTree = "<group>"; };
+		F263C0C1192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMetaKeySignatureEvent.h; sourceTree = "<group>"; };
+		F263C0C2192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMetaKeySignatureEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +248,8 @@
 				F263C0B6192ED6D300F1B297 /* MIKMIDIMetaInstrumentNameEvent.m */,
 				F263C0B8192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.h */,
 				F263C0B9192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.m */,
+				F263C0C1192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.h */,
+				F263C0C2192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m */,
 			);
 			name = "Meta Event Subclasses";
 			sourceTree = "<group>";
@@ -538,6 +543,7 @@
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
 				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
 				9DAE7D37192FC1B800B25DD7 /* MIKMIDITrackView.m in Sources */,
+				F263C0C3192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m in Sources */,
 				F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */,
 				9DB2A68D192D19A60047A3EB /* MIKMIDIOutputPort.m in Sources */,
 				9DB2A692192D19A60047A3EB /* MIKMIDISystemMessageCommand.m in Sources */,
