@@ -18,73 +18,79 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTimeSignatureEvent class]; }
 + (BOOL)isMutable { return NO; }
 
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+{
+    NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
+    if ([key isEqualToString:@"numerator"] ||
+        [key isEqualToString:@"denominator"] ||
+        [key isEqualToString:@"metronomePulse"] ||
+        [key isEqualToString:@"thirtySecondsPerQuarterNote"]) {
+        keyPaths = [keyPaths setByAddingObject:@"metaData"];
+    }
+    return keyPaths;
+}
+
 - (UInt8)numerator
 {
-    UInt8 *numeratorPointer = (UInt8*)[self.metaData bytes];
-    return numeratorPointer[0];
+    return *(UInt8*)[self.metaData bytes];
 }
 
 - (void)setNumerator:(UInt8)numerator
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    [self willChangeValueForKey:@"numerator"];
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
-    [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&numerator];
+    [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&numerator length:1];
     [self setMetaData:[mutableMetaData copy]];
-    [self didChangeValueForKey:@"numerator"];
 }
 
 - (UInt8)denominator
 {
-    UInt8 *numeratorPointer = (UInt8*)[self.metaData bytes];
-    return pow(2.0, (float)numeratorPointer[1]);
+    UInt8 denominator = *((UInt8*)[self.metaData bytes] + 1);
+    return pow(2.0, (float)denominator);
 }
 
 - (void)setDenominator:(UInt8)denominator
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    [self willChangeValueForKey:@"denominator"];
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
     UInt8 denominatorPower = log2(denominator);
-    [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&denominatorPower];
+    [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&denominatorPower length:1];
     [self setMetaData:[mutableMetaData copy]];
-    [self didChangeValueForKey:@"denominator"];
 }
 
 - (UInt8)metronomePulse
 {
-    UInt8 *numeratorPointer = (UInt8*)[self.metaData bytes];
-    return numeratorPointer[2];
+    return *((UInt8*)[self.metaData bytes] + 2);
 }
 
 - (void)setMetronomePulse:(UInt8)metronomePulse
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    [self willChangeValueForKey:@"metronomePulse"];
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
-    [mutableMetaData replaceBytesInRange:NSMakeRange(2, 1) withBytes:&metronomePulse];
+    [mutableMetaData replaceBytesInRange:NSMakeRange(2, 1) withBytes:&metronomePulse length:1];
     [self setMetaData:[mutableMetaData copy]];
-    [self didChangeValueForKey:@"metronomePulse"];
 }
 
 - (UInt8)thirtySecondsPerQuarterNote
 {
-    UInt8 *numeratorPointer = (UInt8*)[self.metaData bytes];
-    return numeratorPointer[3];
+    return *((UInt8*)[self.metaData bytes] + 3);
 }
 
 - (void)setThirtySecondsPerQuarterNote:(UInt8)thirtySecondsPerQuarterNote
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    [self willChangeValueForKey:@"thirtySecondsPerQuarterNote"];
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
-    [mutableMetaData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&thirtySecondsPerQuarterNote];
+    [mutableMetaData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&thirtySecondsPerQuarterNote length:1];
     [self setMetaData:[mutableMetaData copy]];
-    [self didChangeValueForKey:@"thirtySecondsPerQuarterNote"];
+}
+
+- (NSString *)additionalEventDescription
+{
+    return [NSString stringWithFormat:@"Numerator: %d, Denominator: %d, Pulse: %d, Thirty Seconds: %d", self.numerator, self.denominator, self.metronomePulse, self.thirtySecondsPerQuarterNote];
 }
 
 @end

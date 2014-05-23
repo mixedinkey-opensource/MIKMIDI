@@ -103,8 +103,9 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 											  @(kMusicEventType_Parameter) : @(MIKMIDIEventTypeParameter),
 											  @(kMusicEventType_AUPreset) : @(MIKMIDIEventTypeAUPreset),};
 	if (musicEventType == kMusicEventType_Meta) {
-		UInt8 metaEventType = (UInt8)[[data subdataWithRange:NSMakeRange(0, 1)] bytes];
-		return [metaTypeToMidiTypeMap[@(metaEventType)] unsignedIntegerValue];
+		UInt8 metaEventType = *(UInt8 *)[[data subdataWithRange:NSMakeRange(0, 1)] bytes];
+        NSNumber *metaEventTypeKey = @(metaEventType);
+		return [metaTypeToMidiTypeMap[metaEventTypeKey] unsignedIntegerValue];
 	} else {
 		return [musicEventToMIDITypeMap[@(musicEventType)] unsignedIntegerValue];
 	}
