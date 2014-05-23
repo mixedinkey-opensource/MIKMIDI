@@ -10,10 +10,18 @@
 
 @interface MIKMIDIMetaTimeSignatureEvent : MIKMIDIMetaEvent
 
+@property (nonatomic, readonly) UInt8 numerator;
+@property (nonatomic, readonly) UInt8 denominator;
+@property (nonatomic, readonly) UInt8 metronomePulse;
+@property (nonatomic, readonly) UInt8 thirtySecondsPerQuarterNote;
 
 @end
 
 @interface MIKMutableMIDIMetaTimeSignatureEvent : MIKMIDIMetaTimeSignatureEvent
 
+@property (nonatomic, readwrite) UInt8 numerator;
+@property (nonatomic, readwrite) UInt8 denominator;
+@property (nonatomic, readwrite) UInt8 metronomePulse;
+@property (nonatomic, readwrite) UInt8 thirtySecondsPerQuarterNote;
 
 @end
