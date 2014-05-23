@@ -40,11 +40,14 @@
 	CGFloat noteHeight = [self pixelsPerNote];
 	NSInteger index=0;
 	for (MIKMIDITrack *track in self.sequence.tracks) {
-		[[self colorForTrackAtIndex:index++] setFill];
-		[[NSColor blackColor] setStroke];
 		
 		for (MIKMIDINoteEvent *note in [track events]) {
 			if (note.eventType != kMusicEventType_MIDINoteMessage) continue;
+			
+			NSColor *noteColor = [self.sequence.tracks count] <= 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
+			
+			[[NSColor blackColor] setStroke];
+			[noteColor setFill];
 			
 			CGFloat yPosition = NSMinY([self bounds]) + note.note * [self pixelsPerNote];
 			NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.musicTimeStamp * ppt, yPosition, note.duration * ppt, noteHeight);
@@ -53,6 +56,7 @@
 			[path fill];
 			[path stroke];
 		}
+		index++;
 	}
 }
 
@@ -104,7 +108,8 @@
 {
 	NSArray	*colors = @[[NSColor redColor], [NSColor orangeColor], [NSColor yellowColor], [NSColor greenColor], [NSColor blueColor], [NSColor purpleColor]];
 	NSGradient *gradient = [[NSGradient alloc] initWithColors:colors];
-	return [gradient interpolatedColorAtLocation:(CGFloat)(note.note % 12) / 12.0];
+	CGFloat notePosition = (CGFloat)(note.note % 12) / 12.0;
+	return [gradient interpolatedColorAtLocation:notePosition];
 }
 
 - (NSColor *)colorForTrackAtIndex:(NSInteger)index
