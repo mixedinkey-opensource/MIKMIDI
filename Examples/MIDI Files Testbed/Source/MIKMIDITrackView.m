@@ -16,16 +16,18 @@
 - (void)drawRect:(NSRect)dirtyRect
 {
 	CGFloat ppt = [self pixelsPerTick];
+	CGFloat noteHeight = [self pixelsPerNote];
 	for (MIKMIDINoteEvent *note in [self.track events]) {
 		if (note.eventType != kMusicEventType_MIDINoteMessage) continue;
 		
-		NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.musicTimeStamp * ppt,
-									 NSMidY([self bounds]) - 10.0,
-									 note.duration * ppt,
-									 20.0);
+		CGFloat yPosition = NSMinY([self bounds]) + note.note * [self pixelsPerNote];
+		NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.musicTimeStamp * ppt, yPosition, note.duration * ppt, noteHeight);
 		
-		[[self colorForNote:note] set];
-		NSRectFill(noteRect);
+		[[self colorForNote:note] setFill];
+		[[NSColor blackColor] setStroke];
+		NSBezierPath *path = [NSBezierPath bezierPathWithRect:noteRect];
+		[path fill];
+		[path stroke];
 	}
 }
 
@@ -41,6 +43,11 @@
 - (CGFloat)pixelsPerTick
 {
 	return NSWidth([self bounds]) / self.track.length;
+}
+
+- (CGFloat)pixelsPerNote
+{
+	return NSHeight([self bounds]) / 127.0;
 }
 
 #pragma mark - Properties
