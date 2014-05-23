@@ -8,6 +8,7 @@
 
 #import "MIKAppDelegate.h"
 #import "MIKMIDISequence.h"
+#import "MIKMIDITrackView.h"
 
 @implementation MIKAppDelegate
 
@@ -31,6 +32,7 @@
 			NSLog(@"Error loading MIDI file: %@", error);
 		} else {
 			NSLog(@"Loaded MIDI file: %@", sequence);
+			self.trackView.track = [sequence.tracks firstObject];
 		}
 	}];
 }

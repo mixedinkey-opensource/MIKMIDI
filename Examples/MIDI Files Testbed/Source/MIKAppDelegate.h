@@ -8,10 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MIKMIDITrackView;
+
 @interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
 - (IBAction)loadFile:(id)sender;
 
 @property (assign) IBOutlet NSWindow *window;
+@property (weak) IBOutlet MIKMIDITrackView *trackView;
 
 @end

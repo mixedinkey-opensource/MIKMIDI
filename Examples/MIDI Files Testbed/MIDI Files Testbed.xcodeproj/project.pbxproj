@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9D3A2FBF192E85B800314B49 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */; };
+		9DAE7D37192FC1B800B25DD7 /* MIKMIDITrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D36192FC1B800B25DD7 /* MIKMIDITrackView.m */; };
 		9DB2A5F7192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
 		9DB2A616192D184D0047A3EB /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A615192D184D0047A3EB /* XCTest.framework */; };
 		9DB2A617192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
@@ -74,6 +75,8 @@
 /* Begin PBXFileReference section */
 		9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITempoEvent.h; sourceTree = "<group>"; };
 		9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITempoEvent.m; sourceTree = "<group>"; };
+		9DAE7D35192FC1B800B25DD7 /* MIKMIDITrackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITrackView.h; sourceTree = "<group>"; };
+		9DAE7D36192FC1B800B25DD7 /* MIKMIDITrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITrackView.m; sourceTree = "<group>"; };
 		9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Files Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB2A5F6192D184D0047A3EB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9DB2A5F9192D184D0047A3EB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -312,6 +315,8 @@
 				9DB2A62C192D18970047A3EB /* MIDI Files Testbed-Prefix.pch */,
 				9DB2A62D192D18970047A3EB /* MIKAppDelegate.h */,
 				9DB2A62E192D18970047A3EB /* MIKAppDelegate.m */,
+				9DAE7D35192FC1B800B25DD7 /* MIKMIDITrackView.h */,
+				9DAE7D36192FC1B800B25DD7 /* MIKMIDITrackView.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -532,6 +537,7 @@
 				9DB2A686192D19A60047A3EB /* MIKMIDIMapping.m in Sources */,
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
 				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
+				9DAE7D37192FC1B800B25DD7 /* MIKMIDITrackView.m in Sources */,
 				F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */,
 				9DB2A68D192D19A60047A3EB /* MIKMIDIOutputPort.m in Sources */,
 				9DB2A692192D19A60047A3EB /* MIKMIDISystemMessageCommand.m in Sources */,
