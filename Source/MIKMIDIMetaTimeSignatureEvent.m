@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaTimeSignatureEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaTimeSignature; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaTimeSignature; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTimeSignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTimeSignatureEvent class]; }
 + (BOOL)isMutable { return NO; }

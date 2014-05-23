@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_Meta; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMeta; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }

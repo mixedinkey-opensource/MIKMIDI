@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaTrackSequenceNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaTrackSequenceName; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaTrackSequenceName; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTrackSequenceNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }

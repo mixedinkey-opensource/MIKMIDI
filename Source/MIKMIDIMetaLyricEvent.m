@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaLyricEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaLyricText; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaLyricText; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaLyricEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaLyricEvent class]; }
 + (BOOL)isMutable { return NO; }

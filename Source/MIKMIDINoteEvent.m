@@ -13,7 +13,7 @@
 @implementation MIKMIDINoteEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MIDINoteMessage; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMIDINoteMessage; }
 + (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
