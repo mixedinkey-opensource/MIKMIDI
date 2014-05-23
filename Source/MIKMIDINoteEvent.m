@@ -18,6 +18,13 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
 
+#pragma mark - Properties
+
++ (NSSet *)keyPathsForValuesAffectingEndTimeStamp
+{
+	return [NSSet setWithObjects:@"musicTimeStamp", @"duration", nil];
+}
+
 - (UInt8)note
 {
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
@@ -99,6 +106,11 @@
     [self willChangeValueForKey:@"duration"];
     noteMessage->duration = duration;
     [self willChangeValueForKey:@"duration"];
+}
+
+- (MusicTimeStamp)endTimeStamp
+{
+	return self.musicTimeStamp + self.duration;
 }
 
 - (float)frequency
