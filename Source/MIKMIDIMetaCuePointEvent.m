@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaCuePointEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaCuePoint; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaCuePoint; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaCuePointEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaCuePointEvent class]; }
 + (BOOL)isMutable { return NO; }

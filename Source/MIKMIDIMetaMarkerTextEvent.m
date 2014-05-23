@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaMarkerTextEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaMarkerText; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaMarkerText; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaMarkerTextEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaMarkerTextEvent class]; }
 + (BOOL)isMutable { return NO; }

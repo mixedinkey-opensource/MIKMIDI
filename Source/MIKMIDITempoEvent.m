@@ -13,7 +13,7 @@
 @implementation MIKMIDITempoEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_ExtendedTempo; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeExtendedTempo; }
 + (Class)immutableCounterpartClass { return [MIKMIDITempoEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }

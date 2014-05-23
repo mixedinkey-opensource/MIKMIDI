@@ -13,7 +13,7 @@
 @implementation MIKMIDIMetaTextEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_MetaText; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaText; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTextEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTextEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -38,5 +38,7 @@
 @implementation MIKMutableMIDIMetaTextEvent
 
 + (BOOL)isMutable { return YES; }
+
+@dynamic string;
 
 @end
