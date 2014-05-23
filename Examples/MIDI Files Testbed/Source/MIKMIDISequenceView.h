@@ -8,10 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MIKMIDITrack;
+@class MIKMIDISequence;
 
-@interface MIKMIDITrackView : NSView
+@interface MIKMIDISequenceView : NSView
 
-@property (nonatomic, strong) MIKMIDITrack *track;
+@property (nonatomic, strong) MIKMIDISequence *sequence;
 
 @end
