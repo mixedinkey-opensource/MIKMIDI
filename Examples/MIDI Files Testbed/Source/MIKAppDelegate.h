@@ -7,10 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MIKMIDISequenceView.h"
 
 @class MIKMIDISequenceView;
 
-@interface MIKAppDelegate : NSObject <NSApplicationDelegate>
+@interface MIKAppDelegate : NSObject <NSApplicationDelegate, MIKMIDISequenceViewDelegate>
 
 - (IBAction)loadFile:(id)sender;
 

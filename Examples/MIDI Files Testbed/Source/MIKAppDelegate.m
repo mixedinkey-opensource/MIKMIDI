@@ -8,14 +8,8 @@
 
 #import "MIKAppDelegate.h"
 #import "MIKMIDISequence.h"
-#import "MIKMIDISequenceView.h"
 
 @implementation MIKAppDelegate
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-	// Insert code here to initialize your application
-}
 
 - (IBAction)loadFile:(id)sender
 {
@@ -25,15 +19,29 @@
 	[openPanel setAllowedFileTypes:@[@"mid", @"midi"]];
 	[openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
 		if (result != NSFileHandlingPanelOKButton) return;
-		
-		NSError *error = nil;
-		MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:[openPanel URL] error:&error];
-		if (!sequence) {
-			NSLog(@"Error loading MIDI file: %@", error);
-		} else {
-			NSLog(@"Loaded MIDI file: %@", sequence);
-			self.trackView.sequence = sequence;
-		}
+		[self loadMIDIFile:[[openPanel URL] path]];
 	}];
 }
+
+#pragma mark - MIKMIDISequenceViewDelegate
+
+- (void)midiSequenceView:(MIKMIDISequenceView *)sequenceView receivedDroppedMIDIFiles:(NSArray *)midiFiles
+{
+	[self loadMIDIFile:[midiFiles firstObject]];
+}
+
+#pragma mark - Private
+
+- (void)loadMIDIFile:(NSString *)path
+{
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:[NSURL fileURLWithPath:path] error:&error];
+	if (!sequence) {
+		NSLog(@"Error loading MIDI file: %@", error);
+	} else {
+		NSLog(@"Loaded MIDI file: %@", sequence);
+		self.trackView.sequence = sequence;
+	}
+}
+
 @end

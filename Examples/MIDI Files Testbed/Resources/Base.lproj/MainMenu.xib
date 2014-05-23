@@ -690,6 +690,9 @@
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="ig9-gN-jWe" customClass="MIKMIDISequenceView">
                         <rect key="frame" x="20" y="20" width="440" height="279"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <connections>
+                            <outlet property="delegate" destination="Voe-Tx-rLC" id="rrk-QA-HhO"/>
+                        </connections>
                     </customView>
                 </subviews>
                 <constraints>

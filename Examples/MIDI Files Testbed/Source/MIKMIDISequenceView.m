@@ -12,10 +12,30 @@
 #import "MIKMIDIEvent.h"
 #import "MIKMIDINoteEvent.h"
 
+@interface MIKMIDISequenceView ()
+
+@property (nonatomic) BOOL dragInProgress;
+
+@end
+
 @implementation MIKMIDISequenceView
+
+- (instancetype)initWithFrame:(NSRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self registerForDraggedTypes:@[NSFilenamesPboardType]];
+    }
+    return self;
+}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+	if (self.dragInProgress) {
+		[[NSColor lightGrayColor] set];
+		NSRectFill([self bounds]);
+	}
+	
 	CGFloat ppt = [self pixelsPerTick];
 	CGFloat noteHeight = [self pixelsPerNote];
 	NSInteger index=0;
@@ -34,6 +54,48 @@
 			[path stroke];
 		}
 	}
+}
+
+#pragma mark - NSDraggingDestination
+
+- (NSArray *)MIDIFilesFromPasteboard:(NSPasteboard *)pb
+{
+	if (![[pb types] containsObject:NSFilenamesPboardType]) return NSDragOperationNone;
+	
+	NSArray *files = [pb propertyListForType:NSFilenamesPboardType];
+	files = [files filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *file, NSDictionary *bindings) {
+		return [[file pathExtension] isEqualToString:@"mid"] || [[file pathExtension] isEqualToString:@"midi"];
+	}]];
+	return files;
+}
+
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
+{
+	NSArray *files = [self MIDIFilesFromPasteboard:[sender draggingPasteboard]];
+	self.dragInProgress = [files count] != 0;
+	return [files count] ? NSDragOperationCopy : NSDragOperationNone;
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender
+{
+	self.dragInProgress = NO;
+}
+
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
+{
+	NSArray *files = [self MIDIFilesFromPasteboard:[sender draggingPasteboard]];
+	if (![files count]) return NO;
+	
+	if ([self.delegate respondsToSelector:@selector(midiSequenceView:receivedDroppedMIDIFiles:)]) {
+		[self.delegate midiSequenceView:self receivedDroppedMIDIFiles:files];
+	}
+	
+	return YES;
+}
+
+- (void)concludeDragOperation:(id<NSDraggingInfo>)sender
+{
+	self.dragInProgress = NO;
 }
 
 #pragma mark - Private
@@ -69,6 +131,14 @@
 {
 	if (sequence != _sequence) {
 		_sequence = sequence;
+		[self setNeedsDisplay:YES];
+	}
+}
+
+- (void)setDragInProgress:(BOOL)dragInProgress
+{
+	if (dragInProgress != _dragInProgress) {
+		_dragInProgress = dragInProgress;
 		[self setNeedsDisplay:YES];
 	}
 }

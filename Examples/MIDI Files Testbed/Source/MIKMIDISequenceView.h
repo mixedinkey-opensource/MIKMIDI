@@ -10,8 +10,17 @@
 
 @class MIKMIDISequence;
 
+@protocol MIKMIDISequenceViewDelegate;
+
 @interface MIKMIDISequenceView : NSView
 
+@property (nonatomic, weak) IBOutlet id<MIKMIDISequenceViewDelegate> delegate;
 @property (nonatomic, strong) MIKMIDISequence *sequence;
+
+@end
+
+@protocol MIKMIDISequenceViewDelegate <NSObject>
+
+- (void)midiSequenceView:(MIKMIDISequenceView *)sequenceView receivedDroppedMIDIFiles:(NSArray *)midiFiles;
 
 @end
