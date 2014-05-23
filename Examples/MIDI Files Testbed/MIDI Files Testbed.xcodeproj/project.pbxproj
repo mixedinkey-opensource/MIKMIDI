@@ -214,6 +214,14 @@
 				F263C030192D547B00F1B297 /* MIKMIDINoteEvent.m */,
 				9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */,
 				9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */,
+				9D5821CA192FA6E3000A89B5 /* Meta Event Subclasses */,
+			);
+			name = "MIDI Events";
+			sourceTree = "<group>";
+		};
+		9D5821CA192FA6E3000A89B5 /* Meta Event Subclasses */ = {
+			isa = PBXGroup;
+			children = (
 				F263C09D192E8F1C00F1B297 /* MIKMIDIMetaEvent.h */,
 				F263C09E192E8F1C00F1B297 /* MIKMIDIMetaEvent.m */,
 				F263C0A0192E8FC900F1B297 /* MIKMIDIMetaSequenceEvent.h */,
@@ -235,7 +243,7 @@
 				F263C0B8192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.h */,
 				F263C0B9192ED6F200F1B297 /* MIKMIDIMetaCuePointEvent.m */,
 			);
-			name = "MIDI Events";
+			name = "Meta Event Subclasses";
 			sourceTree = "<group>";
 		};
 		9DB2A5EA192D184D0047A3EB = {
@@ -393,9 +401,9 @@
 			children = (
 				9DB2A695192D19D30047A3EB /* MIKMIDISequence.h */,
 				9DB2A696192D19D30047A3EB /* MIKMIDISequence.m */,
-				9D3A2FBC192E670E00314B49 /* MIDI Events */,
 				9DB2A699192D1BE30047A3EB /* MIKMIDITrack.h */,
 				9DB2A69A192D1BE30047A3EB /* MIKMIDITrack.m */,
+				9D3A2FBC192E670E00314B49 /* MIDI Events */,
 			);
 			name = "MIDI Files";
 			sourceTree = "<group>";

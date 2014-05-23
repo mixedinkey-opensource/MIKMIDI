@@ -39,4 +39,6 @@
 
 + (BOOL)isMutable { return YES; }
 
+@dynamic string;
+
 @end
