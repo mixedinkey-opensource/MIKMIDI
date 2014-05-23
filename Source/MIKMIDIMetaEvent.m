@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetadataEvent.h"
+#import "MIKMIDIMetaEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
-@implementation MIKMIDIMetadataEvent
+@implementation MIKMIDIMetaEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMusicEventType:(MusicEventType)type { return type == kMusicEventType_Meta; }
-+ (Class)immutableCounterpartClass { return [MIKMIDIMetadataEvent class]; }
-+ (Class)mutableCounterpartClass { return [MIKMutableMIDIMetadataEvent class]; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventType_Meta; }
++ (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
++ (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }
 
 - (NSString *)additionalEventDescription
@@ -48,15 +48,26 @@
 - (NSData *)metaData
 {
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
-    return [self.internalData subdataWithRange:NSMakeRange(8, metaEvent->dataLength)];
+    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, metaEvent->dataLength)];
 }
 
-#warning Need method to set metadata (and it needs to set length and alter internalData as well
+- (void)setMetaData:(NSData *)metaData
+{
+    if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+    
+    MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
+    [self willChangeValueForKey:@"metaData"];
+    metaEvent->dataLength = (UInt32)[metaData length];
+    NSMutableData *newMetaData = [self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)].mutableCopy;
+    [newMetaData appendData:metaData];
+    self.internalData = newMetaData;
+    [self didChangeValueForKey:@"metaData"];
+}
 
 @end
 
 
-@implementation MIKMutableMIDIMetadataEvent
+@implementation MIKMutableMIDIMetaEvent
 
 @dynamic metadataType;
 @dynamic metaData;

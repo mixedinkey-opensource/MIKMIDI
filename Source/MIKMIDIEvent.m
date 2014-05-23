@@ -9,7 +9,7 @@
 #import "MIKMIDIEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
-#import "MIKMIDIUtilities.h"
+
 
 static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
@@ -26,13 +26,13 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 + (BOOL)isMutable { return NO; }
 
-+ (BOOL)supportsMusicEventType:(MusicEventType)type { return NO; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return NO; }
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
 
 + (instancetype)midiEventWithTimestamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
-    Class subclass = [[self class] subclassForEventType:eventType];
+    Class subclass = [[self class] subclassForEventType:eventType andData:data];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	MIKMIDIEvent *result = [[subclass alloc] initWithTimeStamp:timeStamp eventType:eventType data:data];
@@ -41,7 +41,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 - (id)init
 {
-    self = [self initWithTimeStamp:0 eventType:kMusicEventType_NULL data:nil];
+    self = [self initWithTimeStamp:0 eventType:MIKMIDIEventType_NULL data:nil];
     if (self) {
         self.internalData = [NSMutableData data];
     }
@@ -75,11 +75,122 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 #pragma mark - Private
 
-+ (Class)subclassForEventType:(MusicEventType)eventType
++ (MIKMIDIEventType)mikEventTypeForMusicEventType:(MusicEventType)musicEventType andData:(NSData *)data
+{
+    MIKMIDIEventType returnEventType = MIKMIDIEventType_NULL;
+    if (musicEventType == kMusicEventType_Meta) {
+        UInt8 metaEventType = (UInt8)[[data subdataWithRange:NSMakeRange(0, 1)] bytes];
+
+        switch (metaEventType) {
+            case MIKMIDIMetaEventCopyrightNotice:
+                returnEventType = MIKMIDIEventType_MetaCopyright;
+                break;
+            
+            case MIKMIDIMetaEventCuePoint:
+                returnEventType = MIKMIDIEventType_MetaCuePoint;
+                break;
+                
+            case MIKMIDIMetaEventEndOfTrack:
+                returnEventType = MIKMIDIEventType_MetaEndOfTrack;
+                break;
+                
+            case MIKMIDIMetaEventInstrumentName:
+                returnEventType = MIKMIDIEventType_MetaInstrumentName;
+                break;
+                
+            case MIKMIDIMetaEventKeySignature:
+                returnEventType = MIKMIDIEventType_MetaKeySignature;
+                break;
+                
+            case MIKMIDIMetaEventLyricText:
+                returnEventType = MIKMIDIEventType_MetaLyricText;
+                break;
+                
+            case MIKMIDIMetaEventMarkerText:
+                returnEventType = MIKMIDIEventType_MetaMarkerText;
+                break;
+                
+            case MIKMIDIMetaEventMIDIChannelPrefix:
+                returnEventType = MIKMIDIEventType_MetaMIDIChannelPrefix;
+                break;
+                
+            case MIKMIDIMetaEventSequenceNumber:
+                returnEventType = MIKMIDIEventType_MetaSequence;
+                break;
+                
+            case MIKMIDIMetaEventSequencerSpecificEvent:
+                returnEventType = MIKMIDIEventType_MetaSequenceSpecificEvent;
+                break;
+                
+            case MIKMIDIMetaEventSMPTEOffset:
+                returnEventType = MIKMIDIEventType_MetaSMPTEOffset;
+                break;
+                
+            case MIKMIDIMetaEventTempoSetting:
+                returnEventType = MIKMIDIEventType_MetaTempoSetting;
+                break;
+                
+            case MIKMIDIMetaEventTextEvent:
+                returnEventType = MIKMIDIEventType_MetaText;
+                break;
+                
+            case MIKMIDIMetaEventTimeSignature:
+                returnEventType = MIKMIDIEventType_MetaTimeSignature;
+                break;
+                
+            case MIKMIDIMetaEventTrackSequenceName:
+                returnEventType = MIKMIDIEventType_MetaTrackSequenceName;
+                break;
+                
+            default:
+                returnEventType = MIKMIDIEventType_Meta;
+                break;
+        }
+    } else {
+        switch (musicEventType) {
+            case kMusicEventType_AUPreset:
+                returnEventType = MIKMIDIEventType_AUPreset;
+                break;
+                
+            case kMusicEventType_ExtendedNote:
+                returnEventType = MIKMIDIEventType_ExtendedNote;
+                break;
+            case kMusicEventType_ExtendedTempo:
+                returnEventType = MIKMIDIEventType_ExtendedTempo;
+                break;
+            case kMusicEventType_MIDIChannelMessage:
+                returnEventType = MIKMIDIEventType_MIDIChannelMessage;
+                break;
+            case kMusicEventType_MIDINoteMessage:
+                returnEventType = MIKMIDIEventType_MIDINoteMessage;
+                break;
+            case kMusicEventType_MIDIRawData:
+                returnEventType = MIKMIDIEventType_MIDIRawData;
+                break;
+            case kMusicEventType_Parameter:
+                returnEventType = MIKMIDIEventType_Parameter;
+                break;
+            case kMusicEventType_User:
+                returnEventType = MIKMIDIEventType_User;
+                break;
+            case kMusicEventType_ExtendedControl:
+                returnEventType = MIKMIDIEventType_ExtendedControl;
+                break;
+            default:
+                returnEventType = MIKMIDIEventType_NULL;
+                break;
+        }
+    }
+    
+    return returnEventType;
+}
+
++ (Class)subclassForEventType:(MusicEventType)eventType andData:(NSData *)data
 {
 	Class result = nil;
+    MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
 	for (Class subclass in registeredMIKMIDIEventSubclasses) {
-		if ([subclass supportsMusicEventType:eventType]) {
+		if ([subclass supportsMIKMIDIEventType:midiEventType]) {
 			result = subclass;
 			break;
 		}
@@ -124,7 +235,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 + (BOOL)isMutable { return YES; }
 
-+ (BOOL)supportsMusicEventType:(MusicEventType)type { return [[self immutableCounterpartClass] supportsMusicEventType:type]; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self immutableCounterpartClass] supportsMIKMIDIEventType:type]; }
 
 @dynamic eventType;
 @dynamic channel;

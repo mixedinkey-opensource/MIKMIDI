@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetadataSequenceEvent.h"
+#import "MIKMIDIMetaSequenceEvent.h"
 
-@implementation MIKMIDIMetadataSequenceEvent
+@implementation MIKMIDIMetaSequenceEvent
 
 @end

@@ -6,8 +6,13 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetadataEvent.h"
+#import "MIKMIDIMetaEvent.h"
 
-@interface MIKMIDIMetadataSequenceEvent : MIKMIDIMetadataEvent
+@interface MIKMIDIMetaSequenceEvent : MIKMIDIMetaEvent
+
+@end
+
+
+@interface MIKMutableMIDIMetaSequenceEvent : MIKMIDIMetaSequenceEvent
 
 @end

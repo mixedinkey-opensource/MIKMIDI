@@ -24,14 +24,14 @@
 
 /**
  *  Subclasses of MIKMIDIEvent must override this method, and return YES for any
- *  MusicEventType values they support. MIKMIDIEvent uses this method to determine which
+ *  MIKMIDIEventType values they support. MIKMIDIEvent uses this method to determine which
  *  subclass to use to represent a particular MIDI event type.
  *
- *  @param type An MusicEventType value.
+ *  @param type An MIKMIDIEventType value.
  *
  *  @return YES if the subclass supports type, NO otherwise.
  */
-+ (BOOL)supportsMusicEventType:(MusicEventType)type;
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type;
 
 /**
  *  The immutable counterpart class of the receiver.
@@ -69,6 +69,9 @@
 @property (nonatomic, readwrite) MusicTimeStamp musicTimeStamp;
 
 @property (nonatomic, readwrite) MusicEventType eventType;
+
+@property (nonatomic, strong, readwrite) NSData *metaData;
+
 
 /**
  *  Additional description string to be appended to basic description provided by
