@@ -61,7 +61,7 @@
 		9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF6117A713A100BEE89F /* NSUIApplication+MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EF9517A713A100BEE89F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */; };
 		9DAE7D8D19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */; };
-		9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */; };
+		9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DF99E7A1831841A004EE5F4 /* MIKMIDICommandThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */; };
 		9DF99E7D18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */; };

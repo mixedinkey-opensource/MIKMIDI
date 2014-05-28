@@ -1,6 +1,6 @@
 //
-//  MIKMIDIPlayer.m
-//  MIDI Player
+//  MIKMIDIEndpointSynthesizer.m
+//  MIKMIDI
 //
 //  Created by Andrew Madsen on 5/27/14.
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
