@@ -12,7 +12,7 @@
 
 @interface MIKMIDIEndpointSynthesizer ()
 
-@property (nonatomic, strong) MIKMIDISourceEndpoint *connectedEndpoint;
+@property (nonatomic, strong, readwrite) MIKMIDISourceEndpoint *source;
 @property (nonatomic, strong) id connectionToken;
 
 @property (nonatomic) AUGraph graph;
@@ -50,7 +50,7 @@
 
 - (void)dealloc
 {
-    if (self.connectedEndpoint) [[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:self.connectedEndpoint forConnectionToken:self.connectionToken];
+    if (self.source) [[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:self.source forConnectionToken:self.connectionToken];
 	
 	self.graph = NULL;
 }
@@ -68,7 +68,7 @@
 	
 	if (!connectionToken) return NO;
 	
-	self.connectedEndpoint = source;
+	self.source = source;
 	self.connectionToken = connectionToken;
 	return YES;
 }
