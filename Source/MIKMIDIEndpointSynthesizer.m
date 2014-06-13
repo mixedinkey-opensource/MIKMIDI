@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#if !TARGET_OS_IPHONE
+
 #import "MIKMIDIEndpointSynthesizer.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <MIKMIDI/MIKMIDI.h>
@@ -162,3 +164,5 @@
 }
 
 @end
+
+#endif // !TARGET_OS_IPHONE

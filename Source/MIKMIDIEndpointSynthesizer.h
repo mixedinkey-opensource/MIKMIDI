@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#if !TARGET_OS_IPHONE
+
 #import <Foundation/Foundation.h>
 
 @class MIKMIDISourceEndpoint;
@@ -43,3 +45,5 @@
 @property (nonatomic, strong, readonly) MIKMIDISourceEndpoint *source;
 
 @end
+
+#endif // !TARGET_OS_IPHONE
