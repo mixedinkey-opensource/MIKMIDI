@@ -20,3 +20,5 @@ MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autore
 
 NSString *MIKMIDIMappingAttributeStringForInteractionType(MIKMIDIResponderType type);
 MIKMIDIResponderType MIKMIDIMappingInteractionTypeForAttributeString(NSString *string);
+
+NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType commandType);
