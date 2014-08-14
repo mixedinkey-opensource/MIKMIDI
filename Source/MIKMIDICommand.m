@@ -273,20 +273,55 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 @end
 
-BOOL MIKMIDIPacketListFromCommands(MIDIPacketList *inOutPacketList, ByteCount listSize, NSArray *commands)
+ByteCount MIKMIDIPacketListSizeForCommands(NSArray *commands)
 {
-	if (!listSize) listSize = sizeof(MIDIPacketList);
-	MIDIPacket *currentPacket = MIDIPacketListInit(inOutPacketList);
+	if (commands == nil || [commands count] == 0) {
+		return 0;
+	}
+
+	// Compute the size of static members of MIDIPacketList and (MIDIPacket * [commands count])
+	ByteCount packetListSize = offsetof(MIDIPacketList, packet) + offsetof(MIDIPacket, data) * [commands count];
+
+	// Compute the total number of MIDI bytes in all commands
+	for (MIKMIDICommand *command in commands) {
+		packetListSize += [[command data] length];
+	}
+
+	return packetListSize;
+}
+
+BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList **outPacketList, NSArray *commands)
+{
+	if (outPacketList == NULL || commands == nil || [commands count] == 0) {
+		return NO;
+	}
+
+	ByteCount listSize = MIKMIDIPacketListSizeForCommands(commands);
+
+	if (listSize == 0) {
+		return NO;
+	}
+
+	MIDIPacketList *packetList = calloc(1, listSize);
+	if (packetList == NULL) {
+		return NO;
+	}
+
+	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
 	for (NSUInteger i=0; i<[commands count]; i++) {
 		MIKMIDICommand *command = [commands objectAtIndex:i];
-		currentPacket = MIDIPacketListAdd(inOutPacketList,
+		currentPacket = MIDIPacketListAdd(packetList,
 										  listSize,
 										  currentPacket,
 										  command.midiTimestamp,
 										  [command.data length],
 										  [command.data bytes]);
-		if (!currentPacket && (i < [commands count] - 1)) return NO;
+		if (!currentPacket && (i < [commands count] - 1)) {
+			free(packetList);
+			return NO;
+		}
 	}
-	
+
+	*outPacketList = packetList;
 	return YES;
 }
