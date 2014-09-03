@@ -38,10 +38,11 @@
 	
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 
-	MIDIPacketList packetList;
-	if (!MIKMIDIPacketListFromCommands(&packetList, 0, commands)) return NO;
+	MIDIPacketList *packetList;
+	if (!MIKCreateMIDIPacketListFromCommands(&packetList, commands)) return NO;
 	
-	OSStatus err = MIDISend(self.portRef, destination.objectRef, &packetList);
+	OSStatus err = MIDISend(self.portRef, destination.objectRef, packetList);
+	free(packetList);
 	if (err != noErr) {
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
