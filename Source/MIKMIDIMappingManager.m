@@ -80,8 +80,23 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (NSSet *)mappingsForControllerName:(NSString *)name;
 {
 	if (![name length]) return nil;
+	NSSet *bundledMappings = [self bundledMappingsForControllerName:name];
+	NSSet *userMappings = [self userMappingsForControllerName:name];
+	return [bundledMappings setByAddingObjectsFromSet:userMappings];
+}
+
+- (NSSet *)bundledMappingsForControllerName:(NSString *)name
+{
+	if (![name length]) return [NSSet set];
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
-	return [self.mappings filteredSetUsingPredicate:predicate];
+	return [self.bundledMappings filteredSetUsingPredicate:predicate];
+}
+
+- (NSSet *)userMappingsForControllerName:(NSString *)name
+{
+	if (![name length]) return [NSSet set];
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
+	return [self.userMappings filteredSetUsingPredicate:predicate];
 }
 
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;

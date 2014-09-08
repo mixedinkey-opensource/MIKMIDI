@@ -51,21 +51,6 @@
 	return result;
 }
 
-- (id)initWithMIDIPacket:(MIDIPacket *)packet
-{
-	self = [super initWithMIDIPacket:packet];
-	if (self) {
-#ifndef DISABLE_CONTROLLER_SPECIFIC_WORKAROUNDS
-		NSData *pioneer14BitData = [self fourteenBitDataFromPioneer5ByteData:self.internalData];
-		if ([pioneer14BitData length]) {
-			self.internalData = [pioneer14BitData mutableCopy];
-			self.fourteenBitCommand = YES;
-		}
-#endif
-	}
-	return self;
-}
-
 -(NSString *)additionalCommandDescription
 {
 	if (self.isFourteenBitCommand) {
@@ -90,41 +75,6 @@
 }
 
 #pragma mark - Private
-
-#ifndef DISABLE_CONTROLLER_SPECIFIC_WORKAROUNDS
-
-- (NSData *)fourteenBitDataFromPioneer5ByteData:(NSData *)data
-{
-	// Some Pioneer controller (e.g. DDJ-SX, SR, etc.) send 5 bytes of MIDI
-	// data in their control change commands. This code attempts to detect that
-	// and respond appropriately.
-	// Returns nil if data doesn't appear to be from such a controller.
-	
-	// In essense, these Pioneer controllers send 14-bit data "pre-coalesced" into a single
-	// message. The first 2 bytes (3 bytes including command type) are a standard MIDI command.
-	// The last 3 bytes are essentially another CC command, complete with command type, controller number + 32,
-	// and another byte of (LSB) data.
-	
-	if ([data length] != 6) return nil;
-	
-	uint8_t statusByte = *(uint8_t *)([data bytes] + 3);
-	if ((statusByte & 0xF0) != (MIKMIDICommandTypeControlChange & 0xF0)) return nil; // Status byte's first nibble should be B for control change
-	
-	NSData *standardData = [data subdataWithRange:NSMakeRange(1, 2)];
-	NSData *extendedData = [data subdataWithRange:NSMakeRange(4, 2)];
-	
-	uint8_t standardControllerNumber = *(uint8_t *)[standardData bytes];
-	uint8_t extendedControllerNumber = *(uint8_t *)[extendedData bytes];
-	
-	// byte4 should be byte1 + 32 (0x20), just like regular 14-bit commands
-	if (extendedControllerNumber - standardControllerNumber != 32) return nil;
-	
-	NSMutableData *result = [data mutableCopy];
-	[result replaceBytesInRange:NSMakeRange(3, 2) withBytes:NULL length:0];
-	return result;
-}
-
-#endif
 
 #pragma mark - Properties
 

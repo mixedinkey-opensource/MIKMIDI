@@ -105,3 +105,46 @@ MIKMIDIResponderType MIKMIDIMappingInteractionTypeForAttributeString(NSString *s
 						  @"RelativeAbsoluteKnob" : @(MIKMIDIResponderTypeRelativeAbsoluteKnob)};
 	return [[map objectForKey:string] integerValue];
 }
+
+NSInteger _MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType commandType)
+{
+	// Result includes status/command type byte
+	switch (commandType) {
+		case MIKMIDICommandTypeNoteOff:
+		case MIKMIDICommandTypeNoteOn:
+		case MIKMIDICommandTypePolyphonicKeyPressure:
+		case MIKMIDICommandTypeControlChange:
+		case MIKMIDICommandTypePitchWheelChange:
+		case MIKMIDICommandTypeSystemSongPositionPointer:
+			return 3;
+			break;
+		case MIKMIDICommandTypeProgramChange:
+		case MIKMIDICommandTypeChannelPressure:
+		case MIKMIDICommandTypeSystemTimecodeQuarterFrame:
+		case MIKMIDICommandTypeSystemSongSelect:
+			return 2;
+			break;
+		case MIKMIDICommandTypeSystemTuneRequest:
+		case MIKMIDICommandTypeSystemTimingClock:
+		case MIKMIDICommandTypeSystemStartSequence:
+		case MIKMIDICommandTypeSystemContinueSequence:
+		case MIKMIDICommandTypeSystemStopSequence:
+		case MIKMIDICommandTypeSystemKeepAlive:
+			return 1;
+			break;
+		case MIKMIDICommandTypeSystemMessage:
+		case MIKMIDICommandTypeSystemExclusive:
+			return -1; // No standard length
+			break;
+		default:
+			return NSIntegerMin;
+			break;
+	}
+}
+
+NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType commandType)
+{
+	NSInteger result = _MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+	if (result == NSIntegerMin) result = _MIKMIDIStandardLengthOfMessageForCommandType(commandType | 0x0F); // Mask out channel nibble
+	return result;
+}

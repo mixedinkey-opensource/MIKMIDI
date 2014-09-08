@@ -44,6 +44,26 @@
 - (NSSet *)mappingsForControllerName:(NSString *)name;
 
 /**
+ *  Used to obtain the set of bundled mappings for the controller
+ *  specified by name. Typically, name is the string obtained by calling -[MIKMIDIDevice name].
+ *
+ *  @param name The name of the controller for which available bundled mappings are desired.
+ *
+ *  @return An NSSet containing MIKMIDIMapping instances.
+ */
+- (NSSet *)bundledMappingsForControllerName:(NSString *)name;
+
+/**
+ *  Used to obtain the set of user-supplied mappings for the controller
+ *  specified by name. Typically, name is the string obtained by calling -[MIKMIDIDevice name].
+ *
+ *  @param name The name of the controller for which available user-supplied mappings are desired.
+ *
+ *  @return An NSSet containing MIKMIDIMapping instances.
+ */
+- (NSSet *)userMappingsForControllerName:(NSString *)name;
+
+/**
  *  Used to obtaining a mapping file with a given mapping name.
  *
  *  @param mappingName NSString representing the mapping name for the desired mapping.

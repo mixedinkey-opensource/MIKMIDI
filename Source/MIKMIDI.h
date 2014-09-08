@@ -33,3 +33,4 @@
 #import "NSUIApplication+MIKMIDI.h"
 #import "MIKMIDIErrors.h"
 #import "MIKMIDICommandThrottler.h"
+#import "MIKMIDIEndpointSynthesizer.h"

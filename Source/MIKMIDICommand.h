@@ -193,14 +193,16 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @end
 
 /**
- *  Returns (by reference) a CoreMIDI MIDIPacketList created from an array of MIKMIDICommand instances.
+ *  Allocates and returns (by reference) a CoreMIDI MIDIPacketList created from an array of MIKMIDICommand instances.
+ *  The created MIDIPacketList will be sized according to the number of commands and their contents. Ownership is
+ *  transfered to the caller which becomes responsible for freeing the allocated memory.
  *  Used by MIKMIDI when sending commands. Typically, this is not needed by clients of MIKMIDI.
  *
- *  @param inOutPacketList A pointer to a MIDIPacketList structure.
- *  @param listSize        The size in bytes of the MIDIPacketList, or 0 to use sizeof() (ie. only a single command).
+ *  @param outPacketList   A pointer pointer to a MIDIPacketList structure which will point to the created MIDIPacketList
+ *                         upon success.
  *  @param commands        An array of MIKMIDICommand instances.
  *
  *  @return YES if creating the packet list was successful, NO if an error occurred.
  */
-BOOL MIKMIDIPacketListFromCommands(MIDIPacketList *inOutPacketList, ByteCount listSize, NSArray *commands);
+BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList **outPacketList, NSArray *commands);
 
