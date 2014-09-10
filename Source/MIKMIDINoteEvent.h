@@ -18,6 +18,8 @@
 @property (nonatomic, readonly) float frequency;
 @property (nonatomic, readonly) NSString *noteLetter;
 
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
+
 @end
 
 @interface MIKMutableMIDINoteEvent : MIKMIDINoteEvent

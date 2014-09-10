@@ -18,6 +18,14 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
 
+#pragma mark - Lifecycle
+
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message
+{
+    NSData *data = [NSData dataWithBytes:&message length:sizeof(message)];
+    return [self midiEventWithTimeStamp:timeStamp eventType:kMusicEventType_MIDINoteMessage data:data];
+}
+
 #pragma mark - Properties
 
 + (NSSet *)keyPathsForValuesAffectingEndTimeStamp

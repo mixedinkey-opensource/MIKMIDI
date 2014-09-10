@@ -90,7 +90,7 @@
         return nil;
     }
 
-    return [MIKMIDIEvent midiEventWithTimestamp:timeStamp eventType:type data:[NSData dataWithBytes:data length:dataSize]];
+    return [MIKMIDIEvent midiEventWithTimeStamp:timeStamp eventType:type data:[NSData dataWithBytes:data length:dataSize]];
 }
 
 #pragma mark - Properties

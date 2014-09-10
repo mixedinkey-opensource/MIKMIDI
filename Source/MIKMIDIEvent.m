@@ -30,7 +30,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
 
-+ (instancetype)midiEventWithTimestamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
++ (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
     Class subclass = [[self class] subclassForEventType:eventType andData:data];
 	if (!subclass) subclass = self;

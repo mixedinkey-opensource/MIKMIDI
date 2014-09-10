@@ -65,7 +65,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 @property (nonatomic, readonly) MusicTimeStamp musicTimeStamp;
 @property (nonatomic, readonly) NSData *data;
 
-+ (instancetype)midiEventWithTimestamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
++ (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
 
 @end
 
