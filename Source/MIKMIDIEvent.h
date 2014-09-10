@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 
 @interface MIKMutableMIDIEvent : MIKMIDIEvent
 
-@property (nonatomic, readwrite) MusicEventType eventType;
+@property (nonatomic, readonly) MusicEventType eventType;
 @property (nonatomic, strong, readwrite) NSMutableData *data;
 
 @end

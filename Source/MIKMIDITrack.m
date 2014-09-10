@@ -6,111 +6,357 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#import "MIKMIDISequence.h"
 #import "MIKMIDITrack.h"
 #import "MIKMIDIEvent.h"
 #import "MIKMIDINoteEvent.h"
+#import "MIKMIDITempoEvent.h"
+#import "MIKMIDIEventIterator.h"
 
 @interface MIKMIDITrack()
 
-@property (nonatomic, readwrite) BOOL doesLoop;
-@property (nonatomic, readwrite) NSInteger numberOfLoops; // 0 means loops forever
-@property (nonatomic, readwrite) MusicTimeStamp loopDuration;
-
-@property (nonatomic, readwrite, getter = isMuted) BOOL muted;
-@property (nonatomic, readwrite, getter = isSolo) BOOL solo;
-
-@property (nonatomic, readwrite) MusicTimeStamp length;
-@property (nonatomic, readwrite, copy) NSArray *events;
+@property (strong, nonatomic) MIKMIDISequence *sequence;
 
 @end
 
+
 @implementation MIKMIDITrack
 
-- (instancetype)initWithMusicTrack:(MusicTrack)musicTrack;
+#pragma mark - Lifecycle
+
+- (instancetype)initWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack
 {
-	self = [super init];
-	if (self) {
+    if (self = [super init]) {
+        MusicSequence musicTrackSequence;
+        OSStatus err = MusicTrackGetSequence(musicTrack, &musicTrackSequence);
+        if (err) NSLog(@"MusicTrackGetSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 
-        MusicEventIterator iterator = NULL;
-        NewMusicEventIterator(musicTrack, &iterator);
-
-		MusicTrackLoopInfo loopInfo;
-		UInt32 loopInfoLength = sizeof(MusicTrackLoopInfo);
-		OSStatus err = MusicTrackGetProperty(musicTrack, kSequenceTrackProperty_LoopInfo, (void *)&loopInfo, &loopInfoLength);
-		if (err) {
-			NSLog(@"Unable to get loop info for track %@: %i", self, err);
-			return NO;
-		}
-		self.doesLoop = loopInfo.loopDuration > 0.0;
-		self.numberOfLoops = loopInfo.numberOfLoops;
-		self.loopDuration = loopInfo.loopDuration;
-		
-		Boolean muteStatus = false;
-		UInt32 muteStatusLength = sizeof(muteStatus);
-		err = MusicTrackGetProperty(musicTrack, kSequenceTrackProperty_MuteStatus, (void *)&muteStatus, &muteStatusLength);
-		if (err) {
-			NSLog(@"Unable to get mute status for track %@: %i", self, err);
-			return NO;
-		}
-		self.muted = (muteStatus != false);
-		
-		Boolean soloStatus = false;
-		UInt32 soloStatusLength = sizeof(soloStatus);
-		err = MusicTrackGetProperty(musicTrack, kSequenceTrackProperty_SoloStatus, (void *)&soloStatus, &soloStatusLength);
-		if (err) {
-			NSLog(@"Unable to get solo status for track %@: %i", self, err);
-			return NO;
-		}
-		self.solo = (soloStatus != false);
-		
-		MusicTimeStamp lengthInfo = 0;
-		UInt32 lengthInfoLength = sizeof(lengthInfo);
-		err = MusicTrackGetProperty(musicTrack, kSequenceTrackProperty_TrackLength, (void *)&lengthInfo, &lengthInfoLength);
-		if (err) {
-			NSLog(@"Unable to get track length for track %@: %i", self, err);
-			return NO;
-		}
-		self.length = lengthInfo;
-		
-        MusicTimeStamp timestamp = 0;
-        MusicEventType eventType = 0;
-        const void *rawEventData = NULL;
-        UInt32 eventDataSize = 0;
-        Boolean hasNext = YES;
-        NSMutableArray *midiEvents = [NSMutableArray array];
-        MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
-        while (hasNext) {
-            MusicEventIteratorGetEventInfo(iterator, &timestamp, &eventType, &rawEventData, &eventDataSize);
-           
-            NSData *eventData = [[NSData alloc] initWithBytes:rawEventData length:eventDataSize];
-            MIKMIDIEvent *event = [MIKMIDIEvent midiEventWithTimestamp:timestamp eventType:eventType data:eventData];
-            [midiEvents addObject:event];
-            
-            MusicEventIteratorNextEvent(iterator);
-            MusicEventIteratorHasCurrentEvent(iterator, &hasNext);
+        if (musicTrackSequence != sequence.musicSequence) {
+            NSLog(@"ERROR: initWithSequence:musicTrack: requires the musicTrack's associated MusicSequence to be the same as sequence's musicSequence property.");
+            return nil;
         }
-        self.events = midiEvents;
-		
-		if (!lengthInfo) {
-			// Track length wasn't specified, so determine it from the last event
-			NSArray *notes = [midiEvents filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-				return [evaluatedObject isKindOfClass:[MIKMIDINoteEvent class]];
-			}]];
-			NSSortDescriptor *timeSort = [NSSortDescriptor sortDescriptorWithKey:@"endTimeStamp" ascending:YES];
-			notes = [notes sortedArrayUsingDescriptors:@[timeSort]];
-			MIKMIDINoteEvent *lastNote = [notes lastObject];
-			
-			self.length = lastNote.endTimeStamp;
-		}
-	}
-	return self;
+
+        _musicTrack = musicTrack;
+        _sequence = sequence;
+    }
+
+    return self;
 }
 
-- (NSString *)description
++ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack
 {
-	return [NSString stringWithFormat:@"%@ length: %f loop duration: %f number of loops: %li solo? %i muted? %i events: %@", [super description], self.length, self.loopDuration, (long)self.numberOfLoops, self.isSolo, self.isMuted, self.events];
+    return [[self alloc] initWithSequence:sequence musicTrack:musicTrack];
+}
+
+- (instancetype)init
+{
+#ifdef DEBUG
+    @throw [NSException exceptionWithName:NSGenericException reason:@"Invalid initializer." userInfo:nil];
+#endif
+    return nil;
+}
+
+#pragma mark - Adding and Removing Events
+
+- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event
+{
+    OSStatus err = noErr;
+    MusicTrack track = self.musicTrack;
+    MusicTimeStamp timeStamp = event.musicTimeStamp;
+    const void *data = [event.data bytes];
+
+    switch (event.eventType) {
+        case kMusicEventType_NULL:
+            break;
+
+        case kMusicEventType_ExtendedNote:
+            err = MusicTrackNewExtendedNoteEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewExtendedNoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_ExtendedTempo:
+            err = MusicTrackNewExtendedTempoEvent(track, timeStamp, ((ExtendedTempoEvent *)data)->bpm);
+            if (err) NSLog(@"MusicTrackNewExtendedTempoEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_User:
+            err = MusicTrackNewUserEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewUserEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_Meta:
+            err = MusicTrackNewMetaEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewMetaEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_MIDINoteMessage:
+            err = MusicTrackNewMIDINoteEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewMIDINoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_MIDIChannelMessage:
+            err = MusicTrackNewMIDIChannelEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewMIDIChannelEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_MIDIRawData:
+            err = MusicTrackNewMIDIRawDataEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewMIDIRawDataEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_Parameter:
+            err = MusicTrackNewParameterEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewParameterEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+
+        case kMusicEventType_AUPreset:
+            err = MusicTrackNewAUPresetEvent(track, timeStamp, data);
+            if (err) NSLog(@"MusicTrackNewAUPresetEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            break;
+    }
+
+    return !err;
+}
+
+- (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event
+{
+    MusicTimeStamp timeStamp = event.musicTimeStamp;
+    NSMutableSet *events = [[self eventsFromTimeStamp:timeStamp toTimeStamp:timeStamp] mutableCopy];
+
+    if ([events containsObject:event]) {
+        [events removeObject:event];
+        if (![self clearEventsFromStartingTimeStamp:timeStamp toEndingTimeStamp:timeStamp]) return NO;
+        if (![self insertMIDIEvents:events]) return NO;;
+    }
+
+    return YES;
+}
+
+- (BOOL)insertMIDIEvents:(NSSet *)events
+{
+    for (MIKMIDIEvent *event in events) {
+        if (![self insertMIDIEvent:event]) return NO;
+    }
+    return YES;
+}
+
+- (BOOL)removeMIDIEvents:(NSSet *)events
+{
+    for (MIKMIDIEvent *event in events) {
+        if (![self removeMIDIEvent:event]) return NO;
+    }
+    return YES;
+}
+
+- (BOOL)clearAllEvents
+{
+    return [self clearEventsFromStartingTimeStamp:0 toEndingTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
+#pragma mark - Getting Events
+
+- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+    return [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp includeNonNotes:YES];
+}
+
+- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+    return [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp includeNonNotes:NO];
+}
+
+- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp includeNonNotes:(BOOL)includeNonNotes
+{
+    MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+    if (![iterator seek:startTimeStamp]) return nil;
+
+    NSMutableArray *events = [NSMutableArray array];
+
+    while (iterator.hasCurrentEvent) {
+        MIKMIDIEvent *event = [iterator currentEvent];
+        if (!event || event.musicTimeStamp > endTimeStamp) break;
+        [events addObject:event];
+        [iterator moveToNextEvent];
+    }
+
+    return events;
+}
+
+#pragma mark - Editing Events
+
+- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp
+{
+    OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, offsetTimeStamp);
+    if (err) NSLog(@"MusicTrackMoveEvents() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
+}
+
+- (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+    OSStatus err = MusicTrackClear(self.musicTrack, startTimeStamp, endTimeStamp);
+    if (err) NSLog(@"MusicTrackClear() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
+}
+
+- (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+    OSStatus err = MusicTrackCut(self.musicTrack, startTimeStamp, endTimeStamp);
+    if (err) NSLog(@"MusicTrackCut() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
+}
+
+- (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
+{
+    OSStatus err = MusicTrackCopyInsert(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
+    if (err) NSLog(@"MusicTrackCopyInsert() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
+}
+
+- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
+{
+    OSStatus err = MusicTrackMerge(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
+    if (err) NSLog(@"MusicTrackMerge() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
 }
 
 #pragma mark - Properties
+
+- (void)setEvents:(NSArray *)events
+{
+    [self clearAllEvents];
+    [self insertMIDIEvents:[NSSet setWithArray:events]];
+}
+
+- (NSArray *)events
+{
+    return [self eventsFromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
+- (NSArray *)notes
+{
+    return [self notesFromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
+
+- (BOOL)doesLoop
+{
+    return self.loopDuration > 0;
+}
+
+- (SInt32)numberOfLoops
+{
+    return self.loopInfo.numberOfLoops;
+}
+
+- (void)setNumberOfLoops:(SInt32)numberOfLoops
+{
+    MusicTrackLoopInfo loopInfo = self.loopInfo;
+
+    if (loopInfo.numberOfLoops != numberOfLoops) {
+        loopInfo.numberOfLoops = numberOfLoops;
+        self.loopInfo = loopInfo;
+    }
+}
+
+- (MusicTimeStamp)loopDuration
+{
+    return self.loopInfo.loopDuration;
+}
+
+- (void)setLoopDuration:(MusicTimeStamp)loopDuration
+{
+    MusicTrackLoopInfo loopInfo = self.loopInfo;
+
+    if (loopInfo.loopDuration != loopDuration) {
+        loopInfo.loopDuration = loopDuration;
+        self.loopInfo = loopInfo;
+    }
+}
+
+- (MusicTrackLoopInfo)loopInfo
+{
+    MusicTrackLoopInfo info;
+    UInt32 infoSize = sizeof(info);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &info, &infoSize);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return info;
+}
+
+- (void)setLoopInfo:(MusicTrackLoopInfo)loopInfo
+{
+    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &loopInfo, sizeof(loopInfo));
+    if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (MusicTimeStamp)offset
+{
+    MusicTimeStamp offset = 0;
+    UInt32 offsetLength = sizeof(offset);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, &offsetLength);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return offset;
+}
+
+- (void)setOffset:(MusicTimeStamp)offset
+{
+    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, sizeof(offset));
+    if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (BOOL)isMuted
+{
+    Boolean isMuted = FALSE;
+    UInt32 isMutedLength = sizeof(isMuted);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &isMuted, &isMutedLength);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return isMuted ? YES : NO;
+}
+
+- (void)setMuted:(BOOL)muted
+{
+    Boolean mutedBoolean = muted ? TRUE : FALSE;
+    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &mutedBoolean, sizeof(mutedBoolean));
+    if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (BOOL)isSolo
+{
+    Boolean isSolo = FALSE;
+    UInt32 isSoloLength = sizeof(isSolo);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &isSolo, &isSoloLength);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return isSolo ? YES : NO;
+}
+
+- (void)setSolo:(BOOL)solo
+{
+    Boolean soloBoolean = solo ? TRUE : FALSE;
+    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &soloBoolean, sizeof(soloBoolean));
+    if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (MusicTimeStamp)length
+{
+    MusicTimeStamp length = 0;
+    UInt32 lengthLength = sizeof(length);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return length;
+}
+
+- (void)setLength:(MusicTimeStamp)length
+{
+    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, sizeof(length));
+    if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (SInt16)timeResolution
+{
+    SInt16 resolution = 0;
+    UInt32 resolutionLength = sizeof(resolution);
+    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TimeResolution, &resolution, &resolutionLength);
+    if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return resolution;
+}
 
 @end

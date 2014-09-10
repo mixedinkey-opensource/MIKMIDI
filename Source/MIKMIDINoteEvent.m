@@ -38,7 +38,7 @@
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
     [self willChangeValueForKey:@"note"];
     noteMessage->channel = note;
-    [self willChangeValueForKey:@"note"];
+    [self didChangeValueForKey:@"note"];
 }
 
 - (UInt8)channel
@@ -54,7 +54,7 @@
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
     [self willChangeValueForKey:@"channel"];
     noteMessage->channel = channel;
-    [self willChangeValueForKey:@"channel"];
+    [self didChangeValueForKey:@"channel"];
 }
 
 
@@ -71,7 +71,7 @@
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
     [self willChangeValueForKey:@"velocity"];
     noteMessage->velocity = velocity;
-    [self willChangeValueForKey:@"velocity"];
+    [self didChangeValueForKey:@"velocity"];
 }
 
 
@@ -88,7 +88,7 @@
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
     [self willChangeValueForKey:@"releaseVelocity"];
     noteMessage->releaseVelocity = releaseVelocity;
-    [self willChangeValueForKey:@"releaseVelocity"];
+    [self didChangeValueForKey:@"releaseVelocity"];
 }
 
 
@@ -105,7 +105,7 @@
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
     [self willChangeValueForKey:@"duration"];
     noteMessage->duration = duration;
-    [self willChangeValueForKey:@"duration"];
+    [self didChangeValueForKey:@"duration"];
 }
 
 - (MusicTimeStamp)endTimeStamp

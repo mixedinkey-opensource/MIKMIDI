@@ -9,18 +9,51 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+@class MIKMIDISequence;
+@class MIKMIDIEvent;
+@class MIKMIDINoteEvent;
+
 @interface MIKMIDITrack : NSObject
 
-- (instancetype)initWithMusicTrack:(MusicTrack)musicTrack;
+- (instancetype)initWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
++ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
+
+@property (nonatomic, readonly) MIKMIDISequence *sequence;
+@property (nonatomic, readonly) MusicTrack musicTrack;
+
+@property (nonatomic, copy) NSArray *events;      // all events
+@property (nonatomic, readonly) NSArray *notes;   // only note events
 
 @property (nonatomic, readonly) BOOL doesLoop;
-@property (nonatomic, readonly) NSInteger numberOfLoops; // 0 means loops forever
-@property (nonatomic, readonly) MusicTimeStamp loopDuration;
+@property (nonatomic) SInt32 numberOfLoops;
+@property (nonatomic) MusicTimeStamp loopDuration;
+@property (nonatomic) MusicTrackLoopInfo loopInfo;
 
-@property (nonatomic, readonly, getter = isMuted) BOOL muted;
-@property (nonatomic, readonly, getter = isSolo) BOOL solo;
+@property (nonatomic) MusicTimeStamp offset;
 
-@property (nonatomic, readonly) MusicTimeStamp length;
-@property (nonatomic, readonly, copy) NSArray *events;
+@property (nonatomic, getter = isMuted) BOOL muted;
+@property (nonatomic, getter = isSolo) BOOL solo;
+
+@property (nonatomic) MusicTimeStamp length;
+
+@property (nonatomic, readonly) SInt16 timeResolution;
+
+- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event;
+- (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event;
+
+- (BOOL)insertMIDIEvents:(NSSet *)events;
+- (BOOL)removeMIDIEvents:(NSSet *)events;
+
+- (BOOL)clearAllEvents;
+
+- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp;
+- (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+- (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp;
+- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp;
 
 @end
