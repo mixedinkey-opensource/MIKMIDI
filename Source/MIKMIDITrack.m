@@ -175,7 +175,11 @@
     while (iterator.hasCurrentEvent) {
         MIKMIDIEvent *event = [iterator currentEvent];
         if (!event || event.musicTimeStamp > endTimeStamp) break;
-        [events addObject:event];
+
+        if (includeNonNotes || event.eventType == kMusicEventType_MIDINoteMessage) {
+            [events addObject:event];
+        }
+
         [iterator moveToNextEvent];
     }
 
