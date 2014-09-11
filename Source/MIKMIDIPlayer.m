@@ -144,13 +144,15 @@
 
 - (void)loopTracksWhenNeeded
 {
-    MusicTimeStamp length = self.sequence.length;
-    MusicTrackLoopInfo loopInfo;
-    loopInfo.numberOfLoops = 0;
-    loopInfo.loopDuration = length;
+    if (self.loopPlayback) {
+        MusicTimeStamp length = self.sequence.length;
+        MusicTrackLoopInfo loopInfo;
+        loopInfo.numberOfLoops = 0;
+        loopInfo.loopDuration = length;
 
-    for (MIKMIDITrack *track in self.sequence.tracks) {
-        [track setTemporaryLength:length andLoopInfo:loopInfo];
+        for (MIKMIDITrack *track in self.sequence.tracks) {
+            [track setTemporaryLength:length andLoopInfo:loopInfo];
+        }
     }
 }
 
