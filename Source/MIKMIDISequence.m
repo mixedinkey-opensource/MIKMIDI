@@ -173,15 +173,17 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     MIKMIDISequence *self = (__bridge MIKMIDISequence *)inClientData;
     if (!self.callBackBlock) return;
 
-    MIKMIDITrack *track;
-    for (MIKMIDITrack *maybeTrack in self.tracks) {
-        if (maybeTrack.musicTrack == inTrack) {
-            track = maybeTrack;
-            break;
-        }
+    UInt32 trackIndex;
+    OSStatus err = MusicSequenceGetTrackIndex(inSequence, inTrack, &trackIndex);
+    if (err) {
+        NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        return;
     }
 
-    self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
+    MIKMIDITrack *track = self.tracks[trackIndex];
+    if (track && self.callBackBlock) {
+        self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
+    }
 }
 
 #pragma mark - Tempo
