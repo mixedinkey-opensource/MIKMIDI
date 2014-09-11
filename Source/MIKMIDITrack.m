@@ -15,7 +15,7 @@
 
 @interface MIKMIDITrack()
 
-@property (strong, nonatomic) MIKMIDISequence *sequence;
+@property (weak, nonatomic) MIKMIDISequence *sequence;
 
 @end
 
