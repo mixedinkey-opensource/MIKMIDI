@@ -83,7 +83,7 @@
     if (err) return NSLog(@"MusicPlayerStart() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 
     self.isPlaying = YES;
-    NSDate *startTime = self.lastPlaybackStartedTime;
+    NSDate *startTime = [NSDate date];
     self.lastPlaybackStartedTime = startTime;
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
