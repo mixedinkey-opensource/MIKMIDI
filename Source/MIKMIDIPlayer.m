@@ -129,12 +129,6 @@
         }
     }
 
-    err = MusicPlayerSetSequence(self.musicPlayer, NULL);
-    if (err) {
-        NSLog(@"MusicPlayerSetSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return;
-    }
-
     [self unloopTracks];
 
     self.isPlaying = NO;
@@ -168,6 +162,8 @@
 - (void)setSequence:(MIKMIDISequence *)sequence
 {
     if (_sequence == sequence) return;
+
+    if (self.isPlaying) [self stopPlayback];
 
     MusicSequence musicSequence = sequence.musicSequence;
     OSStatus err = MusicPlayerSetSequence(self.musicPlayer, musicSequence);
