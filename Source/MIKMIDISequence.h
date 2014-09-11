@@ -14,6 +14,18 @@
 
 @interface MIKMIDISequence : NSObject
 
+@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
+@property (nonatomic, readonly) NSArray *tracks;
+
+@property (nonatomic, readonly) MusicSequence musicSequence;
+
+@property (nonatomic) MusicTimeStamp length;    // Set to MIKMIDISequenceLongestTrackLength to use the length of the longest track
+@property (nonatomic, readonly) Float64 durationInSeconds;
+
+@property (nonatomic, readonly) NSData *dataValue;
+
+@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+
 + (instancetype)sequence;
 
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
@@ -27,17 +39,10 @@
 - (MIKMIDITrack *)createNewTrack;
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
 
-@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
-@property (nonatomic, readonly) NSArray *tracks;
-
-@property (nonatomic, readonly) MusicSequence musicSequence;
-
-@property (nonatomic) MusicTimeStamp length;    // Set to MIKMIDISequenceLongestTrackLength to use the length of the longest track
-@property (nonatomic, readonly) Float64 durationInSeconds;
-
-@property (nonatomic, readonly) NSData *dataValue;
-
-@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+// Convenience methods for working with the tempo track
+- (BOOL)setOverallTempo:(Float64)bpm;
+- (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
+- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 
 @end
 

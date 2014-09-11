@@ -10,12 +10,14 @@
 
 @interface MIKMIDITempoEvent : MIKMIDIEvent
 
-@property (nonatomic, readonly) double tempo;
+@property (nonatomic, readonly) Float64 bpm;
+
++ (instancetype)tempoEvenWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 
 @end
 
 @interface MIKMutableMIDITempoEvent : MIKMIDITempoEvent
 
-@property (nonatomic, readwrite) double tempo;
+@property (nonatomic, readwrite) Float64 bpm;
 
 @end

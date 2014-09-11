@@ -9,6 +9,7 @@
 #import "MIKMIDISequence.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
+#import "MIKMIDITempoEvent.h"
 
 
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
@@ -181,6 +182,30 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     }
 
     self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
+}
+
+#pragma mark - Tempo
+
+- (BOOL)setOverallTempo:(Float64)bpm
+{
+    if (![self.tempoTrack clearAllEvents]) return NO;
+    return [self setTempo:bpm atTimeStamp:0];
+}
+
+- (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp
+{
+    MIKMIDITempoEvent *event = [MIKMIDITempoEvent tempoEvenWithTimeStamp:timeStamp tempo:bpm];
+    return [self.tempoTrack insertMIDIEvent:event];
+}
+
+- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp
+{
+    NSArray *events = [self.tempoTrack eventsFromTimeStamp:0 toTimeStamp:timeStamp];
+    if (!events) return NO;
+
+    MIKMIDITempoEvent *event = [events lastObject];
+    *bpm = event.bpm;
+    return YES;
 }
 
 #pragma mark - Description

@@ -18,26 +18,33 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }
 
++ (instancetype)tempoEvenWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm
+{
+    ExtendedTempoEvent tempoEvent = { .bpm = bpm };
+    NSData *data = [NSData dataWithBytes:&tempoEvent length:sizeof(tempoEvent)];
+    return [self midiEventWithTimeStamp:timeStamp eventType:kMusicEventType_ExtendedTempo data:data];
+}
+
 - (NSString *)additionalEventDescription
 {
-	return [NSString stringWithFormat:@"tempo: %f BPM", self.tempo];
+	return [NSString stringWithFormat:@"tempo: %g BPM", self.bpm];
 }
 
 #pragma mark - Properties
 
-- (double)tempo
+- (Float64)bpm
 {
 	ExtendedTempoEvent *tempoEvent = (ExtendedTempoEvent *)[self.data bytes];
-	return (double)tempoEvent->bpm;
+	return tempoEvent->bpm;
 }
 
-- (void)setTempo:(double)tempo
+- (void)setBpm:(Float64)bpm
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
 	ExtendedTempoEvent *tempoEvent = (ExtendedTempoEvent *)[self.internalData bytes];
 	[self willChangeValueForKey:@"internalData"];
-	tempoEvent->bpm = tempo;
+	tempoEvent->bpm = bpm;
 	[self didChangeValueForKey:@"internalData"];
 }
 
@@ -47,6 +54,6 @@
 
 + (BOOL)isMutable { return YES; }
 
-@dynamic tempo;
+@dynamic bpm;
 
 @end
