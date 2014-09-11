@@ -21,6 +21,8 @@
 @property (nonatomic) MusicTrackLoopInfo restoredLoopInfo;
 @property (nonatomic) BOOL hasTemporaryLengthAndLoopInfo;
 
+@property (strong, nonatomic) MIKMIDIEventIterator *iterator;
+
 @end
 
 
@@ -171,7 +173,7 @@
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp includeNonNotes:(BOOL)includeNonNotes
 {
-    MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+    MIKMIDIEventIterator *iterator = self.iterator;
     if (![iterator seek:startTimeStamp]) return nil;
 
     NSMutableArray *events = [NSMutableArray array];
@@ -386,6 +388,12 @@
     OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TimeResolution, &resolution, &resolutionLength);
     if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return resolution;
+}
+
+- (MIKMIDIEventIterator *)iterator
+{
+    if (!_iterator) _iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+    return _iterator;
 }
 
 @end
