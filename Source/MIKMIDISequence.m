@@ -11,6 +11,9 @@
 #import "MIKMIDITrack.h"
 
 
+const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
+
+
 @interface MIKMIDISequence ()
 
 @property (nonatomic) MusicSequence musicSequence;
@@ -83,7 +86,7 @@
 - (instancetype)initWithMusicSequence:(MusicSequence)musicSequence
 {
     if (self = [super init]) {
-        OSStatus err = MusicSequenceSetUserCallback(musicSequence, MIKSequenceCallback, NULL);
+        OSStatus err = MusicSequenceSetUserCallback(musicSequence, MIKSequenceCallback, (__bridge void *)self);
         if (err) NSLog(@"MusicSequenceSetUserCallback() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         self.musicSequence = musicSequence;
 
@@ -105,6 +108,7 @@
             [tracks addObject:[MIKMIDITrack trackWithSequence:self musicTrack:musicTrack]];
         }
         self.tracks = tracks;
+        self.length = MIKMIDISequenceLongestTrackLength;
     }
     
     return self;
@@ -112,6 +116,7 @@
 
 - (void)dealloc
 {
+    self.callBackBlock = nil;
     OSStatus err = DisposeMusicSequence(_musicSequence);
     if (err) NSLog(@"DisposeMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 }
@@ -164,7 +169,18 @@
 
 static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, MusicTrack inTrack, MusicTimeStamp inEventTime, const MusicEventUserData *inEventData, MusicTimeStamp inStartSliceBeat, MusicTimeStamp inEndSliceBeat)
 {
-    NSLog(@"CALLED BACK!");
+    MIKMIDISequence *self = (__bridge MIKMIDISequence *)inClientData;
+    if (!self.callBackBlock) return;
+
+    MIKMIDITrack *track;
+    for (MIKMIDITrack *maybeTrack in self.tracks) {
+        if (maybeTrack.musicTrack == inTrack) {
+            track = maybeTrack;
+            break;
+        }
+    }
+
+    self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
 }
 
 #pragma mark - Description
@@ -178,6 +194,8 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (MusicTimeStamp)length
 {
+    if (_length != MIKMIDISequenceLongestTrackLength) return _length;
+
     MusicTimeStamp length = 0;
     for (MIKMIDITrack *track in self.tracks) {
         MusicTimeStamp trackLength = track.length + track.offset;

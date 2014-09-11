@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIPlayer.h"
+#import "MIKMIDITrack.h"
 
 
 @interface MIKMIDIPlayer ()
@@ -36,7 +37,6 @@
         }
 
         self.musicPlayer = musicPlayer;
-        self.loopStop = kMusicTimeStamp_EndOfTrack;
     }
     return self;
 }
@@ -88,7 +88,7 @@
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
-            if (!self.isLooping) {
+            if (!self.loopPlayback) {
                 [self stopPlayback];
             }
         }
@@ -135,6 +135,8 @@
         return;
     }
 
+    [self unloopTracks];
+
     self.isPlaying = NO;
 }
 
@@ -142,7 +144,21 @@
 
 - (void)loopTracksWhenNeeded
 {
-    NSLog(@"%s is not yet implemented.", __PRETTY_FUNCTION__);
+    MusicTimeStamp length = self.sequence.length;
+    MusicTrackLoopInfo loopInfo;
+    loopInfo.numberOfLoops = 0;
+    loopInfo.loopDuration = length;
+
+    for (MIKMIDITrack *track in self.sequence.tracks) {
+        [track setTemporaryLength:length andLoopInfo:loopInfo];
+    }
+}
+
+- (void)unloopTracks
+{
+    for (MIKMIDITrack *track in self.sequence.tracks) {
+        [track restoreLengthAndLoopInfo];
+    }
 }
 
 #pragma mark - Properties

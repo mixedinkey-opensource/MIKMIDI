@@ -46,6 +46,12 @@
 
 - (BOOL)clearAllEvents;
 
+
+// Used by MIKMIDISequence for looping functionality
+- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
+- (void)restoreLengthAndLoopInfo;
+
+
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 

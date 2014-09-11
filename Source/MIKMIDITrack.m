@@ -17,6 +17,10 @@
 
 @property (weak, nonatomic) MIKMIDISequence *sequence;
 
+@property (nonatomic) MusicTimeStamp restoredLength;
+@property (nonatomic) MusicTrackLoopInfo restoredLoopInfo;
+@property (nonatomic) BOOL hasTemporaryLengthAndLoopInfo;
+
 @end
 
 
@@ -222,6 +226,27 @@
     if (err) NSLog(@"MusicTrackMerge() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
 }
+
+#pragma mark - Temporary Length and Loop Info
+
+- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo
+{
+    self.restoredLength = self.length;
+    self.restoredLoopInfo = self.loopInfo;
+    self.length = length;
+    self.loopInfo = loopInfo;
+    self.hasTemporaryLengthAndLoopInfo = YES;
+}
+
+- (void)restoreLengthAndLoopInfo
+{
+    if (!self.hasTemporaryLengthAndLoopInfo) return;
+
+    self.hasTemporaryLengthAndLoopInfo = NO;
+    self.length = self.restoredLength;
+    self.loopInfo = self.restoredLoopInfo;
+}
+
 
 #pragma mark - Properties
 

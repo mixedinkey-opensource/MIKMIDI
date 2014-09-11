@@ -32,9 +32,14 @@
 
 @property (nonatomic, readonly) MusicSequence musicSequence;
 
-@property (nonatomic, readonly) MusicTimeStamp length;
+@property (nonatomic) MusicTimeStamp length;    // Set to MIKMIDISequenceLongestTrackLength to use the length of the longest track
 @property (nonatomic, readonly) Float64 durationInSeconds;
 
 @property (nonatomic, readonly) NSData *dataValue;
 
+@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+
 @end
+
+
+FOUNDATION_EXPORT const MusicTimeStamp MIKMIDISequenceLongestTrackLength;

@@ -19,9 +19,7 @@
 @property (nonatomic) Float64 tailDuration;
 
 @property (readonly, nonatomic) BOOL isPlaying;
-@property (nonatomic, getter = isLooping) BOOL looping;
-@property (nonatomic) MusicTimeStamp loopStart;
-@property (nonatomic) MusicTimeStamp loopStop;
+@property (nonatomic) BOOL loopPlayback;
 
 @property (nonatomic) Float64 playRateScaler;
 
