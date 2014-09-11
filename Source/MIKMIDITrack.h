@@ -18,7 +18,7 @@
 - (instancetype)initWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
 + (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
 
-@property (nonatomic, readonly) MIKMIDISequence *sequence;
+@property (weak, nonatomic, readonly) MIKMIDISequence *sequence;
 @property (nonatomic, readonly) MusicTrack musicTrack;
 
 @property (nonatomic, copy) NSArray *events;      // all events
