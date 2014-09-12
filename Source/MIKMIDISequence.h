@@ -36,7 +36,7 @@
 
 - (BOOL)writeToURL:(NSURL *)fileURL error:(NSError **)error;
 
-- (MIKMIDITrack *)createNewTrack;
+- (MIKMIDITrack *)addTrack;
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
 
 // Convenience methods for working with the tempo track

@@ -52,7 +52,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 {
 	self = [super init];
 	if (self) {
-		_musicTimeStamp = timeStamp;
+		_timeStamp = timeStamp;
 		_eventType = eventType;
         self.internalData = [data mutableCopy];
 	}
@@ -150,8 +150,13 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 - (void)setData:(NSData *)data
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	
 	self.internalData = [data mutableCopy];
+}
+
+- (void)setTimeStamp:(MusicTimeStamp)timeStamp
+{
+    if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+    _timeStamp = timeStamp;
 }
 
 @end
@@ -165,5 +170,6 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 @dynamic eventType;
 @dynamic channel;
 @dynamic data;
+@dynamic timeStamp;
 
 @end

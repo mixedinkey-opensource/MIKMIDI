@@ -124,7 +124,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 #pragma mark - Adding and Removing Tracks
 
-- (MIKMIDITrack *)createNewTrack
+- (MIKMIDITrack *)addTrack
 {
     MusicTrack musicTrack;
     OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);

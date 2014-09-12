@@ -21,8 +21,6 @@
 @property (readonly, nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL loopPlayback;
 
-@property (nonatomic) Float64 playRateScaler;
-
 - (void)preparePlayback;
 - (void)startPlayback;
 - (void)startPlaybackFromPosition:(MusicTimeStamp)position;

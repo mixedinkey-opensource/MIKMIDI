@@ -68,7 +68,7 @@
 {
     OSStatus err = noErr;
     MusicTrack track = self.musicTrack;
-    MusicTimeStamp timeStamp = event.musicTimeStamp;
+    MusicTimeStamp timeStamp = event.timeStamp;
     const void *data = [event.data bytes];
 
     switch (event.eventType) {
@@ -126,7 +126,7 @@
 
 - (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event
 {
-    MusicTimeStamp timeStamp = event.musicTimeStamp;
+    MusicTimeStamp timeStamp = event.timeStamp;
     NSMutableSet *events = [[self eventsFromTimeStamp:timeStamp toTimeStamp:timeStamp] mutableCopy];
 
     if ([events containsObject:event]) {
@@ -180,7 +180,7 @@
 
     while (iterator.hasCurrentEvent) {
         MIKMIDIEvent *event = iterator.currentEvent;
-        if (!event || event.musicTimeStamp > endTimeStamp) break;
+        if (!event || event.timeStamp > endTimeStamp) break;
 
         if (includeNonNotes || event.eventType == kMusicEventType_MIDINoteMessage) {
             [events addObject:event];
@@ -226,6 +226,15 @@
 {
     OSStatus err = MusicTrackMerge(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
     if (err) NSLog(@"MusicTrackMerge() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    return !err;
+}
+
+#pragma mark - Track Number
+
+- (BOOL)getTrackNumber:(UInt32 *)trackNumber
+{
+    OSStatus err = MusicSequenceGetTrackIndex(self.sequence.musicSequence, self.musicTrack, trackNumber);
+    if (err) NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
 }
 

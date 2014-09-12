@@ -46,6 +46,8 @@
 
 - (BOOL)clearAllEvents;
 
+- (BOOL)getTrackNumber:(UInt32 *)trackNumber;
+
 
 // Used by MIKMIDISequence for looping functionality
 - (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
