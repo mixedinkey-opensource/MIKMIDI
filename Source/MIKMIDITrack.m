@@ -196,6 +196,10 @@
 
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp
 {
+    MusicTimeStamp length = self.length;
+    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (endTimeStamp > length) endTimeStamp = length;
+
     OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, offsetTimeStamp);
     if (err) NSLog(@"MusicTrackMoveEvents() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
@@ -203,6 +207,10 @@
 
 - (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
+    MusicTimeStamp length = self.length;
+    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (endTimeStamp > length) endTimeStamp = length;
+
     OSStatus err = MusicTrackClear(self.musicTrack, startTimeStamp, endTimeStamp);
     if (err) NSLog(@"MusicTrackClear() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
@@ -210,6 +218,10 @@
 
 - (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
+    MusicTimeStamp length = self.length;
+    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (endTimeStamp > length) endTimeStamp = length;
+
     OSStatus err = MusicTrackCut(self.musicTrack, startTimeStamp, endTimeStamp);
     if (err) NSLog(@"MusicTrackCut() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
@@ -217,6 +229,10 @@
 
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
 {
+    MusicTimeStamp length = origTrack.length;
+    if ((startTimeStamp > length) || ![origTrack.events count]) return YES;
+    if (endTimeStamp > length) endTimeStamp = length;
+
     OSStatus err = MusicTrackCopyInsert(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
     if (err) NSLog(@"MusicTrackCopyInsert() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
@@ -224,6 +240,10 @@
 
 - (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
 {
+    MusicTimeStamp length = origTrack.length;
+    if ((startTimeStamp > length) || ![origTrack.events count]) return YES;
+    if (endTimeStamp > length) endTimeStamp = length;
+
     OSStatus err = MusicTrackMerge(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
     if (err) NSLog(@"MusicTrackMerge() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return !err;
