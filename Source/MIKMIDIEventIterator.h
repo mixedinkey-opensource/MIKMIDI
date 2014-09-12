@@ -18,6 +18,7 @@
 @property (nonatomic, readonly) BOOL hasPreviousEvent;
 @property (nonatomic, readonly) BOOL hasCurrentEvent;
 @property (nonatomic, readonly) BOOL hasNextEvent;
+@property (nonatomic, readonly) MIKMIDIEvent *currentEvent;
 
 - (instancetype)initWithTrack:(MIKMIDITrack *)track;
 + (instancetype)iteratorForTrack:(MIKMIDITrack *)track;
@@ -25,7 +26,5 @@
 - (BOOL)seek:(MusicTimeStamp)timeStamp;
 - (BOOL)moveToNextEvent;
 - (BOOL)moveToPreviousEvent;
-
-- (MIKMIDIEvent *)currentEvent;
 
 @end

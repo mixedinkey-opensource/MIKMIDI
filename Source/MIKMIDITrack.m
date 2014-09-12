@@ -179,7 +179,7 @@
     NSMutableArray *events = [NSMutableArray array];
 
     while (iterator.hasCurrentEvent) {
-        MIKMIDIEvent *event = [iterator currentEvent];
+        MIKMIDIEvent *event = iterator.currentEvent;
         if (!event || event.musicTimeStamp > endTimeStamp) break;
 
         if (includeNonNotes || event.eventType == kMusicEventType_MIDINoteMessage) {

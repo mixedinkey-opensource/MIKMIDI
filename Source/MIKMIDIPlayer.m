@@ -90,6 +90,8 @@
         if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
             if (!self.loopPlayback) {
                 [self stopPlayback];
+            } else {
+                self.currentTimeStamp = 0;
             }
         }
     });
@@ -184,17 +186,6 @@
 {
     OSStatus err = MusicPlayerSetTime(self.musicPlayer, currentTimeStamp);
     if (err) NSLog(@"MusicPlayerSetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-}
-
-- (Float64)playRateScaler
-{
-    NSLog(@"%s is not yet implemented.", __PRETTY_FUNCTION__);
-    return 0;
-}
-
-- (void)setPlayRateScaler:(Float64)playRateScaler
-{
-    NSLog(@"%s is not yet implemented.", __PRETTY_FUNCTION__);
 }
 
 @end

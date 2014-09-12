@@ -1,4 +1,4 @@
-//
+ //
 //  MIKMIDISequence.m
 //  MIDI Files Testbed
 //
@@ -242,14 +242,14 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSData *)dataValue
 {
-    NSData *data;
-    CFDataRef cfData = (__bridge CFDataRef)data;
-    OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, kMusicSequenceFileFlags_EraseFile, 0, &cfData);
+    CFDataRef data;
+    OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, kMusicSequenceFileFlags_EraseFile, 0, &data);
     if (err) {
         NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return nil;
     }
-    return data;
+    
+    return (__bridge_transfer NSData *)data;
 }
 
 @end
