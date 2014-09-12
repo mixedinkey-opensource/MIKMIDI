@@ -243,12 +243,12 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 - (NSData *)dataValue
 {
     CFDataRef data;
-    OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, kMusicSequenceFileFlags_EraseFile, 0, &data);
+    OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, 0, 0, &data);
     if (err) {
         NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return nil;
     }
-    
+
     return (__bridge_transfer NSData *)data;
 }
 
