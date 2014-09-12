@@ -90,8 +90,6 @@
         if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
             if (!self.loopPlayback) {
                 [self stopPlayback];
-            } else {
-                self.currentTimeStamp = 0;
             }
         }
     });
