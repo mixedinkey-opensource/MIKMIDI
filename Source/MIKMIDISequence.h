@@ -40,6 +40,9 @@
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
 
 // Convenience methods for working with the tempo track
+- (NSArray *)timeSignatureEvents;
+- (NSArray *)tempoEvents;
+
 - (BOOL)setOverallTempo:(Float64)bpm;
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;

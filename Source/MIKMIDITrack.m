@@ -21,8 +21,6 @@
 @property (nonatomic) MusicTrackLoopInfo restoredLoopInfo;
 @property (nonatomic) BOOL hasTemporaryLengthAndLoopInfo;
 
-@property (strong, nonatomic) MIKMIDIEventIterator *iterator;
-
 @end
 
 
@@ -163,17 +161,17 @@
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-    return [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp includeNonNotes:YES];
+    return [self eventsOfClass:Nil fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
 }
 
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-    return [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp includeNonNotes:NO];
+    return [self eventsOfClass:[MIKMIDINoteEvent class] fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
 }
 
-- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp includeNonNotes:(BOOL)includeNonNotes
+- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-    MIKMIDIEventIterator *iterator = self.iterator;
+    MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
     if (![iterator seek:startTimeStamp]) return nil;
 
     NSMutableArray *events = [NSMutableArray array];
@@ -182,7 +180,7 @@
         MIKMIDIEvent *event = iterator.currentEvent;
         if (!event || event.timeStamp > endTimeStamp) break;
 
-        if (includeNonNotes || event.eventType == kMusicEventType_MIDINoteMessage) {
+        if (!eventClass || [event isKindOfClass:eventClass]) {
             [events addObject:event];
         }
 
@@ -417,12 +415,6 @@
     OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TimeResolution, &resolution, &resolutionLength);
     if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return resolution;
-}
-
-- (MIKMIDIEventIterator *)iterator
-{
-    if (!_iterator) _iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-    return _iterator;
 }
 
 @end

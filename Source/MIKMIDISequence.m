@@ -1,4 +1,4 @@
- //
+//
 //  MIKMIDISequence.m
 //  MIDI Files Testbed
 //
@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
 #import "MIKMIDITempoEvent.h"
+#import "MIKMIDIMetaTimeSignatureEvent.h"
 
 
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
@@ -111,7 +112,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
         self.tracks = tracks;
         self.length = MIKMIDISequenceLongestTrackLength;
     }
-    
+
     return self;
 }
 
@@ -188,6 +189,16 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 #pragma mark - Tempo
 
+- (NSArray *)timeSignatureEvents
+{
+    return [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
+- (NSArray *)tempoEvents
+{
+    return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
 - (BOOL)setOverallTempo:(Float64)bpm
 {
     if (![self.tempoTrack clearAllEvents]) return NO;
@@ -214,7 +225,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
+    return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
 }
 
 #pragma mark - Properties
@@ -248,7 +259,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
         NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return nil;
     }
-
+    
     return (__bridge_transfer NSData *)data;
 }
 
