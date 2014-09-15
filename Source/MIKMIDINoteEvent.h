@@ -17,8 +17,11 @@
 @property (nonatomic, readonly) MusicTimeStamp endTimeStamp;
 @property (nonatomic, readonly) float frequency;
 @property (nonatomic, readonly) NSString *noteLetter;
+@property (nonatomic, readonly) NSString *noteLetterAndOctave;
 
 + (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
+
++ (NSString *)noteLetterAndOctaveForMIDINote:(UInt8)note;
 
 @end
 
