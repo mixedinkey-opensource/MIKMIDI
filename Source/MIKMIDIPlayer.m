@@ -159,6 +159,19 @@
 
 #pragma mark - Properties
 
+- (void)setLoopPlayback:(BOOL)loopPlayback
+{
+    if (_loopPlayback == loopPlayback) return;
+
+    _loopPlayback = loopPlayback;
+
+    if (self.isPlaying) {
+        [self stopPlayback];
+        [self preparePlayback];
+        [self resumePlayback];
+    }
+}
+
 - (void)setSequence:(MIKMIDISequence *)sequence
 {
     if (_sequence == sequence) return;
