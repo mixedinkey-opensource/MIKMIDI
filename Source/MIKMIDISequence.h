@@ -39,6 +39,8 @@
 - (MIKMIDITrack *)addTrack;
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
 
+- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp;
+
 // Convenience methods for working with the tempo track
 - (NSArray *)timeSignatureEvents;
 - (NSArray *)tempoEvents;

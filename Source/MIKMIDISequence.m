@@ -187,6 +187,20 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     }
 }
 
+#pragma mark - Looping
+
+- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp
+{
+    MusicTimeStamp length = self.length;
+
+    if (loopedTimeStamp > length) {
+        NSInteger numTimesLooped = loopedTimeStamp / length;
+        loopedTimeStamp -= (length * numTimesLooped);
+    }
+
+    return loopedTimeStamp;
+}
+
 #pragma mark - Tempo
 
 - (NSArray *)timeSignatureEvents

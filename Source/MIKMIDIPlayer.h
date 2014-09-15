@@ -19,7 +19,7 @@
 @property (nonatomic) Float64 tailDuration;
 
 @property (readonly, nonatomic) BOOL isPlaying;
-@property (nonatomic) BOOL loopPlayback;
+@property (nonatomic, getter=isLooping) BOOL looping;
 
 - (void)preparePlayback;
 - (void)startPlayback;

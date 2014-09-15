@@ -88,7 +88,7 @@
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
-            if (!self.loopPlayback) {
+            if (!self.isLooping) {
                 [self stopPlayback];
             }
         }
@@ -99,13 +99,8 @@
 {
     if (!self.lastStoppedAtTimeStampNumber) return [self startPlayback];
 
-    MusicTimeStamp length = self.sequence.length;
     MusicTimeStamp lastTimeStamp = [self.lastStoppedAtTimeStampNumber doubleValue];
-
-    if (lastTimeStamp > length) {
-        NSInteger numTimesLooped = lastTimeStamp / length;
-        lastTimeStamp -= (length * numTimesLooped);
-    }
+    lastTimeStamp = [self.sequence equivalentTimeStampForLoopedTimeStamp:lastTimeStamp];
 
     [self startPlaybackFromPosition:lastTimeStamp];
 }
@@ -138,7 +133,7 @@
 
 - (void)loopTracksWhenNeeded
 {
-    if (self.loopPlayback) {
+    if (self.isLooping) {
         MusicTimeStamp length = self.sequence.length;
         MusicTrackLoopInfo loopInfo;
         loopInfo.numberOfLoops = 0;
@@ -159,11 +154,11 @@
 
 #pragma mark - Properties
 
-- (void)setLoopPlayback:(BOOL)loopPlayback
+- (void)setLooping:(BOOL)looping
 {
-    if (_loopPlayback == loopPlayback) return;
+    if (_looping == looping) return;
 
-    _loopPlayback = loopPlayback;
+    _looping = looping;
 
     if (self.isPlaying) {
         [self stopPlayback];
