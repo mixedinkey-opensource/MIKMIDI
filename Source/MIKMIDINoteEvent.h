@@ -21,6 +21,7 @@
 
 + (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
 
++ (NSString *)noteLetterForMIDINote:(UInt8)note;
 + (NSString *)noteLetterAndOctaveForMIDINote:(UInt8)note;
 
 @end
