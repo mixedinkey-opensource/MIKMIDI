@@ -195,7 +195,7 @@
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp
 {
     MusicTimeStamp length = self.length;
-    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
     if (endTimeStamp > length) endTimeStamp = length;
 
     OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, offsetTimeStamp);
@@ -206,7 +206,7 @@
 - (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
     MusicTimeStamp length = self.length;
-    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
     if (endTimeStamp > length) endTimeStamp = length;
 
     OSStatus err = MusicTrackClear(self.musicTrack, startTimeStamp, endTimeStamp);
@@ -217,7 +217,7 @@
 - (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
     MusicTimeStamp length = self.length;
-    if ((startTimeStamp > length) || ![self.events count]) return YES;
+    if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
     if (endTimeStamp > length) endTimeStamp = length;
 
     OSStatus err = MusicTrackCut(self.musicTrack, startTimeStamp, endTimeStamp);
@@ -228,7 +228,7 @@
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
 {
     MusicTimeStamp length = origTrack.length;
-    if ((startTimeStamp > length) || ![origTrack.events count]) return YES;
+    if (!length || (startTimeStamp > length) || ![origTrack.events count]) return YES;
     if (endTimeStamp > length) endTimeStamp = length;
 
     OSStatus err = MusicTrackCopyInsert(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
@@ -239,7 +239,7 @@
 - (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
 {
     MusicTimeStamp length = origTrack.length;
-    if ((startTimeStamp > length) || ![origTrack.events count]) return YES;
+    if (!length || (startTimeStamp > length) || ![origTrack.events count]) return YES;
     if (endTimeStamp > length) endTimeStamp = length;
 
     OSStatus err = MusicTrackMerge(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
