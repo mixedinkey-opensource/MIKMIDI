@@ -78,6 +78,7 @@
     if (err) return NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 
     Float64 playbackDuration = (sequenceDuration - positionInTime) + self.tailDuration;
+    if (playbackDuration <= 0) return;
 
     err = MusicPlayerStart(self.musicPlayer);
     if (err) return NSLog(@"MusicPlayerStart() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
