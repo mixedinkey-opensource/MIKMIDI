@@ -181,16 +181,8 @@
             return nil;
         }
 
-        char cName[256];
-        UInt32 cNameSize = sizeof(cName);
-        err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
-        if (err) {
-            NSLog(@"AudioUnitGetProperty() (Instrument Name) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-            return nil;
-        }
-
-        NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
-        MIKMIDIEndpointSynthesizerInstrument *instrument = [MIKMIDIEndpointSynthesizerInstrument instrumentWithName:name instrumentID:instrumentID];
+        MIKMIDIEndpointSynthesizerInstrument *instrument = [self instrumentForID:instrumentID];
+        if (!instrument) return nil;
         [instruments addObject:instrument];
     }
 
@@ -234,6 +226,28 @@
     return YES;
 }
 
+- (MIKMIDIEndpointSynthesizerInstrument *)instrumentForID:(MusicDeviceInstrumentID)instrumentID
+{
+    char cName[256];
+    UInt32 cNameSize = sizeof(cName);
+    OSStatus err = AudioUnitGetProperty(self.midiInstrument, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
+    if (err) {
+        NSLog(@"AudioUnitGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        return nil;
+    }
+
+    NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
+    return [MIKMIDIEndpointSynthesizerInstrument instrumentWithName:name instrumentID:instrumentID];
+}
+
+- (MIKMIDIEndpointSynthesizerInstrument *)instrumentWithName:(NSString *)name
+{
+    for (MIKMIDIEndpointSynthesizerInstrument *instrument in [self availableInstruments]) {
+        if ([instrument.name isEqualToString:name]) return instrument;
+    }
+    return nil;
+}
+
 #pragma mark - Properties
 
 - (void)setGraph:(AUGraph)graph
@@ -261,6 +275,18 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%@ (%d)", self.name, self.instrumentID];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (![object isMemberOfClass:[self class]]) return NO;
+    if (!self.instrumentID == [object instrumentID]) return NO;
+    return [self.name isEqualToString:[object name]];
+}
+
+- (NSUInteger)hash
+{
+    return [[NSString stringWithFormat:@"%d-%@", self.instrumentID, self.name] hash];
 }
 
 @end

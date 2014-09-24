@@ -48,10 +48,32 @@
 
 
 /**
- * An array of MIKMIDIEndpointSnythesizerInstruments
+ * Creates and returns an array of available MIKMIDIEndpointSynthesizerInstruments
+ *
+ * @return An array of MIKMIDIEndpointSynthesizerInstrument
  */
 - (NSArray *)availableInstruments;
 
+/**
+ * Gets the instrument with the corresponding instrument ID.
+ *
+ * @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDIEndpointSynthesizerInstrument
+ *
+ * @return A MIKMIDIEndpointSynthesizerInstrument with the matching instrument ID, or nil if no instrument was found
+ */
+- (MIKMIDIEndpointSynthesizerInstrument *)instrumentForID:(MusicDeviceInstrumentID)instrumentID;
+
+/**
+ * Gets the instrument with the corresponding name.
+ *
+ * @param name The name of the desired MIKMIDIEndpointSynthesizerInstrument
+ *
+ * @return A MIKMIDIEndpointSynthesizerInstrument with the matching name, or nil if no instrument was found
+ *
+ * @discussion This method is implemented by calling -availableInstruments and looping through to find the instrument
+ * with the matching name, and is thus somewhat expensive.
+ */
+- (MIKMIDIEndpointSynthesizerInstrument *)instrumentWithName:(NSString *)name; 
 
 /**
  * Changes the instrument patch for a channel.
