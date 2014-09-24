@@ -9,8 +9,10 @@
 #if !TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 @class MIKMIDISourceEndpoint;
+@class MIKMIDIEndpointSynthesizerInstrument;
 
 /**
  * MIKMIDIEndpointSynthesizer provides a very simple way to synthesize MIDI commands coming from a
@@ -43,6 +45,47 @@
  *  The source the receive is listening to.
  */
 @property (nonatomic, strong, readonly) MIKMIDISourceEndpoint *source;
+
+
+/**
+ * An array of MIKMIDIEndpointSnythesizerInstruments
+ */
+- (NSArray *)availableInstruments;
+
+
+/**
+ * Changes the instrument patch for a channel.
+ *
+ * @param instrument Any MIKMIDIEndpointSynthesizerInstrument from -availableInstruments.
+ *
+ * @param channel The MIDI channel you'd like to change the instrument patch for.
+ *
+ * @return YES if the instrument patch was successfully changed, NO if the change failed
+ */
+- (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument forChannel:(UInt8)channel;
+
+
+/**
+ * Changes the instrument patch for a channel.
+ *
+ * @param instrumentID The MusicDeviceInstrumentID you'd like to change the instrument to to.
+ *
+ * @param channel The MIDI channel you'd like to change the instrument patch for.
+ *
+ * @return YES if the instrument patch was successfully changed, NO if the change failed
+ */
+- (BOOL)selectInstrumentWithID:(MusicDeviceInstrumentID)instrumentID forChannel:(UInt8)channel;
+
+@end
+
+
+
+@interface MIKMIDIEndpointSynthesizerInstrument : NSObject
+
+@property (readonly, copy, nonatomic) NSString *name;
+@property (readonly, nonatomic) MusicDeviceInstrumentID instrumentID;
+
++ (instancetype)instrumentWithName:(NSString *)name instrumentID:(MusicDeviceInstrumentID)instrumentID;
 
 @end
 
