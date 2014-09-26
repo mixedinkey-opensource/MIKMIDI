@@ -9,10 +9,21 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDI.h"
-#import "MIKMIDISequence.h"
 
+@class MIKMIDISequence;
+@class MIKMIDIDestinationEndpoint;
 
 @interface MIKMIDIPlayer : NSObject
+
+// Public
+
+- (void)preparePlayback;
+- (void)startPlayback;
+- (void)startPlaybackFromPosition:(MusicTimeStamp)position;
+- (void)resumePlayback;
+- (void)stopPlayback;
+
+// Properties
 
 @property (strong, nonatomic) MIKMIDISequence *sequence;
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
@@ -21,10 +32,6 @@
 @property (readonly, nonatomic) BOOL isPlaying;
 @property (nonatomic, getter=isLooping) BOOL looping;
 
-- (void)preparePlayback;
-- (void)startPlayback;
-- (void)startPlaybackFromPosition:(MusicTimeStamp)position;
-- (void)resumePlayback;
-- (void)stopPlayback;
+@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint;
 
 @end
