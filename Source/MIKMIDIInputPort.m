@@ -164,48 +164,6 @@
 	return [coalescedCommands copy];
 }
 
-- (NSArray *)commandsFromMIDIPacket:(MIDIPacket *)inputPacket
-{
-	NSInteger firstCommandType = inputPacket->data[0];
-	NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(firstCommandType);
-	if (standardLength <= 0 || inputPacket->length == standardLength) {
-		// Can't parse multiple message because we don't know the length of each one,
-		// or there's only one message there
-		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
-		return command ? @[command] : @[];
-	}
-	
-	NSMutableArray *result = [NSMutableArray array];
-	NSInteger packetCount = 0;
-	while (1) {
-		
-		NSInteger dataOffset = packetCount * standardLength;
-		if (dataOffset > (inputPacket->length - standardLength)) break;
-		const Byte *packetData = inputPacket->data + dataOffset;
-		if (packetData[0] != firstCommandType && ((packetData[0] | 0x0F) != (firstCommandType | 0x0F))) {
-			// Doesn't look like multiple messages because they're not all the same type
-			MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
-			return command ? @[command] : @[];
-		}
-	
-		// This is gross, but it's the only way I can find to reliably create a
-		// single-message MIDIPacket.
-		MIDIPacketList packetList;
-		MIDIPacket *midiPacket = MIDIPacketListInit(&packetList);
-	 	midiPacket = MIDIPacketListAdd(&packetList,
-										  sizeof(MIDIPacketList),
-										  midiPacket,
-										  inputPacket->timeStamp,
-										  standardLength,
-										  packetData);
-		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
-		if (command) [result addObject:command];
-		packetCount++;
-	}
-	
-	return result;
-}
-
 - (void)sendCommands:(NSArray *)commands toEventHandlersFromSource:(MIKMIDISourceEndpoint *)source
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -228,7 +186,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		MIDIPacket *packet = (MIDIPacket *)pktList->packet;
 		for (int i=0; i<pktList->numPackets; i++) {
 			if (packet->length == 0) continue;
-			NSArray *commands = [self commandsFromMIDIPacket:packet];
+			NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
 			if (commands) [receivedCommands addObjectsFromArray:commands];
 			packet = MIDIPacketNext(packet);
 		}
