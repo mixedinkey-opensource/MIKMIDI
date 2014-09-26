@@ -11,10 +11,11 @@
 #import "MIKMIDIEndpointSynthesizer.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDIClientDestinationEndpoint.h"
 
 @interface MIKMIDIEndpointSynthesizer ()
 
-@property (nonatomic, strong, readwrite) MIKMIDISourceEndpoint *source;
+@property (nonatomic, strong, readwrite) MIKMIDIEndpoint *endpoint;
 @property (nonatomic, strong) id connectionToken;
 
 @property (nonatomic) AUGraph graph;
@@ -43,7 +44,34 @@
 			NSLog(@"Unable to connect to MIDI source %@: %@", source, error);
 			return nil;
 		}
-		_source = source;
+		_endpoint = source;
+		
+		if (![self setupAUGraph]) return nil;
+	}
+	return self;
+}
+
++ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+{
+	return [[self alloc] initWithClientDestinationEndpoint:destination];
+}
+
+- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+{
+	if (!destination) {
+		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
+		return nil;
+	}
+	
+	self = [super init];
+	if (self) {
+		
+		__weak MIKMIDIEndpointSynthesizer *weakSelf = self;
+		destination.receivedMessagesHandler = ^(MIKMIDIClientDestinationEndpoint *destination, NSArray *commands){
+			__strong MIKMIDIEndpointSynthesizer *strongSelf = weakSelf;
+			[strongSelf handleMIDIMessages:commands];
+		};
+		_endpoint = destination;
 		
 		if (![self setupAUGraph]) return nil;
 	}
@@ -52,7 +80,13 @@
 
 - (void)dealloc
 {
-    if (self.source) [[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:self.source forConnectionToken:self.connectionToken];
+	if (self.endpoint) {
+		if ([self.endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
+			[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:(MIKMIDISourceEndpoint *)self.endpoint forConnectionToken:self.connectionToken];
+		} else if ([self.endpoint isKindOfClass:[MIKMIDIClientDestinationEndpoint class]]) {
+			[(MIKMIDIClientDestinationEndpoint *)self.endpoint setReceivedMessagesHandler:nil];
+		}
+	}
 	
 	self.graph = NULL;
 }
@@ -63,14 +97,17 @@
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	
+	__weak MIKMIDIEndpointSynthesizer *weakSelf = self;
 	MIKMIDIDeviceManager *deviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
 	id connectionToken = [deviceManager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
-		[self handleMIDIMessages:commands];
+		__strong MIKMIDIEndpointSynthesizer *strongSelf = weakSelf;
+		[strongSelf handleMIDIMessages:commands];
+		
 	}];
 	
 	if (!connectionToken) return NO;
 	
-	self.source = source;
+	self.endpoint = source;
 	self.connectionToken = connectionToken;
 	return YES;
 }

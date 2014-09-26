@@ -18,9 +18,13 @@
  *  -sendCommands:toEndpoint:error: method.
  *
  *  Note that MIKMIDIDestinationEndpoint does not declare any methods of its own. All its methods can be
- *  found on its superclasses: MIKMIDIEndpoint and MIKMIDIObject.
+ *  found on its superclasses: MIKMIDIEndpoint and MIKMIDIObject. Also, MIKMIDIDestinationEndpoint itself
+ *  is only used to represent MIDI endpoints owned by external applications/devices. To create virtual
+ *  destination endpoints to be owned by your application and offered to others, use its subclass,
+ *  MIKMIDIClientDestinationEndpoint instead.
  *
  *  @see -[MIKMIDIDeviceManager sendCommands:toEndpoint:error:]
+ *  @see MIKMIDIClientDestinationEndpoint
  */
 @interface MIKMIDIDestinationEndpoint : MIKMIDIEndpoint
 

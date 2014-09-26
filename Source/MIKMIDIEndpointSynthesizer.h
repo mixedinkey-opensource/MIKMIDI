@@ -10,7 +10,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class MIKMIDIEndpoint;
 @class MIKMIDISourceEndpoint;
+@class MIKMIDIClientDestinationEndpoint;
 
 /**
  * MIKMIDIEndpointSynthesizer provides a very simple way to synthesize MIDI commands coming from a
@@ -40,9 +42,27 @@
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source;
 
 /**
- *  The source the receive is listening to.
+ *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-@property (nonatomic, strong, readonly) MIKMIDISourceEndpoint *source;
++ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+
+/**
+ *  Initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
+ */
+- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+
+/**
+ *  The endpoint the receiver is listening to for note events.
+ */
+@property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
 
 @end
 
