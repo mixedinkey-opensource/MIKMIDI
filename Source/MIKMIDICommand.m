@@ -48,7 +48,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return [[subclass alloc] initWithMIDIPacket:packet];
 }
 
-- (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
++ (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
 {
 	NSInteger firstCommandType = inputPacket->data[0];
 	NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(firstCommandType);
