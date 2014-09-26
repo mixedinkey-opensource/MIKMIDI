@@ -123,6 +123,25 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 
 /**
+ *  Convenience method for creating a new MIKMIDICommand instance from a MIDIPacket as received or created
+ *  using CoreMIDI functions. For command types for which there is a specific MIKMIDICommand subclass,
+ *  an instance of the appropriate subclass will be returned.
+ *
+ *  @note This method is used by MIKMIDI's internal machinery, and its use by MIKMIDI
+ *  clients, while not disallowed, is not typical. Normally, +commandForCommandType: should be used.
+ *
+ *  @param packet A pointer to an MIDIPacket struct.
+ *
+ *  @return An NSArray containing initialized MIKMIDICommand subclass instances for each MIDI
+ *  message of a supported command type. For unsupported command types, an instance of 
+ *  MIKMIDICommand itself will be used. Returns nil if there is an error.
+ *
+ *  @see +commandForCommandType:
+ */
++ (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)packet;
+
+
+/**
  *  Convenience method for creating a new MIKMIDICommand. For command types for which there is a
  *  specific MIKMIDICommand subclass, an instance of the appropriate subclass will be returned.
  *
