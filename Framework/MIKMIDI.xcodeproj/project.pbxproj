@@ -44,7 +44,7 @@
 		839D937419C3A319007589C3 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D937019C3A319007589C3 /* MIKMIDITempoEvent.m */; };
 		839D937519C3A319007589C3 /* MIKMIDITrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D937119C3A319007589C3 /* MIKMIDITrack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D937619C3A319007589C3 /* MIKMIDITrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D937219C3A319007589C3 /* MIKMIDITrack.m */; };
-		83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */; };
+		83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C3716819D607010017186B /* MIKMIDIClientDestinationEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */; };
 		9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EEBE17A712E900BEE89F /* MIKMIDI-Prefix.pch */; };
 		9D74EEC417A712F100BEE89F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D74EEC117A712F100BEE89F /* InfoPlist.strings */; };
@@ -501,7 +501,6 @@
 				9D74EF8117A713A100BEE89F /* MIKMIDINoteOnCommand.h in Headers */,
 				9D74EF8317A713A100BEE89F /* MIKMIDIObject.h in Headers */,
 				9D74EF8617A713A100BEE89F /* MIKMIDIOutputPort.h in Headers */,
-				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */,
 				9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */,
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
@@ -509,6 +508,7 @@
 				9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */,
 				9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */,
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
+				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
 			);
