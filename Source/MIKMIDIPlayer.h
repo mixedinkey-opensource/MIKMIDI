@@ -11,7 +11,6 @@
 #import "MIKMIDI.h"
 
 @class MIKMIDISequence;
-@class MIKMIDIDestinationEndpoint;
 
 @interface MIKMIDIPlayer : NSObject
 
@@ -31,7 +30,5 @@
 
 @property (readonly, nonatomic) BOOL isPlaying;
 @property (nonatomic, getter=isLooping) BOOL looping;
-
-@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint;
 
 @end

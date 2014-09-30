@@ -11,6 +11,7 @@
 #import "MIKMIDITrack.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
+#import "MIKMIDIDestinationEndpoint.h"
 
 
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
@@ -273,8 +274,17 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
         NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return nil;
     }
-    
+
     return (__bridge_transfer NSData *)data;
+}
+
+@synthesize destinationEndpoint = _destinationEndpoint;
+
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
+{
+    for (MIKMIDITrack *track in self.tracks) {
+        track.destinationEndpoint = destinationEndpoint;
+    }
 }
 
 @end

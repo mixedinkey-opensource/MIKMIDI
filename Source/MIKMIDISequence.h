@@ -11,6 +11,7 @@
 
 
 @class MIKMIDITrack;
+@class MIKMIDIDestinationEndpoint;
 
 @interface MIKMIDISequence : NSObject
 
@@ -25,6 +26,8 @@
 @property (nonatomic, readonly) NSData *dataValue;
 
 @property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+
+@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint;
 
 + (instancetype)sequence;
 

@@ -12,6 +12,7 @@
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIEventIterator.h"
+#import "MIKMIDIDestinationEndpoint.h"
 
 @interface MIKMIDITrack()
 
@@ -415,6 +416,15 @@
     OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TimeResolution, &resolution, &resolutionLength);
     if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
     return resolution;
+}
+
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
+{
+    if (destinationEndpoint != _destinationEndpoint) {
+        OSStatus err = MusicTrackSetDestMIDIEndpoint(self.musicTrack, (MIDIEndpointRef)destinationEndpoint.objectRef);
+        if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        _destinationEndpoint = destinationEndpoint;
+    }
 }
 
 @end

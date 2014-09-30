@@ -12,6 +12,7 @@
 @class MIKMIDISequence;
 @class MIKMIDIEvent;
 @class MIKMIDINoteEvent;
+@class MIKMIDIDestinationEndpoint;
 
 @interface MIKMIDITrack : NSObject
 
@@ -37,6 +38,8 @@
 @property (nonatomic) MusicTimeStamp length;
 
 @property (nonatomic, readonly) SInt16 timeResolution;
+
+@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint;
 
 - (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event;
 - (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event;
