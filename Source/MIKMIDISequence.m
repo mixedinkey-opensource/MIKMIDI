@@ -222,7 +222,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp
 {
-    MIKMIDITempoEvent *event = [MIKMIDITempoEvent tempoEvenWithTimeStamp:timeStamp tempo:bpm];
+    MIKMIDITempoEvent *event = [MIKMIDITempoEvent tempoEventWithTimeStamp:timeStamp tempo:bpm];
     return [self.tempoTrack insertMIDIEvent:event];
 }
 

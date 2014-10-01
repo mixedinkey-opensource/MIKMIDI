@@ -18,7 +18,7 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }
 
-+ (instancetype)tempoEvenWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm
++ (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 {
     ExtendedTempoEvent tempoEvent = { .bpm = bpm };
     NSData *data = [NSData dataWithBytes:&tempoEvent length:sizeof(tempoEvent)];

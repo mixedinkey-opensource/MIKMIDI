@@ -12,7 +12,7 @@
 
 @property (nonatomic, readonly) Float64 bpm;
 
-+ (instancetype)tempoEvenWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
++ (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 
 @end
 
