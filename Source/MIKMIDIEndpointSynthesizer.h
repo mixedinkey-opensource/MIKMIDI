@@ -93,25 +93,23 @@
 /**
  * Changes the instrument patch for a channel.
  *
- * @param instrument Any MIKMIDIEndpointSynthesizerInstrument from -availableInstruments.
- *
- * @param channel The MIDI channel you'd like to change the instrument patch for.
+ * @param instrument Any MIKMIDIEndpointSynthesizerInstrument as obtained, e.g. from -availableInstruments.
  *
  * @return YES if the instrument patch was successfully changed, NO if the change failed
+ *
+ * @see -availableInstruments
  */
-- (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument forChannel:(UInt8)channel;
+- (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument;
 
 
 /**
  * Changes the instrument patch for a channel.
  *
- * @param instrumentID The MusicDeviceInstrumentID you'd like to change the instrument to to.
- *
- * @param channel The MIDI channel you'd like to change the instrument patch for.
+ * @param instrumentID The MusicDeviceInstrumentID you'd like to change the instrument to.
  *
  * @return YES if the instrument patch was successfully changed, NO if the change failed
  */
-- (BOOL)selectInstrumentWithID:(MusicDeviceInstrumentID)instrumentID forChannel:(UInt8)channel;
+- (BOOL)selectInstrumentWithID:(MusicDeviceInstrumentID)instrumentID;
 
 @property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
 
