@@ -115,6 +115,13 @@
 
 @property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
 
+
+- (void)handleMIDIMessages:(NSArray *)commands;
+
+- (void)noteOn:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
+- (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
+- (void)noteOff:(UInt8)note channel:(UInt8)channel; // same as noteOff:velocity:channel with a release velocity of 0
+
 @end
 
 
