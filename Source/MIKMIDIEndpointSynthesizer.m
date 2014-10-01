@@ -334,7 +334,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ (%d)", self.name, self.instrumentID];
+    return [NSString stringWithFormat:@"%@", self.name];
 }
 
 - (BOOL)isEqual:(id)object
