@@ -357,6 +357,7 @@
 
 - (BOOL)isEqual:(id)object
 {
+	if (object == self) return YES;
 	if (![object isMemberOfClass:[self class]]) return NO;
 	if (!self.instrumentID == [object instrumentID]) return NO;
 	return [self.name isEqualToString:[object name]];
@@ -364,7 +365,7 @@
 
 - (NSUInteger)hash
 {
-	return [[NSString stringWithFormat:@"%d-%@", self.instrumentID, self.name] hash];
+	return (NSUInteger)self.instrumentID;
 }
 
 @end
