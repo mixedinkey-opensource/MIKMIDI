@@ -61,75 +61,75 @@
  */
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
 
-
 /**
- * Creates and returns an array of available MIKMIDIEndpointSynthesizerInstruments
+ * Changes the instrument/voice used by the synthesizer.
  *
- * @return An array of MIKMIDIEndpointSynthesizerInstrument
- */
-- (NSArray *)availableInstruments;
-
-/**
- * Gets the instrument with the corresponding instrument ID.
+ * @param instrument An MIKMIDIEndpointSynthesizerInstrument instance.
  *
- * @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDIEndpointSynthesizerInstrument
+ * @return YES if the instrument was successfully changed, NO if the change failed.
  *
- * @return A MIKMIDIEndpointSynthesizerInstrument with the matching instrument ID, or nil if no instrument was found
- */
-- (MIKMIDIEndpointSynthesizerInstrument *)instrumentForID:(MusicDeviceInstrumentID)instrumentID;
-
-/**
- * Gets the instrument with the corresponding name.
- *
- * @param name The name of the desired MIKMIDIEndpointSynthesizerInstrument
- *
- * @return A MIKMIDIEndpointSynthesizerInstrument with the matching name, or nil if no instrument was found
- *
- * @discussion This method is implemented by calling -availableInstruments and looping through to find the instrument
- * with the matching name, and is thus somewhat expensive.
- */
-- (MIKMIDIEndpointSynthesizerInstrument *)instrumentWithName:(NSString *)name; 
-
-/**
- * Changes the instrument patch for a channel.
- *
- * @param instrument Any MIKMIDIEndpointSynthesizerInstrument as obtained, e.g. from -availableInstruments.
- *
- * @return YES if the instrument patch was successfully changed, NO if the change failed
- *
- * @see -availableInstruments
+ * @see +[MIKMIDIEndpointSynthesizerInstrument availableInstruments]
  */
 - (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument;
 
-
 /**
- * Changes the instrument patch for a channel.
+ *  Plays MIDI messages through the synthesizer.
  *
- * @param instrumentID The MusicDeviceInstrumentID you'd like to change the instrument to.
+ *  This method can be used to synthesize arbitrary MIDI events. It is especially
+ *  useful for MIKMIDIEndpointSynthesizers that are not connected to a MIDI
+ *  endpoint.
  *
- * @return YES if the instrument patch was successfully changed, NO if the change failed
+ *  @param messages An NSArray of MIKMIDICommand (subclass) instances.
  */
-- (BOOL)selectInstrumentWithID:(MusicDeviceInstrumentID)instrumentID;
-
-@property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
-
-
-- (void)handleMIDIMessages:(NSArray *)commands;
+- (void)handleMIDIMessages:(NSArray *)messages;
 
 - (void)noteOn:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
 - (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
 - (void)noteOff:(UInt8)note channel:(UInt8)channel; // same as noteOff:velocity:channel with a release velocity of 0
 
+/**
+ * The endpoint from which the receiver is receiving MIDI messages.
+ * This may be either an external MIKMIDISourceEndpoint, e.g. to synthesize MIDI
+ * events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,
+ * most commonly to synthesize MIDI coming from an MIKMIDIPlayer.
+ */
+@property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
+
 @end
 
+#pragma mark -
 
-
+/**
+ *  MIKMIDIEndpointSynthesizerInstrument is used to represent
+ */
 @interface MIKMIDIEndpointSynthesizerInstrument : NSObject
 
-@property (readonly, copy, nonatomic) NSString *name;
-@property (readonly, nonatomic) MusicDeviceInstrumentID instrumentID;
+/**
+ * An array of available MIKMIDIEndpointSynthesizerInstruments for use
+ * with MIKMIDIEndpointSynthesizer.
+ *
+ * @return An NSArray containing MIKMIDIEndpointSynthesizerInstrument instances.
+ */
++ (NSArray *)availableInstruments;
 
-+ (instancetype)instrumentWithName:(NSString *)name instrumentID:(MusicDeviceInstrumentID)instrumentID;
+/**
+ * Creates and initializes an MIKMIDIEndpointSynthesizerInstrument with the corresponding instrument ID.
+ *
+ * @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDIEndpointSynthesizerInstrument
+ *
+ * @return A MIKMIDIEndpointSynthesizerInstrument with the matching instrument ID, or nil if no instrument was found.
+ */
++ (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID;
+
+/**
+ *  The human readable name of the receiver. e.g. "Piano 1".
+ */
+@property (readonly, copy, nonatomic) NSString *name;
+
+/**
+ *  The Core Audio supplied instrumentID for the receiver.
+ */
+@property (readonly, nonatomic) MusicDeviceInstrumentID instrumentID;
 
 @end
 

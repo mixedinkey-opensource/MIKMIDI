@@ -215,44 +215,11 @@
 
 #pragma mark - Instruments
 
-- (NSArray *)availableInstruments
-{
-	AudioUnit audioUnit = self.midiInstrument;
-	NSMutableArray *instruments = [NSMutableArray array];
-	
-	UInt32 instrumentCount;
-	UInt32 instrumentCountSize = sizeof(instrumentCount);
-	
-	OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentCount, kAudioUnitScope_Global, 0, &instrumentCount, &instrumentCountSize);
-	if (err) {
-		NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		return nil;
-	}
-	
-	for (UInt32 i = 0; i < instrumentCount; i++) {
-		MusicDeviceInstrumentID instrumentID;
-		UInt32 idSize = sizeof(instrumentID);
-		err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentNumber, kAudioUnitScope_Global, i, &instrumentID, &idSize);
-		if (err) {
-			NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return nil;
-		}
-		
-		MIKMIDIEndpointSynthesizerInstrument *instrument = [self instrumentForID:instrumentID];
-		if (!instrument) return nil;
-		[instruments addObject:instrument];
-	}
-	
-	return instruments;
-}
-
 - (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument;
 {
-	return [self selectInstrumentWithID:instrument.instrumentID];
-}
-
-- (BOOL)selectInstrumentWithID:(MusicDeviceInstrumentID)instrumentID;
-{
+	if (!instrument) return NO;
+	
+	MusicDeviceInstrumentID instrumentID = instrument.instrumentID;
 	for (UInt8 channel = 0; channel < 16; channel++) {
 		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
 		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
@@ -285,28 +252,6 @@
 	return YES;
 }
 
-- (MIKMIDIEndpointSynthesizerInstrument *)instrumentForID:(MusicDeviceInstrumentID)instrumentID
-{
-	char cName[256];
-	UInt32 cNameSize = sizeof(cName);
-	OSStatus err = AudioUnitGetProperty(self.midiInstrument, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
-	if (err) {
-		NSLog(@"AudioUnitGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		return nil;
-	}
-	
-	NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
-	return [MIKMIDIEndpointSynthesizerInstrument instrumentWithName:name instrumentID:instrumentID];
-}
-
-- (MIKMIDIEndpointSynthesizerInstrument *)instrumentWithName:(NSString *)name
-{
-	for (MIKMIDIEndpointSynthesizerInstrument *instrument in [self availableInstruments]) {
-		if ([instrument.name isEqualToString:name]) return instrument;
-	}
-	return nil;
-}
-
 #pragma mark - Properties
 
 - (void)setGraph:(AUGraph)graph
@@ -319,16 +264,90 @@
 
 @end
 
+#pragma mark -
 
 @implementation MIKMIDIEndpointSynthesizerInstrument
 
-+ (instancetype)instrumentWithName:(NSString *)name instrumentID:(MusicDeviceInstrumentID)instrumentID
++ (AudioUnit)instrumentUnit
 {
-	MIKMIDIEndpointSynthesizerInstrument *instrument = [[[self class] alloc] init];
-	instrument->_name = [name copy];
-	instrument->_instrumentID = instrumentID;
+	static AudioUnit instrumentUnit = NULL;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		AudioComponentDescription componentDesc = {
+			.componentManufacturer = kAudioUnitManufacturer_Apple,
+			.componentType = kAudioUnitType_MusicDevice,
+			.componentSubType = kAudioUnitSubType_DLSSynth,
+		};
+		AudioComponent instrumentComponent = AudioComponentFindNext(NULL, &componentDesc);
+		if (!instrumentComponent) {
+			NSLog(@"Unable to create the DLSSynth audio unit.");
+			return;
+		}
+		AudioComponentInstanceNew(instrumentComponent, &instrumentUnit);
+		AudioUnitInitialize(instrumentUnit);
+	});
 	
-	return instrument;
+	return instrumentUnit;
+}
+
++ (NSArray *)availableInstruments
+{
+	static NSArray *availableInstruments = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		AudioUnit audioUnit = [self instrumentUnit];
+		NSMutableArray *result = [NSMutableArray array];
+		
+		UInt32 instrumentCount;
+		UInt32 instrumentCountSize = sizeof(instrumentCount);
+		
+		OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentCount, kAudioUnitScope_Global, 0, &instrumentCount, &instrumentCountSize);
+		if (err) {
+			NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			return;
+		}
+		
+		for (UInt32 i = 0; i < instrumentCount; i++) {
+			MusicDeviceInstrumentID instrumentID;
+			UInt32 idSize = sizeof(instrumentID);
+			err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentNumber, kAudioUnitScope_Global, i, &instrumentID, &idSize);
+			if (err) {
+				NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				continue;
+			}
+			
+			MIKMIDIEndpointSynthesizerInstrument *instrument = [MIKMIDIEndpointSynthesizerInstrument instrumentWithID:instrumentID];
+			if (instrument) [result addObject:instrument];
+		}
+		
+		availableInstruments = [result copy];
+	});
+	
+	return availableInstruments;
+}
+
++ (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID;
+{
+	char cName[256];
+	UInt32 cNameSize = sizeof(cName);
+	OSStatus err = AudioUnitGetProperty([self instrumentUnit], kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
+	if (err) {
+		NSLog(@"AudioUnitGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return nil;
+	}
+	
+	NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
+	return [[self alloc] initWithName:name instrumentID:instrumentID];
+}
+
+- (instancetype)initWithName:(NSString *)name instrumentID:(MusicDeviceInstrumentID)instrumentID
+{
+	self = [super init];
+	if (self) {
+		_name = name;
+		_instrumentID = instrumentID;
+	}
+	return self;
 }
 
 - (NSString *)description
