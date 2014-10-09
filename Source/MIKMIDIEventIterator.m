@@ -89,7 +89,7 @@
         NSLog(@"MusicEventIteratorGetEventInfo() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return nil;
     }
-
+    
     return [MIKMIDIEvent midiEventWithTimeStamp:timeStamp eventType:type data:[NSData dataWithBytes:data length:dataSize]];
 }
 
