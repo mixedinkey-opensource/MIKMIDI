@@ -19,7 +19,9 @@
 @property (nonatomic, strong) id connectionToken;
 
 @property (nonatomic) AUGraph graph;
-@property (nonatomic) AudioUnit midiInstrument;
+@property (nonatomic) AudioUnit instrument;
+
+@property (readonly, nonatomic) BOOL isUsingAppleSynth;
 
 @end
 
@@ -27,10 +29,20 @@
 
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source
 {
+	return [self playerWithMIDISource:source componentDescription:[self appleSynthComponentDescription]];
+}
+
++ (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription
+{
 	return [[self alloc] initWithMIDISource:source];
 }
 
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source
+{
+	return [self initWithMIDISource:source componentDescription:[[self class] appleSynthComponentDescription]];
+}
+
+- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 {
 	if (!source) {
 		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
@@ -45,18 +57,29 @@
 			return nil;
 		}
 		_endpoint = source;
+		_componentDescription = componentDescription;
 		
 		if (![self setupAUGraph]) return nil;
 	}
 	return self;
 }
 
-+ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
++ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination
 {
-	return [[self alloc] initWithClientDestinationEndpoint:destination];
+	return [self synthesizerWithClientDestinationEndpoint:destination componentDescription:[self appleSynthComponentDescription]];
 }
 
-- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
++ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription
+{
+	return [[self alloc] initWithClientDestinationEndpoint:destination componentDescription:componentDescription];
+}
+
+- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination
+{
+	return [self initWithClientDestinationEndpoint:destination componentDescription:[[self class] appleSynthComponentDescription]];
+}
+
+- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription
 {
 	if (!destination) {
 		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
@@ -72,6 +95,7 @@
 			[strongSelf handleMIDIMessages:commands];
 		};
 		_endpoint = destination;
+		_componentDescription = componentDescription;
 		
 		if (![self setupAUGraph]) return nil;
 	}
@@ -115,7 +139,7 @@
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
-		OSStatus err = MusicDeviceMIDIEvent(self.midiInstrument, command.commandType, command.dataByte1, command.dataByte2, 0);
+		OSStatus err = MusicDeviceMIDIEvent(self.instrument, command.commandType, command.dataByte1, command.dataByte2, 0);
 		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %i", command, err);
 	}
 }
@@ -165,15 +189,8 @@
 		return NO;
 	}
 	
-	AudioComponentDescription instrumentcd = {0};
-	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
-	instrumentcd.componentType = kAudioUnitType_MusicDevice;
-#if TARGET_OS_IPHONE
-	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
-#else
-	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
-#endif
-	
+	AudioComponentDescription instrumentcd = self.componentDescription;
+
 	AUNode instrumentNode;
 	if ((err = AUGraphAddNode(graph, &instrumentcd, &instrumentNode))) {
 		NSLog(@"Unable to add instrument node to AU graph: %i", err);
@@ -207,9 +224,22 @@
 	}
 	
 	self.graph = graph;
-	self.midiInstrument = instrumentUnit;
+	self.instrument = instrumentUnit;
 	
 	return YES;
+}
+
++ (AudioComponentDescription)appleSynthComponentDescription
+{
+	AudioComponentDescription instrumentcd = (AudioComponentDescription){0};
+	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
+	instrumentcd.componentType = kAudioUnitType_MusicDevice;
+#if TARGET_OS_IPHONE
+	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
+#else
+	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
+#endif
+	return instrumentcd;
 }
 
 
@@ -218,6 +248,7 @@
 - (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument;
 {
 	if (!instrument) return NO;
+	if (!self.isUsingAppleSynth) return NO;
 	
 	MusicDeviceInstrumentID instrumentID = instrument.instrumentID;
 	for (UInt8 channel = 0; channel < 16; channel++) {
@@ -229,7 +260,7 @@
 		UInt32 bankSelectStatus = 0xB0 | channel;
 		UInt32 programChangeStatus = 0xC0 | channel;
 		
-		AudioUnit instrumentUnit = self.midiInstrument;
+		AudioUnit instrumentUnit = self.instrument;
 		OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
 		if (err) {
 			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
@@ -260,6 +291,18 @@
 		if (_graph) DisposeAUGraph(_graph);
 		_graph = graph;
 	}
+}
+
+- (BOOL)isUsingAppleSynth
+{
+	AudioComponentDescription description = self.componentDescription;
+	AudioComponentDescription appleSynthDescription = [[self class] appleSynthComponentDescription];
+	if (description.componentManufacturer != appleSynthDescription.componentManufacturer) return NO;
+	if (description.componentType != appleSynthDescription.componentType) return NO;
+	if (description.componentSubType != appleSynthDescription.componentSubType) return NO;
+	if (description.componentFlags != appleSynthDescription.componentFlags) return NO;
+	if (description.componentFlagsMask != appleSynthDescription.componentFlagsMask) return NO;
+	return YES;
 }
 
 @end

@@ -33,6 +33,7 @@
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source;
++ (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
@@ -42,6 +43,7 @@
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source;
+- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
@@ -51,6 +53,7 @@
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 + (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
++ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
@@ -60,6 +63,7 @@
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  * Changes the instrument/voice used by the synthesizer.
@@ -94,6 +98,9 @@
  * most commonly to synthesize MIDI coming from an MIKMIDIPlayer.
  */
 @property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
+
+@property (nonatomic, readonly) AudioComponentDescription componentDescription;
+@property (nonatomic, readonly) AudioUnit instrument;
 
 @end
 
