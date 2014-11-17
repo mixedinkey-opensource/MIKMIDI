@@ -66,7 +66,7 @@
  */
 @property (nonatomic, strong, readwrite) NSMutableData *internalData;
 
-@property (nonatomic, readwrite) MusicTimeStamp musicTimeStamp;
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 
 @property (nonatomic, readwrite) MusicEventType eventType;
 

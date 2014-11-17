@@ -118,7 +118,7 @@
 
 - (MusicTimeStamp)endTimeStamp
 {
-	return self.musicTimeStamp + self.duration;
+	return self.timeStamp + self.duration;
 }
 
 - (float)frequency

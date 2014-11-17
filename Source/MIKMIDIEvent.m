@@ -70,7 +70,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
     if ([additionalDescription length] > 0) {
         additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
     }
-    return [NSString stringWithFormat:@"%@ Timestamp: %f Type: %u, %@", [super description], self.musicTimeStamp, (unsigned int)self.eventType, additionalDescription];
+    return [NSString stringWithFormat:@"%@ Timestamp: %f Type: %u, %@", [super description], self.timeStamp, (unsigned int)self.eventType, additionalDescription];
 }
 
 #pragma mark - Private
@@ -131,7 +131,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	MIKMIDIEvent *result = [[copyClass alloc] init];
 	result.internalData = self.internalData;
 	result.eventType = self.eventType;
-	result.musicTimeStamp = self.musicTimeStamp;
+	result.timeStamp = self.timeStamp;
 	return result;
 }
 
@@ -141,7 +141,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	MIKMutableMIDIEvent *result = [[copyClass alloc] init];
 	result.internalData = self.internalData;
 	result.eventType = self.eventType;
-	result.musicTimeStamp = self.musicTimeStamp;
+	result.timeStamp = self.timeStamp;
 	return result;
 }
 
