@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+/**
+ *  Types of MIDI events. These values are used to determine which subclass to
+ *  instantiate when creating a new MIDI event.
+ *
+ *  @note These are similar, but do not directly correspond to the values of MusicEventType
+ */
+
 typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
 {
     MIKMIDIEventTypeNULL,
@@ -58,17 +65,101 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
     MIKMIDIMetaEventTypeSequencerSpecificEvent  = 0x7F
 };
 
+/**
+ *  In MIKMIDI, MIDI events are objects. Specifically, they are instances of MIKMIDIEvent or one of its
+ *  subclasses. MIKMIDIEvent's subclasses each represent a specific type of MIDI event, for example,
+ *  note events will be instances of MIKMIDINoteEvent.
+ *  MIKMIDIEvent includes properties for getting information and data common to all MIDI events.
+ *  Its subclasses implement additional method and properties specific to messages of their associated type.
+ *
+ *  MIKMIDIEvent is also available in mutable variants, most useful for creating events to be sent out
+ *  by your application.
+ *
+ *  To create a new event, typically, you should use +midiEventWithTimeStamp:eventType:data:(NSData *)data
+ *
+ *  Subclass MIKMIDIEvent
+ *  -----------------------
+ *
+ *  Support for the various MIDI event types is provided by type-specific subclasses of MIKMIDIEvent.
+ *  For example, note events are represented using MIKMIDINoteEvent.
+ *
+ *  To support a new event type, you should create a new subclass of MIKMIDIEvent (and please consider
+ *  contributing it to the main MIKMIDI repository!). If you implement this subclass according to the rules
+ *  explained below, it will automatically be used to represent MIDI events matching its MIDI event type.
+ *
+ *  To successfully subclass MIKMIDIEvent, you *must* override at least the following methods:
+ *
+ *  - `+supportsMIKMIDIEventType:` - Return YES when passed the MIKMIDIEventType value your subclass supports.
+ *  - `+immutableCounterPartClass` - Return the subclass itself (eg. `return [MIKMIDINewTypeEvent class];`)
+ *  - `+mutableCounterPartClass` - Return the mutable counterpart class (eg. `return [MIKMIDIMutableNewTypeEvent class;]`)
+ *
+ *  Optionally, override `-additionalEventDescription` to provide an additional, type-specific description string.
+ *
+ *  You must also implement `+load` and call `[MIKMIDIEvent registerSubclass:self]` to register your subclass with
+ *  the MIKMIDIEvent machinery.
+ *
+ *  When creating a subclass of MIKMIDIEvent, you should also create a mutable variant which is itself
+ *  a subclass of your type-specific MIKMIDIEvent subclass. The mutable subclass should override `+isMutable`
+ *  and return YES.
+ *
+ *  If your subclass adds additional properties, beyond those supported by MIKMIDIEvent itself, those properties
+ *  should only be settable on instances of the mutable variant class. The preferred way to accomplish this is to
+ *  implement the setters on the *immutable*, base subclass. In their implementations, check to see if self is
+ *  mutable, and if not, raise an exception. Use the following line of code:
+ *
+ *		if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+ *
+ *  For a straightforward example of a MIKMIDIEvent subclass, see MIKMIDINoteEvent.
+ *
+ */
 @interface MIKMIDIEvent : NSObject <NSCopying>
 
+/**
+ *  The MIDI event type. See MusicPlayer.h for a list of possible values.
+ */
 @property (nonatomic, readonly) MusicEventType eventType;
+
+/**
+ *  The channel for the MIDI event.
+ */
 @property (nonatomic, readonly) UInt8 channel;
+
+/**
+ *  The timeStamp of the MIDI event. When used in a MusicSequence of type kMusicSequenceType_Beats
+ *  a timeStamp of 1 equals one quarter note. See the MusicSequence Reference for more information.
+ */
 @property (nonatomic, readonly) MusicTimeStamp timeStamp;
+
+/**
+ *  The data representing the event. The actual type of stored data will vary by subclass.
+ *  For example, in MIKMIDINoteEvent the data property's bytes are of type MIDINoteMessage.
+ */
 @property (nonatomic, readonly) NSData *data;
 
+
+/**
+ *  Convenience method for creating a new MIKMIDIEvent instance from an NSData instance.
+ *  For event types for which there is a specific MIKMIDIEvent subclass,
+ *  an instance of the appropriate subclass will be returned.
+ *
+ *  @param timeStamp The MusicTimeStamp for the event.
+ *
+ *  @param eventType The MusicEventType of the event.
+ *
+ *  @param data The data representing the event.
+ *
+ *  @return For supported event types, an initialized MIKMIDIEvent subclass. Otherwise, an instance
+ *  of MIKMIDIEvent itself. nil if there is an error.
+ *
+ *  @see +mikEventTypeForMusicEventType:
+ */
 + (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
 
 @end
 
+/**
+ *  Mutable subclass of MIKMIDIEvent. All MIKMIDIEvent subclasses have mutable variants.
+ */
 @interface MIKMutableMIDIEvent : MIKMIDIEvent
 
 @property (nonatomic, readonly) MusicEventType eventType;
