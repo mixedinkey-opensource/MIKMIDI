@@ -17,62 +17,110 @@
 @class MIKMIDIEndpointSynthesizerInstrument;
 
 /**
- * MIKMIDIEndpointSynthesizer provides a very simple way to synthesize MIDI commands coming from a
- * source endpoint (e.g. from a connected MIDI piano keyboard) to produce sound output.
+ *  MIKMIDIEndpointSynthesizer provides a very simple way to synthesize MIDI commands coming from a
+ *  source endpoint (e.g. from a connected MIDI piano keyboard) to produce sound output.
  *
- * To use it, simply create a synthesizer instance with the source you'd like it to play. It will
- * continue playing incoming MIDI until it is deallocated.
+ *  To use it, simply create a synthesizer instance with the source you'd like it to play. It will
+ *  continue playing incoming MIDI until it is deallocated.
  */
 @interface MIKMIDIEndpointSynthesizer : NSObject
 
 /**
- *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
+ *  Creates and initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
+ *  underlying instrument.
  *
  *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source;
+
+/**
+ *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
+ *
+ *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
+ *  you would like the synthesizer to use.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
+ */
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
- *  Initializes an MIKMIDIEndpointSynthesizer instance.
+ *  Initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
+ *  underlying instrument.
  *
  *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source;
+
+/**
+ *  Initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
+ *
+ *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
+ *  you would like the synthesizer to use.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
+ */
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
- *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
+ *  Creates and initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
+ *  underlying instrument.
  *
  *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 + (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+
+/**
+ *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
+ *
+ *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
+ *  you would like the synthesizer to use.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
+ */
 + (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
- *  Initializes an MIKMIDIEndpointSynthesizer instance.
+ *  Initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
+ *  underlying instrument.
  *
  *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+
+/**
+ *  Initializes an MIKMIDIEndpointSynthesizer instance.
+ *
+ *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
+ *
+ *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
+ *  you would like the synthesizer to use.
+ *
+ *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
+ */
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  * Changes the instrument/voice used by the synthesizer.
  *
- * @param instrument An MIKMIDIEndpointSynthesizerInstrument instance.
+ *  @param instrument An MIKMIDIEndpointSynthesizerInstrument instance.
  *
- * @return YES if the instrument was successfully changed, NO if the change failed.
+ *  @return YES if the instrument was successfully changed, NO if the change failed.
  *
- * @see +[MIKMIDIEndpointSynthesizerInstrument availableInstruments]
+ *  @see +[MIKMIDIEndpointSynthesizerInstrument availableInstruments]
  */
 - (BOOL)selectInstrument:(MIKMIDIEndpointSynthesizerInstrument *)instrument;
 
@@ -87,19 +135,66 @@
  */
 - (void)handleMIDIMessages:(NSArray *)messages;
 
+/**
+ *  Sends a note on event to the synthesizer.
+ *
+ *  This method is the equivalent of calling handleMIDIMessages: with an array
+ *  of a single MIDINoteOnCommand.
+ *
+ *  @param note The MIDI note for the note on event.
+ *
+ *  @param velocity The velocity of the note on event.
+ *
+ *  @param channel The channel for the note on event.
+ *
+ */
 - (void)noteOn:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
-- (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
-- (void)noteOff:(UInt8)note channel:(UInt8)channel; // same as noteOff:velocity:channel with a release velocity of 0
 
 /**
- * The endpoint from which the receiver is receiving MIDI messages.
- * This may be either an external MIKMIDISourceEndpoint, e.g. to synthesize MIDI
- * events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,
- * most commonly to synthesize MIDI coming from an MIKMIDIPlayer.
+ *  Sends a note off event to the synthesizer.
+ *
+ *  This method is the equivalent of calling handleMIDIMessages: with an array
+ *  of a single MIDINoteOffCommand.
+ *
+ *  @param note The MIDI note for the note off event.
+ *
+ *  @param velocity The velocity of the note off event.
+ *
+ *  @param channel The channel for the note off event.
+ *
+ */
+- (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
+
+/**
+ *  Sends a note off event to the synthesizer.
+ *
+ *  This method is equivalent to calling noteOff:velocity:channel: with a
+ *  velocity of 0.
+ *
+ *  @param note The MIDI note for the note off event.
+ *
+ *  @param channel The channel for the note off event.
+ *
+ */
+- (void)noteOff:(UInt8)note channel:(UInt8)channel;
+
+/**
+ *  The endpoint from which the receiver is receiving MIDI messages.
+ *  This may be either an external MIKMIDISourceEndpoint, e.g. to synthesize MIDI
+ *  events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,
+ *  most commonly to synthesize MIDI coming from an MIKMIDIPlayer.
  */
 @property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
 
+/**
+ *  The component description of the underlying Audio Unit instrument.
+ */
 @property (nonatomic, readonly) AudioComponentDescription componentDescription;
+
+/**
+ *  The Audio Unit instrument that ultimately receives all of the MIDI messages sent to
+ *  this endpoint synthesizer.
+ */
 @property (nonatomic, readonly) AudioUnit instrument;
 
 @end
@@ -112,19 +207,19 @@
 @interface MIKMIDIEndpointSynthesizerInstrument : NSObject
 
 /**
- * An array of available MIKMIDIEndpointSynthesizerInstruments for use
- * with MIKMIDIEndpointSynthesizer.
+ *  An array of available MIKMIDIEndpointSynthesizerInstruments for use
+ *  with MIKMIDIEndpointSynthesizer.
  *
- * @return An NSArray containing MIKMIDIEndpointSynthesizerInstrument instances.
+ *  @return An NSArray containing MIKMIDIEndpointSynthesizerInstrument instances.
  */
 + (NSArray *)availableInstruments;
 
 /**
- * Creates and initializes an MIKMIDIEndpointSynthesizerInstrument with the corresponding instrument ID.
+ *  Creates and initializes an MIKMIDIEndpointSynthesizerInstrument with the corresponding instrument ID.
  *
- * @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDIEndpointSynthesizerInstrument
+ *  @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDIEndpointSynthesizerInstrument
  *
- * @return A MIKMIDIEndpointSynthesizerInstrument with the matching instrument ID, or nil if no instrument was found.
+ *  @return A MIKMIDIEndpointSynthesizerInstrument with the matching instrument ID, or nil if no instrument was found.
  */
 + (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID;
 
