@@ -173,7 +173,7 @@
 - (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
     MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-    if (![iterator seek:startTimeStamp]) return nil;
+    if (![iterator seek:startTimeStamp]) return @[];
 
     NSMutableArray *events = [NSMutableArray array];
 
