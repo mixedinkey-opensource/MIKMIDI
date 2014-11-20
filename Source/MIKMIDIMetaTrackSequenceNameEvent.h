@@ -8,10 +8,16 @@
 
 #import "MIKMIDIMetaTextEvent.h"
 
+/**
+ *  A meta event containing track sequence information.
+ */
 @interface MIKMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTextEvent
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIMetaTrackSequenceNameEvent
+ */
 @interface MIKMutableMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTrackSequenceNameEvent
 
 @end

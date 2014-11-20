@@ -8,10 +8,17 @@
 
 #import "MIKMIDIMetaTextEvent.h"
 
+/**
+ *  A meta event containing an instrument name.
+ */
 @interface MIKMIDIMetaInstrumentNameEvent : MIKMIDIMetaTextEvent
 
 @end
 
+
+/**
+ *  The mutable counterpart of MIKMIDIMetaInstrumentNameEvent.
+ */
 @interface MIKMutableMIDIMetaInstrumentNameEvent : MIKMIDIMetaInstrumentNameEvent
 
 @end

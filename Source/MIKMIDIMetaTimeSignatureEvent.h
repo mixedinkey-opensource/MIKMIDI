@@ -8,15 +8,36 @@
 
 #import "MIKMIDIMetaEvent.h"
 
+/**
+ *  A meta event containing time signature information.
+ */
 @interface MIKMIDIMetaTimeSignatureEvent : MIKMIDIMetaEvent
 
+/**
+ *  The numerator of the time signature.
+ */
 @property (nonatomic, readonly) UInt8 numerator;
+
+/**
+ *  The denominator of the time signature.
+ */
 @property (nonatomic, readonly) UInt8 denominator;
+
+/**
+ *  The number of MIDI clock ticks per metronome tick.
+ */
 @property (nonatomic, readonly) UInt8 metronomePulse;
+
+/**
+ *  The number of notated 32nd notes in a MIDI quarter note.
+ */
 @property (nonatomic, readonly) UInt8 thirtySecondsPerQuarterNote;
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIMetaTimeSignatureEvent.
+ */
 @interface MIKMutableMIDIMetaTimeSignatureEvent : MIKMIDIMetaTimeSignatureEvent
 
 @property (nonatomic, readwrite) UInt8 numerator;

@@ -8,10 +8,16 @@
 
 #import "MIKMIDIMetaTextEvent.h"
 
+/**
+ *  A meta event containing copyright information.
+ */
 @interface MIKMIDIMetaCopyrightEvent : MIKMIDIMetaTextEvent
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIMetaCopyrightEvent.
+ */
 @interface MIKMutableMIDIMetaCopyrightEvent : MIKMIDIMetaCopyrightEvent
 
 @end

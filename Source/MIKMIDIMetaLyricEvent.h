@@ -8,10 +8,16 @@
 
 #import "MIKMIDIMetaTextEvent.h"
 
+/**
+ *  A meta event containing lyrics.
+ */
 @interface MIKMIDIMetaLyricEvent : MIKMIDIMetaTextEvent
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIMetaLyricEvent.
+ */
 @interface MIKMutableMIDIMetaLyricEvent : MIKMIDIMetaLyricEvent
 
 @end

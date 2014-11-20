@@ -8,10 +8,16 @@
 
 #import "MIKMIDIMetaTextEvent.h"
 
+/**
+ *  A meta event containing marker information.
+ */
 @interface MIKMIDIMetaMarkerTextEvent : MIKMIDIMetaTextEvent
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIMetaMarkerTextEvent.
+ */
 @interface MIKMutableMIDIMetaMarkerTextEvent : MIKMIDIMetaMarkerTextEvent
 
 @end

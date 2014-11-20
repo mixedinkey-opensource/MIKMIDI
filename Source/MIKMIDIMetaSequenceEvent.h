@@ -8,11 +8,16 @@
 
 #import "MIKMIDIMetaEvent.h"
 
+/**
+ *  A meta event containing sequence information.
+ */
 @interface MIKMIDIMetaSequenceEvent : MIKMIDIMetaEvent
 
 @end
 
-
+/**
+ *  The mutable counterpart of MIKMIDIMetaSequenceEvent.
+ */
 @interface MIKMutableMIDIMetaSequenceEvent : MIKMIDIMetaSequenceEvent
 
 @end
