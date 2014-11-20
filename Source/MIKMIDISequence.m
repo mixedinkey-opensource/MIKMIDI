@@ -216,7 +216,9 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (BOOL)setOverallTempo:(Float64)bpm
 {
+	NSArray *timeSignatureEvents = [self timeSignatureEvents];
     if (![self.tempoTrack clearAllEvents]) return NO;
+	if (timeSignatureEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:timeSignatureEvents]]) return NO;
     return [self setTempo:bpm atTimeStamp:0];
 }
 
@@ -277,8 +279,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
     return (__bridge_transfer NSData *)data;
 }
-
-@synthesize destinationEndpoint = _destinationEndpoint;
 
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
 {
