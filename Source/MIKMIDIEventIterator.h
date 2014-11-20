@@ -12,7 +12,10 @@
 @class MIKMIDITrack;
 @class MIKMIDIEvent;
 
-
+/**
+ *  MIKMIDIEventIterator is an Objective-C wrapper for CoreMIDI's MusicEventIterator. It is not intended for use by clients/users of
+ *  of MIKMIDI. Rather, it should be thought of as an MIKMIDI private class.
+ */
 @interface MIKMIDIEventIterator : NSObject
 
 @property (nonatomic, readonly) BOOL hasPreviousEvent;
