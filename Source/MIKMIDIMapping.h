@@ -390,7 +390,8 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 
 /**
  *  This protocol defines methods that that must be implemented by MIDI responder objects to be mapped
- *  using MIKMIDIMappingGenerator.
+ *  using MIKMIDIMappingGenerator, and to whom MIDI messages will selectively be routed using a MIDI mapping
+ *  during normal operation.
  */
 @protocol MIKMIDIMappableResponder <MIKMIDIResponder>
 
@@ -421,5 +422,29 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
  *  @see MIKMIDIResponderType
  */
 - (MIKMIDIResponderType)MIDIResponderTypeForCommandIdentifier:(NSString *)commandID; // Optional. If not implemented, MIKMIDIResponderTypeAll will be assumed.
+
+@optional
+
+/**
+ *  Whether the physical control mapped to the commandID in the receiver should
+ *  be illuminated, or not.
+ *
+ *  Many hardware MIDI devices, e.g. DJ controllers, have buttons that can light
+ *  up to show state for the associated function. For example, the play button
+ *  could be illuminated when the software is playing. This method allows mapped
+ *  MIDI responder objects to communicate the desired state of the physical control
+ *  mapped to them.
+ *
+ *  Currently MIKMIDI doesn't provide automatic support for actually updating
+ *  physical LED status. This must be implemented in application code. For most devices,
+ *  this can be accomplished by sending a MIDI message _to_ the device. The MIDI message
+ *  should identical to the message that the relevant control sends when pressed, with
+ *  a non-zero value to illumniate the control, or zero to turn illumination off.
+ *
+ *  @param commandID The commandID for which the associated illumination state is desired.
+ *
+ *  @return YES if the associated control should be illuminated, NO otherwise.
+ */
+- (BOOL)illuminationStateForCommandIdentifier:(NSString *)commandID;
 
 @end
