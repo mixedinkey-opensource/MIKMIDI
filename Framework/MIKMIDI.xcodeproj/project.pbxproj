@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		834A6AC61A1FEF9B00E8DED1 /* MIKMIDIRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A6AC41A1FEF9B00E8DED1 /* MIKMIDIRecorder.h */; };
+		834A6AC61A1FEF9B00E8DED1 /* MIKMIDIRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A6AC41A1FEF9B00E8DED1 /* MIKMIDIRecorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		834A6AC71A1FEF9B00E8DED1 /* MIKMIDIRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 834A6AC51A1FEF9B00E8DED1 /* MIKMIDIRecorder.m */; };
 		839D933219C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D933319C3A2C9007589C3 /* MIKMIDIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932E19C3A2C9007589C3 /* MIKMIDIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -465,7 +465,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */,
-				834A6AC61A1FEF9B00E8DED1 /* MIKMIDIRecorder.h in Headers */,
 				9D74EF6317A713A100BEE89F /* MIKMIDI.h in Headers */,
 				9D74EF6417A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h in Headers */,
 				9D74EF6617A713A100BEE89F /* MIKMIDICommand.h in Headers */,
@@ -513,6 +512,7 @@
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
 				9D74EF8E17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h in Headers */,
 				9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */,
+				834A6AC61A1FEF9B00E8DED1 /* MIKMIDIRecorder.h in Headers */,
 				9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */,
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
 				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
