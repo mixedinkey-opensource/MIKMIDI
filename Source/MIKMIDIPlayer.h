@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDI.h"
 
 @class MIKMIDISequence;
 

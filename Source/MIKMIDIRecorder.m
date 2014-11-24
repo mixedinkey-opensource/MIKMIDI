@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIRecorder.h"
+#import "MIKMIDI.h"
 
 @interface MIKMIDIRecorder ()
 @property (nonatomic, getter=isRecording) BOOL recording;
@@ -78,14 +79,16 @@
 		if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
 			MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
 			MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
-			MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:[sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] message:message];
+			MusicTimeStamp startTimeStamp = self.isLooping ? [sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] : self.currentTimeStamp;
+			MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:startTimeStamp message:message];
 			self.pendingNotes[@(noteOnCommand.note)] = noteEvent;
 		} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
 			MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
 			NSNumber *noteNumber = @(noteOffCommand.note);
 			MIKMutableMIDINoteEvent *noteEvent = self.pendingNotes[noteNumber];
 			noteEvent.releaseVelocity = noteOffCommand.velocity;
-			noteEvent.duration = [sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] - noteEvent.timeStamp;
+			MusicTimeStamp endTimeStamp = self.isLooping ? [sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] : self.currentTimeStamp;
+			noteEvent.duration = endTimeStamp - noteEvent.timeStamp;
 			[self.pendingNotes removeObjectForKey:noteNumber];
 			[events addObject:noteEvent];
 		}
