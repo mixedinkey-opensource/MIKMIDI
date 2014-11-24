@@ -37,6 +37,7 @@
         }
 
         self.musicPlayer = musicPlayer;
+		self.stopPlaybackAtEndOfSequence = YES;
     }
     return self;
 }
@@ -87,13 +88,15 @@
     NSDate *startTime = [NSDate date];
     self.lastPlaybackStartedTime = startTime;
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
-            if (!self.isLooping) {
-                [self stopPlayback];
-            }
-        }
-    });
+	if (self.stopPlaybackAtEndOfSequence) {
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
+				if (!self.isLooping) {
+					[self stopPlayback];
+				}
+			}
+		});
+	}
 }
 
 - (void)resumePlayback

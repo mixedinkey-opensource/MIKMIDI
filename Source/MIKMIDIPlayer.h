@@ -76,4 +76,6 @@
  */
 @property (nonatomic, getter=isLooping) BOOL looping;
 
+@property (nonatomic) BOOL stopPlaybackAtEndOfSequence;
+
 @end
