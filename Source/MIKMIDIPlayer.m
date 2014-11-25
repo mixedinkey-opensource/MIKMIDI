@@ -184,9 +184,17 @@
 	NSMutableSet *clickEvents = [NSMutableSet set];
 	MIDINoteMessage tickMessage = self.metronome.tickMessage;
 	MIDINoteMessage tockMessage = self.metronome.tockMessage;
-	for (MusicTimeStamp clickTimeStamp = floor(fromTimeStamp); clickTimeStamp <= toTimeStamp; clickTimeStamp++) {
-		// TODO figure out tick vs. tock based on time signature
-		BOOL isTick = YES;
+	MIKMIDISequence *sequence = self.sequence;
+	MusicTimeStamp increment = 1;
+	for (MusicTimeStamp clickTimeStamp = floor(fromTimeStamp); clickTimeStamp <= toTimeStamp; clickTimeStamp += increment) {
+		MIKMIDITimeSignature timeSignature;
+		if (![sequence getTimeSignature:&timeSignature atTimeStamp:clickTimeStamp]) continue;
+		if (!timeSignature.numerator || !timeSignature.denominator) continue;
+
+		NSInteger adjustedTimeStamp = clickTimeStamp * timeSignature.denominator / 4.0;
+		BOOL isTick = !((adjustedTimeStamp + timeSignature.numerator) % (timeSignature.numerator));
+		increment = 4.0 / timeSignature.denominator;
+
 		MIDINoteMessage clickMessage = isTick ? tickMessage : tockMessage;
 		[clickEvents addObject:[MIKMIDINoteEvent noteEventWithTimeStamp:clickTimeStamp message:clickMessage]];
 	}

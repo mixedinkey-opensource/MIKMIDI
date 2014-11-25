@@ -227,7 +227,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
 	if (!bpm) return NO;
     NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-    if (!events) return NO;
+    if (!events.count) return NO;
 
     MIKMIDITempoEvent *event = [events lastObject];
     *bpm = event.bpm;
@@ -265,7 +265,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
 	if (!signature) return NO;
 	NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-	if (!events) {
+	if (!events.count) {
 		signature->numerator = 4;
 		signature->denominator = 4;
 		return YES;
