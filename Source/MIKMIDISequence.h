@@ -10,6 +10,12 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 
+typedef struct {
+	UInt8 numerator;
+	UInt8 denominator;
+} MIKMIDITimeSignature;
+
+
 @class MIKMIDITrack;
 @class MIKMIDIDestinationEndpoint;
 
@@ -198,6 +204,11 @@
  *  @return Whether or not getting the tempo was succesful.
  */
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
+
+
+- (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature;
+- (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp;
+- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp;
 
 
 /**

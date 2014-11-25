@@ -204,11 +204,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 #pragma mark - Tempo
 
-- (NSArray *)timeSignatureEvents
-{
-    return [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
-}
-
 - (NSArray *)tempoEvents
 {
     return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
@@ -230,12 +225,56 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp
 {
-    NSArray *events = [self.tempoTrack eventsFromTimeStamp:0 toTimeStamp:timeStamp];
+	if (!bpm) return NO;
+    NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
     if (!events) return NO;
 
     MIKMIDITempoEvent *event = [events lastObject];
     *bpm = event.bpm;
     return YES;
+}
+
+#pragma mark - Time Signature
+
+- (NSArray *)timeSignatureEvents
+{
+	return [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+}
+
+
+- (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature
+{
+	NSArray *tempoEvents = [self tempoEvents];
+	if (![self.tempoTrack clearAllEvents]) return NO;
+	if (tempoEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:tempoEvents]]) return NO;
+	return [self setTimeSignature:signature atTimeStamp:0];
+}
+
+- (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp
+{
+	MIKMutableMIDIMetaTimeSignatureEvent *event = [[MIKMutableMIDIMetaTimeSignatureEvent alloc] init];
+	event.timeStamp = timeStamp;
+	event.numerator = signature.numerator;
+	event.denominator = signature.denominator;
+	event.metronomePulse = self.tempoTrack.timeResolution;
+	event.thirtySecondsPerQuarterNote = 8;
+	return [self.tempoTrack insertMIDIEvent:event];
+}
+
+- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp
+{
+	if (!signature) return NO;
+	NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
+	if (!events) {
+		signature->numerator = 4;
+		signature->denominator = 4;
+		return YES;
+	};
+
+	MIKMIDIMetaTimeSignatureEvent *event = [events lastObject];
+	signature->numerator = event.numerator;
+	signature->denominator = event.denominator;
+	return YES;
 }
 
 #pragma mark - Description
