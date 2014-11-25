@@ -40,6 +40,7 @@
  */
 @interface MIKMutableMIDIMetaTimeSignatureEvent : MIKMIDIMetaTimeSignatureEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 numerator;
 @property (nonatomic, readwrite) UInt8 denominator;
 @property (nonatomic, readwrite) UInt8 metronomePulse;

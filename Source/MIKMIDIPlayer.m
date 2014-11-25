@@ -9,6 +9,9 @@
 #import "MIKMIDIPlayer.h"
 #import "MIKMIDITrack.h"
 #import "MIKMIDISequence.h"
+#import "MIKMIDIMetronome.h"
+#import "MIKMIDINoteEvent.h"
+#import "MIKMIDIClientDestinationEndpoint.h"
 
 @interface MIKMIDIPlayer ()
 
@@ -18,6 +21,9 @@
 @property (strong, nonatomic) NSNumber *lastStoppedAtTimeStampNumber;
 
 @property (strong, nonatomic) NSDate *lastPlaybackStartedTime;
+
+@property (strong, nonatomic) MIKMIDITrack *clickTrack;
+@property (strong, nonatomic) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
 @end
 
@@ -38,6 +44,7 @@
 
         self.musicPlayer = musicPlayer;
 		self.stopPlaybackAtEndOfSequence = YES;
+		self.maxClickTrackTimeStamp = 480;
     }
     return self;
 }
@@ -68,6 +75,7 @@
     if (self.isPlaying) [self stopPlayback];
 
     [self loopTracksWhenNeeded];
+	[self addClickTrackWhenNeededFromTimeStamp:position];
 
     OSStatus err = MusicPlayerSetTime(self.musicPlayer, position);
     if (err) return NSLog(@"MusicPlayerSetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
@@ -78,9 +86,6 @@
     err = MusicSequenceGetSecondsForBeats(self.sequence.musicSequence, position, &positionInTime);
     if (err) return NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 
-    Float64 playbackDuration = (sequenceDuration - positionInTime) + self.tailDuration;
-    if (playbackDuration <= 0) return;
-
     err = MusicPlayerStart(self.musicPlayer);
     if (err) return NSLog(@"MusicPlayerStart() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 
@@ -89,6 +94,9 @@
     self.lastPlaybackStartedTime = startTime;
 
 	if (self.stopPlaybackAtEndOfSequence) {
+		Float64 playbackDuration = (sequenceDuration - positionInTime) + self.tailDuration;
+		if (playbackDuration <= 0) return;
+
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(playbackDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 			if ([startTime isEqualToDate:self.lastPlaybackStartedTime]) {
 				if (!self.isLooping) {
@@ -130,6 +138,11 @@
 
     [self unloopTracks];
 
+	if (self.clickTrack) {
+		[self.sequence removeTrack:self.clickTrack];
+		self.clickTrack = nil;
+	}
+
     self.isPlaying = NO;
 }
 
@@ -158,12 +171,34 @@
     }
 }
 
+#pragma mark - Click Track
+
+- (void)addClickTrackWhenNeededFromTimeStamp:(MusicTimeStamp)fromTimeStamp
+{
+	if (!self.isClickTrackEnabled) return;
+
+	self.clickTrack = [self.sequence addTrack];
+	[self.clickTrack setDestinationEndpoint:self.metronomeEndpoint];
+	MusicTimeStamp toTimeStamp = self.stopPlaybackAtEndOfSequence ? self.sequence.length : self.maxClickTrackTimeStamp;
+
+	NSMutableSet *clickEvents = [NSMutableSet set];
+	MIDINoteMessage tickMessage = self.metronome.tickMessage;
+	MIDINoteMessage tockMessage = self.metronome.tockMessage;
+	for (MusicTimeStamp clickTimeStamp = floor(fromTimeStamp); clickTimeStamp <= toTimeStamp; clickTimeStamp++) {
+		// TODO figure out tick vs. tock based on time signature
+		BOOL isTick = YES;
+		MIDINoteMessage clickMessage = isTick ? tickMessage : tockMessage;
+		[clickEvents addObject:[MIKMIDINoteEvent noteEventWithTimeStamp:clickTimeStamp message:clickMessage]];
+	}
+
+	[self.clickTrack insertMIDIEvents:clickEvents];
+}
+
 #pragma mark - Properties
 
 - (void)setLooping:(BOOL)looping
 {
     if (looping != _looping) {
-
         _looping = looping;
 
         if (self.isPlaying) {
@@ -177,7 +212,6 @@
 - (void)setSequence:(MIKMIDISequence *)sequence
 {
     if (sequence != _sequence) {
-
         if (self.isPlaying) [self stopPlayback];
 
         MusicSequence musicSequence = sequence.musicSequence;
@@ -200,6 +234,18 @@
 {
     OSStatus err = MusicPlayerSetTime(self.musicPlayer, currentTimeStamp);
     if (err) NSLog(@"MusicPlayerSetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
+- (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint
+{
+	if (!_metronomeEndpoint) _metronomeEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:@"MIKMIDIClickTrackEndpoint" receivedMessagesHandler:NULL];
+	return _metronomeEndpoint;
+}
+
+- (MIKMIDIMetronome *)metronome
+{
+	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
+	return _metronome;
 }
 
 @end

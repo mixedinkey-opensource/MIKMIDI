@@ -46,6 +46,8 @@
 		839D937419C3A319007589C3 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D937019C3A319007589C3 /* MIKMIDITempoEvent.m */; };
 		839D937519C3A319007589C3 /* MIKMIDITrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D937119C3A319007589C3 /* MIKMIDITrack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D937619C3A319007589C3 /* MIKMIDITrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D937219C3A319007589C3 /* MIKMIDITrack.m */; };
+		83BC19BB1A23CD0D004F384F /* MIKMIDIMetronome.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BC19B91A23CD0D004F384F /* MIKMIDIMetronome.h */; };
+		83BC19BC1A23CD0D004F384F /* MIKMIDIMetronome.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */; };
 		83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C3716819D607010017186B /* MIKMIDIClientDestinationEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */; };
 		9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EEBE17A712E900BEE89F /* MIKMIDI-Prefix.pch */; };
@@ -153,6 +155,8 @@
 		839D937019C3A319007589C3 /* MIKMIDITempoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITempoEvent.m; sourceTree = "<group>"; };
 		839D937119C3A319007589C3 /* MIKMIDITrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITrack.h; sourceTree = "<group>"; };
 		839D937219C3A319007589C3 /* MIKMIDITrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITrack.m; sourceTree = "<group>"; };
+		83BC19B91A23CD0D004F384F /* MIKMIDIMetronome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMetronome.h; sourceTree = "<group>"; };
+		83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMetronome.m; sourceTree = "<group>"; };
 		83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIClientDestinationEndpoint.h; sourceTree = "<group>"; };
 		83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIClientDestinationEndpoint.m; sourceTree = "<group>"; };
 		9D74EEA517A7129300BEE89F /* MIKMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MIKMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -404,6 +408,8 @@
 				9D74EF3917A713A100BEE89F /* MIKMIDIDestinationEndpoint.m */,
 				9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */,
 				9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */,
+				83BC19B91A23CD0D004F384F /* MIKMIDIMetronome.h */,
+				83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */,
 			);
 			name = "Device Support";
 			sourceTree = "<group>";
@@ -500,6 +506,7 @@
 				839D935919C3A2F5007589C3 /* MIKMIDIMetaLyricEvent.h in Headers */,
 				9D74EF8A17A713A100BEE89F /* MIKMIDIPort_SubclassMethods.h in Headers */,
 				839D935D19C3A2F5007589C3 /* MIKMIDIMetaSequenceEvent.h in Headers */,
+				83BC19BB1A23CD0D004F384F /* MIKMIDIMetronome.h in Headers */,
 				839D935119C3A2F5007589C3 /* MIKMIDIMetaCuePointEvent.h in Headers */,
 				839D933319C3A2C9007589C3 /* MIKMIDIEvent.h in Headers */,
 				9D74EF7D17A713A100BEE89F /* MIKMIDIMappingManager.h in Headers */,
@@ -605,6 +612,7 @@
 				839D935019C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.m in Sources */,
 				9D74EF7417A713A100BEE89F /* MIKMIDIEntity.m in Sources */,
 				839D936219C3A2F5007589C3 /* MIKMIDIMetaTimeSignatureEvent.m in Sources */,
+				83BC19BC1A23CD0D004F384F /* MIKMIDIMetronome.m in Sources */,
 				9D74EF7617A713A100BEE89F /* MIKMIDIErrors.m in Sources */,
 				9D74EF7817A713A100BEE89F /* MIKMIDIInputPort.m in Sources */,
 				9D74EF7A17A713A100BEE89F /* MIKMIDIMapping.m in Sources */,

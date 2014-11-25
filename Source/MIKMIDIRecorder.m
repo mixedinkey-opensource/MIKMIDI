@@ -23,6 +23,7 @@
 {
 	if (self = [super init]) {
 		self.pendingNotes = [NSMutableDictionary dictionary];
+		self.clickTrackEnabledInRecord = YES;
 	}
 	return self;
 }
@@ -36,29 +37,44 @@
 
 - (void)startRecording
 {
+	BOOL playerClickTrackEnabled = self.isClickTrackEnabled;
 	BOOL playerStopsAtEndOfSequence = self.stopPlaybackAtEndOfSequence;
+	self.clickTrackEnabled = self.isClickTrackEnabledInRecord;
 	self.stopPlaybackAtEndOfSequence = NO;
+
 	[self startPlayback];
-	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 	self.recording = self.isPlaying;
+
+	self.clickTrackEnabled = playerClickTrackEnabled;
+	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 }
 
 - (void)startRecordingFromPosition:(MusicTimeStamp)position
 {
+	BOOL playerClickTrackEnabled = self.isClickTrackEnabled;
 	BOOL playerStopsAtEndOfSequence = self.stopPlaybackAtEndOfSequence;
+	self.clickTrackEnabled = self.isClickTrackEnabledInRecord;
 	self.stopPlaybackAtEndOfSequence = NO;
+
 	[self startPlaybackFromPosition:position];
-	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 	self.recording = self.isPlaying;
+
+	self.clickTrackEnabled = playerClickTrackEnabled;
+	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 }
 
 - (void)resumeRecording
 {
+	BOOL playerClickTrackEnabled = self.isClickTrackEnabled;
 	BOOL playerStopsAtEndOfSequence = self.stopPlaybackAtEndOfSequence;
+	self.clickTrackEnabled = self.isClickTrackEnabledInRecord;
 	self.stopPlaybackAtEndOfSequence = NO;
+
 	[self resumePlayback];
-	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 	self.recording = self.isPlaying;
+
+	self.clickTrackEnabled = playerClickTrackEnabled;
+	self.stopPlaybackAtEndOfSequence = playerStopsAtEndOfSequence;
 }
 
 - (void)stopRecording
@@ -86,11 +102,13 @@
 			MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
 			NSNumber *noteNumber = @(noteOffCommand.note);
 			MIKMutableMIDINoteEvent *noteEvent = self.pendingNotes[noteNumber];
-			noteEvent.releaseVelocity = noteOffCommand.velocity;
-			MusicTimeStamp endTimeStamp = self.isLooping ? [sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] : self.currentTimeStamp;
-			noteEvent.duration = endTimeStamp - noteEvent.timeStamp;
-			[self.pendingNotes removeObjectForKey:noteNumber];
-			[events addObject:noteEvent];
+			if (noteEvent) {
+				noteEvent.releaseVelocity = noteOffCommand.velocity;
+				MusicTimeStamp endTimeStamp = self.isLooping ? [sequence equivalentTimeStampForLoopedTimeStamp:self.currentTimeStamp] : self.currentTimeStamp;
+				noteEvent.duration = endTimeStamp - noteEvent.timeStamp;
+				[self.pendingNotes removeObjectForKey:noteNumber];
+				[events addObject:noteEvent];
+			}
 		}
 	}
 

@@ -99,6 +99,7 @@
 
 + (BOOL)isMutable { return YES; }
 
+@dynamic timeStamp;
 @dynamic numerator;
 @dynamic denominator;
 @dynamic metronomePulse;

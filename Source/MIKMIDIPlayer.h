@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 @class MIKMIDISequence;
+@class MIKMIDIMetronome;
 
 /**
  *  MIKMIDIPlayer is an Objective-C wrapper for CoreMIDI's MusicPlayer.
@@ -75,6 +76,11 @@
  */
 @property (nonatomic, getter=isLooping) BOOL looping;
 
+@property (nonatomic, getter=isClickTrackEnabled) BOOL clickTrackEnabled;
+@property (strong, nonatomic) MIKMIDIMetronome *metronome;
+
 @property (nonatomic) BOOL stopPlaybackAtEndOfSequence;
+
+@property (nonatomic) MusicTimeStamp maxClickTrackTimeStamp;
 
 @end

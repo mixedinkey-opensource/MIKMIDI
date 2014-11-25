@@ -16,6 +16,8 @@
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
 @property (strong, nonatomic) NSSet *recordEnabledTracks;
 
+@property (nonatomic, getter=isClickTrackEnabledInRecord) BOOL clickTrackEnabledInRecord;
+
 - (void)prepareRecording;
 - (void)startRecording;
 - (void)startRecordingFromPosition:(MusicTimeStamp)position;
