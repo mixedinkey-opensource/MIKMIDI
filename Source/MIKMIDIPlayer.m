@@ -178,6 +178,7 @@
 	if (!self.isClickTrackEnabled) return;
 
 	self.clickPlayer = [[MIKMIDIPlayer alloc] init];
+	self.clickPlayer->_isClickPlayer = YES;
 	MIKMIDISequence *clickSequence = [MIKMIDISequence sequence];
 	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.tempoEvents]];
 	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.timeSignatureEvents]];
