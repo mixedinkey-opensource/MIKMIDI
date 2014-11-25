@@ -22,7 +22,8 @@
 
 @property (strong, nonatomic) NSDate *lastPlaybackStartedTime;
 
-@property (strong, nonatomic) MIKMIDITrack *clickTrack;
+@property (strong, nonatomic) MIKMIDIPlayer *clickPlayer;
+@property (nonatomic) BOOL isClickPlayer;
 @property (strong, nonatomic) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
 @end
@@ -88,6 +89,7 @@
 
     err = MusicPlayerStart(self.musicPlayer);
     if (err) return NSLog(@"MusicPlayerStart() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+	[self.clickPlayer startPlaybackFromPosition:position];
 
     self.isPlaying = YES;
     NSDate *startTime = [NSDate date];
@@ -138,11 +140,8 @@
 
     [self unloopTracks];
 
-	if (self.clickTrack) {
-		[self.sequence removeTrack:self.clickTrack];
-		self.clickTrack = nil;
-	}
-
+	[self.clickPlayer stopPlayback];
+	self.clickPlayer = nil;
     self.isPlaying = NO;
 }
 
@@ -175,20 +174,26 @@
 
 - (void)addClickTrackWhenNeededFromTimeStamp:(MusicTimeStamp)fromTimeStamp
 {
+	if (self.isClickPlayer) return;
 	if (!self.isClickTrackEnabled) return;
 
-	self.clickTrack = [self.sequence addTrack];
-	[self.clickTrack setDestinationEndpoint:self.metronomeEndpoint];
+	self.clickPlayer = [[MIKMIDIPlayer alloc] init];
+	MIKMIDISequence *clickSequence = [MIKMIDISequence sequence];
+	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.tempoEvents]];
+	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.timeSignatureEvents]];
+	self.clickPlayer.sequence = clickSequence;
+	MIKMIDITrack *clickTrack = [clickSequence addTrack];
+
+	[clickTrack setDestinationEndpoint:self.metronomeEndpoint];
 	MusicTimeStamp toTimeStamp = self.stopPlaybackAtEndOfSequence ? self.sequence.length : self.maxClickTrackTimeStamp;
 
 	NSMutableSet *clickEvents = [NSMutableSet set];
 	MIDINoteMessage tickMessage = self.metronome.tickMessage;
 	MIDINoteMessage tockMessage = self.metronome.tockMessage;
-	MIKMIDISequence *sequence = self.sequence;
 	MusicTimeStamp increment = 1;
 	for (MusicTimeStamp clickTimeStamp = floor(fromTimeStamp); clickTimeStamp <= toTimeStamp; clickTimeStamp += increment) {
 		MIKMIDITimeSignature timeSignature;
-		if (![sequence getTimeSignature:&timeSignature atTimeStamp:clickTimeStamp]) continue;
+		if (![clickSequence getTimeSignature:&timeSignature atTimeStamp:clickTimeStamp]) continue;
 		if (!timeSignature.numerator || !timeSignature.denominator) continue;
 
 		NSInteger adjustedTimeStamp = clickTimeStamp * timeSignature.denominator / 4.0;
@@ -199,7 +204,7 @@
 		[clickEvents addObject:[MIKMIDINoteEvent noteEventWithTimeStamp:clickTimeStamp message:clickMessage]];
 	}
 
-	[self.clickTrack insertMIDIEvents:clickEvents];
+	[clickTrack insertMIDIEvents:clickEvents];
 }
 
 #pragma mark - Properties
