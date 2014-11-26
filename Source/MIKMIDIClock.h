@@ -22,4 +22,4 @@
 @end
 
 
-#define MIKMIDICurrentTimeStamp()	(mach_absolute_time())
+#define MIKMIDIGetCurrentTimeStamp()	(mach_absolute_time())

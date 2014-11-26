@@ -27,6 +27,7 @@
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
 @property (nonatomic) MusicTimeStamp preRoll;
 
+@property (nonatomic, getter=isPunchInOutEnabled) BOOL punchInOutEnabled;
 @property (nonatomic) MusicTimeStamp punchInTime;
 @property (nonatomic) MusicTimeStamp punchOutTime;
 

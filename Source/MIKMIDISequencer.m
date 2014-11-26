@@ -11,6 +11,9 @@
 #import "MIKMIDIClock.h"
 
 
+#define MIKMIDISequencerDefaultTempo	120
+
+
 @interface MIKMIDISequencer ()
 
 @property (readonly, nonatomic) MIKMIDIClock *clock;
@@ -25,23 +28,11 @@
 
 #pragma mark - Lifecycle
 
-- (instancetype)init
-{
-	if (self = [super init]) {
-		_clock = [MIKMIDIClock clock];
-	}
-	return self;
-}
-
-+ (instancetype)sequencer
-{
-	return [[self alloc] init];
-}
-
 - (instancetype)initWithSequence:(MIKMIDISequence *)sequence
 {
-	if (self = [self init]) {
-		self.sequence = sequence;
+	if (self = [super init]) {
+		_sequence = sequence;
+		_clock = [MIKMIDIClock clock];
 	}
 	return self;
 }
@@ -49,6 +40,16 @@
 + (instancetype)sequencerWithSequence:(MIKMIDISequence *)sequence
 {
 	return [[self alloc] initWithSequence:sequence];
+}
+
+- (instancetype)init
+{
+	return [self initWithSequence:[MIKMIDISequence sequence]];
+}
+
++ (instancetype)sequencer
+{
+	return [[self alloc] init];
 }
 
 #pragma mark - Playback
@@ -60,12 +61,17 @@
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-
+	MIDITimeStamp midiTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.0005];
+	[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
 }
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
+	Float64 startingTempo;
+	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
+	[self.clock setMusicTimeStamp:timeStamp withTempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
+	self.playing = YES;
 }
 
 - (void)resumePlayback
@@ -75,7 +81,7 @@
 
 - (void)stopPlayback
 {
-
+	self.playing = NO;
 }
 
 #pragma mark - Recording
