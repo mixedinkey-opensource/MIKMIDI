@@ -93,7 +93,7 @@
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	MIDITimeStamp midiTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.005];
+	MIDITimeStamp midiTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001];
 	[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
 }
 
@@ -107,7 +107,7 @@
 	self.pendingNoteOffs = [NSMutableDictionary dictionary];
 	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
-	self.timer = [NSTimer timerWithTimeInterval:0.001 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
+	self.timer = [NSTimer timerWithTimeInterval:0.05 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
 	[[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
 	[self.timer fire];
 }
@@ -125,12 +125,13 @@
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
+	self.looping = NO;
 	self.playing = NO;
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.01];
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.05];
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 
@@ -249,7 +250,7 @@
 	MIDITimeStamp allPendingNotesOffTimeStamp = 0;
 	if (toTimeStamp == 0) {
 		toTimeStamp = ULONG_LONG_MAX;
-		allPendingNotesOffTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.01];
+		allPendingNotesOffTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001];
 	}
 
 	NSMapTable *noteOffDestinationsToCommands = [NSMapTable strongToStrongObjectsMapTable];
