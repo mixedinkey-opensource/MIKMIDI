@@ -11,6 +11,10 @@
 #import "MIKMIDITrack.h"
 #import "MIKMIDIClock.h"
 #import "MIKMIDITempoEvent.h"
+#import "MIKMIDINoteEvent.h"
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
+#import "MIKMIDIDeviceManager.h"
 
 
 #define MIKMIDISequencerDefaultTempo	120
@@ -216,7 +220,31 @@
 
 - (void)scheduleEventWithDestination:(MIKMIDIEventWithDestination *)destinationEvent atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	NSLog(@"\nEvent:           %@\nDestination:     %@\nMIDI Time Stamp: %@\n\n", destinationEvent.event, destinationEvent.destination, @(midiTimeStamp));
+	MIKMIDIEvent *event = destinationEvent.event;
+	NSArray *commands;
+
+	if ([event isKindOfClass:[MIKMIDINoteEvent class]]) {
+		MIKMIDINoteEvent *noteEvent = (MIKMIDINoteEvent *)event;
+		MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
+		noteOn.midiTimestamp = midiTimeStamp;
+		noteOn.channel = noteEvent.channel;
+		noteOn.note = noteEvent.note;
+		noteOn.velocity = noteEvent.velocity;
+
+		MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
+		noteOff.midiTimestamp = [self.clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+		noteOff.channel = noteEvent.channel;
+		noteOff.note = noteEvent.note;
+		noteOff.velocity = noteEvent.releaseVelocity;
+
+		commands = @[ noteOn, noteOff ];
+	}
+
+	NSError *error;
+	NSLog(@"%@", commands);
+	if (commands.count && ![[MIKMIDIDeviceManager sharedDeviceManager] sendCommands:commands toEndpoint:destinationEvent.destination error:&error]) {
+		NSLog(@"%@: An error occurred scheduling the commands %@ for destination endpoint %@. %@", NSStringFromClass([self class]), commands, destinationEvent.destination, error);
+	}
 }
 
 @end

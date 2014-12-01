@@ -60,6 +60,7 @@
 
 // One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
 @dynamic timestamp;
+@dynamic midiTimestamp;
 @dynamic channel;
 
 @end
