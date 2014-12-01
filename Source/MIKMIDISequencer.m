@@ -45,6 +45,7 @@
 
 @property (nonatomic, getter=isPlaying) BOOL playing;
 @property (nonatomic, getter=isRecording) BOOL recording;
+@property (nonatomic, getter=isLooping) BOOL looping;
 
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
 @property (strong, nonatomic) NSTimer *timer;
@@ -125,6 +126,86 @@
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
 	self.playing = NO;
+}
+
+- (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
+{
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.01];
+	if (toMIDITimeStamp < fromMIDITimeStamp) return;
+	MIKMIDIClock *clock = self.clock;
+
+	MIKMIDISequence *sequence = self.sequence;
+	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp;
+	MusicTimeStamp loopEndTimeStamp = self.loopEndTimeStamp;
+	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
+	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
+	if (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp) self.looping = YES;
+	BOOL isLooping = self.isLooping;
+
+	MusicTimeStamp maxMusicTimeStamp;
+	if (isLooping) {
+		maxMusicTimeStamp = loopEndTimeStamp;
+	} else {
+		maxMusicTimeStamp = self.isRecording ? DBL_MAX : sequence.length;
+	}
+
+	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxMusicTimeStamp);
+
+	// Send pending note off commands
+	MIDITimeStamp actualToMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:toMusicTimeStamp];
+	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:actualToMIDITimeStamp];
+
+	// Get relevant tempo events
+	NSMutableDictionary *tempoEvents = [NSMutableDictionary dictionary];
+	NSMutableDictionary *timeStampEvents = [NSMutableDictionary dictionary];
+	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
+		NSNumber *timeStampKey = @(tempoEvent.timeStamp);
+		timeStampEvents[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
+		tempoEvents[timeStampKey] = tempoEvent;
+	}
+
+	// Get other events
+	for (MIKMIDITrack *track in sequence.tracks) {
+		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
+		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
+			NSNumber *timeStampKey = @(event.timeStamp);
+			NSMutableArray *eventsAtTimeStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
+			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
+			timeStampEvents[timeStampKey] = eventsAtTimeStamp;
+		}
+	}
+
+	// Schedule events
+	MIDITimeStamp lastProcessedMIDITimeStamp = fromMIDITimeStamp;
+	for (NSNumber *timeStampKey in [timeStampEvents.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
+		MusicTimeStamp musicTimeStamp = timeStampKey.doubleValue;
+		if (isLooping && (musicTimeStamp < loopStartTimeStamp || musicTimeStamp >= loopEndTimeStamp)) continue;
+		MIDITimeStamp midiTimeStamp = [clock midiTimeStampForMusicTimeStamp:musicTimeStamp];
+		MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEvents[timeStampKey];
+		if (tempoEventAtTimeStamp) [clock setMusicTimeStamp:musicTimeStamp withTempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
+
+		NSArray *events = timeStampEvents[timeStampKey];
+		for (id eventObject in events) {
+			if ([eventObject isKindOfClass:[MIKMIDIEventWithDestination class]]) {
+				[self scheduleEventWithDestination:eventObject atMIDITimeStamp:midiTimeStamp];
+			}
+		}
+
+		lastProcessedMIDITimeStamp = midiTimeStamp;
+	}
+
+	self.lastProcessedMIDITimeStamp = lastProcessedMIDITimeStamp;
+
+	// Handle looping
+	if (isLooping && calculatedToMusicTimeStamp > toMusicTimeStamp) {
+		Float64 tempo;
+		if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
+		MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
+
+		MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
+		[clock setMusicTimeStamp:loopStartTimeStamp withTempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
+		[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
+	}
 }
 
 - (void)scheduleEventWithDestination:(MIKMIDIEventWithDestination *)destinationEvent atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
@@ -246,82 +327,6 @@
 - (void)timerFired:(NSTimer *)timer
 {
 	[self processSequenceStartingFromMIDITimeStamp:self.lastProcessedMIDITimeStamp + 1];
-}
-
-- (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
-{
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.01];
-	if (toMIDITimeStamp < fromMIDITimeStamp) return;
-	MIKMIDIClock *clock = self.clock;
-
-	MIKMIDISequence *sequence = self.sequence;
-	BOOL isLooping = self.isLooping;
-	MusicTimeStamp maxMusicTimeStamp;
-	if (isLooping) {
-		maxMusicTimeStamp = self.loopEndTimeStamp;
-	} else {
-		maxMusicTimeStamp = self.isRecording ? DBL_MAX : sequence.length;
-	}
-
-	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
-	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
-	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxMusicTimeStamp);
-
-	// Send pending note off commands
-	MIDITimeStamp actualToMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:toMusicTimeStamp];
-	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:actualToMIDITimeStamp];
-
-	// Get relevant tempo events
-	NSMutableDictionary *tempoEvents = [NSMutableDictionary dictionary];
-	NSMutableDictionary *timeStampEvents = [NSMutableDictionary dictionary];
-	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
-		NSNumber *timeStampKey = @(tempoEvent.timeStamp);
-		timeStampEvents[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
-		tempoEvents[timeStampKey] = tempoEvent;
-	}
-
-	// Get other events
-	for (MIKMIDITrack *track in sequence.tracks) {
-		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
-		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
-			NSNumber *timeStampKey = @(event.timeStamp);
-			NSMutableArray *eventsAtTimeStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
-			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
-			timeStampEvents[timeStampKey] = eventsAtTimeStamp;
-		}
-	}
-
-	// Schedule events
-	MIDITimeStamp lastProcessedMIDITimeStamp = fromMIDITimeStamp;
-	for (NSNumber *timeStampKey in [timeStampEvents.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
-		MusicTimeStamp musicTimeStamp = timeStampKey.doubleValue;
-		MIDITimeStamp midiTimeStamp = [clock midiTimeStampForMusicTimeStamp:musicTimeStamp];
-		MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEvents[timeStampKey];
-		if (tempoEventAtTimeStamp) [clock setMusicTimeStamp:musicTimeStamp withTempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
-
-		NSArray *events = timeStampEvents[timeStampKey];
-		for (id eventObject in events) {
-			if ([eventObject isKindOfClass:[MIKMIDIEventWithDestination class]]) {
-				[self scheduleEventWithDestination:eventObject atMIDITimeStamp:midiTimeStamp];
-			}
-		}
-
-		lastProcessedMIDITimeStamp = midiTimeStamp;
-	}
-
-	self.lastProcessedMIDITimeStamp = lastProcessedMIDITimeStamp;
-
-	// Handle looping
-	if (isLooping && calculatedToMusicTimeStamp > toMusicTimeStamp) {
-		MusicTimeStamp loopStartMusicTimeStamp = self.loopStartTimeStamp;
-		Float64 tempo;
-		if (![sequence getTempo:&tempo atTimeStamp:loopStartMusicTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
-		MusicTimeStamp loopLength = self.loopEndTimeStamp - loopStartMusicTimeStamp;
-
-		MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartMusicTimeStamp + loopLength];
-		[clock setMusicTimeStamp:loopStartMusicTimeStamp withTempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
-		[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
-	}
 }
 
 @end

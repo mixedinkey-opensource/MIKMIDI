@@ -30,11 +30,11 @@
 {
 	Float64 secondsPerMIDITimeStamp = [[self class] secondsPerMIDITimeStamp];
 	Float64 secondsPerMusicTimeStamp = 1.0 / (tempo / 60.0);
-	Float64 musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
+	Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
-	self.timeStampZero = midiTimeStamp - (musicTimeStamp * musicTimeStampsPerMIDITimeStamp);
-	self.midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
-	self.musicTimeStampsPerMIDITimeStamp = musicTimeStampsPerMIDITimeStamp;
+	self.timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
+	self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
+	self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
 }
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp

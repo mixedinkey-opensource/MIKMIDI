@@ -31,7 +31,8 @@
 @property (nonatomic) MusicTimeStamp punchInTime;
 @property (nonatomic) MusicTimeStamp punchOutTime;
 
-@property (nonatomic, getter=isLooping) BOOL looping;
+@property (nonatomic, getter=shouldLoop) BOOL loop;
+@property (readonly, nonatomic, getter=isLooping) BOOL looping;
 @property (nonatomic) MusicTimeStamp loopStartTimeStamp;
 @property (nonatomic) MusicTimeStamp loopEndTimeStamp;
 
