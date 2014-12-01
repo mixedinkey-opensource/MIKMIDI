@@ -15,6 +15,8 @@
 + (instancetype)clock;
 
 - (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
+
+- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
 + (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval;

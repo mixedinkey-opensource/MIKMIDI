@@ -10,8 +10,8 @@
 
 @interface MIKMIDIClock ()
 @property (nonatomic) MIDITimeStamp timeStampZero;
+@property (nonatomic) Float64 musicTimeStampsPerMIDITimeStamp;
 @property (nonatomic) Float64 midiTimeStampsPerMusicTimeStamp;
-
 @end
 
 
@@ -30,9 +30,16 @@
 {
 	Float64 secondsPerMIDITimeStamp = [[self class] secondsPerMIDITimeStamp];
 	Float64 secondsPerMusicTimeStamp = 1.0 / (tempo / 60.0);
+	Float64 musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
 
-	self.timeStampZero = midiTimeStamp - (musicTimeStamp * (secondsPerMIDITimeStamp / secondsPerMusicTimeStamp));
+	self.timeStampZero = midiTimeStamp - (musicTimeStamp * musicTimeStampsPerMIDITimeStamp);
 	self.midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
+	self.musicTimeStampsPerMIDITimeStamp = musicTimeStampsPerMIDITimeStamp;
+}
+
+- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	return (midiTimeStamp - self.timeStampZero) * self.musicTimeStampsPerMIDITimeStamp;
 }
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
