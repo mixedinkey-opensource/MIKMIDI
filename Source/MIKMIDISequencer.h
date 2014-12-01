@@ -21,8 +21,8 @@
 + (instancetype)sequencerWithSequence:(MIKMIDISequence *)sequence;
 
 @property (strong, nonatomic) MIKMIDISequence *sequence;
-@property (readonly, nonatomic) BOOL isPlaying;
-@property (readonly, nonatomic) BOOL isRecording;
+@property (readonly, nonatomic, getter=isPlaying) BOOL playing;
+@property (readonly, nonatomic, getter=isRecording) BOOL recording;
 
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
 @property (nonatomic) MusicTimeStamp preRoll;

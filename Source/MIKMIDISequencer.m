@@ -29,6 +29,13 @@
 @end
 
 
+@interface MIKMIDICommandWithDestination : NSObject
+@property (strong, nonatomic) MIKMIDICommand *command;
+@property (strong, nonatomic) MIKMIDIDestinationEndpoint *destination;
++ (instancetype)commandWithDestination:(MIKMIDIDestinationEndpoint *)destination command:(MIKMIDICommand *)command;
+@end
+
+
 
 #pragma mark -
 
@@ -41,6 +48,9 @@
 
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
 @property (strong, nonatomic) NSTimer *timer;
+
+@property (strong, nonatomic) NSMutableDictionary *pendingNoteOffs;
+@property (strong, nonatomic) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
 
 @end
 
@@ -93,6 +103,8 @@
 	[self.clock setMusicTimeStamp:timeStamp withTempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
+	self.pendingNoteOffs = [NSMutableDictionary dictionary];
+	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
 	self.timer = [NSTimer timerWithTimeInterval:0.0001 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
 	[[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
@@ -108,7 +120,52 @@
 {
 	[self.timer invalidate];
 	self.timer = nil;
+	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
+	self.pendingNoteOffs = nil;
+	self.pendingNoteOffMIDITimeStamps = nil;
 	self.playing = NO;
+}
+
+- (void)sendPendingNoteOffCommandsUpToMIDITimeStamp:(MIDITimeStamp)toTimeStamp
+{
+	MIDITimeStamp allPendingNotesOffTimeStamp = 0;
+	if (toTimeStamp == 0) {
+		toTimeStamp = ULONG_LONG_MAX;
+		allPendingNotesOffTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001];
+	}
+
+	NSMapTable *noteOffDestinationsToCommands = [NSMapTable strongToStrongObjectsMapTable];
+	NSMutableDictionary *noteOffs = self.pendingNoteOffs;
+	if (!noteOffs.count) return;
+	NSMutableOrderedSet *noteOffTimeStamps = self.pendingNoteOffMIDITimeStamps;
+	for (NSNumber *midiTimeStampNumber in [noteOffTimeStamps copy]) {
+		MIDITimeStamp timeStamp = [midiTimeStampNumber unsignedLongLongValue];
+		if (timeStamp > toTimeStamp) break;
+
+		NSArray *noteOffsAtTimeStamp = noteOffs[midiTimeStampNumber];
+		for (MIKMIDICommandWithDestination *destinationCommand in noteOffsAtTimeStamp) {
+			MIKMIDIDestinationEndpoint *destination = destinationCommand.destination;
+			NSMutableArray *noteOffCommandsForDestination = [noteOffDestinationsToCommands objectForKey:destination] ? [noteOffDestinationsToCommands objectForKey:destination] : [NSMutableArray array];
+			MIKMIDICommand *command = destinationCommand.command;
+			if (allPendingNotesOffTimeStamp) {
+				MIKMutableMIDICommand *mutableCommand = [command mutableCopy];
+				mutableCommand.midiTimestamp = allPendingNotesOffTimeStamp;
+				command = mutableCommand;
+			}
+			[noteOffCommandsForDestination addObject:command];
+			[noteOffDestinationsToCommands setObject:noteOffCommandsForDestination forKey:destination];
+		}
+		[noteOffTimeStamps removeObject:midiTimeStampNumber];
+		[noteOffs removeObjectForKey:midiTimeStampNumber];
+	}
+
+	for (MIKMIDIDestinationEndpoint *endpoint in [[noteOffDestinationsToCommands keyEnumerator] allObjects]) {
+		NSArray *commands = [noteOffDestinationsToCommands objectForKey:endpoint];
+		NSError *error;
+		if (commands.count && ![[MIKMIDIDeviceManager sharedDeviceManager] sendCommands:commands toEndpoint:endpoint error:&error]) {
+			NSLog(@"%@: An error occurred scheduling the commands %@ for destination endpoint %@. %@", NSStringFromClass([self class]), commands, endpoint, error);
+		}
+	}
 }
 
 #pragma mark - Recording
@@ -169,6 +226,11 @@
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxMusicTimeStamp);
 
+	// Send pending note off commands
+	MIDITimeStamp actualToMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:toMusicTimeStamp];
+	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:actualToMIDITimeStamp];
+
+	// Get relevant tempo events
 	NSMutableDictionary *tempoEvents = [NSMutableDictionary dictionary];
 	NSMutableDictionary *timeStampEvents = [NSMutableDictionary dictionary];
 	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
@@ -177,6 +239,7 @@
 		tempoEvents[timeStampKey] = tempoEvent;
 	}
 
+	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
 		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
 		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
@@ -187,6 +250,7 @@
 		}
 	}
 
+	// Schedule events
 	MIDITimeStamp lastProcessedMIDITimeStamp = fromMIDITimeStamp;
 	for (NSNumber *timeStampKey in [timeStampEvents.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
 		MusicTimeStamp musicTimeStamp = timeStampKey.doubleValue;
@@ -206,6 +270,7 @@
 
 	self.lastProcessedMIDITimeStamp = lastProcessedMIDITimeStamp;
 
+	// Handle looping
 	if (isLooping && calculatedToMusicTimeStamp > toMusicTimeStamp) {
 		MusicTimeStamp loopStartMusicTimeStamp = self.loopStartTimeStamp;
 		Float64 tempo;
@@ -221,29 +286,39 @@
 - (void)scheduleEventWithDestination:(MIKMIDIEventWithDestination *)destinationEvent atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
 	MIKMIDIEvent *event = destinationEvent.event;
-	NSArray *commands;
+	MIKMIDIDestinationEndpoint *destination = destinationEvent.destination;
+	NSMutableArray *commands = [NSMutableArray array];
+	NSMutableDictionary *pendingNoteOffs = self.pendingNoteOffs;
+	NSMutableOrderedSet *pendingNoteOffTimeStamps = self.pendingNoteOffMIDITimeStamps;
 
 	if ([event isKindOfClass:[MIKMIDINoteEvent class]]) {
+		// Note On
 		MIKMIDINoteEvent *noteEvent = (MIKMIDINoteEvent *)event;
 		MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
 		noteOn.midiTimestamp = midiTimeStamp;
 		noteOn.channel = noteEvent.channel;
 		noteOn.note = noteEvent.note;
 		noteOn.velocity = noteEvent.velocity;
+		[commands addObject:noteOn];
 
+		// Note Off
 		MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
-		noteOff.midiTimestamp = [self.clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+		MIDITimeStamp noteOffTimeStamp = [self.clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+		noteOff.midiTimestamp = noteOffTimeStamp;
 		noteOff.channel = noteEvent.channel;
 		noteOff.note = noteEvent.note;
 		noteOff.velocity = noteEvent.releaseVelocity;
-
-		commands = @[ noteOn, noteOff ];
+		NSMutableArray *pendingNoteOffsAtTimeStamp = pendingNoteOffs[@(noteOffTimeStamp)];
+		if (!pendingNoteOffsAtTimeStamp) pendingNoteOffsAtTimeStamp	= [NSMutableArray array];
+		NSNumber *timeStampNumber = @(noteOffTimeStamp);
+		[pendingNoteOffsAtTimeStamp addObject:[MIKMIDICommandWithDestination commandWithDestination:destination command:noteOff]];
+		pendingNoteOffs[@(noteOffTimeStamp)] = pendingNoteOffsAtTimeStamp;
+		[pendingNoteOffTimeStamps addObject:timeStampNumber];
 	}
 
 	NSError *error;
-	NSLog(@"%@", commands);
-	if (commands.count && ![[MIKMIDIDeviceManager sharedDeviceManager] sendCommands:commands toEndpoint:destinationEvent.destination error:&error]) {
-		NSLog(@"%@: An error occurred scheduling the commands %@ for destination endpoint %@. %@", NSStringFromClass([self class]), commands, destinationEvent.destination, error);
+	if (commands.count && ![[MIKMIDIDeviceManager sharedDeviceManager] sendCommands:commands toEndpoint:destination error:&error]) {
+		NSLog(@"%@: An error occurred scheduling the commands %@ for destination endpoint %@. %@", NSStringFromClass([self class]), commands, destination, error);
 	}
 }
 
@@ -261,6 +336,19 @@
 	destinationEvent->_event = event;
 	destinationEvent->_destination = destination;
 	return destinationEvent;
+}
+
+@end
+
+
+@implementation MIKMIDICommandWithDestination
+
++ (instancetype)commandWithDestination:(MIKMIDIDestinationEndpoint *)destination command:(MIKMIDICommand *)command
+{
+	MIKMIDICommandWithDestination *destinationCommand = [[self alloc] init];
+	destinationCommand->_destination = destination;
+	destinationCommand->_command = command;
+	return destinationCommand;
 }
 
 @end
