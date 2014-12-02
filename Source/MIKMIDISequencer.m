@@ -131,7 +131,7 @@
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.05];
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 
@@ -250,7 +250,7 @@
 	MIDITimeStamp allPendingNotesOffTimeStamp = 0;
 	if (toTimeStamp == 0) {
 		toTimeStamp = ULONG_LONG_MAX;
-		allPendingNotesOffTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001];
+		allPendingNotesOffTimeStamp = MAX(self.lastProcessedMIDITimeStamp + 1, MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001]);
 	}
 
 	NSMapTable *noteOffDestinationsToCommands = [NSMapTable strongToStrongObjectsMapTable];
