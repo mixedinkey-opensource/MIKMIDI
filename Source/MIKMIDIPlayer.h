@@ -13,7 +13,7 @@
 @class MIKMIDIMetronome;
 
 /**
- *  MIKMIDIPlayer is an Objective-C wrapper for CoreMIDI's MusicPlayer.
+ *  MIKMIDIPlayer can be used to play an MIKMIDISequence.
  */
 @interface MIKMIDIPlayer : NSObject
 
@@ -46,6 +46,8 @@
  *  Stops playback of the music seuqenece.
  */
 - (void)stopPlayback;
+
+// Properties
 
 /**
  *  The music sequence to play.
