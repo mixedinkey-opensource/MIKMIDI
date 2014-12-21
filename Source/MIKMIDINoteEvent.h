@@ -64,25 +64,6 @@
  */
 + (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
 
-/**
- *  The note letter of the passed in MIDI note. Notes that correspond to a "black key" on the piano will always be presented as sharp.
- *
- *  @param note The MIDI note number you would like the note letter for.
- *
- *  @return A string representing the note letter of the MIDI note.
- */
-+ (NSString *)noteLetterForMIDINote:(UInt8)note;
-
-/**
- *  The note letter and octave of the passed in MIDI note. 
- *  0 is considered to be the first octave, so the note C0 is equal to MIDI note 0.
- *
- *  @param note The MIDI note number you would like the note letter for.
- *
- *  @return A string representing the note letter and octave of the MIDI note.
- */
-+ (NSString *)noteLetterAndOctaveForMIDINote:(UInt8)note;
-
 @end
 
 /**

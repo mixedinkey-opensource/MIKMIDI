@@ -26,3 +26,29 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 // Subclasses of MIKMIDICommand and MIKMIDIEvent can and should use this macro to raise an exception
 // when the setter for a public property is called on an immutable object.
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])
+
+/**
+ *  Returns the note letter of the passed in MIDI note number as a string.
+ *  Notes that correspond to a "black key" on the piano will always be presented as sharp.
+ *
+ *  @param noteNumber The MIDI note number for the note. Between 0 and 127.
+ *
+ *  @return A string containing the human readable MIDI note letter for the MIDI note.
+ *  e.g. C for MIDI note number 60.
+ *
+ *  @see MIKNoteLetterAndOctaveForMIDINote()
+ */
+NSString *MIKNoteLetterForMIDINoteNumber(UInt8 noteNumber);
+
+/**
+ *  The note letter and octave of the passed in MIDI note.
+ *  0 is considered to be the first octave, so the note C0 is equal to MIDI note 0.
+ *
+ *  @param noteNumber The MIDI note number you would like the note letter for.
+ *  Between 0 and 127. e.g. C for MIDI note number 60.
+ *
+ *  @return A string representing the note letter and octave of the MIDI note.
+ *
+ *  @see MIKNoteLetterForMIDINoteNumber()
+ */
+NSString *MIKNoteLetterAndOctaveForMIDINote(UInt8 noteNumber);

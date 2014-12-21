@@ -130,29 +130,17 @@
 
 - (NSString *)noteLetter
 {
-    return [[self class] noteLetterForMIDINote:self.note];
+	return MIKNoteLetterForMIDINoteNumber(self.note);
 }
 
 - (NSString *)noteLetterAndOctave
 {
-    return [[self class] noteLetterAndOctaveForMIDINote:self.note];
+	return MIKNoteLetterAndOctaveForMIDINote(self.note);
 }
 
 - (NSString *)additionalEventDescription
 {
     return [NSString stringWithFormat:@"MIDINote: %d, Note: %@, channel %d, duration %f, velocity %d, frequency %f", self.note, self.noteLetter, self.channel, self.duration, self.velocity, self.frequency];
-}
-
-+ (NSString *)noteLetterForMIDINote:(UInt8)note
-{
-    NSArray *letters = @[@"C", @"C#", @"D", @"D#", @"E", @"F", @"F#", @"G", @"G#", @"A", @"A#", @"B"];
-    return [letters objectAtIndex:note % 12];
-}
-
-+ (NSString *)noteLetterAndOctaveForMIDINote:(UInt8)note
-{
-    NSInteger octave = note / 12;
-    return [[self noteLetterForMIDINote:note] stringByAppendingFormat:@"%ld", (long)octave];
 }
 
 @end
