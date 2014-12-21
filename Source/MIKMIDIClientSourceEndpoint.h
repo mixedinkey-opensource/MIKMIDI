@@ -1,6 +1,7 @@
 //
 //  MIKMIDIClientSourceEndpoint.h
-//
+//  MIKMIDI
+//  
 //  Created by Dan Rosenstark on 2015-01-07
 //
 

@@ -1,9 +1,8 @@
 //
 //  MIKMIDIClientSourceEndpoint.m
-//  PlayingWithMikMidiSwift
+//  MIKMIDI
 //
-//  Created by dr2050 on 1/7/15.
-//  Copyright (c) 2015 Confusion Studios LLC. All rights reserved.
+//  Created by Dan Rosenstark on 2015-01-07
 //
 
 #import "MIKMIDIClientSourceEndpoint.h"
