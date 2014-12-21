@@ -15,7 +15,11 @@
 @class MIKMIDIDestinationEndpoint;
 
 /**
- *  MIKMIDISequence is an Objective-C wrapper for CoreMIDI's MusicTrack.
+ *  Instances of MIKMIDITrack contain sequences of MIDI events. Commonly,
+ *  these will be MIDI notes. Multiple MIKMIDITracks can be contained in a
+ *  MIKMIDISequence, which can be played.
+ *  
+ *  @see MIKMIDISequence
  */
 @interface MIKMIDITrack : NSObject
 

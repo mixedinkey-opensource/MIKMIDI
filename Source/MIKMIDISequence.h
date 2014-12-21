@@ -20,7 +20,12 @@ typedef struct {
 @class MIKMIDIDestinationEndpoint;
 
 /**
- *  MIKMIDISequence is an Objective-C wrapper for CoreMIDI's MusicSequence.
+ *  Instances of MIKMIDISequence contain a collection of MIDI tracks. MIKMIDISequences may be thought
+ *  of as MIDI "songs". They can be loaded from and saved to MIDI files. They can also be played
+ *  using an MIKMIDIPlayer.
+ *
+ *  @see MIKMIDITrack
+ *  @see MIKMIDIPlayer
  */
 @interface MIKMIDISequence : NSObject
 
