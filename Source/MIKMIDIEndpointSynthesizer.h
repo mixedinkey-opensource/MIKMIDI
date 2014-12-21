@@ -136,49 +136,6 @@
 - (void)handleMIDIMessages:(NSArray *)messages;
 
 /**
- *  Sends a note on event to the synthesizer.
- *
- *  This method is the equivalent of calling handleMIDIMessages: with an array
- *  of a single MIDINoteOnCommand.
- *
- *  @param note The MIDI note for the note on event.
- *
- *  @param velocity The velocity of the note on event.
- *
- *  @param channel The channel for the note on event.
- *
- */
-- (void)noteOn:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
-
-/**
- *  Sends a note off event to the synthesizer.
- *
- *  This method is the equivalent of calling handleMIDIMessages: with an array
- *  of a single MIDINoteOffCommand.
- *
- *  @param note The MIDI note for the note off event.
- *
- *  @param velocity The velocity of the note off event.
- *
- *  @param channel The channel for the note off event.
- *
- */
-- (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel;
-
-/**
- *  Sends a note off event to the synthesizer.
- *
- *  This method is equivalent to calling noteOff:velocity:channel: with a
- *  velocity of 0.
- *
- *  @param note The MIDI note for the note off event.
- *
- *  @param channel The channel for the note off event.
- *
- */
-- (void)noteOff:(UInt8)note channel:(UInt8)channel;
-
-/**
  *  The endpoint from which the receiver is receiving MIDI messages.
  *  This may be either an external MIKMIDISourceEndpoint, e.g. to synthesize MIDI
  *  events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,

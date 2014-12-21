@@ -144,29 +144,6 @@
 	}
 }
 
-- (void)noteOn:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel
-{
-	MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
-	noteOn.note = note;
-	noteOn.channel = channel;
-	noteOn.velocity = velocity;
-	[self handleMIDIMessages:@[noteOn]];
-}
-
-- (void)noteOff:(UInt8)note velocity:(UInt8)velocity channel:(UInt8)channel
-{
-	MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
-	noteOff.note = note;
-	noteOff.channel = channel;
-	noteOff.velocity = velocity;
-	[self handleMIDIMessages:@[noteOff]];
-}
-
-- (void)noteOff:(UInt8)note channel:(UInt8)channel
-{
-	[self noteOff:note velocity:0 channel:channel];
-}
-
 #pragma mark Audio Graph
 
 - (BOOL)setupAUGraph
