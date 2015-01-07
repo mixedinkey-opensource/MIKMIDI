@@ -13,6 +13,7 @@
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIInputPort.h"
 #import "MIKMIDIOutputPort.h"
+#import "MIKMIDIClientSourceEndpoint.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIDeviceManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDeviceManager.m in the Build Phases for this target
@@ -88,7 +89,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 #pragma mark - Public
 
-- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
 	if (!port) {
@@ -100,7 +101,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	return [port addEventHandler:eventHandler];
 }
 
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken;
+- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
 {
 	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
 	if (!port) return; // Not connected
@@ -116,6 +117,13 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 {
 	return [self.outputPort sendCommands:commands toDestination:endpoint error:error];
 }
+
+
+- (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error
+{
+    return [endpoint sendCommands:commands error:error];
+}
+
 
 #pragma mark - Private
 
