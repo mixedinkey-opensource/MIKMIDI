@@ -53,7 +53,7 @@
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDITrack.h"
 #import "MIKMIDIClientDestinationEndpoint.h"
-
+#import "MIKMIDIClientSourceEndpoint.h"
 #import "MIKMIDISequencer.h"
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDIClock.h"

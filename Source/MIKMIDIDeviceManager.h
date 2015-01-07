@@ -10,6 +10,7 @@
 #import "MIKMIDIInputPort.h"
 
 @class MIKMIDISourceEndpoint;
+@class MIKMIDIClientSourceEndpoint;
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDICommand;
 
@@ -103,6 +104,21 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
 - (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
+
+
+/**
+ *  Used to send MIDI messages/commands from your application to a MIDI output endpoint.
+ *  Use this to send messages to a virtual MIDI port created in the  your client using the MIKMIDIClientSourceEndpoint class.
+ *
+ *  @param commands An NSArray containing MIKMIDICommand instances to be sent.
+ *  @param endpoint An MIKMIDIClientSourceEndpoint to which the commands should be sent.
+ *  @param error    If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
+ *
+ *  @return YES if the commands were successfully sent, NO if an error occurred.
+ */
+- (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
+
+
 
 /**
  *  An NSArray containing MIKMIDIDevice instances representing MIDI devices connected to the system.
