@@ -5,9 +5,9 @@
 //  Created by Dan Rosenstark on 2015-01-07
 //
 
-#import "MIKMIDIEndpoint.h"
+#import "MIKMIDISourceEndpoint.h"
 
-@interface MIKMIDIClientSourceEndpoint : MIKMIDIEndpoint
+@interface MIKMIDIClientSourceEndpoint : MIKMIDISourceEndpoint
 
 - (instancetype)initWithName:(NSString*)name;
 
