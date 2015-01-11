@@ -63,6 +63,7 @@
 - (void)dealloc
 {
 	if (_selfTrampoline) free(_selfTrampoline);
+    MIDIEndpointDispose(self.objectRef);
 }
 
 #pragma mark - Private
@@ -87,5 +88,7 @@ void MIKMIDIDestinationReadProc(const MIDIPacketList *pktList, void *readProcRef
 		}
 	}
 }
+
+
 
 @end
