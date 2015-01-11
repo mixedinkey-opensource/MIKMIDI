@@ -51,5 +51,10 @@
     return YES;
 }
 
+-(void)dealloc {
+    MIDIEndpointDispose(self.objectRef);
+}
+
+
 
 @end
