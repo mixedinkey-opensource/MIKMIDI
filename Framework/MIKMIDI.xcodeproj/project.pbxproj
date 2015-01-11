@@ -386,6 +386,7 @@
 				9D74EF4317A713A100BEE89F /* MIKMIDIErrors.m */,
 				9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */,
 				9DF99E731831837C004EE5F4 /* Device Support */,
+				9D2717EB19E344EF00D62398 /* Endpoints */,
 				9DF99E75183183AF004EE5F4 /* Commands */,
 				9DF99E7418318395004EE5F4 /* Mapping */,
 				9DF99E76183183F6004EE5F4 /* Utilities */,
@@ -545,6 +546,7 @@
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
 				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */,
+				9D2717EE19E3450700D62398 /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
