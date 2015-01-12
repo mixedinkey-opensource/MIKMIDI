@@ -66,4 +66,15 @@
 	return (1.0 / [self secondsPerMIDITimeStamp]) * timeInterval;
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+	MIKMIDIClock *clock = [[[self class] alloc] init];
+	clock.timeStampZero = self.timeStampZero;
+	clock.musicTimeStampsPerMIDITimeStamp = self.musicTimeStampsPerMIDITimeStamp;
+	clock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
+	return clock;
+}
+
 @end

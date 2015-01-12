@@ -10,7 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 
-@interface MIKMIDIClock : NSObject
+@interface MIKMIDIClock : NSObject	<NSCopying>
 
 + (instancetype)clock;
 
