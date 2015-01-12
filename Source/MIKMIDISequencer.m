@@ -134,6 +134,7 @@
 	self.historicalClockMIDITimeStamps = nil;
 	self.looping = NO;
 	self.playing = NO;
+	self.currentTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:self.lastProcessedMIDITimeStamp];
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
@@ -214,7 +215,7 @@
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
-	} else if ([clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()] > sequence.length) {
+	} else if ([clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()] >= sequence.length) {
 		[self stopRecording];
 	}
 }
@@ -443,10 +444,29 @@
 
 #pragma mark - Properties
 
+@synthesize currentTimeStamp = _currentTimeStamp;
 - (MusicTimeStamp)currentTimeStamp
 {
-	MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
-	return (timeStamp <= self.sequence.length) ? timeStamp : self.sequence.length;
+	if (self.isPlaying) {
+		MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
+		_currentTimeStamp = (timeStamp <= self.sequence.length) ? timeStamp : self.sequence.length;
+	}
+	return _currentTimeStamp;
+}
+
+- (void)setCurrentTimeStamp:(MusicTimeStamp)currentTimeStamp
+{
+	_currentTimeStamp = currentTimeStamp;
+
+	if (self.isPlaying) {
+		if (self.isRecording) {
+			[self stopRecording];
+			[self startRecordingAtTimeStamp:_currentTimeStamp];
+		} else {
+			[self stopPlayback];
+			[self startPlaybackAtTimeStamp:_currentTimeStamp];
+		}
+	}
 }
 
 @end
