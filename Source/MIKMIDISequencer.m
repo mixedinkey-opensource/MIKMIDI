@@ -213,6 +213,8 @@
 		MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
 		[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 		[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
+	} else if (calculatedToMusicTimeStamp > self.sequence.length) {
+		[self stopRecording];
 	}
 }
 
