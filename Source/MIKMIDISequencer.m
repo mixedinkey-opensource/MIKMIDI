@@ -385,58 +385,41 @@
 	self.pendingRecordedNoteEvents = nil;
 }
 
-- (void)recordMIDICommands:(NSSet *)commands
+- (void)recordMIDICommand:(MIKMIDICommand *)command
 {
-	NSMutableDictionary *commandsAtTimeStamps = [NSMutableDictionary dictionaryWithCapacity:commands.count];
-	NSMutableOrderedSet *commandTimeStamps = [NSMutableOrderedSet orderedSetWithCapacity:commands.count];
-
-	for (MIKMIDICommand *command in commands) {
-		NSNumber *timeStampNumber = @(command.midiTimestamp);
-		NSMutableArray *commandsAtTimeStamp = commandsAtTimeStamps[timeStampNumber];
-		if (!commandsAtTimeStamp) commandsAtTimeStamp = [NSMutableArray arrayWithCapacity:1];
-		[commandsAtTimeStamp addObject:command];
-		commandsAtTimeStamps[timeStampNumber] = commandsAtTimeStamp;
-		[commandTimeStamps addObject:timeStampNumber];
-	}
-	[commandTimeStamps sortUsingComparator:^NSComparisonResult(id obj1, id obj2) { return [obj1 compare:obj2]; }];
-
-	NSMutableSet *events = [NSMutableSet setWithCapacity:commands.count];
-	for (NSNumber *timeStampNumber in commandTimeStamps) {
-		MIDITimeStamp midiTimeStamp = [timeStampNumber unsignedLongLongValue];
-		MIKMIDIClock *clockAtTimeStamp;
-		for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
-			if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
-				clockAtTimeStamp = self.historicalClocks[historicalClockTimeStamp];
-			} else {
-				break;
-			}
+	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
+	MIKMIDIClock *clockAtTimeStamp;
+	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
+			clockAtTimeStamp = self.historicalClocks[historicalClockTimeStamp];
+		} else {
+			break;
 		}
-		if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
-		MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp];
+	}
+	if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
+	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp];
 
-		for (MIKMIDICommand *command in commandsAtTimeStamps[timeStampNumber]) {
-			if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
-				MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
-				MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
-				MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
-				self.pendingRecordedNoteEvents[@(noteOnCommand.note)] = noteEvent;
-			} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
-				MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
-				NSNumber *noteNumber = @(noteOffCommand.note);
-				MIKMutableMIDINoteEvent *noteEvent = self.pendingRecordedNoteEvents[noteNumber];
-				if (noteEvent) {
-					noteEvent.releaseVelocity = noteOffCommand.velocity;
-					noteEvent.duration = musicTimeStamp - noteEvent.timeStamp;
-					[self.pendingRecordedNoteEvents removeObjectForKey:noteNumber];
-					[events addObject:noteEvent];
-				}
-			}
+	MIKMIDIEvent *event;
+	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
+		MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
+		MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
+		MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
+		self.pendingRecordedNoteEvents[@(noteOnCommand.note)] = noteEvent;
+	} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
+		MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
+		NSNumber *noteNumber = @(noteOffCommand.note);
+		MIKMutableMIDINoteEvent *noteEvent = self.pendingRecordedNoteEvents[noteNumber];
+		if (noteEvent) {
+			noteEvent.releaseVelocity = noteOffCommand.velocity;
+			noteEvent.duration = musicTimeStamp - noteEvent.timeStamp;
+			[self.pendingRecordedNoteEvents removeObjectForKey:noteNumber];
+			event = noteEvent;
 		}
 	}
 
-	if (events.count) {
+	if (event) {
 		for (MIKMIDITrack *track in self.recordEnabledTracks) {
-			[track insertMIDIEvents:events];
+			[track insertMIDIEvent:event];
 		}
 	}
 }

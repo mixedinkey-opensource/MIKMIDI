@@ -11,6 +11,7 @@
 
 @class MIKMIDISequence;
 @class MIKMIDIMetronome;
+@class MIKMIDICommand;
 
 
 @interface MIKMIDISequencer : NSObject
@@ -55,6 +56,6 @@
 - (void)resumeRecording;
 - (void)stopRecording;
 
-- (void)recordMIDICommands:(NSSet *)commands;
+- (void)recordMIDICommand:(MIKMIDICommand *)command;
 
 @end
