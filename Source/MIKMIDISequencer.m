@@ -218,8 +218,11 @@
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
-	} else if ([clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()] >= sequence.length) {
-		[self stopRecording];
+	} else {
+		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
+		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length)) {
+			[self stopRecording];
+		}
 	}
 }
 
