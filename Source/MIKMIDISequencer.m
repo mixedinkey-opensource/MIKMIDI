@@ -142,8 +142,9 @@
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
-	if (toMIDITimeStamp < fromMIDITimeStamp) return;
+	MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
+	if (systemTimeStamp < fromMIDITimeStamp) return;
+	MIDITimeStamp toMIDITimeStamp = systemTimeStamp + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
 	MIKMIDIClock *clock = self.clock;
 
 	MIKMIDISequence *sequence = self.sequence;
@@ -219,8 +220,7 @@
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
 	} else {
-		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
-		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length)) {
+		if ([clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()] >= sequence.length) {
 			[self stopRecording];
 		}
 	}
