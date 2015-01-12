@@ -119,8 +119,7 @@
 
 - (void)resumePlayback
 {
-	MusicTimeStamp lastMusicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:self.lastProcessedMIDITimeStamp - 1];
-	[self startPlaybackAtTimeStamp:lastMusicTimeStamp];
+	[self startPlaybackAtTimeStamp:self.currentTimeStamp];
 }
 
 - (void)stopPlayback
@@ -133,8 +132,8 @@
 	self.historicalClocks = nil;
 	self.historicalClockMIDITimeStamps = nil;
 	self.looping = NO;
+	[self currentTimeStamp];	// update the current time stamp
 	self.playing = NO;
-	self.currentTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:self.lastProcessedMIDITimeStamp];
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
