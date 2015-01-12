@@ -104,6 +104,8 @@
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
+	if (self.isPlaying) [self stopRecording];
+
 	Float64 startingTempo;
 	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
@@ -124,6 +126,8 @@
 
 - (void)stopPlayback
 {
+	if (!self.isPlaying) return;
+
 	[self.timer invalidate];
 	self.timer = nil;
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
