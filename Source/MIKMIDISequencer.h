@@ -34,7 +34,7 @@
 @property (nonatomic, getter=shouldLoop) BOOL loop;
 @property (readonly, nonatomic, getter=isLooping) BOOL looping;
 @property (nonatomic) MusicTimeStamp loopStartTimeStamp;
-@property (nonatomic) MusicTimeStamp loopEndTimeStamp;
+@property (nonatomic) MusicTimeStamp loopEndTimeStamp;	// set to -1 to have the loop end at the end of the sequence. default is -1.
 
 @property (strong, nonatomic) MIKMIDIMetronome *metronome;
 @property (nonatomic, getter=isClickTrackAlwaysEnabled) BOOL clickTrackAlwaysEnabled;

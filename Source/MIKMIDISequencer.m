@@ -70,6 +70,7 @@
 	if (self = [super init]) {
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
+		_loopEndTimeStamp = -1;
 	}
 	return self;
 }
@@ -161,7 +162,6 @@
 	} else {
 		maxMusicTimeStamp = self.isRecording ? DBL_MAX : sequence.length;
 	}
-
 	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxMusicTimeStamp);
 
 	// Send pending note off commands
@@ -319,7 +319,7 @@
 		NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
 		for (NSUInteger i = 0; i < count; i++) {
 			NSNumber *timeStampNumber = historicalClockMIDITimeStamps[i];
-			MIDITimeStamp timeStamp = timeStampNumber.unsignedLongValue;
+			MIDITimeStamp timeStamp = timeStampNumber.unsignedLongLongValue;
 			if (timeStamp <= oldTimeStamp) {
 				[timeStampsToRemove addObject:timeStampNumber];
 				[indexesToRemove addIndex:i];
@@ -402,10 +402,10 @@
 
 	NSMutableSet *events = [NSMutableSet setWithCapacity:commands.count];
 	for (NSNumber *timeStampNumber in commandTimeStamps) {
-		MIDITimeStamp midiTimeStamp = [timeStampNumber unsignedLongValue];
+		MIDITimeStamp midiTimeStamp = [timeStampNumber unsignedLongLongValue];
 		MIKMIDIClock *clockAtTimeStamp;
 		for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
-			if ([historicalClockTimeStamp unsignedLongValue] > midiTimeStamp) {
+			if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
 				clockAtTimeStamp = self.historicalClocks[historicalClockTimeStamp];
 			} else {
 				break;
@@ -473,6 +473,11 @@
 			[self startPlaybackAtTimeStamp:_currentTimeStamp];
 		}
 	}
+}
+
+- (MusicTimeStamp)loopEndTimeStamp
+{
+	return (_loopEndTimeStamp < 0) ? self.sequence.length : _loopEndTimeStamp;
 }
 
 @end
