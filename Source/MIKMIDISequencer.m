@@ -387,6 +387,8 @@
 
 - (void)recordMIDICommand:(MIKMIDICommand *)command
 {
+	if (!self.isRecording) return;
+	
 	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
 	MIKMIDIClock *clockAtTimeStamp;
 	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
