@@ -204,16 +204,17 @@
 
 	self.lastProcessedMIDITimeStamp = lastProcessedMIDITimeStamp;
 
-	// Handle looping
-	if (isLooping && calculatedToMusicTimeStamp > toMusicTimeStamp) {
-		Float64 tempo;
-		if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
-		MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
+	if (isLooping) {
+		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
+			Float64 tempo;
+			if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
+			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
 
-		MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
-		[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
-		[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
-	} else if (calculatedToMusicTimeStamp > self.sequence.length) {
+			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
+			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
+			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
+		}
+	} else if ([clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()] > sequence.length) {
 		[self stopRecording];
 	}
 }
@@ -438,6 +439,14 @@
 - (void)timerFired:(NSTimer *)timer
 {
 	[self processSequenceStartingFromMIDITimeStamp:self.lastProcessedMIDITimeStamp + 1];
+}
+
+#pragma mark - Properties
+
+- (MusicTimeStamp)currentTimeStamp
+{
+	MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
+	return (timeStamp <= self.sequence.length) ? timeStamp : self.sequence.length;
 }
 
 @end
