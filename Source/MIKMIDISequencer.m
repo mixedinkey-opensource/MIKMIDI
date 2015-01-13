@@ -165,14 +165,7 @@
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	if (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp) self.looping = YES;
 	BOOL isLooping = self.isLooping;
-
-	MusicTimeStamp maxMusicTimeStamp;
-	if (isLooping) {
-		maxMusicTimeStamp = loopEndTimeStamp;
-	} else {
-		maxMusicTimeStamp = self.isRecording ? DBL_MAX : sequence.length;
-	}
-	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxMusicTimeStamp);
+	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, isLooping ? loopEndTimeStamp : sequence.length);
 
 	// Send pending note off commands
 	MIDITimeStamp actualToMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:toMusicTimeStamp];
