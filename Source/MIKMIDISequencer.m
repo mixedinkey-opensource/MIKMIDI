@@ -449,7 +449,7 @@
 
 - (MIKMIDINoteEvent	*)pendingNoteEventWithNoteNumber:(NSNumber *)noteNumber channel:(UInt8)channel releaseVelocity:(UInt8)releaseVelocity offTimeStamp:(MusicTimeStamp)offTimeStamp
 {
-	NSMutableArray *pendingRecordedNoteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
+	NSMutableSet *pendingRecordedNoteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
 	for (MIKMutableMIDINoteEvent *noteEvent in [pendingRecordedNoteEventsAtNote copy]) {
 		if (channel == noteEvent.channel) {
 			noteEvent.releaseVelocity = releaseVelocity;
