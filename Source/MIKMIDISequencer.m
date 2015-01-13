@@ -431,14 +431,14 @@
 	NSMutableSet *events = [NSMutableSet set];
 
 	NSMutableDictionary *pendingRecordedNoteEvents = self.pendingRecordedNoteEvents;
-	for (NSNumber *noteNumber in [pendingRecordedNoteEvents copy]) {
+	for (NSNumber *noteNumber in pendingRecordedNoteEvents) {
 		for (MIKMutableMIDINoteEvent *event in pendingRecordedNoteEvents[noteNumber]) {
 			event.releaseVelocity = 0;
 			event.duration = offTimeStamp - event.timeStamp;
 			[events addObject:event];
 		}
-		[pendingRecordedNoteEvents removeObjectForKey:noteNumber];
 	}
+	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
 
 	if (events.count) {
 		for (MIKMIDITrack *track in self.recordEnabledTracks) {
