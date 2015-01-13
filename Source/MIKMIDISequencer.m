@@ -407,10 +407,16 @@
 		MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
 		MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
 		MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
-		self.pendingRecordedNoteEvents[@(noteOnCommand.note)] = noteEvent;
+		NSNumber *noteNumber = @(noteOnCommand.note);
+		NSMutableSet *noteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
+		if (!noteEventsAtNote) {
+			noteEventsAtNote = [NSMutableSet setWithCapacity:1];
+			self.pendingRecordedNoteEvents[noteNumber] = noteEventsAtNote;
+		}
+		[noteEventsAtNote addObject:noteEvent];
 	} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
 		MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
-		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
+		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
 	}
 
 	if (event) {
@@ -422,10 +428,16 @@
 
 - (void)recordPendingNoteEventsWithOffTimeStamp:(MusicTimeStamp)offTimeStamp
 {
+	NSMutableSet *events = [NSMutableSet set];
+
 	NSMutableDictionary *pendingRecordedNoteEvents = self.pendingRecordedNoteEvents;
-	NSMutableSet *events = [NSMutableSet setWithCapacity:pendingRecordedNoteEvents.count];
 	for (NSNumber *noteNumber in [pendingRecordedNoteEvents copy]) {
-		[events addObject:[self pendingNoteEventWithNoteNumber:noteNumber releaseVelocity:0 offTimeStamp:offTimeStamp]];
+		for (MIKMutableMIDINoteEvent *event in pendingRecordedNoteEvents[noteNumber]) {
+			event.releaseVelocity = 0;
+			event.duration = offTimeStamp - event.timeStamp;
+			[events addObject:event];
+		}
+		[pendingRecordedNoteEvents removeObjectForKey:noteNumber];
 	}
 
 	if (events.count) {
@@ -435,15 +447,24 @@
 	}
 }
 
-- (MIKMIDINoteEvent	*)pendingNoteEventWithNoteNumber:(NSNumber *)noteNumber releaseVelocity:(UInt8)releaseVelocity offTimeStamp:(MusicTimeStamp)offTimeStamp
+- (MIKMIDINoteEvent	*)pendingNoteEventWithNoteNumber:(NSNumber *)noteNumber channel:(UInt8)channel releaseVelocity:(UInt8)releaseVelocity offTimeStamp:(MusicTimeStamp)offTimeStamp
 {
-	MIKMutableMIDINoteEvent *noteEvent = self.pendingRecordedNoteEvents[noteNumber];
-	if (noteEvent) {
-		noteEvent.releaseVelocity = releaseVelocity;
-		noteEvent.duration = offTimeStamp - noteEvent.timeStamp;
-		[self.pendingRecordedNoteEvents removeObjectForKey:noteNumber];
+	NSMutableArray *pendingRecordedNoteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
+	for (MIKMutableMIDINoteEvent *noteEvent in [pendingRecordedNoteEventsAtNote copy]) {
+		if (channel == noteEvent.channel) {
+			noteEvent.releaseVelocity = releaseVelocity;
+			noteEvent.duration = offTimeStamp - noteEvent.timeStamp;
+
+			if (pendingRecordedNoteEventsAtNote.count > 1) {
+				[pendingRecordedNoteEventsAtNote removeObject:noteEvent];
+			} else {
+				[self.pendingRecordedNoteEvents removeObjectForKey:noteNumber];
+			}
+
+			return noteEvent;
+		}
 	}
-	return noteEvent;
+	return nil;
 }
 
 #pragma mark - Timer
