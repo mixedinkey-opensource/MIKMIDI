@@ -145,7 +145,7 @@
 	self.historicalClockMIDITimeStamps = nil;
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
-	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length + self.playbackOffset;
+	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length;
 	self.playbackOffset = 0;
 	self.playing = NO;
 	self.recording = self.isPlaying;
