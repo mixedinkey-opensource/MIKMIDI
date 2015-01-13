@@ -48,13 +48,13 @@
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp;
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
 - (void)resumePlayback;
-- (void)stopPlayback;
 
 - (void)startRecording;
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp;
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
 - (void)resumeRecording;
-- (void)stopRecording;
+
+- (void)stop;
 
 - (void)recordMIDICommand:(MIKMIDICommand *)command;
 

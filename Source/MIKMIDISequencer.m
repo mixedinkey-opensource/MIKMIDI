@@ -107,7 +107,7 @@
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	if (self.isPlaying) [self stopRecording];
+	if (self.isPlaying) [self stop];
 
 	Float64 startingTempo;
 	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
@@ -127,7 +127,7 @@
 	[self startPlaybackAtTimeStamp:self.currentTimeStamp];
 }
 
-- (void)stopPlayback
+- (void)stop
 {
 	if (!self.isPlaying) return;
 
@@ -141,6 +141,8 @@
 	self.looping = NO;
 	[self currentTimeStamp];	// update the current time stamp
 	self.playing = NO;
+	self.recording = self.isPlaying;
+	self.pendingRecordedNoteEvents = nil;
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
@@ -224,7 +226,7 @@
 	} else {
 		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
 		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length)) {
-			[self stopRecording];
+			[self stop];
 		}
 	}
 }
@@ -381,13 +383,6 @@
 	self.recording = self.isPlaying;
 }
 
-- (void)stopRecording
-{
-	[self stopPlayback];
-	self.recording = self.isPlaying;
-	self.pendingRecordedNoteEvents = nil;
-}
-
 - (void)recordMIDICommand:(MIKMIDICommand *)command
 {
 	if (!self.isRecording) return;
@@ -453,11 +448,11 @@
 	_currentTimeStamp = currentTimeStamp;
 
 	if (self.isPlaying) {
-		if (self.isRecording) {
-			[self stopRecording];
+		BOOL isRecording = self.isRecording;
+		[self stop];
+		if (isRecording) {
 			[self startRecordingAtTimeStamp:_currentTimeStamp];
 		} else {
-			[self stopPlayback];
 			[self startPlaybackAtTimeStamp:_currentTimeStamp];
 		}
 	}
