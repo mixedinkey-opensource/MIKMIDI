@@ -137,7 +137,7 @@
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
-	[self recordPendingNoteEventsWithOffTimeStamp:[self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
+	[self recordAllPendingNoteEventsWithOffTimeStamp:[self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
 	self.historicalClocks = nil;
 	self.historicalClockMIDITimeStamps = nil;
 	self.pendingRecordedNoteEvents = nil;
@@ -217,7 +217,7 @@
 
 	if (isLooping) {
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
-			[self recordPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
+			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
 			Float64 tempo;
 			if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
 			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
@@ -426,7 +426,7 @@
 	}
 }
 
-- (void)recordPendingNoteEventsWithOffTimeStamp:(MusicTimeStamp)offTimeStamp
+- (void)recordAllPendingNoteEventsWithOffTimeStamp:(MusicTimeStamp)offTimeStamp
 {
 	NSMutableSet *events = [NSMutableSet set];
 
