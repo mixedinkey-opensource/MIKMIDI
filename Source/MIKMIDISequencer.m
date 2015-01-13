@@ -47,6 +47,8 @@
 @property (nonatomic, getter=isRecording) BOOL recording;
 @property (nonatomic, getter=isLooping) BOOL looping;
 
+@property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
+
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
 @property (strong, nonatomic) NSTimer *timer;
 
@@ -149,7 +151,7 @@
 
 	MIKMIDISequence *sequence = self.sequence;
 	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp;
-	MusicTimeStamp loopEndTimeStamp = self.loopEndTimeStamp;
+	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp;
 	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	if (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp) self.looping = YES;
@@ -461,7 +463,7 @@
 	}
 }
 
-- (MusicTimeStamp)loopEndTimeStamp
+- (MusicTimeStamp)actualLoopEndTimeStamp
 {
 	return (_loopEndTimeStamp < 0) ? self.sequence.length : _loopEndTimeStamp;
 }
