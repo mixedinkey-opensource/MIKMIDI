@@ -233,7 +233,7 @@
 		}
 	} else {
 		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
-		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length)) {
+		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length + playbackOffset)) {
 			[self stop];
 		}
 	}
