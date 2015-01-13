@@ -60,6 +60,8 @@
 
 @property (strong, nonatomic) NSMutableDictionary *pendingRecordedNoteEvents;
 
+@property (nonatomic) MusicTimeStamp playbackOffset;
+
 @end
 
 
@@ -73,6 +75,7 @@
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
 		_loopEndTimeStamp = -1;
+		_preRoll = 4;
 	}
 	return self;
 }
@@ -110,7 +113,7 @@
 	if (self.isPlaying) [self stop];
 
 	Float64 startingTempo;
-	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
+	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp + self.playbackOffset]) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
@@ -142,7 +145,8 @@
 	self.historicalClockMIDITimeStamps = nil;
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
-	[self currentTimeStamp];	// update the current time stamp
+	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length + self.playbackOffset;
+	self.playbackOffset = 0;
 	self.playing = NO;
 	self.recording = self.isPlaying;
 }
@@ -154,8 +158,9 @@
 	MIKMIDIClock *clock = self.clock;
 
 	MIKMIDISequence *sequence = self.sequence;
-	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp;
-	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp;
+	MusicTimeStamp playbackOffset = self.playbackOffset;
+	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp + playbackOffset;
+	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp + playbackOffset;
 	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	if (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp) self.looping = YES;
@@ -176,8 +181,8 @@
 	// Get relevant tempo events
 	NSMutableDictionary *tempoEvents = [NSMutableDictionary dictionary];
 	NSMutableDictionary *timeStampEvents = [NSMutableDictionary dictionary];
-	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
-		NSNumber *timeStampKey = @(tempoEvent.timeStamp);
+	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
+		NSNumber *timeStampKey = @(tempoEvent.timeStamp + playbackOffset);
 		timeStampEvents[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
 		tempoEvents[timeStampKey] = tempoEvent;
 	}
@@ -185,8 +190,8 @@
 	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
 		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
-		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
-			NSNumber *timeStampKey = @(event.timeStamp);
+		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
+			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
 			NSMutableArray *eventsAtTimeStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
 			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
 			timeStampEvents[timeStampKey] = eventsAtTimeStamp;
@@ -254,7 +259,7 @@
 
 		// Note Off
 		MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
-		MIDITimeStamp noteOffTimeStamp = [self.clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+		MIDITimeStamp noteOffTimeStamp = [self.clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp + self.playbackOffset];
 		noteOff.midiTimestamp = noteOffTimeStamp;
 		noteOff.channel = noteEvent.channel;
 		noteOff.note = noteEvent.note;
@@ -360,29 +365,39 @@
 
 - (void)startRecording
 {
-	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-	[self startPlayback];
-	self.recording = self.isPlaying;
+	[self startRecordingWithPreRoll:YES playbackBlock:^{
+		[self startPlayback];
+	}];
 }
 
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-	[self startPlaybackAtTimeStamp:timeStamp];
-	self.recording = self.isPlaying;
+	[self startRecordingWithPreRoll:YES playbackBlock:^{
+		[self startPlaybackAtTimeStamp:timeStamp];
+	}];
 }
 
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-	[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
-	self.recording = self.isPlaying;
+	[self startRecordingWithPreRoll:YES playbackBlock:^{
+		[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
+	}];
 }
 
 - (void)resumeRecording
 {
+	[self startRecordingWithPreRoll:YES playbackBlock:^{
+		[self resumePlayback];
+	}];
+}
+
+- (void)startRecordingWithPreRoll:(BOOL)includePreroll playbackBlock:(void (^)())playbackBlock
+{
+	if (!playbackBlock) return;
+
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-	[self resumePlayback];
+	if (includePreroll) self.playbackOffset = self.preRoll;
+	playbackBlock();
 	self.recording = self.isPlaying;
 }
 
@@ -400,7 +415,7 @@
 		}
 	}
 	if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
-	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp];
+	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - self.playbackOffset;
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
@@ -481,7 +496,8 @@
 {
 	if (self.isPlaying) {
 		MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
-		_currentTimeStamp = (timeStamp <= self.sequence.length) ? timeStamp : self.sequence.length;
+		MusicTimeStamp playbackOffset = self.playbackOffset;
+		_currentTimeStamp = (timeStamp <= self.sequence.length + playbackOffset) ? timeStamp - playbackOffset : self.sequence.length;
 	}
 	return _currentTimeStamp;
 }
@@ -494,7 +510,9 @@
 		BOOL isRecording = self.isRecording;
 		[self stop];
 		if (isRecording) {
-			[self startRecordingAtTimeStamp:_currentTimeStamp];
+			[self startRecordingWithPreRoll:NO playbackBlock:^{
+				[self startPlaybackAtTimeStamp:_currentTimeStamp];
+			}];
 		} else {
 			[self startPlaybackAtTimeStamp:_currentTimeStamp];
 		}
@@ -504,6 +522,12 @@
 - (MusicTimeStamp)actualLoopEndTimeStamp
 {
 	return (_loopEndTimeStamp < 0) ? self.sequence.length : _loopEndTimeStamp;
+}
+
+- (void)setPreRoll:(MusicTimeStamp)preRoll
+{
+	if (preRoll < 0) preRoll = 0;
+	_preRoll = preRoll;
 }
 
 @end
