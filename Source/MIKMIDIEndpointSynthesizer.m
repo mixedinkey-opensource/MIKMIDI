@@ -25,6 +25,11 @@
 
 @implementation MIKMIDIEndpointSynthesizer
 
+- (instancetype)init
+{
+	return [self initWithMIDISource:nil];
+}
+
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source
 {
 	return [[self alloc] initWithMIDISource:source];
@@ -32,19 +37,16 @@
 
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source
 {
-	if (!source) {
-		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
-		return nil;
-	}
-	
 	self = [super init];
 	if (self) {
-		NSError *error = nil;
-		if (![self connectToMIDISource:source error:&error]) {
-			NSLog(@"Unable to connect to MIDI source %@: %@", source, error);
-			return nil;
+		if (source) {
+			NSError *error = nil;
+			if (![self connectToMIDISource:source error:&error]) {
+				NSLog(@"Unable to connect to MIDI source %@: %@", source, error);
+				return nil;
+			}
+			_endpoint = source;
 		}
-		_endpoint = source;
 		
 		if (![self setupAUGraph]) return nil;
 	}
@@ -59,7 +61,7 @@
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
 {
 	if (!destination) {
-		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
+		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil destination endpoint argument.", __PRETTY_FUNCTION__];
 		return nil;
 	}
 	
