@@ -27,7 +27,7 @@
 }
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return type == MIKMIDICommandTypeSystemExclusive; }
++ (NSArray *)supportedMIDICommandTypes { return @[@(MIKMIDICommandTypeSystemExclusive)]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDISystemExclusiveCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDISystemExclusiveCommand class]; }
 

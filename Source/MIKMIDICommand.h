@@ -80,7 +80,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
  *
  *  To successfully subclass MIKMIDICommand, you *must* override at least the following methods:
  *  
- *  - `+supportsMIDICommandType:` - Return YES when passed the MIKMIDICommandType value your subclass supports.
+ *  - `+supportedMIDICommandTypes:` - Return an array of one or more MIKMIDICommandTypes that your subclass supports.
  *  - `+immutableCounterPartClass` - Return the subclass itself (eg. `return [MIKMIDINewTypeCommand class];`)
  *  - `+mutableCounterPartClass` - Return the mutable counterpart class (eg. `return [MIKMIDIMutableNewTypeCommand class;]`)
  *

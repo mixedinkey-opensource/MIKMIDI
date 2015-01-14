@@ -24,13 +24,12 @@
 @implementation MIKMIDIChannelVoiceCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type
++ (NSArray *)supportedMIDICommandTypes
 {
-	NSArray *supportedTypes = @[@(MIKMIDICommandTypePolyphonicKeyPressure),
-							 @(MIKMIDICommandTypeProgramChange),
-							 @(MIKMIDICommandTypeChannelPressure),
-							 @(MIKMIDICommandTypePitchWheelChange)];
-	return [supportedTypes containsObject:@(type)];
+	return  @[@(MIKMIDICommandTypePolyphonicKeyPressure),
+			  @(MIKMIDICommandTypeProgramChange),
+			  @(MIKMIDICommandTypeChannelPressure),
+			  @(MIKMIDICommandTypePitchWheelChange)];
 }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
@@ -38,7 +37,7 @@
 
 - (NSString *)additionalCommandDescription
 {
-    return [NSString stringWithFormat:@"channel %d", self.channel];
+	return [NSString stringWithFormat:@"channel %d", self.channel];
 }
 
 #pragma mark - Properties

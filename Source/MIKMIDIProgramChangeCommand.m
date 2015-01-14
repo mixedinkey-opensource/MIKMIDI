@@ -23,7 +23,7 @@
 @implementation MIKMIDIProgramChangeCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return type == MIKMIDICommandTypeProgramChange; }
++ (NSArray *)supportedMIDICommandTypes { return @[@(MIKMIDICommandTypeProgramChange)]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDIProgramChangeCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIProgramChangeCommand class]; }
 

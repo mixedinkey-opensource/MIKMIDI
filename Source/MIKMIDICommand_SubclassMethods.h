@@ -22,7 +22,7 @@
  *
  *  Typically this method should be called in the subclass's +load method.
  *
- *  @note If two subclasses support the same command type, as determined by calling +supportsMIDICommandType:
+ *  @note If two subclasses support the same command type, as determined by calling +supportedMIDICommandTypes
  *  which one is used is undefined.
  *
  *  @param subclass A subclass of MIKMIDICommand.
@@ -30,15 +30,26 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
- *  Subclasses of MIKMIDICommand must override this method, and return YES for any
- *  MIKMIDICommandType values they support. MIKMIDICommand uses this method to determine which
- *  subclass to use to represent a particular MIDI command type.
+ *  This method has been replaced by +supportedMIDICommandTypes
+ *  and by default simply calls through to that method. Subclasses
+ *  no longer need implement this.
  *
  *  @param type An MIKMIDICommandType value.
  *
  *  @return YES if the subclass supports type, NO otherwise.
  */
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type;
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type DEPRECATED_ATTRIBUTE;
+
+/**
+ *  Subclasses of MIKMIDICommand must override this method, and return the MIKMIDICommandType
+ *  values they support. MIKMIDICommand uses this method to determine which
+ *  subclass to use to represent a particular MIDI command type.
+ *
+ *  Note that the older +supportsMIDICommandType: by default simply calls through to this method.
+ *
+ *  @return An NSArray containing NSNumber instances containing MIKMIDICommandType values.
+ */
++ (NSArray *)supportedMIDICommandTypes;
 
 /**
  *  The immutable counterpart class of the receiver.
