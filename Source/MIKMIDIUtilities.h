@@ -38,7 +38,7 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
  *
  *  @see MIKNoteLetterAndOctaveForMIDINote()
  */
-NSString *MIKNoteLetterForMIDINoteNumber(UInt8 noteNumber);
+NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
 
 /**
  *  The note letter and octave of the passed in MIDI note.
@@ -51,4 +51,4 @@ NSString *MIKNoteLetterForMIDINoteNumber(UInt8 noteNumber);
  *
  *  @see MIKNoteLetterForMIDINoteNumber()
  */
-NSString *MIKNoteLetterAndOctaveForMIDINote(UInt8 noteNumber);
+NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber);

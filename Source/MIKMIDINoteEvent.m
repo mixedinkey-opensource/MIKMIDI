@@ -130,12 +130,12 @@
 
 - (NSString *)noteLetter
 {
-	return MIKNoteLetterForMIDINoteNumber(self.note);
+	return MIKMIDINoteLetterForMIDINoteNumber(self.note);
 }
 
 - (NSString *)noteLetterAndOctave
 {
-	return MIKNoteLetterAndOctaveForMIDINote(self.note);
+	return MIKMIDINoteLetterAndOctaveForMIDINote(self.note);
 }
 
 - (NSString *)additionalEventDescription

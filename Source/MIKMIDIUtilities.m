@@ -151,14 +151,14 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 
 #pragma mark - Note Utilities
 
-NSString *MIKNoteLetterForMIDINoteNumber(UInt8 noteNumber)
+NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber)
 {
 	NSArray *letters = @[@"C", @"C#", @"D", @"D#", @"E", @"F", @"F#", @"G", @"G#", @"A", @"A#", @"B"];
 	return [letters objectAtIndex:noteNumber % 12];
 }
 
-NSString *MIKNoteLetterAndOctaveForMIDINote(UInt8 noteNumber)
+NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber)
 {
 	NSInteger octave = noteNumber / 12;
-	return [MIKNoteLetterForMIDINoteNumber(noteNumber) stringByAppendingFormat:@"%ld", (long)octave];
+	return [MIKMIDINoteLetterForMIDINoteNumber(noteNumber) stringByAppendingFormat:@"%ld", (long)octave];
 }
