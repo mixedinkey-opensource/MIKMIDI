@@ -524,8 +524,7 @@
 
 - (void)setPreRoll:(MusicTimeStamp)preRoll
 {
-	if (preRoll < 0) preRoll = 0;
-	_preRoll = preRoll;
+	_preRoll = (preRoll < 0) ? 0 : preRoll;
 }
 
 @end
