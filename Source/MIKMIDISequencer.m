@@ -17,7 +17,8 @@
 #import "MIKMIDIDeviceManager.h"
 
 
-#define MIKMIDISequencerDefaultTempo	120
+#define MIKMIDISequencerDefaultTempo			120
+#define MIKMIDISequencerDefaultTimeSignature	((MIKMIDITimeSignature) { .numerator = 4, .denominator = 4 })
 
 
 #pragma mark -
@@ -76,7 +77,7 @@
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
 		_loopEndTimeStamp = -1;
-		_preRoll = 4;
+		_preRoll = 1;
 	}
 	return self;
 }
@@ -391,7 +392,11 @@
 	if (!playbackBlock) return;
 
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-	if (includePreroll) self.playbackOffset = self.preRoll;
+
+	MIKMIDITimeSignature timeSignature;
+	if (![self.sequence getTimeSignature:&timeSignature atTimeStamp:self.startingTimeStamp]) timeSignature = MIKMIDISequencerDefaultTimeSignature;
+
+	if (includePreroll) self.playbackOffset = self.preRoll * (timeSignature.numerator / (timeSignature.denominator / 4));
 	playbackBlock();
 	self.recording = self.isPlaying;
 }

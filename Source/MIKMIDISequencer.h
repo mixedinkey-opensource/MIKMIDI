@@ -26,7 +26,7 @@
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
 
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
-@property (nonatomic) MusicTimeStamp preRoll;
+@property (nonatomic) NSUInteger preRoll;	// number of measures to play before recording begins
 
 @property (nonatomic, getter=isPunchInOutEnabled) BOOL punchInOutEnabled;
 @property (nonatomic) MusicTimeStamp punchInTime;
