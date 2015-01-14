@@ -27,6 +27,11 @@
 
 @implementation MIKMIDIEndpointSynthesizer
 
+- (instancetype)init
+{
+	return [self initWithMIDISource:nil];
+}
+
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source
 {
 	return [self playerWithMIDISource:source componentDescription:[self appleSynthComponentDescription]];
@@ -43,21 +48,18 @@
 }
 
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
-{
-	if (!source) {
-		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
-		return nil;
-	}
-	
+{	
 	self = [super init];
 	if (self) {
-		NSError *error = nil;
-		if (![self connectToMIDISource:source error:&error]) {
-			NSLog(@"Unable to connect to MIDI source %@: %@", source, error);
-			return nil;
+		if (source) {
+			NSError *error = nil;
+			if (![self connectToMIDISource:source error:&error]) {
+				NSLog(@"Unable to connect to MIDI source %@: %@", source, error);
+				return nil;
+			}
+			_endpoint = source;
+			_componentDescription = componentDescription;
 		}
-		_endpoint = source;
-		_componentDescription = componentDescription;
 		
 		if (![self setupAUGraph]) return nil;
 	}
@@ -82,7 +84,7 @@
 - (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription
 {
 	if (!destination) {
-		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil device argument.", __PRETTY_FUNCTION__];
+		[NSException raise:NSInvalidArgumentException format:@"%s requires a non-nil destination endpoint argument.", __PRETTY_FUNCTION__];
 		return nil;
 	}
 	
@@ -167,7 +169,7 @@
 	}
 	
 	AudioComponentDescription instrumentcd = self.componentDescription;
-
+	
 	AUNode instrumentNode;
 	if ((err = AUGraphAddNode(graph, &instrumentcd, &instrumentNode))) {
 		NSLog(@"Unable to add instrument node to AU graph: %i", err);
