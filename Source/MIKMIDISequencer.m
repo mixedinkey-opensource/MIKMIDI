@@ -61,6 +61,7 @@
 @property (strong, nonatomic) NSMutableDictionary *pendingRecordedNoteEvents;
 
 @property (nonatomic) MusicTimeStamp playbackOffset;
+@property (nonatomic) MusicTimeStamp startingTimeStamp;
 
 @end
 
@@ -112,6 +113,7 @@
 {
 	if (self.isPlaying) [self stop];
 
+	self.startingTimeStamp = timeStamp;
 	Float64 startingTempo;
 	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp + self.playbackOffset]) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
@@ -409,6 +411,9 @@
 	}
 	if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
 	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - self.playbackOffset;
+
+	if (musicTimeStamp < self.startingTimeStamp) return;	// in pre-roll
+	if (self.isPunchInOutEnabled && (musicTimeStamp < self.punchInTime || musicTimeStamp >= self.punchOutTime)) return;	// not punching in now
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
