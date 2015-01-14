@@ -527,11 +527,6 @@
 	return (_loopEndTimeStamp < 0) ? self.sequence.length : _loopEndTimeStamp;
 }
 
-- (void)setPreRoll:(MusicTimeStamp)preRoll
-{
-	_preRoll = (preRoll < 0) ? 0 : preRoll;
-}
-
 @end
 
 
