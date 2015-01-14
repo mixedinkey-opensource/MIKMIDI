@@ -34,7 +34,8 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (BOOL)isMutable { return NO; }
 
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return NO; }
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return [[self supportedMIDICommandTypes] containsObject:@(type)]; }
++ (NSArray *)supportedMIDICommandTypes { return @[]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDICommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDICommand class]; }
 
@@ -107,7 +108,10 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
     self = [self initWithMIDIPacket:NULL];
     if (self) {
-        self.internalData = [NSMutableData data];
+        self.internalData = [NSMutableData dataWithLength:2];
+		
+		MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
+		((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
     }
     return self;
 }
@@ -148,7 +152,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
 	Class result = nil;
 	for (Class subclass in registeredMIKMIDICommandSubclasses) {
-		if ([subclass supportsMIDICommandType:commandType]) {
+		if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
 			result = subclass;
 			break;
 		}
@@ -157,7 +161,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 		// Try again ignoring lower 4 bits
 		commandType |= 0x0f;
 		for (Class subclass in registeredMIKMIDICommandSubclasses) {
-			if ([subclass supportsMIDICommandType:commandType]) {
+			if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
 				result = subclass;
 				break;
 			}
@@ -240,8 +244,8 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	if ([self.internalData length] < 1) return 0;
 	UInt8 *data = (UInt8 *)[self.internalData bytes];
 	MIKMIDICommandType result = data[0];
-	if (![[self class] supportsMIDICommandType:result]) {
-		if ([[self class] supportsMIDICommandType:(result | 0x0F)]) {
+	if (![[[self class] supportedMIDICommandTypes] containsObject:@(result)]) {
+		if ([[[self class] supportedMIDICommandTypes] containsObject:@(result | 0x0F)]) {
 			result |= 0x0F;
 		}
 	}

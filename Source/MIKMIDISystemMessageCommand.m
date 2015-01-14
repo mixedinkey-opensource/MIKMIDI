@@ -20,14 +20,13 @@
 @implementation	MIKMIDISystemMessageCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type
++ (NSArray *)supportedMIDICommandTypes
 {
-	NSArray *supportedTypes = @[@(MIKMIDICommandTypeSystemMessage),
-							 @(MIKMIDICommandTypeSystemTimecodeQuarterFrame),
-							 @(MIKMIDICommandTypeSystemSongPositionPointer),
-							 @(MIKMIDICommandTypeSystemSongSelect),
-							 @(MIKMIDICommandTypeSystemTuneRequest)];
-	return [supportedTypes containsObject:@(type)];
+	return @[@(MIKMIDICommandTypeSystemMessage),
+			 @(MIKMIDICommandTypeSystemTimecodeQuarterFrame),
+			 @(MIKMIDICommandTypeSystemSongPositionPointer),
+			 @(MIKMIDICommandTypeSystemSongSelect),
+			 @(MIKMIDICommandTypeSystemTuneRequest)];
 }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDISystemMessageCommand class]; }

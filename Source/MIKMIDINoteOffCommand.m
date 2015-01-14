@@ -24,7 +24,7 @@
 @implementation MIKMIDINoteOffCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return type == MIKMIDICommandTypeNoteOff; }
++ (NSArray *)supportedMIDICommandTypes { return @[@(MIKMIDICommandTypeNoteOff)]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDINoteOffCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDINoteOffCommand class]; }
 
