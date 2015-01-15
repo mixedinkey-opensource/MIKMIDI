@@ -15,6 +15,9 @@
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
 #import "MIKMIDIDeviceManager.h"
+#import "MIKMIDIMetronome.h"
+#import "MIKMIDIMetaTimeSignatureEvent.h"
+#import "MIKMIDIClientDestinationEndpoint.h"
 
 
 #define MIKMIDISequencerDefaultTempo			120
@@ -64,6 +67,8 @@
 @property (nonatomic) MusicTimeStamp playbackOffset;
 @property (nonatomic) MusicTimeStamp startingTimeStamp;
 
+@property (strong, nonatomic) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
+
 @end
 
 
@@ -77,7 +82,8 @@
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
 		_loopEndTimeStamp = -1;
-		_preRoll = 1;
+		_preRoll = 4;
+		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll;
 	}
 	return self;
 }
@@ -114,9 +120,11 @@
 {
 	if (self.isPlaying) [self stop];
 
-	self.startingTimeStamp = timeStamp;
+	MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
+	self.startingTimeStamp = startingTimeStamp;
+
 	Float64 startingTempo;
-	if (![self.sequence getTempo:&startingTempo atTimeStamp:timeStamp + self.playbackOffset]) startingTempo = MIKMIDISequencerDefaultTempo;
+	if (![self.sequence getTempo:&startingTempo atTimeStamp:startingTimeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
@@ -151,7 +159,7 @@
 	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length;
 	self.playbackOffset = 0;
 	self.playing = NO;
-	self.recording = self.isPlaying;
+	self.recording = NO;
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
@@ -192,6 +200,14 @@
 			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
 			timeStampEvents[timeStampKey] = eventsAtTimeStamp;
 		}
+	}
+
+	// Get click track events
+	for (MIKMIDIEventWithDestination *destinationEvent in [self clickTrackEventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
+		NSNumber *timeStampKey = @(destinationEvent.event.timeStamp + playbackOffset);
+		NSMutableArray *eventsAtTimesStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
+		[eventsAtTimesStamp addObject:destinationEvent];
+		timeStampEvents[timeStampKey] = eventsAtTimesStamp;
 	}
 
 	// Schedule events
@@ -361,41 +377,33 @@
 
 - (void)startRecording
 {
-	[self startRecordingWithPreRoll:YES playbackBlock:^{
-		[self startPlayback];
-	}];
+	[self prepareForRecordingWithPreRoll:YES];
+	[self startPlayback];
 }
 
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	[self startRecordingWithPreRoll:YES playbackBlock:^{
-		[self startPlaybackAtTimeStamp:timeStamp];
-	}];
+	[self prepareForRecordingWithPreRoll:YES];
+	[self startPlaybackAtTimeStamp:timeStamp];
 }
 
 - (void)startRecordingAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	[self startRecordingWithPreRoll:YES playbackBlock:^{
-		[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
-	}];
+	[self prepareForRecordingWithPreRoll:YES];
+	[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
 }
 
 - (void)resumeRecording
 {
-	[self startRecordingWithPreRoll:YES playbackBlock:^{
-		[self resumePlayback];
-	}];
+	[self prepareForRecordingWithPreRoll:YES];
+	[self resumePlayback];
 }
 
-- (void)startRecordingWithPreRoll:(BOOL)includePreroll playbackBlock:(void (^)())playbackBlock
+- (void)prepareForRecordingWithPreRoll:(BOOL)includePreRoll
 {
-	if (!playbackBlock) return;
-
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-
-	if (includePreroll) self.playbackOffset = self.preRoll;
-	playbackBlock();
-	self.recording = self.isPlaying;
+	if (includePreRoll) self.playbackOffset = self.preRoll;
+	self.recording = YES;
 }
 
 - (void)recordMIDICommand:(MIKMIDICommand *)command
@@ -412,10 +420,10 @@
 		}
 	}
 	if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
-	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - self.playbackOffset;
 
-	if (musicTimeStamp < self.startingTimeStamp) return;	// in pre-roll
-	if (self.isPunchInOutEnabled && (musicTimeStamp < self.punchInTime || musicTimeStamp >= self.punchOutTime)) return;	// not punching in now
+	MusicTimeStamp playbackOffset = self.playbackOffset;
+	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - playbackOffset;
+	if (self.isPunchInOutEnabled && (musicTimeStamp < self.punchInTime + playbackOffset || musicTimeStamp >= self.punchOutTime + playbackOffset)) return;	// not punching in now
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
@@ -482,6 +490,51 @@
 	return nil;
 }
 
+#pragma mark - Click Track
+
+- (NSMutableArray *)clickTrackEventsFromTimeStamp:(MusicTimeStamp)fromTimeStamp toTimeStamp:(MusicTimeStamp)toTimeStamp
+{
+	MIKMIDISequencerClickTrackStatus clickTrackStatus = self.clickTrackStatus;
+	if (clickTrackStatus == MIKMIDISequencerClickTrackStatusDisabled) return nil;
+	if (!self.isRecording && clickTrackStatus != MIKMIDISequencerClickTrackStatusAlwaysEnabled) return nil;
+
+	NSMutableArray *clickEvents = [NSMutableArray array];
+	MIDINoteMessage tickMessage = self.metronome.tickMessage;
+	MIDINoteMessage tockMessage = self.metronome.tockMessage;
+	MIKMIDIDestinationEndpoint *destination = self.metronomeEndpoint;
+
+	MIKMIDISequence *sequence = self.sequence;
+	MusicTimeStamp playbackOffset = self.playbackOffset;
+	MIKMIDITimeSignature timeSignature;
+	if (![sequence getTimeSignature:&timeSignature atTimeStamp:fromTimeStamp - playbackOffset]) timeSignature = MIKMIDISequencerDefaultTimeSignature;
+	NSMutableArray *timeSignatureEvents = [[sequence.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class]
+																fromTimeStamp:MAX(fromTimeStamp - playbackOffset, 0)
+																  toTimeStamp:toTimeStamp] mutableCopy];
+
+	MusicTimeStamp clickTimeStamp = floor(fromTimeStamp);
+	while (clickTimeStamp <= toTimeStamp) {
+		if (clickTrackStatus == MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll && clickTimeStamp >= self.startingTimeStamp) break;
+
+		MIKMIDIMetaTimeSignatureEvent *event = [timeSignatureEvents firstObject];
+		if (event && event.timeStamp - playbackOffset <= clickTimeStamp) {
+			timeSignature = (MIKMIDITimeSignature) { .numerator = event.numerator, .denominator = event.denominator };
+			[timeSignatureEvents removeObjectAtIndex:0];
+		}
+
+		if (clickTimeStamp >= fromTimeStamp) {	// ignore if clickTimeStamp is still less than fromTimeStamp (from being floored)
+			NSInteger adjustedTimeStamp = clickTimeStamp * timeSignature.denominator / 4.0;
+			BOOL isTick = !((adjustedTimeStamp + timeSignature.numerator) % (timeSignature.numerator));
+			MIDINoteMessage clickMessage = isTick ? tickMessage : tockMessage;
+			MIKMIDINoteEvent *noteEvent = [MIKMIDINoteEvent noteEventWithTimeStamp:clickTimeStamp - playbackOffset message:clickMessage];
+			[clickEvents addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:noteEvent]];
+		}
+
+		clickTimeStamp += 4.0 / timeSignature.denominator;
+	}
+
+	return clickEvents;
+}
+
 #pragma mark - Timer
 
 - (void)timerFired:(NSTimer *)timer
@@ -509,13 +562,8 @@
 	if (self.isPlaying) {
 		BOOL isRecording = self.isRecording;
 		[self stop];
-		if (isRecording) {
-			[self startRecordingWithPreRoll:NO playbackBlock:^{
-				[self startPlaybackAtTimeStamp:_currentTimeStamp];
-			}];
-		} else {
-			[self startPlaybackAtTimeStamp:_currentTimeStamp];
-		}
+		if (isRecording) [self prepareForRecordingWithPreRoll:NO];
+		[self startPlaybackAtTimeStamp:_currentTimeStamp];
 	}
 }
 
@@ -527,6 +575,19 @@
 - (void)setPreRoll:(MusicTimeStamp)preRoll
 {
 	_preRoll = (preRoll >= 0) ? _preRoll : 0;
+}
+
+// TODO: make the metronome and metronomeEndpoint properties work properly with setMetronome:
+- (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint
+{
+	if (!_metronomeEndpoint) _metronomeEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:@"MIKMIDIClickTrackEndpoint" receivedMessagesHandler:NULL];
+	return _metronomeEndpoint;
+}
+
+- (MIKMIDIMetronome *)metronome
+{
+	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
+	return _metronome;
 }
 
 @end

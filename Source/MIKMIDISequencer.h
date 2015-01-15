@@ -14,6 +14,14 @@
 @class MIKMIDICommand;
 
 
+typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
+	MIKMIDISequencerClickTrackStatusDisabled,
+	MIKMIDISequencerClickTrackStatusEnabledInRecord,
+	MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll,
+	MIKMIDISequencerClickTrackStatusAlwaysEnabled
+};
+
+
 @interface MIKMIDISequencer : NSObject
 
 + (instancetype)sequencer;
@@ -38,9 +46,7 @@
 @property (nonatomic) MusicTimeStamp loopEndTimeStamp;	// set to -1 to have the loop end at the end of the sequence. default is -1.
 
 @property (strong, nonatomic) MIKMIDIMetronome *metronome;
-@property (nonatomic, getter=isClickTrackAlwaysEnabled) BOOL clickTrackAlwaysEnabled;
-@property (nonatomic, getter=isClickTrackEnabledInRecord) BOOL clickTrackEnabledInRecord;
-@property (nonatomic, getter=isClickTrackEnabledInPreRoll) BOOL clickTrackEnabledInPreRoll;
+@property (nonatomic) MIKMIDISequencerClickTrackStatus clickTrackStatus;
 
 @property (copy, nonatomic) NSSet *recordEnabledTracks;
 
