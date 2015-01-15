@@ -393,10 +393,7 @@
 
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
 
-	MIKMIDITimeSignature timeSignature;
-	if (![self.sequence getTimeSignature:&timeSignature atTimeStamp:self.startingTimeStamp]) timeSignature = MIKMIDISequencerDefaultTimeSignature;
-
-	if (includePreroll) self.playbackOffset = self.preRoll * (timeSignature.numerator / (timeSignature.denominator / 4));
+	if (includePreroll) self.playbackOffset = self.preRoll;
 	playbackBlock();
 	self.recording = self.isPlaying;
 }
@@ -525,6 +522,11 @@
 - (MusicTimeStamp)actualLoopEndTimeStamp
 {
 	return (_loopEndTimeStamp < 0) ? self.sequence.length : _loopEndTimeStamp;
+}
+
+- (void)setPreRoll:(MusicTimeStamp)preRoll
+{
+	_preRoll = (preRoll >= 0) ? _preRoll : 0;
 }
 
 @end
