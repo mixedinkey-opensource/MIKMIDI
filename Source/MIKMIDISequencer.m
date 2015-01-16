@@ -404,6 +404,8 @@
 {
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
 	if (includePreRoll) self.playbackOffset = self.preRoll;
+#warning - testing
+	NSLog(@"%@ and %@", @(self.playbackOffset), @(self.preRoll));
 	self.recording = YES;
 }
 
@@ -574,7 +576,7 @@
 
 - (void)setPreRoll:(MusicTimeStamp)preRoll
 {
-	_preRoll = (preRoll >= 0) ? _preRoll : 0;
+	_preRoll = (preRoll >= 0) ? preRoll : 0;
 }
 
 // TODO: make the metronome and metronomeEndpoint properties work properly with setMetronome:
