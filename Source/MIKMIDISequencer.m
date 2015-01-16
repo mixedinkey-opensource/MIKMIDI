@@ -217,7 +217,7 @@
 		MusicTimeStamp musicTimeStamp = timeStampKey.doubleValue;
 		if (isLooping && (musicTimeStamp < loopStartTimeStamp || musicTimeStamp >= loopEndTimeStamp)) continue;
 		MIDITimeStamp midiTimeStamp = [clock midiTimeStampForMusicTimeStamp:musicTimeStamp];
-		if (midiTimeStamp < MIKMIDIGetCurrentTimeStamp()) continue;	// prevents events that were just recorded from being scheduled
+		if (midiTimeStamp < MIKMIDIGetCurrentTimeStamp() && midiTimeStamp > fromMIDITimeStamp) continue;	// prevents events that were just recorded from being scheduled
 		MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEvents[timeStampKey];
 		if (tempoEventAtTimeStamp) [self updateClockWithMusicTimeStamp:musicTimeStamp tempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
 
