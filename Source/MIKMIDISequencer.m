@@ -404,8 +404,6 @@
 {
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
 	if (includePreRoll) self.playbackOffset = self.preRoll;
-#warning - testing
-	NSLog(@"%@ and %@", @(self.playbackOffset), @(self.preRoll));
 	self.recording = YES;
 }
 
