@@ -60,7 +60,7 @@
 			_endpoint = source;
 			_componentDescription = componentDescription;
 		}
-		
+		_componentDescription = componentDescription;
 		if (![self setupAUGraph]) return nil;
 	}
 	return self;
