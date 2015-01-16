@@ -174,8 +174,8 @@
 	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp + playbackOffset;
 	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
-	if (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp) self.looping = YES;
-	BOOL isLooping = self.isLooping;
+	BOOL isLooping = (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp && loopEndTimeStamp > loopStartTimeStamp);
+	self.looping = isLooping;
 	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, isLooping ? loopEndTimeStamp : sequence.length);
 
 	// Send pending note off commands
@@ -423,7 +423,6 @@
 
 	MusicTimeStamp playbackOffset = self.playbackOffset;
 	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - playbackOffset;
-	if (self.isPunchInOutEnabled && (musicTimeStamp < self.punchInTime + playbackOffset || musicTimeStamp >= self.punchOutTime + playbackOffset)) return;	// not punching in now
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
