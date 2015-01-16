@@ -216,7 +216,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 - (NSDate *)timestamp
 {
-	int64_t elapsed = self.midiTimestamp - mach_absolute_time();
+	int64_t elapsed = self.midiTimestamp - MIKMIDIGetCurrentTimeStamp();
 	mach_timebase_info_data_t timebaseInfo;
 	mach_timebase_info(&timebaseInfo);
 	int64_t elapsedInNanoseconds = elapsed * timebaseInfo.numer / timebaseInfo.denom;
@@ -236,7 +236,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	mach_timebase_info(&timebaseInfo);
 	int64_t elapsed = elapsedInNanoseconds * timebaseInfo.denom / timebaseInfo.numer;
 	
-	self.midiTimestamp = mach_absolute_time() + elapsed;
+	self.midiTimestamp = MIKMIDIGetCurrentTimeStamp() + elapsed;
 }
 
 - (MIKMIDICommandType)commandType

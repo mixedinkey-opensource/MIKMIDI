@@ -27,6 +27,9 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 // when the setter for a public property is called on an immutable object.
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])
 
+// A prettier way to get the mac_absolute_time() when working with MIDITimeStamps.
+#define MIKMIDIGetCurrentTimeStamp()	(mach_absolute_time())
+
 /**
  *  Returns the note letter of the passed in MIDI note number as a string.
  *  Notes that correspond to a "black key" on the piano will always be presented as sharp.
@@ -52,3 +55,4 @@ NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
  *  @see MIKMIDINoteLetterForMIDINoteNumber()
  */
 NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber);
+

@@ -49,7 +49,6 @@
 #import "MIKMIDIMetaTrackSequenceNameEvent.h"
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDIPlayer.h"
-#import "MIKMIDIRecorder.h"
 #import "MIKMIDISequence.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDITrack.h"

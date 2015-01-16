@@ -18,6 +18,7 @@
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIClientDestinationEndpoint.h"
+#import "MIKMIDIUtilities.h"
 
 
 #define MIKMIDISequencerDefaultTempo			120
