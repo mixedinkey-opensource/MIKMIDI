@@ -10,6 +10,11 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 
+/**
+ *  MIKMIDIClock is used to convert back and forth between MIDITimeStamp and MusicTimeStamp.
+ *  It is not intended for use by clients/users of of MIKMIDI. Rather, it should be thought 
+ *  of as an MIKMIDI private class.
+ */
 @interface MIKMIDIClock : NSObject <NSCopying>
 
 + (instancetype)clock;
