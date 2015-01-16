@@ -36,7 +36,7 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
  *  @return A string containing the human readable MIDI note letter for the MIDI note.
  *  e.g. C for MIDI note number 60.
  *
- *  @see MIKNoteLetterAndOctaveForMIDINote()
+ *  @see MIKMIDINoteLetterAndOctaveForMIDINote()
  */
 NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
 
@@ -49,6 +49,6 @@ NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
  *
  *  @return A string representing the note letter and octave of the MIDI note.
  *
- *  @see MIKNoteLetterForMIDINoteNumber()
+ *  @see MIKMIDINoteLetterForMIDINoteNumber()
  */
 NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber);
