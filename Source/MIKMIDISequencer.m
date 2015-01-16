@@ -84,7 +84,7 @@
 		_clock = [MIKMIDIClock clock];
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
-		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll;
+		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
 	}
 	return self;
 }

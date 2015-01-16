@@ -149,6 +149,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 
 /**
  *  When the click track should be heard.
+ *  The default is MIKMIDISequencerClickTrackStatusEnabledInRecord.
  */
 @property (nonatomic) MIKMIDISequencerClickTrackStatus clickTrackStatus;
 
