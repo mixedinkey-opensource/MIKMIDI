@@ -17,6 +17,11 @@
 	self.tickMessage = (MIDINoteMessage){ .channel = 0, .note = 57, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
 	self.tockMessage = (MIDINoteMessage){ .channel = 0, .note = 56, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
 	[self selectInstrument:[MIKMIDIEndpointSynthesizerInstrument instrumentWithID:7864376]];
+
+	OSStatus err;
+	if ((err = AudioUnitSetParameter(self.instrument, kMusicDeviceParam_ReverbVolume, kAudioUnitScope_Global, 0, -120, 0))) {
+		NSLog(@"Unable to set reverb level to -120: %i", err);
+	}
 }
 
 - (instancetype)init
