@@ -577,17 +577,25 @@
 	_preRoll = (preRoll >= 0) ? preRoll : 0;
 }
 
-// TODO: make the metronome and metronomeEndpoint properties work properly with setMetronome:
 - (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint
 {
 	if (!_metronomeEndpoint) _metronomeEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:@"MIKMIDIClickTrackEndpoint" receivedMessagesHandler:NULL];
 	return _metronomeEndpoint;
 }
 
+@synthesize metronome = _metronome;
 - (MIKMIDIMetronome *)metronome
 {
 	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
 	return _metronome;
+}
+
+- (void)setMetronome:(MIKMIDIMetronome *)metronome
+{
+	if (_metronome != metronome) {
+		_metronome = metronome;
+		_metronomeEndpoint = (MIKMIDIClientDestinationEndpoint *)metronome.endpoint;
+	}
 }
 
 @end

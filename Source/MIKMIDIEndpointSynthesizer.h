@@ -140,6 +140,7 @@
  *  This may be either an external MIKMIDISourceEndpoint, e.g. to synthesize MIDI
  *  events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,
  *  most commonly to synthesize MIDI coming from an MIKMIDIPlayer.
+ *
  */
 @property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
 
@@ -151,8 +152,41 @@
 /**
  *  The Audio Unit instrument that ultimately receives all of the MIDI messages sent to
  *  this endpoint synthesizer.
+ *
+ *  @note You should only use the setter for this property from an
+ *  MIKMIDIEndpointSynthesizer subclass.
+ *
+ *  @see -setupAUGraph
  */
-@property (nonatomic, readonly) AudioUnit instrument;
+@property (nonatomic) AudioUnit instrument;
+
+
+/**
+ *  The AUGraph for the instrument.
+ *
+ *  @note You should only use the setter for this property from an 
+ *  MIKMIDIEndpointSynthesizer subclass.
+ *
+ *  @see -setupAUGraph
+ */
+@property (nonatomic) AUGraph graph;
+
+/**
+ *  Sets up the AUGraph for the instrument. Do not call this method, as it is 
+ *  called automatically during initialization.
+ *  
+ *  The method is provided to give subclasses a chance to override
+ *  the AUGraph behavior for the instrument. If you do override it, you will need
+ *  to create an AudioUnit instrument and set it to the instrument property. Also,
+ *  if you intend to use the graph property, you will be responsible for setting
+ *  that as well. DisposeAUGraph() is called on the previous graph when setting 
+ *  the graph property, and in dealloc.
+ *
+ *  @return YES is setting up the graph was succesful, and initialization
+ *  should continue, NO if setting up the graph failed and initialization should
+ *  return nil.
+ */
+- (BOOL)setupAUGraph;
 
 @end
 

@@ -16,11 +16,8 @@
 @interface MIKMIDIEndpointSynthesizer ()
 
 @property (nonatomic, strong, readwrite) MIKMIDIEndpoint *endpoint;
+
 @property (nonatomic, strong) id connectionToken;
-
-@property (nonatomic) AUGraph graph;
-@property (nonatomic) AudioUnit instrument;
-
 @property (readonly, nonatomic) BOOL isUsingAppleSynth;
 
 @end
