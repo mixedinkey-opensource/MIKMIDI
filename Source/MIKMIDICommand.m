@@ -108,7 +108,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
     self = [self initWithMIDIPacket:NULL];
     if (self) {
-        self.internalData = [NSMutableData dataWithLength:2];
+        self.internalData = [NSMutableData dataWithLength:3];
 		
 		MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
 		((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
