@@ -211,6 +211,7 @@ typedef struct {
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 
 
+// TODO: Document these
 - (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature;
 - (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp;
 - (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp;
