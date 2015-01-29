@@ -233,6 +233,7 @@
 
 	self.lastProcessedMIDITimeStamp = lastProcessedMIDITimeStamp;
 
+	// Handle looping or stopping at the end of the sequence
 	if (isLooping) {
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
 			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
