@@ -255,11 +255,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		839D932C19C3A2A1007589C3 /* Sequencing */ = {
+		839D932C19C3A2A1007589C3 /* Files */ = {
 			isa = PBXGroup;
 			children = (
-				839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */,
+				839D936B19C3A30B007589C3 /* MIKMIDISequence.h */,
+				839D936C19C3A30B007589C3 /* MIKMIDISequence.m */,
+				839D937119C3A319007589C3 /* MIKMIDITrack.h */,
+				839D937219C3A319007589C3 /* MIKMIDITrack.m */,
 				839D932E19C3A2C9007589C3 /* MIKMIDIEvent.h */,
+				839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */,
 				839D932F19C3A2C9007589C3 /* MIKMIDIEvent.m */,
 				839D933019C3A2C9007589C3 /* MIKMIDIEventIterator.h */,
 				839D933119C3A2C9007589C3 /* MIKMIDIEventIterator.m */,
@@ -289,18 +293,10 @@
 				839D934E19C3A2F5007589C3 /* MIKMIDINoteEvent.m */,
 				839D936719C3A303007589C3 /* MIKMIDIPlayer.h */,
 				839D936819C3A303007589C3 /* MIKMIDIPlayer.m */,
-				839D936B19C3A30B007589C3 /* MIKMIDISequence.h */,
-				839D936C19C3A30B007589C3 /* MIKMIDISequence.m */,
 				839D936F19C3A319007589C3 /* MIKMIDITempoEvent.h */,
 				839D937019C3A319007589C3 /* MIKMIDITempoEvent.m */,
-				839D937119C3A319007589C3 /* MIKMIDITrack.h */,
-				839D937219C3A319007589C3 /* MIKMIDITrack.m */,
-				833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */,
-				833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */,
-				833B73DC1A26346F00E0CC9F /* MIKMIDIClock.h */,
-				833B73DD1A26346F00E0CC9F /* MIKMIDIClock.m */,
 			);
-			name = Sequencing;
+			name = Files;
 			sourceTree = "<group>";
 		};
 		9D74EE9B17A7129300BEE89F = {
@@ -384,11 +380,33 @@
 				9DF99E731831837C004EE5F4 /* Device Support */,
 				9DF99E75183183AF004EE5F4 /* Commands */,
 				9DF99E7418318395004EE5F4 /* Mapping */,
+				839D932C19C3A2A1007589C3 /* Files */,
+				9DAF8AFF1A7AFAB800F46528 /* Synthesis */,
+				9DAF8B001A7AFB1900F46528 /* Sequencing */,
 				9DF99E76183183F6004EE5F4 /* Utilities */,
-				839D932C19C3A2A1007589C3 /* Sequencing */,
 			);
 			name = Source;
 			path = ../Source;
+			sourceTree = "<group>";
+		};
+		9DAF8AFF1A7AFAB800F46528 /* Synthesis */ = {
+			isa = PBXGroup;
+			children = (
+				9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */,
+				9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */,
+				83BC19B91A23CD0D004F384F /* MIKMIDIMetronome.h */,
+				83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */,
+			);
+			name = Synthesis;
+			sourceTree = "<group>";
+		};
+		9DAF8B001A7AFB1900F46528 /* Sequencing */ = {
+			isa = PBXGroup;
+			children = (
+				833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */,
+				833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */,
+			);
+			name = Sequencing;
 			sourceTree = "<group>";
 		};
 		9DF99E731831837C004EE5F4 /* Device Support */ = {
@@ -420,10 +438,6 @@
 				9D74EF3917A713A100BEE89F /* MIKMIDIDestinationEndpoint.m */,
 				83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */,
 				83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */,
-				9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */,
-				9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */,
-				83BC19B91A23CD0D004F384F /* MIKMIDIMetronome.h */,
-				83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */,
 			);
 			name = "Device Support";
 			sourceTree = "<group>";
@@ -469,10 +483,12 @@
 		9DF99E76183183F6004EE5F4 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */,
-				9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */,
 				9D74EF5F17A713A100BEE89F /* MIKMIDIUtilities.h */,
 				9D74EF6017A713A100BEE89F /* MIKMIDIUtilities.m */,
+				9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */,
+				9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */,
+				833B73DC1A26346F00E0CC9F /* MIKMIDIClock.h */,
+				833B73DD1A26346F00E0CC9F /* MIKMIDIClock.m */,
 				9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */,
 				9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */,
 			);
