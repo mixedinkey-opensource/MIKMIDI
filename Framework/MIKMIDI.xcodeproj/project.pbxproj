@@ -108,6 +108,7 @@
 		9D877D851A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877D831A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m */; };
 		9D877DFC1A670261001BA997 /* MIKMIDIProgramChangeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877DFA1A670261001BA997 /* MIKMIDIProgramChangeCommand.m */; };
 		9D877DFD1A6706E6001BA997 /* MIKMIDIProgramChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D877DF91A670261001BA997 /* MIKMIDIProgramChangeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DA1652A1A7B20E10056AFB6 /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAE7D8D19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */; };
 		9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B1F1A7AFF5900F46528 /* MIKMIDIDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */; };
@@ -709,6 +710,7 @@
 				9DAF8B801A7B00B100F46528 /* MIKMIDIUtilities.h in Headers */,
 				9DAF8B631A7B008A00F46528 /* MIKMIDINoteOnCommand.h in Headers */,
 				9DAF8B5E1A7B007300F46528 /* MIKMIDIDestinationEndpoint.h in Headers */,
+				9DA1652A1A7B20E10056AFB6 /* MIKMIDIResponder.h in Headers */,
 				9DAF8B7B1A7B00A700F46528 /* MIKMIDIPlayer.h in Headers */,
 				9DAF8B781A7B00A700F46528 /* MIKMIDIMetaTimeSignatureEvent.h in Headers */,
 				9DAF8B651A7B008A00F46528 /* MIKMIDISystemMessageCommand.h in Headers */,
@@ -1177,6 +1179,7 @@
 				9DAF8B1A1A7AFF1200F46528 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
