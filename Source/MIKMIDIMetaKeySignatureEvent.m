@@ -66,6 +66,7 @@
 
 + (BOOL)isMutable { return YES; }
 
+@dynamic key;
 @dynamic scale;
 
 @end
