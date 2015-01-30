@@ -7,19 +7,22 @@
 //
 
 import UIKit
+import MIKMIDI
 
 class ViewController: UIViewController {
+	
+	var sequenceView: MIDISequenceView {
+		get {
+			return self.view as MIDISequenceView
+		}
+	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		// Do any additional setup after loading the view, typically from a nib.
+		
+		let sequenceURL = NSBundle.mainBundle().URLForResource("default", withExtension: "mid")
+		self.sequenceView.sequence = MIKMIDISequence(fileAtURL: sequenceURL, error: nil)
+		
 	}
-
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
-	}
-
-
 }
 
