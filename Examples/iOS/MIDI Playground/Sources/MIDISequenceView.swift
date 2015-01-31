@@ -9,59 +9,6 @@
 import UIKit
 import MIKMIDI
 
-class MIDISequenceView : UIView {
-	
-	var sequence: MIKMIDISequence? {
-		didSet {
-			self.setNeedsDisplay()
-		}
-	}
-	
-	var pixelsPerTick : CGFloat {
-		if (self.sequence == nil) { return 10.0 }
-		
-		let tracks = self.sequence!.tracks as [MIKMIDITrack]
-		let maxLength = tracks.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
-			return max(currMax, track.length);
-		}
-		return CGRectGetWidth(self.bounds) / CGFloat(maxLength)
-	}
-	
-	var pixelsPerNote : CGFloat {
-		return CGRectGetHeight(self.bounds) / 127.0
-	}
-	
-	override func drawRect(rect: CGRect) {
-		if self.sequence == nil { return }
-		
-		let ppt = self.pixelsPerTick
-		let noteHeight = self.pixelsPerNote
-		
-		let tracks = self.sequence!.tracks as [MIKMIDITrack]
-		for (index, track) in enumerate(tracks) {
-			let events = track.events as [MIKMIDIEvent]
-			for event in events {
-				if let note = event as? MIKMIDINoteEvent {
-					let noteColor = tracks.count <= 2 ? self.colorForNote(note) : self.colorForTrackAtIndex(index)
-				}
-				
-				
-			}
-		}
-	}
-	
-	func colorForNote(note: MIKMIDINoteEvent) -> UIColor {
-		let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor(), UIColor.greenColor(), UIColor.cyanColor(), UIColor.blueColor(), UIColor.purpleColor()]
-		let noteIndex = (note.note % 12)
-		return UIColor.greenColor()
-	}
-	
-	func colorForTrackAtIndex(index: Int) -> UIColor {
-		let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor(), UIColor.greenColor(), UIColor.blueColor(), UIColor.purpleColor()]
-		return UIColor.greenColor()
-	}
-}
-
 extension UIColor {
 	func colorByInterpolatingWith(otherColor: UIColor, var amount: CGFloat) -> UIColor {
 		amount = min(max(amount, 0.0), 1.0)
@@ -79,4 +26,117 @@ extension UIColor {
 		
 		return UIColor(red: r, green: g, blue: b, alpha: a)
 	}
+}
+
+class MIDISequenceView : UIView {
+	
+	// MARK: Drawing
+	
+	func drawNote(note: MIKMIDINoteEvent) {
+		let yPosition = CGRectGetMaxY(self.bounds) - CGFloat(note.note) * self.noteHeightInPixels
+		let noteRect = CGRectMake(CGRectGetMinX(self.bounds) + 60.0 + CGFloat(note.timeStamp) * self.pixelsPerTick,
+			yPosition,
+			CGFloat(note.duration) * self.pixelsPerTick,
+			self.noteHeightInPixels)
+		
+		let path = UIBezierPath(rect: noteRect)
+		path.stroke()
+		path.fill()
+	}
+	
+	override func drawRect(rect: CGRect) {
+		
+		UIColor.whiteColor().setFill()
+		UIBezierPath(rect: self.bounds).fill()
+		
+//		// Draw scale on left
+//		for note: UInt8 in 0...127 {
+//			let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
+//			let font = UIFont(name: "Helvetica", size: 12.0)!
+//			let attributes = [NSFontAttributeName : font, NSForegroundColorAttributeName : UIColor.blackColor()]
+//			let attrString = NSAttributedString(string: noteString, attributes: attributes)
+//			let yPosition = CGRectGetMaxY(self.bounds) - CGFloat(note) * self.noteHeightInPixels
+//			attrString.drawAtPoint(CGPointMake(3.0, yPosition))
+//		}
+//		UIColor.blackColor().setFill()
+//		UIBezierPath(rect: CGRectMake(45.0, 0.0, 1.0, CGRectGetHeight(self.bounds))).fill()
+		
+		// Draw notes
+		if self.noteTracks == nil { return }
+		
+		// Draw gridlines
+		let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
+			return max(currMax, track.length);
+		}
+		UIColor(white: 0.9, alpha: 1.0).setFill()
+		for tick in 0...Int(maxLength) {
+			UIBezierPath(rect: CGRectMake(59.0 + CGFloat(tick) * self.pixelsPerTick, 0, 1.0, CGRectGetHeight(self.bounds))).fill()
+		}
+		
+		// Draw notes
+		self.noteHeightInPixels = CGRectGetHeight(self.bounds) / 127.0
+		
+		for (index, track) in enumerate(noteTracks!) {
+			let events: [MIKMIDINoteEvent] = track.events.filter({ $0 is MIKMIDINoteEvent }) as [MIKMIDINoteEvent]
+			for note in events {
+				let noteColor = noteTracks!.count == 1 ? self.colorForNote(note) : self.colorForTrackAtIndex(index)
+				noteColor.setFill()
+				UIColor.blackColor().setStroke()
+				self.drawNote(note)
+			}
+		}
+	}
+	
+	// MARK: Utilities
+	
+	func colorForNote(note: MIKMIDINoteEvent) -> UIColor {
+		let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor(), UIColor.greenColor(), UIColor.cyanColor(), UIColor.blueColor()]
+		let noteIndex = Int(note.note) % 12
+		let floatIndex = Double(noteIndex) / (Double(12) / Double(colors.count-1))
+		let leftColor = colors[Int(floor(floatIndex))]
+		let rightColor = colors[Int(ceil(floatIndex))]
+		let interpolationAmount = floatIndex - floor(floatIndex)
+		return leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
+	}
+	
+	func colorForTrackAtIndex(index: Int) -> UIColor {
+		let colors = [UIColor.redColor(), UIColor.orangeColor(), UIColor.yellowColor(), UIColor.greenColor(), UIColor.cyanColor(), UIColor.blueColor()]
+		if let numTracks = self.noteTracks?.count {
+			let floatIndex = Double(index) / (Double(numTracks) / Double(colors.count-1))
+			let leftColor = colors[Int(floor(floatIndex))]
+			let rightColor = colors[Int(ceil(floatIndex))]
+			let interpolationAmount = floatIndex - floor(floatIndex)
+			return leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
+		} else {
+			return UIColor.grayColor()
+		}
+	}
+	
+	// MARK: Properties
+	
+	var sequence: MIKMIDISequence? {
+		didSet {
+			let tracks = sequence?.tracks as? [MIKMIDITrack]
+			self.noteTracks = tracks?.filter({ (track: MIKMIDITrack) -> Bool in
+				return track.events.filter({ $0 is MIKMIDINoteEvent }).count != 0
+			})
+			self.calculatePixelsPerTick()
+			self.setNeedsDisplay()
+		}
+	}
+	var noteTracks: [MIKMIDITrack]?
+	
+	func calculatePixelsPerTick () {
+		if (self.noteTracks == nil) {
+			pixelsPerTick = 10.0
+			return
+		}
+		
+		let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
+			return max(currMax, track.length);
+		}
+		pixelsPerTick = (CGRectGetWidth(self.bounds) - 60.0) / CGFloat(maxLength)
+	}
+	var pixelsPerTick : CGFloat = 10.0
+	var noteHeightInPixels: CGFloat = 20.0
 }

@@ -2,14 +2,5 @@
 <Timeline
    version = "3.0">
    <TimelineItems>
-      <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=9&amp;CharacterRangeLoc=1905&amp;EndingColumnNumber=16&amp;EndingLineNumber=67&amp;StartingColumnNumber=7&amp;StartingLineNumber=67&amp;Timestamp=444339987.922196">
-      </LoggerValueHistoryTimelineItem>
-      <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=39&amp;CharacterRangeLoc=1941&amp;EndingColumnNumber=42&amp;EndingLineNumber=68&amp;StartingColumnNumber=3&amp;StartingLineNumber=68&amp;Timestamp=444339987.922362">
-      </LoggerValueHistoryTimelineItem>
-      <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=21&amp;CharacterRangeLoc=1990&amp;EndingColumnNumber=31&amp;EndingLineNumber=69&amp;StartingColumnNumber=10&amp;StartingLineNumber=69&amp;Timestamp=444339988.229781">
-      </LoggerValueHistoryTimelineItem>
    </TimelineItems>
 </Timeline>
