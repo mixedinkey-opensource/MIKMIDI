@@ -164,6 +164,7 @@
 	return [[self privateXMLRepresentation] XMLStringWithOptions:NSXMLNodePrettyPrint];
 #else
 	
+	int err = 0;
 	xmlTextWriterPtr writer = NULL;
 	xmlBufferPtr buffer = xmlBufferCreate();
 	if (!buffer) {
@@ -179,7 +180,7 @@
 	}
 	
 	// Start the document
-	int err = xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
+	err = xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
 	if (err < 0) {
 		NSLog(@"Unable to start XML document: %i", err);
 		goto CLEANUP_AND_EXIT;

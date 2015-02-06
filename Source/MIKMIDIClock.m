@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIClock.h"
+#import <mach/mach_time.h>
 
 @interface MIKMIDIClock ()
 @property (nonatomic) MIDITimeStamp timeStampZero;

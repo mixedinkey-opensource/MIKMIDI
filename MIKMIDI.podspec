@@ -1,18 +1,18 @@
 Pod::Spec.new do |s|
   
   s.name         = 'MIKMIDI'
-  s.version      = '0.9.2'
-  s.summary      = 'Library useful for programmers writing Objective-C OS X or iOS apps that communicate with external MIDI devices.'
+  s.version      = '1.0.0'
+  s.summary      = 'Library useful for programmers writing Objective-C or Swift OS X or iOS apps that use MIDI.'
   s.description  = <<-DESC
-                     MIKMIDI is a library intended to simplify implementing Objective-C apps 
-                     for OS X or iOS that communicate with external MIDI devices, including
-                     DJ controllers, keyboards, etc. It provides Objective-C abstractions
-                     around CoreMIDI, as well as a number of useful higher level features
-                     not included in CoreMIDI itself.'
+                     MIKMIDI is a library intended to simplify implementing Objective-C or Swift apps 
+                     for OS X or iOS that use MIDI. It includes the ability to communicate with external
+					 MIDI devices, to read and write MIDI files, to record and play back MIDI, etc.
+ 					 It provides Objective-C abstractions around CoreMIDI, as well as a number of useful
+ 					 higher level feature not included in CoreMIDI itself.'
                      DESC
   s.homepage     = 'https://github.com/mixedinkey-opensource/MIKMIDI'
   s.license      = 'MIT'
-  s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com.com' }
+  s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com' }
   s.social_media_url = 'https://twitter.com/armadsen'
 
   s.ios.deployment_target = '6.0'

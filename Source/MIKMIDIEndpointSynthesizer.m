@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#if !TARGET_OS_IPHONE
-
 #import "MIKMIDIEndpointSynthesizer.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDI.h"
@@ -155,7 +153,12 @@
 	
 	AudioComponentDescription outputcd = {0};
 	outputcd.componentType = kAudioUnitType_Output;
+#if TARGET_OS_IPHONE
+	outputcd.componentSubType = kAudioUnitSubType_RemoteIO;
+#else
 	outputcd.componentSubType = kAudioUnitSubType_DefaultOutput;
+#endif
+	
 	outputcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	
 	AUNode outputNode;
@@ -294,7 +297,11 @@
 		AudioComponentDescription componentDesc = {
 			.componentManufacturer = kAudioUnitManufacturer_Apple,
 			.componentType = kAudioUnitType_MusicDevice,
+#if TARGET_OS_IPHONE
+			.componentSubType = kAudioUnitSubType_MIDISynth,
+#else
 			.componentSubType = kAudioUnitSubType_DLSSynth,
+#endif
 		};
 		AudioComponent instrumentComponent = AudioComponentFindNext(NULL, &componentDesc);
 		if (!instrumentComponent) {
@@ -387,5 +394,3 @@
 }
 
 @end
-
-#endif // !TARGET_OS_IPHONE

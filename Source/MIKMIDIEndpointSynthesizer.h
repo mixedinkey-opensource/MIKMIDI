@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#if !TARGET_OS_IPHONE
-
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
@@ -225,5 +223,3 @@
 @property (readonly, nonatomic) MusicDeviceInstrumentID instrumentID;
 
 @end
-
-#endif // !TARGET_OS_IPHONE

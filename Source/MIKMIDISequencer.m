@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDISequencer.h"
+#import <mach/mach_time.h>
 #import "MIKMIDISequence.h"
 #import "MIKMIDITrack.h"
 #import "MIKMIDIClock.h"
