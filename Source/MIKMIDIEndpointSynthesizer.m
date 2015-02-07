@@ -104,9 +104,8 @@
 	if (self.endpoint) {
 		if ([self.endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
 			[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:(MIKMIDISourceEndpoint *)self.endpoint forConnectionToken:self.connectionToken];
-		} else if ([self.endpoint isKindOfClass:[MIKMIDIClientDestinationEndpoint class]]) {
-			[(MIKMIDIClientDestinationEndpoint *)self.endpoint setReceivedMessagesHandler:nil];
 		}
+		// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
 	}
 	
 	self.graph = NULL;
