@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D6DE79A1A86918E00AD9C10 /* MIDISequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */; };
 		9DA164FB1A7B1F5F0056AFB6 /* MIDI_PlaygroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA164FA1A7B1F5F0056AFB6 /* MIDI_PlaygroundTests.swift */; };
 		9DA165111A7B1FFF0056AFB6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA1650F1A7B1FFF0056AFB6 /* AppDelegate.swift */; };
 		9DA165121A7B1FFF0056AFB6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA165101A7B1FFF0056AFB6 /* ViewController.swift */; };
 		9DA1651A1A7B20090056AFB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DA165141A7B20090056AFB6 /* LaunchScreen.xib */; };
 		9DA1651B1A7B20090056AFB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9DA165161A7B20090056AFB6 /* Main.storyboard */; };
 		9DA1651C1A7B20090056AFB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DA165181A7B20090056AFB6 /* Images.xcassets */; };
-		9DA1651F1A7B20700056AFB6 /* MIDISequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */; };
 		9DA1652C1A7B4BE60056AFB6 /* default.mid in Resources */ = {isa = PBXBuildFile; fileRef = 9DA1652B1A7B4BE60056AFB6 /* default.mid */; };
+		9DB146DD1A867B77006915FC /* PianoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB146DC1A867B77006915FC /* PianoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		9DA165191A7B20090056AFB6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDISequenceView.swift; sourceTree = "<group>"; };
 		9DA1652B1A7B4BE60056AFB6 /* default.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = default.mid; sourceTree = "<group>"; };
+		9DB146DC1A867B77006915FC /* PianoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PianoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 				9DA1650F1A7B1FFF0056AFB6 /* AppDelegate.swift */,
 				9DA165101A7B1FFF0056AFB6 /* ViewController.swift */,
 				9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */,
+				9DB146DC1A867B77006915FC /* PianoView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -220,9 +223,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D6DE79A1A86918E00AD9C10 /* MIDISequenceView.swift in Sources */,
+				9DB146DD1A867B77006915FC /* PianoView.swift in Sources */,
 				9DA165121A7B1FFF0056AFB6 /* ViewController.swift in Sources */,
 				9DA165111A7B1FFF0056AFB6 /* AppDelegate.swift in Sources */,
-				9DA1651F1A7B20700056AFB6 /* MIDISequenceView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

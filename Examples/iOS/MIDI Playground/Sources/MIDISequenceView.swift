@@ -44,36 +44,7 @@ class MIDISequenceView : UIView {
 		path.fill()
 	}
 	
-	override func drawRect(rect: CGRect) {
-		
-		UIColor.whiteColor().setFill()
-		UIBezierPath(rect: self.bounds).fill()
-		
-//		// Draw scale on left
-//		for note: UInt8 in 0...127 {
-//			let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
-//			let font = UIFont(name: "Helvetica", size: 12.0)!
-//			let attributes = [NSFontAttributeName : font, NSForegroundColorAttributeName : UIColor.blackColor()]
-//			let attrString = NSAttributedString(string: noteString, attributes: attributes)
-//			let yPosition = CGRectGetMaxY(self.bounds) - CGFloat(note) * self.noteHeightInPixels
-//			attrString.drawAtPoint(CGPointMake(3.0, yPosition))
-//		}
-//		UIColor.blackColor().setFill()
-//		UIBezierPath(rect: CGRectMake(45.0, 0.0, 1.0, CGRectGetHeight(self.bounds))).fill()
-		
-		// Draw notes
-		if self.noteTracks == nil { return }
-		
-		// Draw gridlines
-		let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
-			return max(currMax, track.length);
-		}
-		UIColor(white: 0.9, alpha: 1.0).setFill()
-		for tick in 0...Int(maxLength) {
-			UIBezierPath(rect: CGRectMake(59.0 + CGFloat(tick) * self.pixelsPerTick, 0, 1.0, CGRectGetHeight(self.bounds))).fill()
-		}
-		
-		// Draw notes
+	func drawNotes() {
 		self.noteHeightInPixels = CGRectGetHeight(self.bounds) / 127.0
 		
 		for (index, track) in enumerate(noteTracks!) {
@@ -85,6 +56,45 @@ class MIDISequenceView : UIView {
 				self.drawNote(note)
 			}
 		}
+	}
+	
+	func drawScale() {
+		for note: UInt8 in 0...127 {
+			let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
+			let font = UIFont(name: "Helvetica", size: 12.0)!
+			let attributes = [NSFontAttributeName : font, NSForegroundColorAttributeName : UIColor.blackColor()]
+			let attrString = NSAttributedString(string: noteString, attributes: attributes)
+			let yPosition = CGRectGetMaxY(self.bounds) - CGFloat(note) * self.noteHeightInPixels
+			attrString.drawAtPoint(CGPointMake(3.0, yPosition))
+		}
+		UIColor.blackColor().setFill()
+		UIBezierPath(rect: CGRectMake(45.0, 0.0, 1.0, CGRectGetHeight(self.bounds))).fill()
+	}
+	
+	func drawGridlines() {
+		let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
+			return max(currMax, track.length);
+		}
+		UIColor(white: 0.9, alpha: 1.0).setFill()
+		for tick in 0...Int(maxLength) {
+			UIBezierPath(rect: CGRectMake(59.0 + CGFloat(tick) * self.pixelsPerTick, 0, 1.0, CGRectGetHeight(self.bounds))).fill()
+		}
+	}
+	
+	override func drawRect(rect: CGRect) {
+		
+		UIColor.whiteColor().setFill()
+		UIBezierPath(rect: self.bounds).fill()
+		
+		// Draw scale on left
+		drawScale();
+		
+		if self.noteTracks == nil { return }
+		
+		// Draw gridlines
+		drawGridlines();
+		// Draw notes
+		drawNotes();
 	}
 	
 	// MARK: Utilities

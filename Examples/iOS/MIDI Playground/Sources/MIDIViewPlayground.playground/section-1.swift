@@ -4,6 +4,8 @@ import UIKit
 import MIKMIDI
 import XCPlayground
 
+XCPSetExecutionShouldContinueIndefinitely(continueIndefinitely: false)
+
 extension UIColor {
 	func colorByInterpolatingWith(otherColor: UIColor, var amount: CGFloat) -> UIColor {
 		amount = min(max(amount, 0.0), 1.0)
@@ -136,11 +138,75 @@ class MIDISequenceView : UIView {
 	var noteHeightInPixels: CGFloat = 20.0
 }
 
-let bachURL = NSBundle.mainBundle().URLForResource("bach", withExtension: "mid")
-let bachSequence = MIKMIDISequence(fileAtURL: bachURL, error: nil)
-let scaleURL = NSBundle.mainBundle().URLForResource("scale", withExtension: "mid")
-let scaleSequence = MIKMIDISequence(fileAtURL: scaleURL, error: nil)
+class PianoView: UIView {
+	
+	// MARK: Drawing
+	
+	func drawBlackNote(noteNumber: Int) {
+	}
+	
+	func drawWhiteNote(noteNumber: Int, offset: CGFloat) {
+		UIColor.grayColor().setFill()
+		UIBezierPath(rect: CGRectMake(offset+self.whiteKeyWidth, 0, 1, CGRectGetHeight(self.bounds))).fill()
+	}
+	
+	override func drawRect(rect: CGRect) {
+		UIColor.whiteColor().setFill()
+		UIColor.blackColor().setStroke()
+		UIBezierPath(rect: self.bounds).fill()
+		UIBezierPath(rect: self.bounds).stroke()
+		
+		var offset: CGFloat = 0
+		UIColor.grayColor().setFill()
+		UIBezierPath(rect: CGRectMake(offset+self.whiteKeyWidth, 0, 1, CGRectGetHeight(self.bounds))).fill()
+		
+		let numKeys = self.numberOfKeys
+		for noteNumber in 1..<numKeys {
+			if noteIsBlack(noteNumber) {
+				drawBlackNote(noteNumber)
+			} else {
+				drawWhiteNote(noteNumber, offset: offset)
+				offset += self.whiteKeyWidth
+			}
+		}
+		
+		UIColor.grayColor().setFill()
+		UIBezierPath(rect: CGRectMake(offset+self.whiteKeyWidth, 0, 1, CGRectGetHeight(self.bounds))).fill()
+	}
+	
+	// MARK: Private Utilities
+	
+	private func noteIsBlack(noteNumber: Int) -> Bool {
+		return NSSet(array:[1, 3, 6, 8, 10]).containsObject((noteNumber % 12));
+	}
+	
+	// MARK: Properties
+	
+	var isVertical: Bool {
+		return CGRectGetWidth(self.bounds) < CGRectGetHeight(self.bounds)
+	}
+	
+	var numberOfKeys: Int = 10 {
+		didSet {
+			self.setNeedsDisplay()
+		}
+	}
+	
+	var whiteKeyWidth: CGFloat {
+		let width = self.isVertical ? CGRectGetHeight(self.bounds) : CGRectGetWidth(self.bounds)
+		return width / CGFloat(self.numberOfKeys)
+	}
+}
 
-let sequenceView = MIDISequenceView(frame: CGRectMake(0, 0, 800, 2000))
-sequenceView.sequence = bachSequence
-XCPShowView("sequenceView", sequenceView)
+let pianoView = PianoView(frame: CGRectMake(0, 0, 800, 100))
+XCPShowView("pianoView", pianoView);
+
+
+//let bachURL = NSBundle.mainBundle().URLForResource("bach", withExtension: "mid")
+//let bachSequence = MIKMIDISequence(fileAtURL: bachURL, error: nil)
+//let scaleURL = NSBundle.mainBundle().URLForResource("scale", withExtension: "mid")
+//let scaleSequence = MIKMIDISequence(fileAtURL: scaleURL, error: nil)
+//
+//let sequenceView = MIDISequenceView(frame: CGRectMake(0, 0, 800, 2000))
+//sequenceView.sequence = bachSequence
+//XCPShowView("sequenceView", sequenceView)
