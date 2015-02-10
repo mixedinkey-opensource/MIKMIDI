@@ -14,6 +14,36 @@
 @interface MIKMIDINoteEvent : MIKMIDIEvent
 
 /**
+ *  Convenience method for creating a new MIKMIDINoteEvent.
+ *
+ *  @param channel   The channel for the event.
+ *  @param timeStamp The MusicTimeStamp for the event.
+ *  @param note      The MIDI note number for the event.
+ *  @param velocity  The note's velocity.
+ *  @param duration  The duration of the note event.
+ *
+ *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
+ *
+ *  @note If you need to set additional properties, use +noteEventWithTimeStamp:message:, or
+ *  create an MIKMutableMIDINoteEventInstead.
+ */
++ (instancetype)noteEventWithChannel:(NSInteger)channel
+						   timeStamp:(MusicTimeStamp)timeStamp
+								note:(NSInteger)note
+							velocity:(NSInteger)velocity
+							duration:(float)duration;
+
+/**
+ *  Convenience method for creating a new MIKMIDINoteEvent.
+ *
+ *  @param timeStamp The MusicTimeStamp for the event.
+ *  @param message The MIDINoteMessage for the event.
+ *
+ *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
+ */
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
+
+/**
  *  The MIDI note number for the event.
  */
 @property (nonatomic, readonly) UInt8 note;
@@ -52,17 +82,6 @@
  *  The note letter and octave of the MIDI note. 0 is considered to be the first octave, so the note C0 is equal to MIDI note 0.
  */
 @property (nonatomic, readonly) NSString *noteLetterAndOctave;
-
-/**
- *  Convenience method for creating a new MIKMIDINoteEvent.
- *
- *  @param timeStamp The MusicTimeStamp for the event.
- *
- *  @param message The MIDINoteMessage for the event.
- *
- *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
- */
-+ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
 
 @end
 
