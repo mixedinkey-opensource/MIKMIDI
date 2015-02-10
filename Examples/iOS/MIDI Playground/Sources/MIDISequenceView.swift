@@ -28,7 +28,26 @@ extension UIColor {
 	}
 }
 
-class MIDISequenceView : UIView {
+@IBDesignable class MIDISequenceView : UIView {
+	
+	override func prepareForInterfaceBuilder() {
+		let bundle = NSBundle(forClass: self.dynamicType)
+		let midiURL = bundle.URLForResource("default", withExtension: "mid")
+		if midiURL != nil {
+			self.sequence = MIKMIDISequence(fileAtURL: midiURL, error: nil)
+		} else {
+			let sequence = MIKMIDISequence()
+			let track = sequence.addTrack()
+			
+			var timestamp: MusicTimeStamp = 0
+			for note in 60...72 {
+				track.insertMIDIEvent(MIKMIDINoteEvent(channel: 0, timeStamp: timestamp, note: note, velocity: 127, duration: 1.0))
+				timestamp += 1
+			}
+			
+			self.sequence = sequence
+		}
+	}
 	
 	// MARK: Drawing
 	
@@ -87,7 +106,7 @@ class MIDISequenceView : UIView {
 		UIBezierPath(rect: self.bounds).fill()
 		
 		// Draw scale on left
-		drawScale();
+		//drawScale();
 		
 		if self.noteTracks == nil { return }
 		
