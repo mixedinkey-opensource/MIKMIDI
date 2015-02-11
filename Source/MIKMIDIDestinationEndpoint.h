@@ -28,4 +28,10 @@
  */
 @interface MIKMIDIDestinationEndpoint : MIKMIDIEndpoint
 
+/**
+ *  Unschedules previously-sent events. Events that have been scheduled with timestamps
+ *  in the future are cancelled and won't be sent. 
+ */
+- (void)unscheduleAllPendingEvents;
+
 @end
