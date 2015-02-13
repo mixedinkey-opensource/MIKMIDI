@@ -541,7 +541,7 @@
 
 #pragma mark - Timer
 
-- (void)timerFired:(NSTimer *)timer
+- (void)processingTimerFired:(NSTimer *)timer
 {
 	[self processSequenceStartingFromMIDITimeStamp:self.lastProcessedMIDITimeStamp + 1];
 }
