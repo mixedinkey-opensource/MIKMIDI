@@ -56,7 +56,7 @@
 @property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
 
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
-@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) NSTimer *processingTimer;
 
 @property (strong, nonatomic) NSMutableDictionary *pendingNoteOffs;
 @property (strong, nonatomic) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
@@ -133,9 +133,12 @@
 	self.pendingNoteOffs = [NSMutableDictionary dictionary];
 	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
-	self.timer = [NSTimer timerWithTimeInterval:0.05 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
-	[[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-	[self.timer fire];
+	self.processingTimer = [NSTimer scheduledTimerWithTimeInterval:0.05
+															target:self
+														  selector:@selector(processingTimerFired:)
+														  userInfo:nil
+														   repeats:YES];
+	[self.processingTimer fire];
 }
 
 - (void)resumePlayback
@@ -148,8 +151,7 @@
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
-	[self.timer invalidate];
-	self.timer = nil;
+	self.processingTimer = nil;
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
@@ -577,6 +579,14 @@
 - (void)setPreRoll:(MusicTimeStamp)preRoll
 {
 	_preRoll = (preRoll >= 0) ? preRoll : 0;
+}
+
+- (void)setProcessingTimer:(NSTimer *)processingTimer
+{
+	if (processingTimer != _processingTimer) {
+		[_processingTimer invalidate];
+		_processingTimer = processingTimer;
+	}
 }
 
 - (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint
