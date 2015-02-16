@@ -185,7 +185,11 @@
 	self.clickPlayer.sequence = clickSequence;
 	MIKMIDITrack *clickTrack = [clickSequence addTrack];
 
-	[clickTrack setDestinationEndpoint:self.metronomeEndpoint];
+	OSStatus err = MusicTrackSetDestMIDIEndpoint(clickTrack.musicTrack, (MIDIEndpointRef)self.metronomeEndpoint.objectRef);
+	if (err) {
+		NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return;
+	}
 	MusicTimeStamp toTimeStamp = self.stopPlaybackAtEndOfSequence ? self.sequence.length : self.maxClickTrackTimeStamp;
 
 	NSMutableSet *clickEvents = [NSMutableSet set];
