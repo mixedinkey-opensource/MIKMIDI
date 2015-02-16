@@ -30,47 +30,6 @@ typedef struct {
 @interface MIKMIDISequence : NSObject
 
 /**
- *  The tempo track for the sequence.
- */
-@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
-
-/**
- *  The MIDI tracks for the sequence. An array of MIKMIDITrack.
- */
-@property (nonatomic, readonly) NSArray *tracks;
-
-/**
- *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
- */
-@property (nonatomic, readonly) MusicSequence musicSequence;
-
-/**
- *  The length of the sequence as a MusicTimeStamp.
- *
- *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
- */
-@property (nonatomic) MusicTimeStamp length;
-
-/**
- *  The duration of the sequence in seconds.
- */
-@property (nonatomic, readonly) Float64 durationInSeconds;
-
-/**
- *  The MIDI data that composes the sequence. This data is equivalent to an NSData representation of a standard MIDI file.
- */
-@property (nonatomic, readonly) NSData *dataValue;
-
-/**
- *  A block to be called for each user event added to any music track owned by the sequence.
- *
- *  This block is to be used in the same fashion as you would use the callback function sent to
- *  MusicSequenceSetUserCallback() if you were working directly with CoreMIDI.
- */
-@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
-
-
-/**
  *  Creates and initializes a new instance of MIKMIDISequence.
  *
  *  @return A new instance of MIKMIDISequence, or nil if an error occured.
@@ -210,19 +169,61 @@ typedef struct {
  */
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 
-
 // TODO: Document these
 - (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature;
 - (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp;
 - (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp;
 
+// Properties
+
+/**
+ *  The tempo track for the sequence.
+ */
+@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
+
+/**
+ *  The MIDI tracks for the sequence. An array of MIKMIDITrack instances.
+ */
+@property (nonatomic, readonly) NSArray *tracks;
+
+/**
+ *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
+ */
+@property (nonatomic, readonly) MusicSequence musicSequence;
+
+/**
+ *  The length of the sequence as a MusicTimeStamp.
+ *
+ *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
+ */
+@property (nonatomic) MusicTimeStamp length;
+
+/**
+ *  The duration of the sequence in seconds.
+ */
+@property (nonatomic, readonly) Float64 durationInSeconds;
+
+/**
+ *  The MIDI data that composes the sequence. This data is equivalent to an NSData representation of a standard MIDI file.
+ */
+@property (nonatomic, readonly) NSData *dataValue;
+
+/**
+ *  A block to be called for each user event added to any music track owned by the sequence.
+ *
+ *  This block is to be used in the same fashion as you would use the callback function sent to
+ *  MusicSequenceSetUserCallback() if you were working directly with CoreMIDI.
+ */
+@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+
+#pragma mark - Deprecated
 
 /**
  *  Sets the destination endpoint for each track in the sequence.
  *
  *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.
  */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint;
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 @end
 

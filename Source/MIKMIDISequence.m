@@ -321,6 +321,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
 {
+	NSLog(@"%s is deprecated. You should update your code to avoid calling this method. Use MIKMIDISequencer's API instead.", __PRETTY_FUNCTION__);
     for (MIKMIDITrack *track in self.tracks) {
         track.destinationEndpoint = destinationEndpoint;
     }

@@ -418,8 +418,20 @@
     return resolution;
 }
 
+#pragma mark - Properties
+
+@synthesize destinationEndpoint = _destinationEndpoint;
+
+- (MIKMIDIDestinationEndpoint *)destinationEndpoint
+{
+	NSLog(@"%s is deprecated. You should update your code to avoid calling this method. Use MIKMIDISequencer's API instead.", __PRETTY_FUNCTION__);
+	return _destinationEndpoint;
+}
+
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
 {
+	NSLog(@"%s is deprecated. You should update your code to avoid calling this method. Use MIKMIDISequencer's API instead.", __PRETTY_FUNCTION__);
+
     if (destinationEndpoint != _destinationEndpoint) {
         OSStatus err = MusicTrackSetDestMIDIEndpoint(self.musicTrack, (MIDIEndpointRef)destinationEndpoint.objectRef);
         if (err) NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
