@@ -72,6 +72,9 @@
 @property (nonatomic, strong) NSMapTable *tracksToDestinationsMap;
 @property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
+@property (nonatomic, strong, readonly) MIKMIDIClientDestinationEndpoint *builtinEndpoint;
+@property (nonatomic, strong, readonly) MIKMIDIEndpointSynthesizer *builtinSynthesizer;
+
 @end
 
 
@@ -505,7 +508,8 @@
 
 - (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
 {
-	return [self.tracksToDestinationsMap objectForKey:track];
+	MIKMIDIDestinationEndpoint *result = [self.tracksToDestinationsMap objectForKey:track];
+	return result ?: self.builtinEndpoint;
 }
 
 #pragma mark - Click Track
@@ -624,9 +628,27 @@
 	}
 }
 
+@synthesize builtinEndpoint = _builtinEndpoint;
+- (MIKMIDIClientDestinationEndpoint *)builtinEndpoint
+{
+	if (!_builtinEndpoint) {
+		NSString *name = [NSString stringWithFormat:@"%@ (%p)", NSStringFromClass([self class]), self];
+		_builtinEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];
+		[self builtinSynthesizer]; // Create synth
+	}
+	return _builtinEndpoint;
+}
+
+@synthesize builtinSynthesizer = _builtinSynthesizer;
+- (MIKMIDIEndpointSynthesizer *)builtinSynthesizer
+{
+	if (!_builtinSynthesizer) {
+		_builtinSynthesizer = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:self.builtinEndpoint];
+	}
+	return _builtinSynthesizer;
+}
+
 @end
-
-
 
 #pragma mark - 
 
