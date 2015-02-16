@@ -43,7 +43,7 @@
 }
 
 - (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
-{	
+{
 	self = [super init];
 	if (self) {
 		if (source) {
@@ -195,6 +195,15 @@
 		NSLog(@"Unable to initialize AU graph: %i", err);
 		return NO;
 	}
+	
+#if !TARGET_OS_IPHONE
+	// Turn down reverb which is way too high by default
+	if (instrumentcd.componentSubType == kAudioUnitSubType_DLSSynth) {
+		if ((err = AudioUnitSetParameter(instrumentUnit, kMusicDeviceParam_ReverbVolume, kAudioUnitScope_Global, 0, -120, 0))) {
+			NSLog(@"Unable to set reverb level to -120: %i", err);
+		}
+	}
+#endif
 	
 	if ((err = AUGraphStart(graph))) {
 		NSLog(@"Unable to start AU graph: %i", err);
