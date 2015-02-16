@@ -29,15 +29,15 @@
 #pragma mark -
 
 @interface MIKMIDIEventWithDestination : NSObject
-@property (strong, nonatomic) MIKMIDIEvent *event;
-@property (strong, nonatomic) MIKMIDIDestinationEndpoint *destination;
+@property (nonatomic, strong) MIKMIDIEvent *event;
+@property (nonatomic, strong) MIKMIDIDestinationEndpoint *destination;
 + (instancetype)eventWithDestination:(MIKMIDIDestinationEndpoint *)destination event:(MIKMIDIEvent *)event;
 @end
 
 
 @interface MIKMIDICommandWithDestination : NSObject
-@property (strong, nonatomic) MIKMIDICommand *command;
-@property (strong, nonatomic) MIKMIDIDestinationEndpoint *destination;
+@property (nonatomic, strong) MIKMIDICommand *command;
+@property (nonatomic, strong) MIKMIDIDestinationEndpoint *destination;
 + (instancetype)commandWithDestination:(MIKMIDIDestinationEndpoint *)destination command:(MIKMIDICommand *)command;
 @end
 
@@ -56,20 +56,21 @@
 @property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
 
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
-@property (strong, nonatomic) NSTimer *processingTimer;
+@property (nonatomic, strong) NSTimer *processingTimer;
 
-@property (strong, nonatomic) NSMutableDictionary *pendingNoteOffs;
-@property (strong, nonatomic) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
+@property (nonatomic, strong) NSMutableDictionary *pendingNoteOffs;
+@property (nonatomic, strong) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
 
-@property (strong, nonatomic) NSMutableDictionary *historicalClocks;
-@property (strong, nonatomic) NSMutableOrderedSet *historicalClockMIDITimeStamps;
+@property (nonatomic, strong) NSMutableDictionary *historicalClocks;
+@property (nonatomic, strong) NSMutableOrderedSet *historicalClockMIDITimeStamps;
 
-@property (strong, nonatomic) NSMutableDictionary *pendingRecordedNoteEvents;
+@property (nonatomic, strong) NSMutableDictionary *pendingRecordedNoteEvents;
 
 @property (nonatomic) MusicTimeStamp playbackOffset;
 @property (nonatomic) MusicTimeStamp startingTimeStamp;
 
-@property (strong, nonatomic) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
+@property (nonatomic, strong) NSMapTable *tracksToDestinationsMap;
+@property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
 @end
 
@@ -86,6 +87,7 @@
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
+		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 	}
 	return self;
 }
@@ -197,7 +199,7 @@
 
 	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
-		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
+		MIKMIDIDestinationEndpoint *destination = [self destinationEndpointForTrack:track];
 		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
 			NSMutableArray *eventsAtTimeStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
@@ -492,6 +494,18 @@
 		}
 	}
 	return nil;
+}
+
+#pragma mark - Configuration
+
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track
+{
+	[self.tracksToDestinationsMap setObject:endpoint forKey:track];
+}
+
+- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
+{
+	return [self.tracksToDestinationsMap objectForKey:track];
 }
 
 #pragma mark - Click Track
