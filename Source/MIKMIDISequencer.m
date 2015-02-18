@@ -437,15 +437,19 @@
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
 		MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
-		MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
-		MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
-		NSNumber *noteNumber = @(noteOnCommand.note);
-		NSMutableSet *noteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
-		if (!noteEventsAtNote) {
-			noteEventsAtNote = [NSMutableSet setWithCapacity:1];
-			self.pendingRecordedNoteEvents[noteNumber] = noteEventsAtNote;
+		if (noteOnCommand.velocity) {
+			MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
+			MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
+			NSNumber *noteNumber = @(noteOnCommand.note);
+			NSMutableSet *noteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
+			if (!noteEventsAtNote) {
+				noteEventsAtNote = [NSMutableSet setWithCapacity:1];
+				self.pendingRecordedNoteEvents[noteNumber] = noteEventsAtNote;
+			}
+			[noteEventsAtNote addObject:noteEvent];
+		} else {	// Velocity is 0, treat as a note Off per MIDI spec
+			event = [self pendingNoteEventWithNoteNumber:@(noteOnCommand.note) channel:noteOnCommand.channel releaseVelocity:0 offTimeStamp:musicTimeStamp];
 		}
-		[noteEventsAtNote addObject:noteEvent];
 	} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
 		MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
 		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
