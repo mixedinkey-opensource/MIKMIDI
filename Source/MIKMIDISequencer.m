@@ -20,7 +20,7 @@
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIClientDestinationEndpoint.h"
 #import "MIKMIDIUtilities.h"
-
+#import "MIKMIDISynthesizer.h"
 
 #define MIKMIDISequencerDefaultTempo			120
 #define MIKMIDISequencerDefaultTimeSignature	((MIKMIDITimeSignature) { .numerator = 4, .denominator = 4 })
@@ -73,7 +73,7 @@
 @property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
 @property (nonatomic, strong, readonly) MIKMIDIClientDestinationEndpoint *builtinEndpoint;
-@property (nonatomic, strong, readonly) MIKMIDIEndpointSynthesizer *builtinSynthesizer;
+@property (nonatomic, strong, readonly) MIKMIDISynthesizer *builtinSynthesizer;
 
 @end
 
@@ -640,7 +640,7 @@
 }
 
 @synthesize builtinSynthesizer = _builtinSynthesizer;
-- (MIKMIDIEndpointSynthesizer *)builtinSynthesizer
+- (MIKMIDISynthesizer *)builtinSynthesizer
 {
 	if (!_builtinSynthesizer) {
 		_builtinSynthesizer = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:self.builtinEndpoint];
