@@ -14,7 +14,7 @@
 		839D933219C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D933319C3A2C9007589C3 /* MIKMIDIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932E19C3A2C9007589C3 /* MIKMIDIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D933419C3A2C9007589C3 /* MIKMIDIEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D932F19C3A2C9007589C3 /* MIKMIDIEvent.m */; };
-		839D933519C3A2C9007589C3 /* MIKMIDIEventIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933019C3A2C9007589C3 /* MIKMIDIEventIterator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		839D933519C3A2C9007589C3 /* MIKMIDIEventIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933019C3A2C9007589C3 /* MIKMIDIEventIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		839D933619C3A2C9007589C3 /* MIKMIDIEventIterator.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D933119C3A2C9007589C3 /* MIKMIDIEventIterator.m */; };
 		839D934F19C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933719C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839D935019C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D933819C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.m */; };
@@ -187,7 +187,7 @@
 		9DAF8B6B1A7B00A700F46528 /* MIKMIDISequence.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D936B19C3A30B007589C3 /* MIKMIDISequence.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B6C1A7B00A700F46528 /* MIKMIDITrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D937119C3A319007589C3 /* MIKMIDITrack.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B6D1A7B00A700F46528 /* MIKMIDIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932E19C3A2C9007589C3 /* MIKMIDIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9DAF8B6E1A7B00A700F46528 /* MIKMIDIEventIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933019C3A2C9007589C3 /* MIKMIDIEventIterator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DAF8B6E1A7B00A700F46528 /* MIKMIDIEventIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933019C3A2C9007589C3 /* MIKMIDIEventIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9DAF8B6F1A7B00A700F46528 /* MIKMIDIMetaCopyrightEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933719C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B701A7B00A700F46528 /* MIKMIDIMetaCuePointEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933919C3A2F5007589C3 /* MIKMIDIMetaCuePointEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B711A7B00A700F46528 /* MIKMIDIMetaEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D933B19C3A2F5007589C3 /* MIKMIDIMetaEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1177,6 +1177,7 @@
 				9DAF8B1A1A7AFF1200F46528 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

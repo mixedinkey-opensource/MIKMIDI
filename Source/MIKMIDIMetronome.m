@@ -9,6 +9,9 @@
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDINoteEvent.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIMetronome.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#endif
 
 @implementation MIKMIDIMetronome
 
