@@ -40,7 +40,6 @@ typedef struct {
  *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
- *
  *  @param error If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -52,7 +51,6 @@ typedef struct {
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
- *
  *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -82,7 +80,6 @@ typedef struct {
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
  *
  *  @param fileURL The URL to write the MIDI file to.
- *
  *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -151,7 +148,6 @@ typedef struct {
  *  Inserts a tempo event with the desired bpm into the tempo track at the specified time stamp.
  *
  *  @param bpm The number of beats per minute for the tempo.
- *
  *  @param timeStamp The time stamp at which to set the tempo.
  *
  *  @return Whether or not setting the tempo of the sequence was succesful.
@@ -159,10 +155,10 @@ typedef struct {
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 
 /**
+ *
  *  Gets the bpm of the last tempo event before the specified time stamp.
  *
  *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
- *
  *  @param timeStamp The time stamp that you would like to know the sequence's tempo at.
  *
  *  @return Whether or not getting the tempo was succesful.

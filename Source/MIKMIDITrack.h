@@ -79,7 +79,6 @@
  *  Gets all of the MIDI events in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
  *
  *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
- *
  *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
  *  end of the track.
  *
@@ -91,9 +90,7 @@
  *  Gets all of the MIDI events of a specific class in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
  *
  *  @param eventClass The class of MIDI events you would like to retrieve. This class must be the MIKMIDIEvent class or a subclass thereof.
- *
  *  @param startTimeStamp The staring time stamp for the range to get MIDI events for.
- *
  *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
  *  end of the track.
  *
@@ -105,7 +102,6 @@
  *  Gets all of the MIDI notes in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
  *
  *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
- *
  *  @param endTimeStamp The ending time stamp for the range to get MIDI notes for. Use kMusicTimeStamp_EndOfTrack to get events up to the
  *  end of the track.
  *
@@ -119,9 +115,7 @@
  *  Moves all of the MIDI events between startTimeStamp and endTimeStamp inclusively by the specified offset.
  *
  *  @param startTimeStamp The starting time stamp for the range of the events to move.
- *
  *  @param endTimeStamp The ending time stamp for the range of the events to move.
- *
  *  @param offsetTimeStamp The amount to move the events
  *
  *  @return Whether or not moving the events was succesful.
@@ -132,7 +126,6 @@
  *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively.
  *
  *  @param startTimeStamp The starting time stamp for the range of the events to remove.
- *
  *  @param endTimeStamp The ending time stamp for the range of the events to move.
  *
  *  @return Whether or not moving the MIDI events was succesful.
@@ -144,7 +137,6 @@
  *  specified range will be moved back by the specified range time.
  *
  *  @param startTimeStamp The starting time stamp for the range of the events to cut.
- *
  *  @param endTimeStamp The ending time stamp for the range of the events to cut.
  *
  *  @return Whether or not cutting the MIDI events was succesful.
@@ -155,11 +147,8 @@
  *  Copies MIDI events from one track and inserts them into the receiver.
  *
  *  @param origTrack The track to copy the events from.
- *
  *  @param startTimeStamp The starting time stamp for the range of the events to copy.
- *
  *  @param endTimeStamp The ending time stamp for the range of the events to copy.
- *
  *  @param destTimeStamp The time stamp at which to the copied events will be inserted into the receiver.
  *
  *  @return Whether or not copying the MIDI events was succesful.
@@ -170,11 +159,8 @@
  *  Copies MIDI events from one track and merges them into the receiver.
  *
  *  @param origTrack The track to copy the events from.
- *
  *  @param startTimeStamp The starting time stamp for the range of the events to copy.
- *
  *  @param endTimeStamp The ending time stamp for the range of the events to copy.
- *
  *  @param destTimeStamp The time stamp at which to the copied events will be merged into the receiver.
  *
  *  @return Whether or not merging the MIDI events was succesful.
@@ -185,7 +171,6 @@
  *  Creates and initializes a new MIKMIDITrack.
  *
  *  @param sequence The MIDI sequence the new track will belong to.
- *
  *  @param musicTrack The MusicTrack to use as the backing for the new MIDI track.
  *
  *  @note You should not call this method. To add a new track to a MIDI sequence use -[MIKMIDISequence addTrack].
@@ -196,7 +181,6 @@
  *  Sets a temporary length and loopInfo for the track.
  *
  *  @param length The temporary length for the track.
- *
  *  @param loopInfo The temporary loopInfo for the track.
  *
  *  @note You should not call this method. It is exclusivley used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.

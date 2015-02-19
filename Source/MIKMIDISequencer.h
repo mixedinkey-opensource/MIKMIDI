@@ -91,7 +91,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  such as an audio track, or another MIKMIDISequencer instance.
  *
  *  @param timeStamp The position in the sequence to begin playback from.
- *
  *  @param midiTimeStamp The MIDITimeStamp to begin playback at.
  */
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp;

@@ -39,7 +39,6 @@
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
  *
  *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
- *
  *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
  *  you would like the synthesizer to use.
  *
@@ -61,7 +60,6 @@
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
  *
  *  @param source An MIKMIDISourceEndpoint instance from which MIDI note events will be received.
- *
  *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
  *  you would like the synthesizer to use.
  *
@@ -83,7 +81,6 @@
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
  *
  *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
- *
  *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
  *  you would like the synthesizer to use.
  *
@@ -105,7 +102,6 @@
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
  *
  *  @param destination An MIKMIDIClientDestinationEndpoint instance from which MIDI note events will be received.
- *
  *  @param componentDescription an AudioComponentDescription describing the Audio Unit instrument
  *  you would like the synthesizer to use.
  *
