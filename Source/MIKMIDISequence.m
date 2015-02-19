@@ -223,15 +223,10 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     return [self.tempoTrack insertMIDIEvent:event];
 }
 
-- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp
+- (Float64)tempoAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	if (!bpm) return NO;
-    NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-    if (!events.count) return NO;
-
-    MIKMIDITempoEvent *event = [events lastObject];
-    *bpm = event.bpm;
-    return YES;
+	NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
+	return [[events lastObject] bpm];
 }
 
 #pragma mark - Time Signature
@@ -261,20 +256,16 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return [self.tempoTrack insertMIDIEvent:event];
 }
 
-- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp
+- (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	if (!signature) return NO;
+	MIKMIDITimeSignature result = {4, 4};
 	NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-	if (!events.count) {
-		signature->numerator = 4;
-		signature->denominator = 4;
-		return YES;
-	};
-
 	MIKMIDIMetaTimeSignatureEvent *event = [events lastObject];
-	signature->numerator = event.numerator;
-	signature->denominator = event.denominator;
-	return YES;
+	if (event) {
+		result.numerator = event.numerator;
+		result.denominator = event.denominator;
+	}
+	return result;
 }
 
 #pragma mark - Description
@@ -319,12 +310,45 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     return (__bridge_transfer NSData *)data;
 }
 
+#pragma mark - Deprecated
+
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
 {
 	NSLog(@"%s is deprecated. You should update your code to avoid calling this method. Use MIKMIDISequencer's API instead.", __PRETTY_FUNCTION__);
-    for (MIKMIDITrack *track in self.tracks) {
-        track.destinationEndpoint = destinationEndpoint;
-    }
+	for (MIKMIDITrack *track in self.tracks) {
+		track.destinationEndpoint = destinationEndpoint;
+	}
+}
+
+- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp
+{
+	static BOOL deprectionMsgShown = NO;
+	if (!deprectionMsgShown) {
+		NSLog(@"WARNING: %s has been deprecated. Please use -timeSignatureAtTimeStamp: instead. This message will only be logged once", __PRETTY_FUNCTION__);
+		deprectionMsgShown = YES;
+	}
+	
+	if (!bpm) return NO;
+	Float64 result = [self tempoAtTimeStamp:timeStamp];
+	if (result == 0.0) return NO;
+	*bpm = result;
+	return YES;
+}
+
+- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp
+{
+	static BOOL deprectionMsgShown = NO;
+	if (!deprectionMsgShown) {
+		NSLog(@"WARNING: %s has been deprecated. Please use -timeSignatureAtTimeStamp: instead. This message will only be logged once", __PRETTY_FUNCTION__);
+		deprectionMsgShown = YES;
+	}
+	
+	if (!signature) return NO;
+	MIKMIDITimeSignature result = [self timeSignatureAtTimeStamp:timeStamp];
+	if (result.numerator == 0) return NO;
+	signature->numerator = result.numerator;
+	signature->denominator = result.denominator;
+	return YES;
 }
 
 @end
