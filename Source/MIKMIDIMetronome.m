@@ -9,14 +9,13 @@
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDINoteEvent.h"
 
-
 @implementation MIKMIDIMetronome
 
 - (void)setupMetronome
 {
 	self.tickMessage = (MIDINoteMessage){ .channel = 0, .note = 57, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
 	self.tockMessage = (MIDINoteMessage){ .channel = 0, .note = 56, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
-	[self selectInstrument:[MIKMIDIEndpointSynthesizerInstrument instrumentWithID:7864376]];
+	[self selectInstrument:[MIKMIDISynthesizerInstrument instrumentWithID:7864376]];
 }
 
 - (instancetype)init
