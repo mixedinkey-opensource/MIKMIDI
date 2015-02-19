@@ -197,8 +197,7 @@
 	MIDINoteMessage tockMessage = self.metronome.tockMessage;
 	MusicTimeStamp increment = 1;
 	for (MusicTimeStamp clickTimeStamp = floor(fromTimeStamp); clickTimeStamp <= toTimeStamp; clickTimeStamp += increment) {
-		MIKMIDITimeSignature timeSignature;
-		if (![clickSequence getTimeSignature:&timeSignature atTimeStamp:clickTimeStamp]) continue;
+		MIKMIDITimeSignature timeSignature = [clickSequence timeSignatureAtTimeStamp:clickTimeStamp];
 		if (!timeSignature.numerator || !timeSignature.denominator) continue;
 
 		NSInteger adjustedTimeStamp = clickTimeStamp * timeSignature.denominator / 4.0;

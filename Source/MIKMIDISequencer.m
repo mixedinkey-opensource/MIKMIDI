@@ -23,7 +23,6 @@
 #import "MIKMIDISynthesizer.h"
 
 #define MIKMIDISequencerDefaultTempo			120
-#define MIKMIDISequencerDefaultTimeSignature	((MIKMIDITimeSignature) { .numerator = 4, .denominator = 4 })
 
 
 #pragma mark -
@@ -130,8 +129,8 @@
 	MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
 	self.startingTimeStamp = startingTimeStamp;
 
-	Float64 startingTempo;
-	if (![self.sequence getTempo:&startingTempo atTimeStamp:startingTimeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
+	Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
+	if (!startingTempo) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
@@ -245,8 +244,8 @@
 	if (isLooping) {
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
 			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
-			Float64 tempo;
-			if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
+			Float64 tempo = [sequence tempoAtTimeStamp:loopStartTimeStamp];
+			if (!tempo) tempo = MIKMIDISequencerDefaultTempo;
 			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
 
 			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
@@ -527,8 +526,7 @@
 
 	MIKMIDISequence *sequence = self.sequence;
 	MusicTimeStamp playbackOffset = self.playbackOffset;
-	MIKMIDITimeSignature timeSignature;
-	if (![sequence getTimeSignature:&timeSignature atTimeStamp:fromTimeStamp - playbackOffset]) timeSignature = MIKMIDISequencerDefaultTimeSignature;
+	MIKMIDITimeSignature timeSignature = [sequence timeSignatureAtTimeStamp:fromTimeStamp - playbackOffset];
 	NSMutableArray *timeSignatureEvents = [[sequence.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class]
 																fromTimeStamp:MAX(fromTimeStamp - playbackOffset, 0)
 																  toTimeStamp:toTimeStamp] mutableCopy];
