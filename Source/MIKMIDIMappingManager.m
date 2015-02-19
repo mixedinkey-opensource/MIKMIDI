@@ -6,6 +6,12 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
+
 #import "MIKMIDIMappingManager.h"
 #import "MIKMIDIMapping.h"
 #import "MIKMIDIErrors.h"
