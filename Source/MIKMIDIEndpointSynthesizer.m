@@ -109,7 +109,6 @@
 	id connectionToken = [deviceManager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		__strong MIKMIDIEndpointSynthesizer *strongSelf = weakSelf;
 		[strongSelf handleMIDIMessages:commands];
-		
 	}];
 	
 	if (!connectionToken) return NO;
@@ -118,15 +117,5 @@
 	self.connectionToken = connectionToken;
 	return YES;
 }
-
-
-
-
-
-#pragma mark - Instruments
-
-#pragma mark - Properties
-
-
 
 @end

@@ -10,6 +10,19 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <MIKMIDI/MIKMIDISynthesizerInstrument.h>
 
+/**
+ *  MIKMIDISynthesizer provides a simple way to synthesize MIDI messages to
+ *  produce sound output.
+ *
+ *  To use it, simply create a synthesizer instance, then pass MIDI messages
+ *  to it by calling -handleMIDIMessages:.
+ *
+ *  A subclass, MIKMIDIEndpointSynthesizer, adds the ability to easily connect
+ *  to a MIDI endpoint and automatically synthesize incoming messages.
+ *
+ *  @see MIKMIDIEndpointSynthesizer
+ *
+ */
 @interface MIKMIDISynthesizer : NSObject
 
 /**

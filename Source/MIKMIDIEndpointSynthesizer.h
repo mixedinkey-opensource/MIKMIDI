@@ -14,11 +14,14 @@
 @class MIKMIDISynthesizerInstrument;
 
 /**
- *  MIKMIDIEndpointSynthesizer provides a very simple way to synthesize MIDI commands coming from a
- *  source endpoint (e.g. from a connected MIDI piano keyboard) to produce sound output.
+ *  MIKMIDIEndpointSynthesizer is a subclass of MIKMIDISynthesizer that
+ *  provides a very simple way to synthesize MIDI commands coming from a
+ *  MIDI endpoint (e.g. from a connected MIDI piano keyboard) to produce sound output.
  *
  *  To use it, simply create a synthesizer instance with the source you'd like it to play. It will
  *  continue playing incoming MIDI until it is deallocated.
+ *
+ *  @see MIKMIDISynthesizer
  */
 @interface MIKMIDIEndpointSynthesizer : MIKMIDISynthesizer
 
