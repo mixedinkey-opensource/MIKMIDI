@@ -120,11 +120,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 @property (nonatomic, readonly) MusicEventType eventType;
 
 /**
- *  The channel for the MIDI event.
- */
-@property (nonatomic, readonly) UInt8 channel;
-
-/**
  *  The timeStamp of the MIDI event. When used in a MusicSequence of type kMusicSequenceType_Beats
  *  a timeStamp of 1 equals one quarter note. See the MusicSequence Reference for more information.
  */

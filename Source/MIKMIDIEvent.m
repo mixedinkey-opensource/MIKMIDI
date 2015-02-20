@@ -171,7 +171,6 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 + (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self immutableCounterpartClass] supportsMIKMIDIEventType:type]; }
 
 @dynamic eventType;
-@dynamic channel;
 @dynamic data;
 @dynamic timeStamp;
 
