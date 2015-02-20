@@ -133,8 +133,8 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	Class copyClass = [[self class] immutableCounterpartClass];
 	MIKMIDIEvent *result = [[copyClass alloc] init];
 	result.internalData = self.internalData;
-	result.eventType = self.eventType;
-	result.timeStamp = self.timeStamp;
+	result->_eventType = self.eventType;
+	result->_timeStamp = self.timeStamp;
 	return result;
 }
 
