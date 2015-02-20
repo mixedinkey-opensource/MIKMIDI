@@ -7,10 +7,7 @@
 //
 
 #import "MIKMIDISequenceView.h"
-#import "MIKMIDISequence.h"
-#import "MIKMIDITrack.h"
-#import "MIKMIDIEvent.h"
-#import "MIKMIDINoteEvent.h"
+#import <MIKMIDI/MIKMIDI.h>
 
 @interface MIKMIDISequenceView ()
 
@@ -50,7 +47,7 @@
 			[noteColor setFill];
 			
 			CGFloat yPosition = NSMinY([self bounds]) + note.note * [self pixelsPerNote];
-			NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.musicTimeStamp * ppt, yPosition, note.duration * ppt, noteHeight);
+			NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.timeStamp * ppt, yPosition, note.duration * ppt, noteHeight);
 			
 			NSBezierPath *path = [NSBezierPath bezierPathWithRect:noteRect];
 			[path fill];

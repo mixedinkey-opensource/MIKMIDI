@@ -7,7 +7,7 @@
 //
 
 #import "MIKAppDelegate.h"
-#import "MIKMIDISequence.h"
+#import <MIKMIDI/MIKMIDI.h>
 
 @implementation MIKAppDelegate
 
