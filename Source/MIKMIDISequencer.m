@@ -256,7 +256,7 @@
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
-	} else {
+	} else if (!self.isRecording) { // Don't stop automatically during recording
 		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
 		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length + playbackOffset)) {
 			[self stop];
