@@ -275,6 +275,8 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  The tracks to record incoming MIDI events to while recording is enabled.
  *
+ *  Each incoming event is added to every track in this set.
+ *
  *  @see recording
  */
 @property (copy, nonatomic) NSSet *recordEnabledTracks;
