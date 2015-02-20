@@ -34,7 +34,7 @@
 
 + (NSSet *)keyPathsForValuesAffectingEndTimeStamp
 {
-	return [NSSet setWithObjects:@"musicTimeStamp", @"duration", nil];
+	return [NSSet setWithObjects:@"timeStamp", @"duration", nil];
 }
 
 - (UInt8)note
