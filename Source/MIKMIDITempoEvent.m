@@ -36,6 +36,11 @@
 
 #pragma mark - Properties
 
++ (NSSet *)keyPathsForValuesAffectingInternalData
+{
+	return [NSSet setWithObjects:@"bpm", nil];
+}
+
 - (Float64)bpm
 {
 	ExtendedTempoEvent *tempoEvent = (ExtendedTempoEvent *)[self.data bytes];
@@ -47,9 +52,7 @@
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
 	ExtendedTempoEvent *tempoEvent = (ExtendedTempoEvent *)[self.internalData bytes];
-	[self willChangeValueForKey:@"internalData"];
 	tempoEvent->bpm = bpm;
-	[self didChangeValueForKey:@"internalData"];
 }
 
 @end

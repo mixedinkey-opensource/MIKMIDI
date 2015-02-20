@@ -7,7 +7,7 @@
 //
 
 
-@interface MIKMIDIEvent()
+@interface MIKMIDIEvent ()
 
 /**
  *  Registers a subclass of MIKMIDIEvent. Registered subclasses will be instantiated and returned
