@@ -60,9 +60,9 @@
                             </menu>
                         </popUpButtonCell>
                         <connections>
+                            <binding destination="-2" name="selectedObject" keyPath="device" previousBinding="tvW-OW-gpK" id="L4r-mK-LrI"/>
                             <binding destination="-2" name="content" keyPath="deviceManager.availableDevices" id="oVB-Nd-ar2"/>
                             <binding destination="-2" name="contentValues" keyPath="deviceManager.availableDevices.name" previousBinding="oVB-Nd-ar2" id="tvW-OW-gpK"/>
-                            <binding destination="-2" name="selectedObject" keyPath="device" previousBinding="tvW-OW-gpK" id="L4r-mK-LrI"/>
                         </connections>
                     </popUpButton>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eSe-hq-VkU">
@@ -78,6 +78,7 @@
                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                 </dictionary>
                             </binding>
+                            <binding destination="-2" name="title" keyPath="recordButtonLabel" id="fIL-Fd-0iK"/>
                         </connections>
                     </button>
                 </subviews>
