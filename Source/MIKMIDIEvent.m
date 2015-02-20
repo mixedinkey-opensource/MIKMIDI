@@ -148,6 +148,18 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	return result;
 }
 
+#pragma mark - Properties
+
++ (NSSet *)keyPathsForValuesAffectingInternalData
+{
+	return [NSSet set];
+}
+
++ (NSSet *)keyPathsForValuesAffectingData
+{
+	return [NSSet setWithObject:@"internalData"];
+}
+
 - (NSData *)data { return [self.internalData copy]; }
 
 - (void)setData:(NSData *)data

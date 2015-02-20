@@ -32,6 +32,11 @@
 
 #pragma mark - Properties
 
++ (NSSet *)keyPathsForValuesAffectingInternalData
+{
+	return [NSSet setWithObjects:@"note", @"channel", @"velocity", @"releaseVelocity", @"duration", nil];
+}
+
 + (NSSet *)keyPathsForValuesAffectingEndTimeStamp
 {
 	return [NSSet setWithObjects:@"timeStamp", @"duration", nil];
@@ -48,9 +53,7 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    [self willChangeValueForKey:@"note"];
     noteMessage->channel = note;
-    [self didChangeValueForKey:@"note"];
 }
 
 - (UInt8)channel
@@ -64,11 +67,8 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    [self willChangeValueForKey:@"channel"];
     noteMessage->channel = channel;
-    [self didChangeValueForKey:@"channel"];
 }
-
 
 - (UInt8)velocity
 {
@@ -81,11 +81,8 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    [self willChangeValueForKey:@"velocity"];
     noteMessage->velocity = velocity;
-    [self didChangeValueForKey:@"velocity"];
 }
-
 
 - (UInt8)releaseVelocity
 {
@@ -98,11 +95,8 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    [self willChangeValueForKey:@"releaseVelocity"];
     noteMessage->releaseVelocity = releaseVelocity;
-    [self didChangeValueForKey:@"releaseVelocity"];
 }
-
 
 - (Float32)duration
 {
@@ -115,9 +109,7 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    [self willChangeValueForKey:@"duration"];
     noteMessage->duration = duration;
-    [self didChangeValueForKey:@"duration"];
 }
 
 - (MusicTimeStamp)endTimeStamp
