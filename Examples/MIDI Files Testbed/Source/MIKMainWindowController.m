@@ -1,0 +1,164 @@
+//
+//  MIKMainWindowController.m
+//  MIDI Files Testbed
+//
+//  Created by Andrew Madsen on 2/20/15.
+//  Copyright (c) 2015 Mixed In Key. All rights reserved.
+//
+
+#import "MIKMainWindowController.h"
+#import <MIKMIDI/MIKMIDI.h>
+
+@interface MIKMainWindowController ()
+
+@property (nonatomic, strong) MIKMIDISequencer *sequencer;
+
+@property (nonatomic, strong) id deviceConnectionToken;
+
+@end
+
+@implementation MIKMainWindowController
+
++ (instancetype)windowController
+{
+	return [[self alloc] initWithWindowNibName:@"MainWindow"];
+}
+
+- (void)dealloc
+{
+	self.device = nil;
+}
+
+- (void)windowDidLoad
+{
+	[super windowDidLoad];
+	
+	self.sequencer = [MIKMIDISequencer sequencer];
+}
+
+#pragma mark - Actions
+
+- (IBAction)loadFile:(id)sender
+{
+	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+	[openPanel setAllowsMultipleSelection:NO];
+	[openPanel setCanChooseDirectories:NO];
+	[openPanel setAllowedFileTypes:@[@"mid", @"midi"]];
+	[openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+		if (result != NSFileHandlingPanelOKButton) return;
+		[self loadMIDIFile:[[openPanel URL] path]];
+	}];
+}
+
+- (IBAction)toggleRecording:(id)sender
+{
+	if (self.isRecording) {
+		[self.sequencer stop];
+		[self.trackView setNeedsDisplay:YES];
+		return;
+	} else {
+		if (!self.sequence) self.sequence = [MIKMIDISequence sequence];
+		self.sequencer.recordEnabledTracks = [NSSet setWithObject:[self.sequence addTrack]];
+		[self.sequencer startRecording];
+	}
+}
+
+#pragma mark - MIKMIDISequenceViewDelegate
+
+- (void)midiSequenceView:(MIKMIDISequenceView *)sequenceView receivedDroppedMIDIFiles:(NSArray *)midiFiles
+{
+	[self loadMIDIFile:[midiFiles firstObject]];
+}
+
+#pragma mark - Private
+
+- (void)loadMIDIFile:(NSString *)path
+{
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:[NSURL fileURLWithPath:path] error:&error];
+	if (!sequence) {
+		NSLog(@"Error loading MIDI file: %@", error);
+		return;
+	}
+	self.sequence = sequence;
+}
+
+#pragma mark Device Connection/Disconnection
+
+- (BOOL)connectToDevice:(MIKMIDIDevice *)device error:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	MIKMIDISourceEndpoint *source = [[[device.entities firstObject] sources] firstObject];
+	if (!source) {
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIUnknownErrorCode userInfo:nil];
+		return NO;
+	}
+	
+	MIKMIDIDeviceManager *manager = [MIKMIDIDeviceManager sharedDeviceManager];
+	self.deviceConnectionToken = [manager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
+		for (MIKMIDICommand *command in commands) {
+			if (self.isRecording) [self.sequencer recordMIDICommand:command];
+		}
+	}];
+	return self.deviceConnectionToken != nil;
+}
+
+- (void)disconnectFromDevice
+{
+	if (!self.deviceConnectionToken) return;
+	
+	MIKMIDISourceEndpoint *source = [[[self.device.entities firstObject] sources] firstObject];
+	if (!source) return;
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:source forConnectionToken:self.deviceConnectionToken];
+	self.deviceConnectionToken = nil;
+}
+
+#pragma mark - Properties
+
+- (MIKMIDIDeviceManager *)deviceManager { return [MIKMIDIDeviceManager sharedDeviceManager]; }
+
+- (void)setSequence:(MIKMIDISequence *)sequence
+{
+	if (sequence != _sequence) {
+		_sequence = sequence;
+		self.trackView.sequence = sequence;
+		self.sequencer.sequence = sequence;
+	}
+}
+
+- (void)setDevice:(MIKMIDIDevice *)device
+{
+	if (device != _device) {
+		[self disconnectFromDevice];
+
+		NSError *error = nil;
+		if (![self connectToDevice:device error:&error]) {
+			[self presentError:error];
+			_device = nil;
+		} else {
+			_device = device;
+		}
+	}
+}
+
++ (NSSet *)keyPathsForValuesAffectingRecording
+{
+	return [NSSet setWithObjects:@"sequencer.recording", nil];
+}
+
+- (BOOL)isRecording
+{
+	return self.sequencer.isRecording;
+}
+
++ (NSSet *)keyPathsForValuesAffectingRecordButtonLabel
+{
+	return [NSSet setWithObjects:@"recording", nil];
+}
+
+- (NSString *)recordButtonLabel
+{
+	return self.isRecording ? @"Stop" : @"Record";
+}
+
+@end
