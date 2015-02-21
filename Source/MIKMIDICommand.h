@@ -165,6 +165,14 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 @property (nonatomic, readonly) MIKMIDICommandType commandType;
 
 /**
+ *  The MIDI status byte. The exact meaning of the contents
+ *  of this byte differ for different command types. See
+ *  http://www.midi.org/techspecs/midimessages.php for a information
+ *  about the contents of this value.
+ */
+@property (nonatomic, readonly) UInt8 statusByte;
+
+/**
  *  The first byte of the MIDI data (after the command type).
  */
 @property (nonatomic, readonly) UInt8 dataByte1;

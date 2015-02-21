@@ -9,6 +9,9 @@
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDINoteEvent.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIMetronome.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#endif
 
 @implementation MIKMIDIMetronome
 
@@ -16,14 +19,7 @@
 {
 	self.tickMessage = (MIDINoteMessage){ .channel = 0, .note = 57, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
 	self.tockMessage = (MIDINoteMessage){ .channel = 0, .note = 56, .velocity = 127, .duration = 0.5, .releaseVelocity = 0 };
-	[self selectInstrument:[MIKMIDIEndpointSynthesizerInstrument instrumentWithID:7864376]];
-
-#if !TARGET_OS_IPHONE
-	OSStatus err;
-	if ((err = AudioUnitSetParameter(self.instrument, kMusicDeviceParam_ReverbVolume, kAudioUnitScope_Global, 0, -120, 0))) {
-		NSLog(@"Unable to set reverb level to -120: %i", err);
-	}
-#endif
+	[self selectInstrument:[MIKMIDISynthesizerInstrument instrumentWithID:7864376]];
 }
 
 - (instancetype)init

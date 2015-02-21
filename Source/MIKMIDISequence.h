@@ -13,7 +13,7 @@
 typedef struct {
 	UInt8 numerator;
 	UInt8 denominator;
-} MIKMIDITimeSignature;
+} MIKMIDITimeSignature; // Deprecated
 
 
 @class MIKMIDITrack;
@@ -30,47 +30,6 @@ typedef struct {
 @interface MIKMIDISequence : NSObject
 
 /**
- *  The tempo track for the sequence.
- */
-@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
-
-/**
- *  The MIDI tracks for the sequence. An array of MIKMIDITrack.
- */
-@property (nonatomic, readonly) NSArray *tracks;
-
-/**
- *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
- */
-@property (nonatomic, readonly) MusicSequence musicSequence;
-
-/**
- *  The length of the sequence as a MusicTimeStamp.
- *
- *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
- */
-@property (nonatomic) MusicTimeStamp length;
-
-/**
- *  The duration of the sequence in seconds.
- */
-@property (nonatomic, readonly) Float64 durationInSeconds;
-
-/**
- *  The MIDI data that composes the sequence. This data is equivalent to an NSData representation of a standard MIDI file.
- */
-@property (nonatomic, readonly) NSData *dataValue;
-
-/**
- *  A block to be called for each user event added to any music track owned by the sequence.
- *
- *  This block is to be used in the same fashion as you would use the callback function sent to
- *  MusicSequenceSetUserCallback() if you were working directly with CoreMIDI.
- */
-@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
-
-
-/**
  *  Creates and initializes a new instance of MIKMIDISequence.
  *
  *  @return A new instance of MIKMIDISequence, or nil if an error occured.
@@ -81,7 +40,6 @@ typedef struct {
  *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
- *
  *  @param error If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -93,7 +51,6 @@ typedef struct {
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
- *
  *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -123,7 +80,6 @@ typedef struct {
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
  *
  *  @param fileURL The URL to write the MIDI file to.
- *
  *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  *
@@ -189,10 +145,10 @@ typedef struct {
 - (BOOL)setOverallTempo:(Float64)bpm;
 
 /**
- *  Inserts a tempo event with the desired bpm into the tempo track at the specified time stamp.
+ *  Inserts a tempo event with the desired tempo in beats per minute (BPM)
+ *  into the tempo track at the specified time stamp.
  *
  *  @param bpm The number of beats per minute for the tempo.
- *
  *  @param timeStamp The time stamp at which to set the tempo.
  *
  *  @return Whether or not setting the tempo of the sequence was succesful.
@@ -200,29 +156,133 @@ typedef struct {
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
 
 /**
- *  Gets the bpm of the last tempo event before the specified time stamp.
+ *  Returns the tempo in beats per minute (BPM) of the last tempo event before 
+ *  the specified time stamp.
  *
- *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
+ *  @param timeStamp The time stamp at which you would like to know the sequence's tempo.
  *
- *  @param timeStamp The time stamp that you would like to know the sequence's tempo at.
- *
- *  @return Whether or not getting the tempo was succesful.
+ *  @return The tempo in beats per minute at the specified time stamp, or 0.0 if an error occurred.
  */
-- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp;
-
-
-// TODO: Document these
-- (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature;
-- (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp;
-- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp;
-
+- (Float64)tempoAtTimeStamp:(MusicTimeStamp)timeStamp;
 
 /**
+ *  Sets the overall time signature for the receiver.
+ *
+ *  This method deletes all existing time signature events from the receiver's 
+ *  tempo track, replacing them with a single event with the specified time signature.
+ *
+ *  @param signature An MIKMIDITimeSignature struct with the desired overall time signature.
+ *
+ *  @return YES if setting the overall time signature was succesful, NO if an error occurred.
+ *
+ *  @see -timeSignatureAtTimeStamp:
+ *	@see -setTimeSignature:atTimeStamp:
+ */
+- (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature;
+
+/**
+ *  Sets the time signature of the receiver at a specified time.
+ *
+ *  Unlike -setOverallTimeSignature, this method does not modify any existing
+ *  time signature events.
+ *
+ *  @param signature An MIKMIDITimeSignature struct representing the desired time signature.
+ *  @param timeStamp The time stamp at which the time signature should be effective.
+ *
+ *  @return YES if setting the time signature was successful, NO if an error occurred.
+ *
+ *  @see -timeSignatureAtTimeStamp:
+ *	@see -setOverallTimeSignature:
+ */
+- (BOOL)setTimeSignature:(MIKMIDITimeSignature)signature atTimeStamp:(MusicTimeStamp)timeStamp;
+
+/**
+ *  Returns the time signature in effect at the the specified time stamp.
+ *
+ *  @param timeStamp The time stamp at which you would like to know the receiver's time signature.
+ *
+ *  @return An MIKMIDITimeSignature struct representing the time signature of the sequence at
+ *  the specified time stamp. Defaults to 4/4 if no time signature events are found.
+ *
+ *  @see -timeSignatureAtTimeStamp:
+ *	@see -setOverallTimeSignature:
+ */
+- (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp;
+
+// Properties
+
+/**
+ *  The tempo track for the sequence.
+ */
+@property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
+
+/**
+ *  The MIDI tracks for the sequence. An array of MIKMIDITrack instances.
+ */
+@property (nonatomic, readonly) NSArray *tracks;
+
+/**
+ *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
+ */
+@property (nonatomic, readonly) MusicSequence musicSequence;
+
+/**
+ *  The length of the sequence as a MusicTimeStamp.
+ *
+ *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
+ */
+@property (nonatomic) MusicTimeStamp length;
+
+/**
+ *  The duration of the sequence in seconds.
+ */
+@property (nonatomic, readonly) Float64 durationInSeconds;
+
+/**
+ *  The MIDI data that composes the sequence. This data is equivalent to an NSData representation of a standard MIDI file.
+ */
+@property (nonatomic, readonly) NSData *dataValue;
+
+/**
+ *  A block to be called for each user event added to any music track owned by the sequence.
+ *
+ *  This block is to be used in the same fashion as you would use the callback function sent to
+ *  MusicSequenceSetUserCallback() if you were working directly with CoreMIDI.
+ */
+@property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
+
+#pragma mark - Deprecated
+
+/**
+ *  This method has been deprecated. You should not call it. Instead, use MIKMIDISequencer's API
+ *  for routing tracks' output to specific endpoints. If you must set an endpoint on an MusicSequence,
+ *  use CoreMIDI's API instead.
+ *
  *  Sets the destination endpoint for each track in the sequence.
  *
  *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.
  */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint;
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
+
+/**
+ *	This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
+ *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
+ *
+ *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
+ *  @param timeStamp The time stamp that you would like to know the sequence's tempo at.
+ *  @return YES if getting the tempo was successful, NO if an error occurred.
+ */
+- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
+
+/**
+ *  This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
+ *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
+ *
+ *  @param signature On output, a time signature instance with its values populated.
+ *  @param timeStamp The time stamp at which you would like to know the time signature.
+ *  @return YES if getting the time signature was successful, NO if an error occurred.
+ */
+- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
 
 @end
 

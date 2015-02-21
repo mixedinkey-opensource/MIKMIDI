@@ -48,9 +48,7 @@
  *  -midiTimeStampForMusicTimeStamp: will return any meaningful values.
  *
  *  @param musicTimeStamp The MusicTimeStamp to synchronize the clock to.
- *
  *  @param tempo The beats per minute at which MusicTimeStamps should tick.
- *
  *  @param midiTimeStamp The MIDITimeStamp to synchronize the clock to.
  *
  *  @see -musicTimeStampForMIDITimeStamp:

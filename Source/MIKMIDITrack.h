@@ -24,6 +24,177 @@
 @interface MIKMIDITrack : NSObject
 
 /**
+ *  Inserts the specified MIDI event into the track.
+ *
+ *  @param event The MIDI event to insert into the track.
+ *
+ *  @return Whether or not inserting the MIDI event was succesful.
+ */
+- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event;
+
+/**
+ *  Removes the specified MIDI event from the track.
+ *
+ *  @param event The MIDI event to remove from the track.
+ *
+ *  @return Whether or not removing the MIDI event from the track was succesful.
+ */
+- (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event;
+
+/**
+ *  Inserts MIDI events into the track.
+ *
+ *  @param events An NSSet of MIKMIDIEvent to insert into the track.
+ *
+ *  @return Whether or not inserting the MIDI events was succesful.
+ */
+- (BOOL)insertMIDIEvents:(NSSet *)events;
+
+/**
+ *  Removes MIDI events from a track.
+ *
+ *  @param events An NSSet of MIKMIDIEvent to remove from the track.
+ *
+ *  @return Whether or not removing the MIDI events was succesful.
+ */
+- (BOOL)removeMIDIEvents:(NSSet *)events;
+
+/**
+ *  Removes all MIDI events from the track.
+ *
+ *  @return Whether or not removing all of the MIDI events from the track was succesful.
+ */
+- (BOOL)clearAllEvents;
+
+/**
+ *  Gets the track's track number in it's owning MIDI sequence.
+ *
+ *  @param trackNumber On output, the track number of the track.
+ *
+ *  @return Whether or not getting the track number was succesful.
+ */
+- (BOOL)getTrackNumber:(UInt32 *)trackNumber;
+
+/**
+ *  Gets all of the MIDI events in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
+ *
+ *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
+ *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
+ *  end of the track.
+ *
+ *  @return An array of MIKMIDIEvent.
+ */
+- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+/**
+ *  Gets all of the MIDI events of a specific class in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
+ *
+ *  @param eventClass The class of MIDI events you would like to retrieve. This class must be the MIKMIDIEvent class or a subclass thereof.
+ *  @param startTimeStamp The staring time stamp for the range to get MIDI events for.
+ *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
+ *  end of the track.
+ *
+ *  @return An array of specified class of MIDI events.
+ */
+- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+/**
+ *  Gets all of the MIDI notes in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
+ *
+ *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
+ *  @param endTimeStamp The ending time stamp for the range to get MIDI notes for. Use kMusicTimeStamp_EndOfTrack to get events up to the
+ *  end of the track.
+ *
+ *  @return An array of MIKMIDINoteEvent.
+ *
+ *  @discussion Calling this method is equivalent to calling eventsOfClass:fromTimeStamp:toTimeStamp: with [MIKMIDINoteEvent class].
+ */
+- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+/**
+ *  Moves all of the MIDI events between startTimeStamp and endTimeStamp inclusively by the specified offset.
+ *
+ *  @param startTimeStamp The starting time stamp for the range of the events to move.
+ *  @param endTimeStamp The ending time stamp for the range of the events to move.
+ *  @param offsetTimeStamp The amount to move the events
+ *
+ *  @return Whether or not moving the events was succesful.
+ */
+- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp;
+
+/**
+ *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively.
+ *
+ *  @param startTimeStamp The starting time stamp for the range of the events to remove.
+ *  @param endTimeStamp The ending time stamp for the range of the events to move.
+ *
+ *  @return Whether or not moving the MIDI events was succesful.
+ */
+- (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+/**
+ *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively. Events that fall past the 
+ *  specified range will be moved back by the specified range time.
+ *
+ *  @param startTimeStamp The starting time stamp for the range of the events to cut.
+ *  @param endTimeStamp The ending time stamp for the range of the events to cut.
+ *
+ *  @return Whether or not cutting the MIDI events was succesful.
+ */
+- (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
+
+/**
+ *  Copies MIDI events from one track and inserts them into the receiver.
+ *
+ *  @param origTrack The track to copy the events from.
+ *  @param startTimeStamp The starting time stamp for the range of the events to copy.
+ *  @param endTimeStamp The ending time stamp for the range of the events to copy.
+ *  @param destTimeStamp The time stamp at which to the copied events will be inserted into the receiver.
+ *
+ *  @return Whether or not copying the MIDI events was succesful.
+ */
+- (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp;
+
+/**
+ *  Copies MIDI events from one track and merges them into the receiver.
+ *
+ *  @param origTrack The track to copy the events from.
+ *  @param startTimeStamp The starting time stamp for the range of the events to copy.
+ *  @param endTimeStamp The ending time stamp for the range of the events to copy.
+ *  @param destTimeStamp The time stamp at which to the copied events will be merged into the receiver.
+ *
+ *  @return Whether or not merging the MIDI events was succesful.
+ */
+- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp;
+
+/**
+ *  Creates and initializes a new MIKMIDITrack.
+ *
+ *  @param sequence The MIDI sequence the new track will belong to.
+ *  @param musicTrack The MusicTrack to use as the backing for the new MIDI track.
+ *
+ *  @note You should not call this method. To add a new track to a MIDI sequence use -[MIKMIDISequence addTrack].
+ */
++ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
+
+/**
+ *  Sets a temporary length and loopInfo for the track.
+ *
+ *  @param length The temporary length for the track.
+ *  @param loopInfo The temporary loopInfo for the track.
+ *
+ *  @note You should not call this method. It is exclusivley used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
+ */
+- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
+
+/**
+ *  Restores the length and loopInfo of the track to what it was before calling -setTemporaryLength:andLoopInfo:.
+ *
+ *  @note You should not call this method. It is exclusively used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
+ */
+- (void)restoreLengthAndLoopInfo;
+
+/**
  *  The MIDI sequence the track belongs to.
  */
 @property (weak, nonatomic, readonly) MIKMIDISequence *sequence;
@@ -97,196 +268,11 @@
  */
 @property (nonatomic, readonly) SInt16 timeResolution;
 
+#pragma mark - Deprecated
+
 /**
  *  The destination endpoint for the MIDI events of the track during playback.
  */
-@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint;
-
-/**
- *  Inserts the specified MIDI event into the track.
- *
- *  @param event The MIDI event to insert into the track.
- *
- *  @return Whether or not inserting the MIDI event was succesful.
- */
-- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event;
-
-/**
- *  Removes the specified MIDI event from the track.
- *
- *  @param event The MIDI event to remove from the track.
- *
- *  @return Whether or not removing the MIDI event from the track was succesful.
- */
-- (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event;
-
-/**
- *  Inserts MIDI events into the track.
- *
- *  @param events An NSSet of MIKMIDIEvent to insert into the track.
- *
- *  @return Whether or not inserting the MIDI events was succesful.
- */
-- (BOOL)insertMIDIEvents:(NSSet *)events;
-
-/**
- *  Removes MIDI events from a track.
- *
- *  @param events An NSSet of MIKMIDIEvent to remove from the track.
- *
- *  @return Whether or not removing the MIDI events was succesful.
- */
-- (BOOL)removeMIDIEvents:(NSSet *)events;
-
-/**
- *  Removes all MIDI events from the track.
- *
- *  @return Whether or not removing all of the MIDI events from the track was succesful.
- */
-- (BOOL)clearAllEvents;
-
-/**
- *  Gets the track's track number in it's owning MIDI sequence.
- *
- *  @param trackNumber On output, the track number of the track.
- *
- *  @return Whether or not getting the track number was succesful.
- */
-- (BOOL)getTrackNumber:(UInt32 *)trackNumber;
-
-/**
- *  Gets all of the MIDI events in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
- *
- *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
- *
- *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
- *  end of the track.
- *
- *  @return An array of MIKMIDIEvent.
- */
-- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
-
-/**
- *  Gets all of the MIDI events of a specific class in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
- *
- *  @param eventClass The class of MIDI events you would like to retrieve. This class must be the MIKMIDIEvent class or a subclass thereof.
- *
- *  @param startTimeStamp The staring time stamp for the range to get MIDI events for.
- *
- *  @param endTimeStamp The ending time stamp for the range to get MIDI events for. Use kMusicTimeStamp_EndOfTrack to get events up to the
- *  end of the track.
- *
- *  @return An array of specified class of MIDI events.
- */
-- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
-
-/**
- *  Gets all of the MIDI notes in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
- *
- *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
- *
- *  @param endTimeStamp The ending time stamp for the range to get MIDI notes for. Use kMusicTimeStamp_EndOfTrack to get events up to the
- *  end of the track.
- *
- *  @return An array of MIKMIDINoteEvent.
- *
- *  @discussion Calling this method is equivalent to calling eventsOfClass:fromTimeStamp:toTimeStamp: with [MIKMIDINoteEvent class].
- */
-- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
-
-/**
- *  Moves all of the MIDI events between startTimeStamp and endTimeStamp inclusively by the specified offset.
- *
- *  @param startTimeStamp The starting time stamp for the range of the events to move.
- *
- *  @param endTimeStamp The ending time stamp for the range of the events to move.
- *
- *  @param offsetTimeStamp The amount to move the events
- *
- *  @return Whether or not moving the events was succesful.
- */
-- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp;
-
-/**
- *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively.
- *
- *  @param startTimeStamp The starting time stamp for the range of the events to remove.
- *
- *  @param endTimeStamp The ending time stamp for the range of the events to move.
- *
- *  @return Whether or not moving the MIDI events was succesful.
- */
-- (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
-
-/**
- *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively. Events that fall past the 
- *  specified range will be moved back by the specified range time.
- *
- *  @param startTimeStamp The starting time stamp for the range of the events to cut.
- *
- *  @param endTimeStamp The ending time stamp for the range of the events to cut.
- *
- *  @return Whether or not cutting the MIDI events was succesful.
- */
-- (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
-
-/**
- *  Copies MIDI events from one track and inserts them into the receiver.
- *
- *  @param origTrack The track to copy the events from.
- *
- *  @param startTimeStamp The starting time stamp for the range of the events to copy.
- *
- *  @param endTimeStamp The ending time stamp for the range of the events to copy.
- *
- *  @param destTimeStamp The time stamp at which to the copied events will be inserted into the receiver.
- *
- *  @return Whether or not copying the MIDI events was succesful.
- */
-- (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp;
-
-/**
- *  Copies MIDI events from one track and merges them into the receiver.
- *
- *  @param origTrack The track to copy the events from.
- *
- *  @param startTimeStamp The starting time stamp for the range of the events to copy.
- *
- *  @param endTimeStamp The ending time stamp for the range of the events to copy.
- *
- *  @param destTimeStamp The time stamp at which to the copied events will be merged into the receiver.
- *
- *  @return Whether or not merging the MIDI events was succesful.
- */
-- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp;
-
-/**
- *  Creates and initializes a new MIKMIDITrack.
- *
- *  @param sequence The MIDI sequence the new track will belong to.
- *
- *  @param musicTrack The MusicTrack to use as the backing for the new MIDI track.
- *
- *  @note You should not call this method. To add a new track to a MIDI sequence use -[MIKMIDISequence addTrack].
- */
-+ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
-
-/**
- *  Sets a temporary length and loopInfo for the track.
- *
- *  @param length The temporary length for the track.
- *
- *  @param loopInfo The temporary loopInfo for the track.
- *
- *  @note You should not call this method. It is exclusivley used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
- */
-- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
-
-/**
- *  Restores the length and loopInfo of the track to what it was before calling -setTemporaryLength:andLoopInfo:.
- *
- *  @note You should not call this method. It is exclusively used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
- */
-- (void)restoreLengthAndLoopInfo;
+@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 @end

@@ -19,4 +19,11 @@
 
 + (NSArray *)representedMIDIObjectTypes; { return @[@(kMIDIObjectType_Destination)]; }
 
+#pragma mark - Public
+
+- (void)unscheduleAllPendingEvents
+{
+	MIDIFlushOutput(self.objectRef);
+}
+
 @end

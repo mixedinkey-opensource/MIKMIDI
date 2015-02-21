@@ -7,7 +7,7 @@
 //
 
 
-@interface MIKMIDIEvent()
+@interface MIKMIDIEvent ()
 
 /**
  *  Registers a subclass of MIKMIDIEvent. Registered subclasses will be instantiated and returned
@@ -62,7 +62,7 @@
  *  This is the property used internally by MIKMIDIEvent to store the raw data for
  *  a MIDI packet. It is essentially the mutable backing store for MIKMIDIEvent's
  *  data property. Subclasses may set it. When mutating it, subclasses should manually
- *  call -will/didChangeValueForKey for the data key path.
+ *  call -will/didChangeValueForKey for the internalData key path.
  */
 @property (nonatomic, strong, readwrite) NSMutableData *internalData;
 

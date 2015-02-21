@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MIKMainWindowController">
+            <connections>
+                <outlet property="trackView" destination="e8Y-Fj-noD" id="UxJ-08-EFE"/>
+                <outlet property="window" destination="iWA-aE-AFu" id="QGS-MU-5wj"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="MIDI Files Testbed" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="iWA-aE-AFu">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="335" y="390" width="480" height="360"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" id="bjF-sO-f3j">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6ro-dS-WBO">
+                        <rect key="frame" x="14" y="312" width="96" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="84" id="2zZ-R0-vbR"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Load File" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wQF-OX-DAd">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="loadFile:" target="-2" id="phS-kC-Z2Q"/>
+                            <binding destination="-2" name="enabled" keyPath="recording" id="bsi-xy-lk8">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="e8Y-Fj-noD" customClass="MIKMIDISequenceView">
+                        <rect key="frame" x="20" y="20" width="440" height="279"/>
+                    </customView>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yxv-Ce-QrW">
+                        <rect key="frame" x="348" y="316" width="115" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="110" id="Jmm-af-UUF"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="BX3-0d-ikz" id="e7m-FA-thV">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="xEd-Qa-ruC">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="BX3-0d-ikz"/>
+                                    <menuItem title="Item 2" id="e83-wh-W67"/>
+                                    <menuItem title="Item 3" id="Hkp-CH-m9f"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <binding destination="-2" name="selectedObject" keyPath="device" previousBinding="tvW-OW-gpK" id="L4r-mK-LrI"/>
+                            <binding destination="-2" name="content" keyPath="deviceManager.availableDevices" id="oVB-Nd-ar2"/>
+                            <binding destination="-2" name="contentValues" keyPath="deviceManager.availableDevices.name" previousBinding="oVB-Nd-ar2" id="tvW-OW-gpK"/>
+                        </connections>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eSe-hq-VkU">
+                        <rect key="frame" x="110" y="312" width="85" height="32"/>
+                        <buttonCell key="cell" type="push" title="Record" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="es0-0d-PVt">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleRecording:" target="-2" id="dm9-DB-BTG"/>
+                            <binding destination="-2" name="enabled" keyPath="device" id="IgY-8d-nGD">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="title" keyPath="recordButtonLabel" id="fIL-Fd-0iK"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FGs-7w-fIc">
+                        <rect key="frame" x="195" y="312" width="67" height="32"/>
+                        <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VhN-XN-yhh">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="togglePlayback:" target="-2" id="DFY-86-tqL"/>
+                            <binding destination="-2" name="enabled2" keyPath="recording" previousBinding="szY-h5-pd3" id="4Z4-zy-opm">
+                                <dictionary key="options">
+                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="enabled" keyPath="sequence" id="szY-h5-pd3">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="title" keyPath="playButtonLabel" id="Yyl-Xy-VbJ"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Yxv-Ce-QrW" firstAttribute="trailing" secondItem="e8Y-Fj-noD" secondAttribute="trailing" id="CB7-Gg-mX8"/>
+                    <constraint firstAttribute="bottom" secondItem="e8Y-Fj-noD" secondAttribute="bottom" constant="20" symbolic="YES" id="Cai-yE-q1c"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="leading" secondItem="bjF-sO-f3j" secondAttribute="leading" constant="20" symbolic="YES" id="Czx-Mv-pgv"/>
+                    <constraint firstItem="eSe-hq-VkU" firstAttribute="leading" secondItem="6ro-dS-WBO" secondAttribute="trailing" constant="12" symbolic="YES" id="JDK-mB-MUl"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="leading" secondItem="eSe-hq-VkU" secondAttribute="trailing" constant="12" symbolic="YES" id="POG-yK-dEx"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="leading" secondItem="e8Y-Fj-noD" secondAttribute="leading" id="Phf-nZ-bRN"/>
+                    <constraint firstAttribute="trailing" secondItem="e8Y-Fj-noD" secondAttribute="trailing" constant="20" symbolic="YES" id="Stb-M8-iIu"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="baseline" secondItem="eSe-hq-VkU" secondAttribute="baseline" id="TmR-XW-i6d"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="baseline" secondItem="eSe-hq-VkU" secondAttribute="baseline" id="XGc-dn-wRd"/>
+                    <constraint firstItem="eSe-hq-VkU" firstAttribute="baseline" secondItem="Yxv-Ce-QrW" secondAttribute="baseline" id="bHx-Dn-eIe"/>
+                    <constraint firstItem="e8Y-Fj-noD" firstAttribute="top" secondItem="6ro-dS-WBO" secondAttribute="bottom" constant="20" symbolic="YES" id="hhc-PG-3RE"/>
+                    <constraint firstItem="6ro-dS-WBO" firstAttribute="top" secondItem="bjF-sO-f3j" secondAttribute="top" constant="20" symbolic="YES" id="rm4-TU-P7w"/>
+                </constraints>
+            </view>
+        </window>
+    </objects>
+</document>

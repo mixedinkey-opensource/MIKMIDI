@@ -10,6 +10,9 @@
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDIEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#endif
 
 static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
@@ -130,8 +133,8 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	Class copyClass = [[self class] immutableCounterpartClass];
 	MIKMIDIEvent *result = [[copyClass alloc] init];
 	result.internalData = self.internalData;
-	result.eventType = self.eventType;
-	result.timeStamp = self.timeStamp;
+	result->_eventType = self.eventType;
+	result->_timeStamp = self.timeStamp;
 	return result;
 }
 
@@ -143,6 +146,18 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	result.eventType = self.eventType;
 	result.timeStamp = self.timeStamp;
 	return result;
+}
+
+#pragma mark - Properties
+
++ (NSSet *)keyPathsForValuesAffectingInternalData
+{
+	return [NSSet set];
+}
+
++ (NSSet *)keyPathsForValuesAffectingData
+{
+	return [NSSet setWithObject:@"internalData"];
 }
 
 - (NSData *)data { return [self.internalData copy]; }
@@ -168,7 +183,6 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 + (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self immutableCounterpartClass] supportsMIKMIDIEventType:type]; }
 
 @dynamic eventType;
-@dynamic channel;
 @dynamic data;
 @dynamic timeStamp;
 

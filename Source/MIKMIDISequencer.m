@@ -20,24 +20,27 @@
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIClientDestinationEndpoint.h"
 #import "MIKMIDIUtilities.h"
+#import "MIKMIDISynthesizer.h"
 
+#if !__has_feature(objc_arc)
+#error MIKMIDISequencer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#endif
 
 #define MIKMIDISequencerDefaultTempo			120
-#define MIKMIDISequencerDefaultTimeSignature	((MIKMIDITimeSignature) { .numerator = 4, .denominator = 4 })
 
 
 #pragma mark -
 
 @interface MIKMIDIEventWithDestination : NSObject
-@property (strong, nonatomic) MIKMIDIEvent *event;
-@property (strong, nonatomic) MIKMIDIDestinationEndpoint *destination;
+@property (nonatomic, strong) MIKMIDIEvent *event;
+@property (nonatomic, strong) MIKMIDIDestinationEndpoint *destination;
 + (instancetype)eventWithDestination:(MIKMIDIDestinationEndpoint *)destination event:(MIKMIDIEvent *)event;
 @end
 
 
 @interface MIKMIDICommandWithDestination : NSObject
-@property (strong, nonatomic) MIKMIDICommand *command;
-@property (strong, nonatomic) MIKMIDIDestinationEndpoint *destination;
+@property (nonatomic, strong) MIKMIDICommand *command;
+@property (nonatomic, strong) MIKMIDIDestinationEndpoint *destination;
 + (instancetype)commandWithDestination:(MIKMIDIDestinationEndpoint *)destination command:(MIKMIDICommand *)command;
 @end
 
@@ -56,20 +59,23 @@
 @property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
 
 @property (nonatomic) MIDITimeStamp lastProcessedMIDITimeStamp;
-@property (strong, nonatomic) NSTimer *timer;
+@property (nonatomic, strong) NSTimer *processingTimer;
 
-@property (strong, nonatomic) NSMutableDictionary *pendingNoteOffs;
-@property (strong, nonatomic) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
+@property (nonatomic, strong) NSMutableDictionary *pendingNoteOffs;
+@property (nonatomic, strong) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
 
-@property (strong, nonatomic) NSMutableDictionary *historicalClocks;
-@property (strong, nonatomic) NSMutableOrderedSet *historicalClockMIDITimeStamps;
+@property (nonatomic, strong) NSMutableDictionary *historicalClocks;
+@property (nonatomic, strong) NSMutableOrderedSet *historicalClockMIDITimeStamps;
 
-@property (strong, nonatomic) NSMutableDictionary *pendingRecordedNoteEvents;
+@property (nonatomic, strong) NSMutableDictionary *pendingRecordedNoteEvents;
 
 @property (nonatomic) MusicTimeStamp playbackOffset;
 @property (nonatomic) MusicTimeStamp startingTimeStamp;
 
-@property (strong, nonatomic) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
+@property (nonatomic, strong) NSMapTable *tracksToDestinationsMap;
+@property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
+
+@property (nonatomic, strong, readonly) MIKMIDIClientDestinationEndpoint *builtinEndpoint;
 
 @end
 
@@ -86,6 +92,7 @@
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
+		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 	}
 	return self;
 }
@@ -125,17 +132,20 @@
 	MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
 	self.startingTimeStamp = startingTimeStamp;
 
-	Float64 startingTempo;
-	if (![self.sequence getTempo:&startingTempo atTimeStamp:startingTimeStamp]) startingTempo = MIKMIDISequencerDefaultTempo;
+	Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
+	if (!startingTempo) startingTempo = MIKMIDISequencerDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
 	self.pendingNoteOffs = [NSMutableDictionary dictionary];
 	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
-	self.timer = [NSTimer timerWithTimeInterval:0.05 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
-	[[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-	[self.timer fire];
+	self.processingTimer = [NSTimer scheduledTimerWithTimeInterval:0.05
+															target:self
+														  selector:@selector(processingTimerFired:)
+														  userInfo:nil
+														   repeats:YES];
+	[self.processingTimer fire];
 }
 
 - (void)resumePlayback
@@ -148,8 +158,7 @@
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
-	[self.timer invalidate];
-	self.timer = nil;
+	self.processingTimer = nil;
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
@@ -195,7 +204,7 @@
 
 	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
-		MIKMIDIDestinationEndpoint *destination = track.destinationEndpoint;
+		MIKMIDIDestinationEndpoint *destination = [self destinationEndpointForTrack:track];
 		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
 			NSMutableArray *eventsAtTimeStamp = timeStampEvents[timeStampKey] ? timeStampEvents[timeStampKey] : [NSMutableArray array];
@@ -238,15 +247,15 @@
 	if (isLooping) {
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
 			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
-			Float64 tempo;
-			if (![sequence getTempo:&tempo atTimeStamp:loopStartTimeStamp]) tempo = MIKMIDISequencerDefaultTempo;
+			Float64 tempo = [sequence tempoAtTimeStamp:loopStartTimeStamp];
+			if (!tempo) tempo = MIKMIDISequencerDefaultTempo;
 			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
 
 			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
-	} else {
+	} else if (!self.isRecording) { // Don't stop automatically during recording
 		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
 		if ((systemTimeStamp > lastProcessedMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= sequence.length + playbackOffset)) {
 			[self stop];
@@ -430,15 +439,19 @@
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
 		MIKMIDINoteOnCommand *noteOnCommand = (MIKMIDINoteOnCommand *)command;
-		MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
-		MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
-		NSNumber *noteNumber = @(noteOnCommand.note);
-		NSMutableSet *noteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
-		if (!noteEventsAtNote) {
-			noteEventsAtNote = [NSMutableSet setWithCapacity:1];
-			self.pendingRecordedNoteEvents[noteNumber] = noteEventsAtNote;
+		if (noteOnCommand.velocity) {
+			MIDINoteMessage message = { .channel = noteOnCommand.channel, .note = noteOnCommand.note, .velocity = noteOnCommand.velocity, 0, 0 };
+			MIKMutableMIDINoteEvent *noteEvent = [MIKMutableMIDINoteEvent noteEventWithTimeStamp:musicTimeStamp message:message];
+			NSNumber *noteNumber = @(noteOnCommand.note);
+			NSMutableSet *noteEventsAtNote = self.pendingRecordedNoteEvents[noteNumber];
+			if (!noteEventsAtNote) {
+				noteEventsAtNote = [NSMutableSet setWithCapacity:1];
+				self.pendingRecordedNoteEvents[noteNumber] = noteEventsAtNote;
+			}
+			[noteEventsAtNote addObject:noteEvent];
+		} else {	// Velocity is 0, treat as a note Off per MIDI spec
+			event = [self pendingNoteEventWithNoteNumber:@(noteOnCommand.note) channel:noteOnCommand.channel releaseVelocity:0 offTimeStamp:musicTimeStamp];
 		}
-		[noteEventsAtNote addObject:noteEvent];
 	} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
 		MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
 		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
@@ -492,6 +505,19 @@
 	return nil;
 }
 
+#pragma mark - Configuration
+
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track
+{
+	[self.tracksToDestinationsMap setObject:endpoint forKey:track];
+}
+
+- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
+{
+	MIKMIDIDestinationEndpoint *result = [self.tracksToDestinationsMap objectForKey:track];
+	return result ?: self.builtinEndpoint;
+}
+
 #pragma mark - Click Track
 
 - (NSMutableArray *)clickTrackEventsFromTimeStamp:(MusicTimeStamp)fromTimeStamp toTimeStamp:(MusicTimeStamp)toTimeStamp
@@ -507,8 +533,7 @@
 
 	MIKMIDISequence *sequence = self.sequence;
 	MusicTimeStamp playbackOffset = self.playbackOffset;
-	MIKMIDITimeSignature timeSignature;
-	if (![sequence getTimeSignature:&timeSignature atTimeStamp:fromTimeStamp - playbackOffset]) timeSignature = MIKMIDISequencerDefaultTimeSignature;
+	MIKMIDITimeSignature timeSignature = [sequence timeSignatureAtTimeStamp:fromTimeStamp - playbackOffset];
 	NSMutableArray *timeSignatureEvents = [[sequence.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class]
 																fromTimeStamp:MAX(fromTimeStamp - playbackOffset, 0)
 																  toTimeStamp:toTimeStamp] mutableCopy];
@@ -539,7 +564,7 @@
 
 #pragma mark - Timer
 
-- (void)timerFired:(NSTimer *)timer
+- (void)processingTimerFired:(NSTimer *)timer
 {
 	[self processSequenceStartingFromMIDITimeStamp:self.lastProcessedMIDITimeStamp + 1];
 }
@@ -579,6 +604,14 @@
 	_preRoll = (preRoll >= 0) ? preRoll : 0;
 }
 
+- (void)setProcessingTimer:(NSTimer *)processingTimer
+{
+	if (processingTimer != _processingTimer) {
+		[_processingTimer invalidate];
+		_processingTimer = processingTimer;
+	}
+}
+
 - (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint
 {
 	if (!_metronomeEndpoint) _metronomeEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:@"MIKMIDIClickTrackEndpoint" receivedMessagesHandler:NULL];
@@ -600,9 +633,27 @@
 	}
 }
 
+@synthesize builtinEndpoint = _builtinEndpoint;
+- (MIKMIDIClientDestinationEndpoint *)builtinEndpoint
+{
+	if (!_builtinEndpoint) {
+		NSString *name = [NSString stringWithFormat:@"%@ (%p)", NSStringFromClass([self class]), self];
+		_builtinEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];
+		[self builtinSynthesizer]; // Create synth
+	}
+	return _builtinEndpoint;
+}
+
+@synthesize builtinSynthesizer = _builtinSynthesizer;
+- (MIKMIDISynthesizer *)builtinSynthesizer
+{
+	if (!_builtinSynthesizer) {
+		_builtinSynthesizer = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:self.builtinEndpoint];
+	}
+	return _builtinSynthesizer;
+}
+
 @end
-
-
 
 #pragma mark - 
 
