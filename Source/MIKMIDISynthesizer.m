@@ -122,8 +122,8 @@
 			return NO;
 		}
 		return YES;
-#endif
 	}
+#endif
 }
 
 #pragma mark - Private
