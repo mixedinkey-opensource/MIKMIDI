@@ -108,6 +108,9 @@
 	}];
 	if (!self.deviceConnectionToken) return NO;
 	
+	// So audio can be heard
+	self.endpointSynth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:source];
+	
 	return YES;
 }
 
