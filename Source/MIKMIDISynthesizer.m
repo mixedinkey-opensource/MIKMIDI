@@ -1,6 +1,6 @@
 //
 //  MIKMIDISynthesizer.m
-//  
+//
 //
 //  Created by Andrew Madsen on 2/19/15.
 //
@@ -71,6 +71,60 @@
 	return YES;
 }
 
+- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = noErr;
+	
+	if (self.componentDescription.componentSubType == kAudioUnitSubType_Sampler) {
+		// fill out a bank preset data structure
+		NSDictionary *typesByFileExtension = @{@"sf2" : @(kInstrumentType_SF2Preset),
+											   @"dls" : @(kInstrumentType_DLSPreset),
+											   @"aupreset" : @(kInstrumentType_AUPreset)};
+		AUSamplerInstrumentData instrumentData;
+		instrumentData.fileURL  = (__bridge CFURLRef)fileURL;
+		instrumentData.instrumentType = [typesByFileExtension[[fileURL pathExtension]] intValue];
+		instrumentData.bankMSB  = kAUSampler_DefaultMelodicBankMSB;
+		instrumentData.bankLSB  = kAUSampler_DefaultBankLSB;
+		instrumentData.presetID = 0;
+		
+		// set the kAUSamplerProperty_LoadPresetFromBank property
+		err = AudioUnitSetProperty(self.instrument,
+								   kAUSamplerProperty_LoadInstrument,
+								   kAudioUnitScope_Global,
+								   0,
+								   &instrumentData,
+								   sizeof(instrumentData));
+		
+		if (err != noErr) {
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		return YES;
+	} else {
+#if TARGET_OS_IPHONE
+		return NO;
+	}
+#else
+		FSRef fsRef;
+		err = FSPathMakeRef((const UInt8*)[[fileURL path] cStringUsingEncoding:NSUTF8StringEncoding], &fsRef, 0);
+		if (err != noErr) {
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		
+		err = AudioUnitSetProperty(self.instrument,
+								   kMusicDeviceProperty_SoundBankFSRef,
+								   kAudioUnitScope_Global, 0,
+								   &fsRef, sizeof(fsRef));
+		if (err != noErr) {
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		return YES;
+#endif
+	}
+}
 
 #pragma mark - Private
 

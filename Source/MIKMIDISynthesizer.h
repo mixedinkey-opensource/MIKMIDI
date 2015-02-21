@@ -58,6 +58,16 @@
  */
 - (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument;
 
+/**
+ *  Loads the sound font (.dls or .sf2) file at fileURL.
+ *
+ *  @param fileURL A fileURL for a .dls or .sf2 file.
+ *  @param error   If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
+ *
+ *	@return YES if loading the sound font file was succesful, NO if an error occurred.
+ */
+- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error;
+
 + (AudioComponentDescription)appleSynthComponentDescription;
 
 // methods for property 'componentDescription'
