@@ -76,7 +76,6 @@
 @property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
 @property (nonatomic, strong, readonly) MIKMIDIClientDestinationEndpoint *builtinEndpoint;
-@property (nonatomic, strong, readonly) MIKMIDISynthesizer *builtinSynthesizer;
 
 @end
 

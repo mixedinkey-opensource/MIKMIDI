@@ -14,6 +14,7 @@
 @class MIKMIDIMetronome;
 @class MIKMIDICommand;
 @class MIKMIDIDestinationEndpoint;
+@class MIKMIDISynthesizer;
 
 /**
  *  Types of click track statuses, that determine when the click track will be audible.
@@ -260,6 +261,13 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  sequence length, set this value to less than 0. The default is -1.
  */
 @property (nonatomic) MusicTimeStamp loopEndTimeStamp;
+
+/**
+ *  The synthesizer the receiver will use to synthesize MIDI during playback
+ *  for any tracks whose MIDI has not been routed to a custom endpoint using
+ *  -setDestinationEndpoint:forTrack:.
+ */
+@property (nonatomic, strong, readonly) MIKMIDISynthesizer *builtinSynthesizer;
 
 /**
  *  The metronome to send click track events to.
