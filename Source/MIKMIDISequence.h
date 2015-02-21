@@ -15,6 +15,12 @@ typedef struct {
 	UInt8 denominator;
 } MIKMIDITimeSignature;
 
+NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 denominator) {
+	MIKMIDITimeSignature ts;
+	ts.numerator = numerator;
+	ts.denominator = denominator;
+	return ts;
+}
 
 @class MIKMIDITrack;
 @class MIKMIDIDestinationEndpoint;
