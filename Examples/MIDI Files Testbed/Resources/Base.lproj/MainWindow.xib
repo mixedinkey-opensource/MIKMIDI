@@ -81,14 +81,41 @@
                             <binding destination="-2" name="title" keyPath="recordButtonLabel" id="fIL-Fd-0iK"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FGs-7w-fIc">
+                        <rect key="frame" x="195" y="312" width="67" height="32"/>
+                        <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VhN-XN-yhh">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="togglePlayback:" target="-2" id="DFY-86-tqL"/>
+                            <binding destination="-2" name="enabled2" keyPath="recording" previousBinding="szY-h5-pd3" id="4Z4-zy-opm">
+                                <dictionary key="options">
+                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="enabled" keyPath="sequence" id="szY-h5-pd3">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="title" keyPath="playButtonLabel" id="Yyl-Xy-VbJ"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="Yxv-Ce-QrW" firstAttribute="trailing" secondItem="e8Y-Fj-noD" secondAttribute="trailing" id="CB7-Gg-mX8"/>
                     <constraint firstAttribute="bottom" secondItem="e8Y-Fj-noD" secondAttribute="bottom" constant="20" symbolic="YES" id="Cai-yE-q1c"/>
                     <constraint firstItem="6ro-dS-WBO" firstAttribute="leading" secondItem="bjF-sO-f3j" secondAttribute="leading" constant="20" symbolic="YES" id="Czx-Mv-pgv"/>
                     <constraint firstItem="eSe-hq-VkU" firstAttribute="leading" secondItem="6ro-dS-WBO" secondAttribute="trailing" constant="12" symbolic="YES" id="JDK-mB-MUl"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="leading" secondItem="eSe-hq-VkU" secondAttribute="trailing" constant="12" symbolic="YES" id="POG-yK-dEx"/>
                     <constraint firstItem="6ro-dS-WBO" firstAttribute="leading" secondItem="e8Y-Fj-noD" secondAttribute="leading" id="Phf-nZ-bRN"/>
                     <constraint firstAttribute="trailing" secondItem="e8Y-Fj-noD" secondAttribute="trailing" constant="20" symbolic="YES" id="Stb-M8-iIu"/>
+                    <constraint firstItem="FGs-7w-fIc" firstAttribute="baseline" secondItem="eSe-hq-VkU" secondAttribute="baseline" id="TmR-XW-i6d"/>
                     <constraint firstItem="6ro-dS-WBO" firstAttribute="baseline" secondItem="eSe-hq-VkU" secondAttribute="baseline" id="XGc-dn-wRd"/>
                     <constraint firstItem="eSe-hq-VkU" firstAttribute="baseline" secondItem="Yxv-Ce-QrW" secondAttribute="baseline" id="bHx-Dn-eIe"/>
                     <constraint firstItem="e8Y-Fj-noD" firstAttribute="top" secondItem="6ro-dS-WBO" secondAttribute="bottom" constant="20" symbolic="YES" id="hhc-PG-3RE"/>

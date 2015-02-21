@@ -18,14 +18,17 @@
 
 - (IBAction)loadFile:(id)sender;
 - (IBAction)toggleRecording:(id)sender;
+- (IBAction)togglePlayback:(id)sender;
 
 @property (nonatomic, readonly) MIKMIDIDeviceManager *deviceManager;
 
 @property (nonatomic, strong) MIKMIDISequence *sequence;
 @property (nonatomic, strong) MIKMIDIDevice *device;
+@property (nonatomic, getter=isPlaying, readonly) BOOL playing;
 @property (nonatomic, getter=isRecording, readonly) BOOL recording;
 
 @property (weak) IBOutlet MIKMIDISequenceView *trackView;
 @property (nonatomic, readonly) NSString *recordButtonLabel;
+@property (nonatomic, readonly) NSString *playButtonLabel;
 
 @end

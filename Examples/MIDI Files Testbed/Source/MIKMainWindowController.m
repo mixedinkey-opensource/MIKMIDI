@@ -12,6 +12,7 @@
 @interface MIKMainWindowController ()
 
 @property (nonatomic, strong) MIKMIDISequencer *sequencer;
+@property (nonatomic, strong) MIKMIDIEndpointSynthesizer *endpointSynth;
 
 @property (nonatomic, strong) id deviceConnectionToken;
 
@@ -63,6 +64,11 @@
 	}
 }
 
+- (IBAction)togglePlayback:(id)sender
+{
+	self.isPlaying ? [self.sequencer stop] : [self.sequencer startPlayback];
+}
+
 #pragma mark - MIKMIDISequenceViewDelegate
 
 - (void)midiSequenceView:(MIKMIDISequenceView *)sequenceView receivedDroppedMIDIFiles:(NSArray *)midiFiles
@@ -100,7 +106,9 @@
 			if (self.isRecording) [self.sequencer recordMIDICommand:command];
 		}
 	}];
-	return self.deviceConnectionToken != nil;
+	if (!self.deviceConnectionToken) return NO;
+	
+	return YES;
 }
 
 - (void)disconnectFromDevice
@@ -141,6 +149,16 @@
 	}
 }
 
++ (NSSet *)keyPathsForValuesAffectingPlaying
+{
+	return [NSSet setWithObjects:@"sequencer.playing", nil];
+}
+
+- (BOOL)isPlaying
+{
+	return self.sequencer.isPlaying;
+}
+
 + (NSSet *)keyPathsForValuesAffectingRecording
 {
 	return [NSSet setWithObjects:@"sequencer.recording", nil];
@@ -159,6 +177,16 @@
 - (NSString *)recordButtonLabel
 {
 	return self.isRecording ? @"Stop" : @"Record";
+}
+
++ (NSSet *)keyPathsForValuesAffectingPlayButtonLabel
+{
+	return [NSSet setWithObjects:@"playing", nil];
+}
+
+- (NSString *)playButtonLabel
+{
+	return self.isPlaying ? @"Stop" : @"Play";
 }
 
 @end
