@@ -97,4 +97,4 @@ MIDI synthesis is the process by which MIDI events/messages are turned into audi
 MIDI Sequencing
 ---------------
 
-`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback.git p
+`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback.
