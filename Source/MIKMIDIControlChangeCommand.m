@@ -131,8 +131,16 @@
 
 // One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
 @dynamic channel;
+@dynamic value;
+@dynamic controllerNumber;
+@dynamic controllerValue;
+@dynamic fourteenBitCommand;
+@dynamic fourteenBitValue;
 @dynamic timestamp;
+@dynamic midiTimestamp;
 @dynamic commandType;
+@dynamic dataByte1;
+@dynamic dataByte2;
 @dynamic data;
 
 @end

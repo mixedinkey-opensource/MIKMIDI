@@ -191,8 +191,14 @@
 #pragma mark - Properties
 
 // One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
+@dynamic manufacturerID;
+@dynamic sysexChannel;
+@dynamic sysexData;
 @dynamic timestamp;
 @dynamic commandType;
+@dynamic dataByte1;
+@dynamic dataByte2;
+@dynamic midiTimestamp;
 @dynamic data;
 
 @end

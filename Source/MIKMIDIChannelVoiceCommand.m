@@ -82,6 +82,16 @@
 
 #pragma mark - Properties
 
+// MIKMIDICommand already implements these. This keeps the compiler happy.
+@dynamic channel;
+@dynamic value;
+@dynamic timestamp;
+@dynamic dataByte1;
+@dynamic dataByte2;
+@dynamic midiTimestamp;
+@dynamic data;
+
+@dynamic commandType;
 - (void)setCommandType:(MIKMIDICommandType)commandType
 {
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
@@ -89,8 +99,5 @@
 	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
 	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
 }
-
-@dynamic timestamp; // MIKMIDICommand already implements a getter *and* setter for this. This keeps the compiler happy.
-@dynamic data; // // MIKMIDICommand already implements a getter *and* setter for this. This keeps the compiler happy.
 
 @end
