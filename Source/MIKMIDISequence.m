@@ -88,40 +88,57 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     return [self initWithMusicSequence:sequence];
 }
 
-+ (instancetype)sequenceWithMusicSequence:(MusicSequence)musicSequence
++ (instancetype)sequenceWithMusicSequence:(MusicSequence)musicSequence error:(NSError **)error
 {
-    return [[self alloc] initWithMusicSequence:musicSequence];
+	return [[self alloc] initWithMusicSequence:musicSequence error:error];
 }
 
-- (instancetype)initWithMusicSequence:(MusicSequence)musicSequence
+- (instancetype)initWithMusicSequence:(MusicSequence)musicSequence error:(NSError **)error
 {
-    if (self = [super init]) {
-        OSStatus err = MusicSequenceSetUserCallback(musicSequence, MIKSequenceCallback, (__bridge void *)self);
-        if (err) NSLog(@"MusicSequenceSetUserCallback() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        self.musicSequence = musicSequence;
-
-        MusicTrack tempoTrack;
-        err = MusicSequenceGetTempoTrack(musicSequence, &tempoTrack);
-        if (err) NSLog(@"MusicSequenceGetTempoTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        self.tempoTrack = [MIKMIDITrack trackWithSequence:self musicTrack:tempoTrack];
-
-        UInt32 numTracks = 0;
-        err = MusicSequenceGetTrackCount(musicSequence, &numTracks);
-        if (err) NSLog(@"MusicSequenceGetTrackCount() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-
-        NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:numTracks];
-
-        for (UInt32 i = 0; i < numTracks; i++) {
-            MusicTrack musicTrack;
-            err = MusicSequenceGetIndTrack(musicSequence, i, &musicTrack);
-            if (err) NSLog(@"MusicSequenceGetIndTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-            [tracks addObject:[MIKMIDITrack trackWithSequence:self musicTrack:musicTrack]];
-        }
-        self.tracks = tracks;
-        self.length = MIKMIDISequenceLongestTrackLength;
-    }
-
-    return self;
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	
+	if (self = [super init]) {
+		OSStatus err = MusicSequenceSetUserCallback(musicSequence, MIKSequenceCallback, (__bridge void *)self);
+		if (err) {
+			NSLog(@"MusicSequenceSetUserCallback() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return nil;
+		}
+		self.musicSequence = musicSequence;
+		
+		MusicTrack tempoTrack;
+		err = MusicSequenceGetTempoTrack(musicSequence, &tempoTrack);
+		if (err) {
+			NSLog(@"MusicSequenceGetTempoTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return nil;
+		}
+		self.tempoTrack = [MIKMIDITrack trackWithSequence:self musicTrack:tempoTrack];
+		
+		UInt32 numTracks = 0;
+		err = MusicSequenceGetTrackCount(musicSequence, &numTracks);
+		if (err) {
+			NSLog(@"MusicSequenceGetTrackCount() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+			return nil;
+		}
+		NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:numTracks];
+		
+		for (UInt32 i = 0; i < numTracks; i++) {
+			MusicTrack musicTrack;
+			err = MusicSequenceGetIndTrack(musicSequence, i, &musicTrack);
+			if (err){
+				NSLog(@"MusicSequenceGetIndTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+				return nil;
+			}
+			[tracks addObject:[MIKMIDITrack trackWithSequence:self musicTrack:musicTrack]];
+		}
+		self.tracks = tracks;
+		self.length = MIKMIDISequenceLongestTrackLength;
+	}
+	
+	return self;
 }
 
 - (void)dealloc
