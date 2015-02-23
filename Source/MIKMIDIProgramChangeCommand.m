@@ -56,8 +56,7 @@
 
 // One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
 @dynamic channel;
-@dynamic timestamp;
-@dynamic commandType;
-@dynamic data;
+@dynamic value;
+@dynamic programNumber;
 
 @end

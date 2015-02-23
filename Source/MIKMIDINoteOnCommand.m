@@ -62,5 +62,8 @@
 @dynamic timestamp;
 @dynamic midiTimestamp;
 @dynamic channel;
+@dynamic value;
+@dynamic note;
+@dynamic velocity;
 
 @end
