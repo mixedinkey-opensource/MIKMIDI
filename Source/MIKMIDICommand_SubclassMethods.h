@@ -30,7 +30,7 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
- *  This method has been replaced by +supportedMIDICommandTypes
+ *  @deprecated This method has been replaced by +supportedMIDICommandTypes
  *  and by default simply calls through to that method. Subclasses
  *  no longer need implement this.
  *

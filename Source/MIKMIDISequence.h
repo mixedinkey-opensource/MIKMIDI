@@ -263,7 +263,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 #pragma mark - Deprecated
 
 /**
- *  This method is deprecated. Use +sequenceWithData:error: instead.
+ *  @deprecated This method is deprecated. Use +sequenceWithData:error: instead.
  *
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
  *
@@ -274,7 +274,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 + (instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
 
 /**
- *  This method is deprecated. Use -initWithData:error: instead.
+ *  @deprecated This method is deprecated. Use -initWithData:error: instead.
  *
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
  *
@@ -285,6 +285,9 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 - (instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
 
 /**
+ *	@deprecated This method is deprecated. Use -[MIKMIDISequencer 
+ *	setDestinationEndpoint:forTrack:] instead.
+ *
  *  Sets the destination endpoint for each track in the sequence.
  *
  *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.
@@ -292,7 +295,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
- *	This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
+ *	@deprecated This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
  *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
  *
  *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
@@ -302,7 +305,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
 
 /**
- *  This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
+ *  @deprecated This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
  *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
  *
  *  @param signature On output, a time signature instance with its values populated.

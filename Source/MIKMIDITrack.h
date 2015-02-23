@@ -278,7 +278,9 @@
 - (BOOL)getTrackNumber:(UInt32 *)trackNumber DEPRECATED_ATTRIBUTE;
 
 /**
- *  The destination endpoint for the MIDI events of the track during playback.
+ *	@deprecated This property has been deprecated. Use -[MIKMIDISequencer setDestinationEndpoint:forTrack:] instead.
+ *  
+ *	The destination endpoint for the MIDI events of the track during playback.
  */
 @property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
 
