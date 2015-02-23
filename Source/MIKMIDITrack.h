@@ -67,15 +67,6 @@
 - (BOOL)clearAllEvents;
 
 /**
- *  Gets the track's track number in it's owning MIDI sequence.
- *
- *  @param trackNumber On output, the track number of the track.
- *
- *  @return Whether or not getting the track number was succesful.
- */
-- (BOOL)getTrackNumber:(UInt32 *)trackNumber;
-
-/**
  *  Gets all of the MIDI events in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
  *
  *  @param startTimeStamp The starting time stamp for the range to get MIDI events for.
@@ -215,6 +206,11 @@
 @property (nonatomic, readonly) NSArray *notes;
 
 /**
+ *  The receiver's index in its containing sequence, or -1 if the track isn't in a sequence.
+ */
+@property (nonatomic, readonly) NSInteger trackNumber;
+
+/**
  *  Whether the track is set to loop.
  */
 @property (nonatomic, readonly) BOOL doesLoop;
@@ -269,6 +265,17 @@
 @property (nonatomic, readonly) SInt16 timeResolution;
 
 #pragma mark - Deprecated
+
+/**
+ *  Gets the track's track number in it's owning MIDI sequence.
+ *
+ *  @param trackNumber On output, the track number of the track.
+ *
+ *  @return Whether or not getting the track number was succesful.
+ *
+ *	@deprecated This method is deprecated. Use -trackNumber instead.
+ */
+- (BOOL)getTrackNumber:(UInt32 *)trackNumber DEPRECATED_ATTRIBUTE;
 
 /**
  *  The destination endpoint for the MIDI events of the track during playback.
