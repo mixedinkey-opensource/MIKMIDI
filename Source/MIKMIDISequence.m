@@ -58,26 +58,30 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
     NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
-    return data ? [self initWithData:data] : nil;
+	return [self initWithData:data error:error];
 }
 
-+ (instancetype)sequenceWithData:(NSData *)data
++ (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error
 {
-    return [[self alloc] initWithData:data];
+    return [[self alloc] initWithData:data error:error];
 }
 
-- (instancetype)initWithData:(NSData *)data
+- (instancetype)initWithData:(NSData *)data error:(NSError **)error
 {
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	
     MusicSequence sequence;
     OSStatus err = NewMusicSequence(&sequence);
     if (err) {
         NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
         return nil;
     }
 
     err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, 0);
     if (err) {
         NSLog(@"MusicSequenceFileLoadData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
         return nil;
     }
 
@@ -320,6 +324,24 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     }
 
     return (__bridge_transfer NSData *)data;
+}
+
+#pragma mark - Deprecated
+
++ (instancetype)sequenceWithData:(NSData *)data
+{
+	NSLog(@"%s is deprecated."
+		  "You should update your code to avoid calling this method."
+		  "Use +sequenceWithData:error: instead.", __PRETTY_FUNCTION__);
+	return [self sequenceWithData:data error:NULL];
+}
+
+- (instancetype)initWithData:(NSData *)data
+{
+	NSLog(@"%s is deprecated."
+		  "You should update your code to avoid calling this method."
+		  "Use -initWithData:error: instead.", __PRETTY_FUNCTION__);
+	return [self initWithData:data error:NULL];
 }
 
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
