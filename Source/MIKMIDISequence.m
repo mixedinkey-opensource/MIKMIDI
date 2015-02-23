@@ -47,7 +47,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
         return nil;
     }
 
-    return [self initWithMusicSequence:sequence];
+    return [self initWithMusicSequence:sequence error:NULL];
 }
 
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
@@ -85,7 +85,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
         return nil;
     }
 
-    return [self initWithMusicSequence:sequence];
+	return [self initWithMusicSequence:sequence error:error];
 }
 
 + (instancetype)sequenceWithMusicSequence:(MusicSequence)musicSequence error:(NSError **)error
