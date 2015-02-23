@@ -67,20 +67,24 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 /**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
  *
- *  @param data The MIDI data for the new sequence.
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param error If an
  *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
  */
-+ (instancetype)sequenceWithData:(NSData *)data;
++ (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
  *
- *  @param data The MIDI data for the new sequence.
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param error If an
  *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
  */
-- (instancetype)initWithData:(NSData *)data;
+- (instancetype)initWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
@@ -106,7 +110,6 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return Whether or not removing the track was successful.
  */
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
-
 
 /**
  *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
@@ -260,10 +263,28 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 #pragma mark - Deprecated
 
 /**
- *  This method has been deprecated. You should not call it. Instead, use MIKMIDISequencer's API
- *  for routing tracks' output to specific endpoints. If you must set an endpoint on an MusicSequence,
- *  use CoreMIDI's API instead.
+ *  This method is deprecated. Use +sequenceWithData:error: instead.
  *
+ *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data The MIDI data for the new sequence.
+ *
+ *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ */
++ (instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
+
+/**
+ *  This method is deprecated. Use -initWithData:error: instead.
+ *
+ *  Initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data The MIDI data for the new sequence.
+ *
+ *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ */
+- (instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
+
+/**
  *  Sets the destination endpoint for each track in the sequence.
  *
  *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.

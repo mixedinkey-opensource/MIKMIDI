@@ -22,6 +22,21 @@ On OS X, you can also use MIKMIDI.framework instead of including the MIKMIDI sou
 
 Important Note: MIKMIDI relies on Automatic Reference Counting (ARC). If you'd like to use its source in a non-ARC project, you'll need to open the "Compile Sources" build phase for the target(s) you're using it in, and add the -fobjc-arc flag to the "Compiler Flags" column for all MIKMIDI implementation (.m) files. MIKMIDI will generate a compiler error if ARC is not enabled.
 
+### Install as Embedded Framework on iOS 8
+
+- Add MIKMIDI as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the following command:
+
+```bash
+$ git submodule add https://github.com/mixedinkey-opensource/MIKMIDI.git
+```
+
+- Open the `MIKMIDI/Framework` folder, and drag `MIKMIDI.xcodeproj` into the file navigator of your app project.
+- In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
+- Ensure that the deployment target of MIKMIDI.framework matches that of the application target.
+- In the tab bar at the top of that window, open the "Build Phases" panel.
+- Expand the "Target Dependencies" group, and add `MIKMIDI.framework`.
+- Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `MIKMIDI.framework`.
+
 MIKMIDI Overview
 ----------------
 
@@ -97,4 +112,4 @@ MIDI synthesis is the process by which MIDI events/messages are turned into audi
 MIDI Sequencing
 ---------------
 
-`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback.git p
+`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback.
