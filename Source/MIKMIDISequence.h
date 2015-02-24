@@ -226,7 +226,8 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 @property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
 
 /**
- *  The MIDI tracks for the sequence. An array of MIKMIDITrack instances.
+ *  The MIDI music tracks for the sequence. An array of MIKMIDITrack instances.
+ *  Does not include the tempo track.
  */
 @property (nonatomic, readonly) NSArray *tracks;
 
