@@ -62,5 +62,7 @@
 + (BOOL)isMutable { return YES; }
 
 @dynamic bpm;
+@dynamic timeStamp;
+@dynamic data;
 
 @end

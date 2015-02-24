@@ -26,6 +26,10 @@
 
 @implementation MIKMutableMIDIMetaLyricEvent
 
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
+
 + (BOOL)isMutable { return YES; }
 
 @end
