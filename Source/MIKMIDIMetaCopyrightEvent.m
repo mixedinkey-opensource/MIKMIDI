@@ -26,6 +26,7 @@
 
 @implementation MIKMutableMIDIMetaCopyrightEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

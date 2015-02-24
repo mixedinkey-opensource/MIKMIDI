@@ -26,6 +26,7 @@
 
 @implementation MIKMutableMIDIMetaInstrumentNameEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

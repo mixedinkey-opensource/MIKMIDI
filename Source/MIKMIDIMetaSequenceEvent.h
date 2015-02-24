@@ -20,6 +20,7 @@
  */
 @interface MIKMutableMIDIMetaSequenceEvent : MIKMIDIMetaSequenceEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 metadataType;
 @property (nonatomic, readwrite) NSData *metaData;
 

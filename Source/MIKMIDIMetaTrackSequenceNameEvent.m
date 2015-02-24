@@ -26,6 +26,7 @@
 
 @implementation MIKMutableMIDIMetaTrackSequenceNameEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

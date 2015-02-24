@@ -26,6 +26,7 @@
 
 @implementation MIKMutableMIDIMetaMarkerTextEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

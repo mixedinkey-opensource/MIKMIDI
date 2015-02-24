@@ -26,6 +26,7 @@
 
 @implementation MIKMutableMIDIMetaCuePointEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

@@ -68,6 +68,7 @@
 
 @implementation MIKMutableMIDIMetaKeySignatureEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 @dynamic key;
