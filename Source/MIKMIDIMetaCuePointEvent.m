@@ -25,5 +25,10 @@
 @end
 
 @implementation MIKMutableMIDIMetaCuePointEvent
+
+@dynamic metadataType;
+@dynamic metaData;
+
 + (BOOL)isMutable { return YES; }
+
 @end

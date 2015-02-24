@@ -26,6 +26,9 @@
 
 @implementation MIKMutableMIDIMetaMarkerTextEvent
 
+@dynamic metadataType;
+@dynamic metaData;
+
 + (BOOL)isMutable { return YES; }
 
 @end

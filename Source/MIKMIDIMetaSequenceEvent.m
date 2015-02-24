@@ -18,4 +18,7 @@
 
 @implementation MIKMutableMIDIMetaSequenceEvent
 
+@dynamic metadataType;
+@dynamic metaData;
+
 @end

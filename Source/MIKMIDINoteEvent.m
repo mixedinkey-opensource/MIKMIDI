@@ -150,6 +150,12 @@
 @dynamic channel;
 @dynamic releaseVelocity;
 @dynamic duration;
+@dynamic endTimeStamp;
+@dynamic frequency;
+@dynamic noteLetter;
+@dynamic noteLetterAndOctave;
+@dynamic timeStamp;
+@dynamic data;
 
 + (BOOL)isMutable { return YES; }
 

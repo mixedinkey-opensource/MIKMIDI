@@ -26,6 +26,9 @@
 
 @implementation MIKMutableMIDIMetaCopyrightEvent
 
+@dynamic metadataType;
+@dynamic metaData;
+
 + (BOOL)isMutable { return YES; }
 
 @end

@@ -68,9 +68,11 @@
 
 @implementation MIKMutableMIDIMetaKeySignatureEvent
 
-+ (BOOL)isMutable { return YES; }
-
+@dynamic metadataType;
+@dynamic metaData;
 @dynamic key;
 @dynamic scale;
+
++ (BOOL)isMutable { return YES; }
 
 @end

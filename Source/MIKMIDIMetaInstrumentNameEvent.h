@@ -21,4 +21,7 @@
  */
 @interface MIKMutableMIDIMetaInstrumentNameEvent : MIKMIDIMetaInstrumentNameEvent
 
+@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, readwrite) NSData *metaData;
+
 @end

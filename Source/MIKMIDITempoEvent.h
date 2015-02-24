@@ -38,6 +38,8 @@
  */
 @interface MIKMutableMIDITempoEvent : MIKMIDITempoEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
+@property (nonatomic, strong, readwrite) NSMutableData *data;
 @property (nonatomic, readwrite) Float64 bpm;
 
 @end
