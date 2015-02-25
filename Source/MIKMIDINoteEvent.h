@@ -89,10 +89,6 @@
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 releaseVelocity;
 @property (nonatomic, readwrite) Float32 duration;
-@property (nonatomic, readwrite) MusicTimeStamp endTimeStamp;
-@property (nonatomic, readwrite) float frequency;
-@property (nonatomic, readwrite) NSString *noteLetter;
-@property (nonatomic, readwrite) NSString *noteLetterAndOctave;
 
 @end
 
