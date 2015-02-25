@@ -36,6 +36,19 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIChannelVoiceCommand class]; }
 
+- (instancetype)initWithMIDIPacket:(MIDIPacket *)packet
+{
+	self = [super initWithMIDIPacket:packet];
+	if (self) {
+		if (!packet) {
+			if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
+			UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
+			data[0] &= 0xF0; // Set channel to 0
+		}
+	}
+	return self;
+}
+
 - (NSString *)additionalCommandDescription
 {
 	return [NSString stringWithFormat:@"channel %d", self.channel];
