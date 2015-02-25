@@ -21,6 +21,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTimeSignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTimeSignatureEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (size_t)minimumDataSize { return [super minimumDataSize] + 4; /* Account for numerator, denominator, metronome, and 32nd note bytes  */ }
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
@@ -44,8 +45,9 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+	if ([mutableMetaData length] < 1) [mutableMetaData increaseLengthBy:1];
     [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&numerator length:1];
-    [self setMetaData:[mutableMetaData copy]];
+    [self setMetaData:mutableMetaData];
 }
 
 - (UInt8)denominator
@@ -59,9 +61,10 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+	if ([mutableMetaData length] < 2) [mutableMetaData increaseLengthBy:2-[mutableMetaData length]];
     UInt8 denominatorPower = log2(denominator);
     [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&denominatorPower length:1];
-    [self setMetaData:[mutableMetaData copy]];
+    [self setMetaData:mutableMetaData];
 }
 
 - (UInt8)metronomePulse
@@ -74,8 +77,9 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+	if ([mutableMetaData length] < 3) [mutableMetaData increaseLengthBy:3-[mutableMetaData length]];
     [mutableMetaData replaceBytesInRange:NSMakeRange(2, 1) withBytes:&metronomePulse length:1];
-    [self setMetaData:[mutableMetaData copy]];
+    [self setMetaData:mutableMetaData];
 }
 
 - (UInt8)thirtySecondsPerQuarterNote
@@ -88,8 +92,9 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+	if ([mutableMetaData length] < 4) [mutableMetaData increaseLengthBy:4-[mutableMetaData length]];
     [mutableMetaData replaceBytesInRange:NSMakeRange(3, 1) withBytes:&thirtySecondsPerQuarterNote length:1];
-    [self setMetaData:[mutableMetaData copy]];
+    [self setMetaData:mutableMetaData];
 }
 
 - (NSString *)additionalEventDescription
