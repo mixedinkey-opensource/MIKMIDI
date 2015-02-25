@@ -8,12 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		9D3A2FBF192E85B800314B49 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */; };
+		9D76DCE71A9E4ACA00A24C16 /* MIKMIDIEventIterator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D76DCE61A9E4ACA00A24C16 /* MIKMIDIEventIterator.m */; };
 		9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */; };
 		9DB2A5F7192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
-		9DB2A616192D184D0047A3EB /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A615192D184D0047A3EB /* XCTest.framework */; };
-		9DB2A617192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
-		9DB2A61F192D184D0047A3EB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9DB2A61D192D184D0047A3EB /* InfoPlist.strings */; };
-		9DB2A621192D184D0047A3EB /* MIDI_Files_TestbedTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A620192D184D0047A3EB /* MIDI_Files_TestbedTests.m */; };
 		9DB2A62F192D18970047A3EB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A62B192D18970047A3EB /* main.m */; };
 		9DB2A630192D18970047A3EB /* MIKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A62E192D18970047A3EB /* MIKAppDelegate.m */; };
 		9DB2A63A192D189E0047A3EB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DB2A632192D189E0047A3EB /* MainMenu.xib */; };
@@ -63,19 +60,11 @@
 		F263C0C3192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F263C0C2192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		9DB2A618192D184D0047A3EB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9DB2A5EB192D184D0047A3EB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9DB2A5F2192D184D0047A3EB;
-			remoteInfo = "MIDI Files Testbed";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITempoEvent.h; sourceTree = "<group>"; };
 		9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITempoEvent.m; sourceTree = "<group>"; };
+		9D76DCE51A9E4ACA00A24C16 /* MIKMIDIEventIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIEventIterator.h; sourceTree = "<group>"; };
+		9D76DCE61A9E4ACA00A24C16 /* MIKMIDIEventIterator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIEventIterator.m; sourceTree = "<group>"; };
 		9DAE7D35192FC1B800B25DD7 /* MIKMIDISequenceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequenceView.h; sourceTree = "<group>"; };
 		9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequenceView.m; sourceTree = "<group>"; };
 		9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Files Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,11 +72,7 @@
 		9DB2A5F9192D184D0047A3EB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		9DB2A5FA192D184D0047A3EB /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		9DB2A5FB192D184D0047A3EB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		9DB2A614192D184D0047A3EB /* MIDI Files TestbedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MIDI Files TestbedTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB2A615192D184D0047A3EB /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		9DB2A61C192D184D0047A3EB /* MIDI Files TestbedTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MIDI Files TestbedTests-Info.plist"; sourceTree = "<group>"; };
-		9DB2A61E192D184D0047A3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9DB2A620192D184D0047A3EB /* MIDI_Files_TestbedTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDI_Files_TestbedTests.m; sourceTree = "<group>"; };
 		9DB2A62B192D18970047A3EB /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9DB2A62C192D18970047A3EB /* MIDI Files Testbed-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIDI Files Testbed-Prefix.pch"; sourceTree = "<group>"; };
 		9DB2A62D192D18970047A3EB /* MIKAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKAppDelegate.h; sourceTree = "<group>"; };
@@ -198,21 +183,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9DB2A611192D184D0047A3EB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9DB2A617192D184D0047A3EB /* Cocoa.framework in Frameworks */,
-				9DB2A616192D184D0047A3EB /* XCTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9D3A2FBC192E670E00314B49 /* MIDI Events */ = {
 			isa = PBXGroup;
 			children = (
+				9D76DCE51A9E4ACA00A24C16 /* MIKMIDIEventIterator.h */,
+				9D76DCE61A9E4ACA00A24C16 /* MIKMIDIEventIterator.m */,
 				F263C02C192D2A0C00F1B297 /* MIKMIDIEvent.h */,
 				F263C032192D62A600F1B297 /* MIKMIDIEvent_SubclassMethods.h */,
 				F263C02D192D2A0C00F1B297 /* MIKMIDIEvent.m */,
@@ -260,7 +238,6 @@
 				9DB2A62A192D18970047A3EB /* Source */,
 				9DB2A63F192D19A60047A3EB /* MIKMIDI */,
 				9DB2A631192D189E0047A3EB /* Resources */,
-				9DB2A61A192D184D0047A3EB /* MIDI Files TestbedTests */,
 				9DB2A5F5192D184D0047A3EB /* Frameworks */,
 				9DB2A5F4192D184D0047A3EB /* Products */,
 			);
@@ -270,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */,
-				9DB2A614192D184D0047A3EB /* MIDI Files TestbedTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -293,24 +269,6 @@
 				9DB2A5FB192D184D0047A3EB /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		9DB2A61A192D184D0047A3EB /* MIDI Files TestbedTests */ = {
-			isa = PBXGroup;
-			children = (
-				9DB2A620192D184D0047A3EB /* MIDI_Files_TestbedTests.m */,
-				9DB2A61B192D184D0047A3EB /* Supporting Files */,
-			);
-			path = "MIDI Files TestbedTests";
-			sourceTree = "<group>";
-		};
-		9DB2A61B192D184D0047A3EB /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				9DB2A61C192D184D0047A3EB /* MIDI Files TestbedTests-Info.plist */,
-				9DB2A61D192D184D0047A3EB /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		9DB2A62A192D18970047A3EB /* Source */ = {
@@ -438,24 +396,6 @@
 			productReference = 9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9DB2A613192D184D0047A3EB /* MIDI Files TestbedTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9DB2A627192D184D0047A3EB /* Build configuration list for PBXNativeTarget "MIDI Files TestbedTests" */;
-			buildPhases = (
-				9DB2A610192D184D0047A3EB /* Sources */,
-				9DB2A611192D184D0047A3EB /* Frameworks */,
-				9DB2A612192D184D0047A3EB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9DB2A619192D184D0047A3EB /* PBXTargetDependency */,
-			);
-			name = "MIDI Files TestbedTests";
-			productName = "MIDI Files TestbedTests";
-			productReference = 9DB2A614192D184D0047A3EB /* MIDI Files TestbedTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -465,11 +405,6 @@
 				CLASSPREFIX = MIK;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Mixed In Key";
-				TargetAttributes = {
-					9DB2A613192D184D0047A3EB = {
-						TestTargetID = 9DB2A5F2192D184D0047A3EB;
-					};
-				};
 			};
 			buildConfigurationList = 9DB2A5EE192D184D0047A3EB /* Build configuration list for PBXProject "MIDI Files Testbed" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -485,7 +420,6 @@
 			projectRoot = "";
 			targets = (
 				9DB2A5F2192D184D0047A3EB /* MIDI Files Testbed */,
-				9DB2A613192D184D0047A3EB /* MIDI Files TestbedTests */,
 			);
 		};
 /* End PBXProject section */
@@ -499,14 +433,6 @@
 				9DB2A63D192D189E0047A3EB /* Images.xcassets in Resources */,
 				9DB2A63C192D189E0047A3EB /* InfoPlist.strings in Resources */,
 				9DB2A63B192D189E0047A3EB /* Credits.rtf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9DB2A612192D184D0047A3EB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9DB2A61F192D184D0047A3EB /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +468,7 @@
 				9DB2A686192D19A60047A3EB /* MIKMIDIMapping.m in Sources */,
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
 				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
+				9D76DCE71A9E4ACA00A24C16 /* MIKMIDIEventIterator.m in Sources */,
 				9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */,
 				F263C0C3192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m in Sources */,
 				F263C02E192D2A0C00F1B297 /* MIKMIDIEvent.m in Sources */,
@@ -565,33 +492,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9DB2A610192D184D0047A3EB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9DB2A621192D184D0047A3EB /* MIDI_Files_TestbedTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		9DB2A619192D184D0047A3EB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9DB2A5F2192D184D0047A3EB /* MIDI Files Testbed */;
-			targetProxy = 9DB2A618192D184D0047A3EB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
-		9DB2A61D192D184D0047A3EB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9DB2A61E192D184D0047A3EB /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		9DB2A632192D189E0047A3EB /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -715,46 +618,6 @@
 			};
 			name = Release;
 		};
-		9DB2A628192D184D0047A3EB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MIDI Files Testbed.app/Contents/MacOS/MIDI Files Testbed";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MIDI Files Testbed/MIDI Files Testbed-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "MIDI Files TestbedTests/MIDI Files TestbedTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		9DB2A629192D184D0047A3EB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MIDI Files Testbed.app/Contents/MacOS/MIDI Files Testbed";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "MIDI Files Testbed/MIDI Files Testbed-Prefix.pch";
-				INFOPLIST_FILE = "MIDI Files TestbedTests/MIDI Files TestbedTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -772,15 +635,6 @@
 			buildConfigurations = (
 				9DB2A625192D184D0047A3EB /* Debug */,
 				9DB2A626192D184D0047A3EB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9DB2A627192D184D0047A3EB /* Build configuration list for PBXNativeTarget "MIDI Files TestbedTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				9DB2A628192D184D0047A3EB /* Debug */,
-				9DB2A629192D184D0047A3EB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
