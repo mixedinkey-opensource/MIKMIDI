@@ -85,7 +85,7 @@
  *
  *  @return An initialized MIKMIDICommand (or subclass) instance.
  */
-- (id)initWithMIDIPacket:(MIDIPacket *)packet;
+- (id)initWithMIDIPacket:(MIDIPacket *)packet NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
 
