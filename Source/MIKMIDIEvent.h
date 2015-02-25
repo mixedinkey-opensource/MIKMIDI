@@ -148,7 +148,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
  *  @return For supported command types, an initialized MIKMIDIEvent subclass. Otherwise, an instance of
  *	MIKMIDICommand itself. nil if there is an error.
  */
-- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(NSData *)data;
+- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /**
  *  The MIDI event type.
