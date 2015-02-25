@@ -21,6 +21,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDITempoEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (size_t)minimumDataSize { return sizeof(ExtendedTempoEvent); }
 
 + (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 {

@@ -21,6 +21,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (size_t)minimumDataSize { return sizeof(MIDIMetaEvent); }
 
 - (NSString *)additionalEventDescription
 {
@@ -43,7 +44,7 @@
 - (void)setMetadataType:(UInt8)metadataType
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-    
+	
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->metaEventType = metadataType;
 }
@@ -61,8 +62,7 @@
 
 - (NSData *)metaData
 {
-    MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
-    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, metaEvent->dataLength)];
+    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, self.metadataLength)];
 }
 
 - (void)setMetaData:(NSData *)metaData

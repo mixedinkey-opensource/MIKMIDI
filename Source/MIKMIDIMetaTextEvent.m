@@ -33,6 +33,7 @@
 
 - (NSString *)string
 {
+	if (![self.metaData length]) return nil;
     return [[NSString alloc] initWithData:self.metaData encoding:NSUTF8StringEncoding];
 }
 
