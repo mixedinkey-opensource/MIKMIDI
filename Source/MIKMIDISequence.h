@@ -15,6 +15,12 @@ typedef struct {
 	UInt8 denominator;
 } MIKMIDITimeSignature; // Deprecated
 
+NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 denominator) {
+	MIKMIDITimeSignature ts;
+	ts.numerator = numerator;
+	ts.denominator = denominator;
+	return ts;
+}
 
 @class MIKMIDITrack;
 @class MIKMIDIDestinationEndpoint;
@@ -61,20 +67,24 @@ typedef struct {
 /**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
  *
- *  @param data The MIDI data for the new sequence.
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param error If an
  *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
  */
-+ (instancetype)sequenceWithData:(NSData *)data;
++ (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
  *
- *  @param data The MIDI data for the new sequence.
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param error If an
  *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
  */
-- (instancetype)initWithData:(NSData *)data;
+- (instancetype)initWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
@@ -100,7 +110,6 @@ typedef struct {
  *  @return Whether or not removing the track was successful.
  */
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
-
 
 /**
  *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
@@ -217,7 +226,8 @@ typedef struct {
 @property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
 
 /**
- *  The MIDI tracks for the sequence. An array of MIKMIDITrack instances.
+ *  The MIDI music tracks for the sequence. An array of MIKMIDITrack instances.
+ *  Does not include the tempo track.
  */
 @property (nonatomic, readonly) NSArray *tracks;
 
@@ -254,9 +264,30 @@ typedef struct {
 #pragma mark - Deprecated
 
 /**
- *  This method has been deprecated. You should not call it. Instead, use MIKMIDISequencer's API
- *  for routing tracks' output to specific endpoints. If you must set an endpoint on an MusicSequence,
- *  use CoreMIDI's API instead.
+ *  @deprecated This method is deprecated. Use +sequenceWithData:error: instead.
+ *
+ *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data The MIDI data for the new sequence.
+ *
+ *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ */
++ (instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated This method is deprecated. Use -initWithData:error: instead.
+ *
+ *  Initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data The MIDI data for the new sequence.
+ *
+ *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
+ */
+- (instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
+
+/**
+ *	@deprecated This method is deprecated. Use -[MIKMIDISequencer 
+ *	setDestinationEndpoint:forTrack:] instead.
  *
  *  Sets the destination endpoint for each track in the sequence.
  *
@@ -265,7 +296,7 @@ typedef struct {
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
- *	This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
+ *	@deprecated This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
  *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
  *
  *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
@@ -275,7 +306,7 @@ typedef struct {
 - (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
 
 /**
- *  This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
+ *  @deprecated This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
  *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
  *
  *  @param signature On output, a time signature instance with its values populated.

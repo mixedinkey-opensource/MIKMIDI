@@ -52,8 +52,11 @@
 
 @implementation MIKMutableMIDIMetaTextEvent
 
-+ (BOOL)isMutable { return YES; }
-
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
 @dynamic string;
+
++ (BOOL)isMutable { return YES; }
 
 @end

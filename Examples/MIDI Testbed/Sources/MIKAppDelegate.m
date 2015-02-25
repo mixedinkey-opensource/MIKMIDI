@@ -7,7 +7,7 @@
 //
 
 #import "MIKAppDelegate.h"
-#import "MIKMIDI.h"
+#import <MIKMIDI/MIKMIDI.h>
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 

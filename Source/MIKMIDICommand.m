@@ -322,6 +322,9 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 // MIKMIDICommand already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
 @dynamic timestamp;
 @dynamic commandType;
+@dynamic dataByte1;
+@dynamic dataByte2;
+@dynamic midiTimestamp;
 @dynamic data;
 
 @end

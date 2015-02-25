@@ -252,15 +252,6 @@
     return !err;
 }
 
-#pragma mark - Track Number
-
-- (BOOL)getTrackNumber:(UInt32 *)trackNumber
-{
-    OSStatus err = MusicSequenceGetTrackIndex(self.sequence.musicSequence, self.musicTrack, trackNumber);
-    if (err) NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-    return !err;
-}
-
 #pragma mark - Temporary Length and Loop Info
 
 - (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo
@@ -300,6 +291,17 @@
     return [self notesFromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
 }
 
+- (NSInteger)trackNumber
+{
+	if (!self.sequence) return -1;
+	UInt32 trackNumber = 0;
+	OSStatus err = MusicSequenceGetTrackIndex(self.sequence.musicSequence, self.musicTrack, &trackNumber);
+	if (err) {
+		NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return -1;
+	}
+	return (NSInteger)trackNumber;
+}
 
 - (BOOL)doesLoop
 {
@@ -423,6 +425,20 @@
 }
 
 #pragma mark - Properties
+
+#pragma mark - Deprecated
+
+- (BOOL)getTrackNumber:(UInt32 *)trackNumber
+{
+	static BOOL deprectionMsgShown = NO;
+	if (!deprectionMsgShown) {
+		NSLog(@"WARNING: %s has been deprecated. Please use -trackNumber instead. This message will only be logged once", __PRETTY_FUNCTION__);
+		deprectionMsgShown = YES;
+	}
+	NSInteger result = self.trackNumber;
+	*trackNumber = (UInt32)result;
+	return (result >= 0);
+}
 
 @synthesize destinationEndpoint = _destinationEndpoint;
 

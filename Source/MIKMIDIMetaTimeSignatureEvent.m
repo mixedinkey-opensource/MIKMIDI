@@ -101,12 +101,14 @@
 
 @implementation MIKMutableMIDIMetaTimeSignatureEvent
 
-+ (BOOL)isMutable { return YES; }
-
+@dynamic metadataType;
+@dynamic metaData;
 @dynamic timeStamp;
 @dynamic numerator;
 @dynamic denominator;
 @dynamic metronomePulse;
 @dynamic thirtySecondsPerQuarterNote;
+
++ (BOOL)isMutable { return YES; }
 
 @end

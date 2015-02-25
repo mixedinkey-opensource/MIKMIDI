@@ -639,7 +639,7 @@
 	if (!_builtinEndpoint) {
 		NSString *name = [NSString stringWithFormat:@"%@ (%p)", NSStringFromClass([self class]), self];
 		_builtinEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];
-		[self builtinSynthesizer]; // Create synth
+		if (_builtinEndpoint) [[self builtinSynthesizer] self]; // Create synth
 	}
 	return _builtinEndpoint;
 }
