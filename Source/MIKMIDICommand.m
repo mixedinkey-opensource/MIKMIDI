@@ -96,34 +96,25 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	Class subclass = [[self class] subclassForCommandType:commandType];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
-	MIKMIDICommand *result = [[subclass alloc] init];
-	
-	if ([result.internalData length] < 2) [result.internalData increaseLengthBy:2-[result.internalData length]];
-	UInt8 *data = (UInt8 *)[result.internalData mutableBytes];
-	data[0] = commandType;
-	return result;
+	return [[subclass alloc] init];
 }
 
 - (id)init
 {
-    self = [self initWithMIDIPacket:NULL];
-    if (self) {
-        self.internalData = [NSMutableData dataWithLength:3];
-		
-		MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
-		((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
-    }
-    return self;
+    return [self initWithMIDIPacket:NULL];
 }
 
 - (id)initWithMIDIPacket:(MIDIPacket *)packet
 {
 	self = [super init];
 	if (self) {
-		self.internalData = [NSMutableData data];
 		if (packet != NULL) {
 			self.midiTimestamp = packet->timeStamp;
 			self.internalData = [NSMutableData dataWithBytes:packet->data length:packet->length];
+		} else {
+			self.internalData = [NSMutableData dataWithLength:3];
+			MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
+			((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
 		}
 	}
 	return self;
