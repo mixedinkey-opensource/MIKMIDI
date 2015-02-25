@@ -145,17 +145,13 @@
 
 @implementation MIKMutableMIDINoteEvent
 
+@dynamic timeStamp;
+@dynamic data;
 @dynamic note;
 @dynamic velocity;
 @dynamic channel;
 @dynamic releaseVelocity;
 @dynamic duration;
-@dynamic endTimeStamp;
-@dynamic frequency;
-@dynamic noteLetter;
-@dynamic noteLetterAndOctave;
-@dynamic timeStamp;
-@dynamic data;
 
 + (BOOL)isMutable { return YES; }
 
