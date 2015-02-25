@@ -26,6 +26,22 @@
 
 #pragma mark - Lifecycle
 
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+								  note:(UInt8)note
+							  velocity:(UInt8)velocity
+							  duration:(Float32)duration
+							   channel:(UInt8)channel
+{
+	MIDINoteMessage message = {
+		.note = note,
+		.velocity = velocity,
+		.channel = channel,
+		.duration = duration,
+		.releaseVelocity = 0,
+	};
+	return [self noteEventWithTimeStamp:timeStamp message:message];
+}
+
 + (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message
 {
     NSData *data = [NSData dataWithBytes:&message length:sizeof(message)];
