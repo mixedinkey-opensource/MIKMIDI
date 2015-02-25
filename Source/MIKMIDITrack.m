@@ -76,6 +76,7 @@
 
     switch (event.eventType) {
         case kMusicEventType_NULL:
+            NSLog(@"Warning: insertMIDITrack: attempted to insert NULL event.");
             break;
 
         case kMusicEventType_ExtendedNote:
@@ -122,6 +123,9 @@
             err = MusicTrackNewAUPresetEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewAUPresetEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
+        default:
+            err = 1;
+            NSLog(@"Warning: insertMIDIEvent: attempted to insert unknown event type %d.", event.eventType);
     }
 
     return !err;
