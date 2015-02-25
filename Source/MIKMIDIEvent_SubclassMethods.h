@@ -59,6 +59,14 @@
 + (BOOL)isMutable;
 
 /**
+ *  Subclasses of MIKMIDIEvent can override this to specify a minum internal data length
+ *  necessary to hold their contents. For example, MIKMIDINoteEvent returns sizeof(MIDINoteMessage).
+ *
+ *  @return A size_t value indicating the minimum size in bytes required to hold the receiver's data.
+ */
++ (size_t)minimumDataSize;
+
+/**
  *  This is the property used internally by MIKMIDIEvent to store the raw data for
  *  a MIDI packet. It is essentially the mutable backing store for MIKMIDIEvent's
  *  data property. Subclasses may set it. When mutating it, subclasses should manually
