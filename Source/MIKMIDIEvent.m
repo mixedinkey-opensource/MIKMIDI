@@ -29,37 +29,50 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 + (BOOL)isMutable { return NO; }
 
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return NO; }
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self supportedMIDIEventTypes] containsObject:@(type)]; }
++ (NSArray *)supportedMIDIEventTypes { return @[]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
 
 + (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
-    Class subclass = [[self class] subclassForEventType:eventType andData:data];
+	MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
+	// -initWithTimeStamp:midiEventType:data: will do subclass lookup too, but this way we avoid a second alloc
+	Class subclass = [[self class] subclassForEventType:eventType];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
-	MIKMIDIEvent *result = [[subclass alloc] initWithTimeStamp:timeStamp eventType:eventType data:data];
-    return result;
+	return [[subclass alloc] initWithTimeStamp:timeStamp midiEventType:midiEventType data:data];
 }
 
 - (id)init
 {
-    self = [self initWithTimeStamp:0 eventType:MIKMIDIEventTypeNULL data:nil];
-    if (self) {
-        self.internalData = [NSMutableData data];
-    }
-    return self;
+	MIKMIDIEventType eventType = (MIKMIDIEventType)[[[[self class] supportedMIDIEventTypes] firstObject] unsignedIntegerValue];
+    return [self initWithTimeStamp:0 midiEventType:eventType data:nil];
 }
 
-- (id)initWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
+- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(NSData *)data
 {
+	// If we don't directly support eventType, return an instance of an MIKMIDIEvent subclass that does.
+	if (![[[self class] supportedMIDIEventTypes] containsObject:@(eventType)]) {
+		BOOL isMutable = [[self class] isMutable];
+		Class subclass = [[self class] subclassForEventType:eventType];
+		if (!subclass) subclass = [MIKMIDIEvent class];
+		if (isMutable) subclass = [subclass mutableCounterpartClass];
+		self = [subclass alloc];
+	}
+	
 	self = [super init];
 	if (self) {
 		_timeStamp = timeStamp;
 		_eventType = eventType;
-        self.internalData = [data mutableCopy];
+		self.internalData = [NSMutableData dataWithData:data];
 	}
 	return self;
+}
+
+- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType
+{
+	return [self initWithTimeStamp:timeStamp midiEventType:eventType data:nil];
 }
 
 - (NSString *)additionalEventDescription
@@ -113,17 +126,22 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	}
 }
 
-+ (Class)subclassForEventType:(MusicEventType)eventType andData:(NSData *)data
++ (Class)subclassForEventType:(MIKMIDIEventType)eventType
 {
 	Class result = nil;
-    MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
 	for (Class subclass in registeredMIKMIDIEventSubclasses) {
-		if ([subclass supportsMIKMIDIEventType:midiEventType]) {
+		if ([[subclass supportedMIDIEventTypes] containsObject:@(eventType)]) {
 			result = subclass;
 			break;
 		}
-    }
+	}
 	return result;
+}
+
++ (Class)subclassForMusicEventType:(MusicEventType)eventType andData:(NSData *)data
+{
+    MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
+	return [self subclassForEventType:midiEventType];
 }
 
 #pragma mark - NSCopying

@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaCopyrightEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaCopyright; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaCopyright)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaCopyrightEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaCopyrightEvent class]; }
 + (BOOL)isMutable { return NO; }

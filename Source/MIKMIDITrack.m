@@ -75,53 +75,72 @@
     const void *data = [event.data bytes];
 
     switch (event.eventType) {
-        case kMusicEventType_NULL:
+        case MIKMIDIEventTypeNULL:
             break;
 
-        case kMusicEventType_ExtendedNote:
+        case MIKMIDIEventTypeExtendedNote:
             err = MusicTrackNewExtendedNoteEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewExtendedNoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
+			
+		case MIKMIDIEventTypeExtendedControl:
+			NSLog(@"Events of type MIKMIDIEventTypeExtendedControl are unsupported because the underlying CoreMIDI API is deprecated.");
+			break;
 
-        case kMusicEventType_ExtendedTempo:
+        case MIKMIDIEventTypeExtendedTempo:
             err = MusicTrackNewExtendedTempoEvent(track, timeStamp, ((ExtendedTempoEvent *)data)->bpm);
             if (err) NSLog(@"MusicTrackNewExtendedTempoEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_User:
+        case MIKMIDIEventTypeUser:
             err = MusicTrackNewUserEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewUserEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_Meta:
-            err = MusicTrackNewMetaEvent(track, timeStamp, data);
-            if (err) NSLog(@"MusicTrackNewMetaEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-            break;
-
-        case kMusicEventType_MIDINoteMessage:
+        case MIKMIDIEventTypeMIDINoteMessage:
             err = MusicTrackNewMIDINoteEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewMIDINoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_MIDIChannelMessage:
+        case MIKMIDIEventTypeMIDIChannelMessage:
             err = MusicTrackNewMIDIChannelEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewMIDIChannelEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_MIDIRawData:
+        case MIKMIDIEventTypeMIDIRawData:
             err = MusicTrackNewMIDIRawDataEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewMIDIRawDataEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_Parameter:
+        case MIKMIDIEventTypeParameter:
             err = MusicTrackNewParameterEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewParameterEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case kMusicEventType_AUPreset:
+        case MIKMIDIEventTypeAUPreset:
             err = MusicTrackNewAUPresetEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewAUPresetEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
+			
+		case MIKMIDIEventTypeMeta:
+		case MIKMIDIEventTypeMetaSequence:
+		case MIKMIDIEventTypeMetaText:
+		case MIKMIDIEventTypeMetaCopyright:
+		case MIKMIDIEventTypeMetaTrackSequenceName:
+		case MIKMIDIEventTypeMetaInstrumentName:
+		case MIKMIDIEventTypeMetaLyricText:
+		case MIKMIDIEventTypeMetaMarkerText:
+		case MIKMIDIEventTypeMetaCuePoint:
+		case MIKMIDIEventTypeMetaMIDIChannelPrefix:
+		case MIKMIDIEventTypeMetaEndOfTrack:
+		case MIKMIDIEventTypeMetaTempoSetting:
+		case MIKMIDIEventTypeMetaSMPTEOffset:
+		case MIKMIDIEventTypeMetaTimeSignature:
+		case MIKMIDIEventTypeMetaKeySignature:
+		case MIKMIDIEventTypeMetaSequenceSpecificEvent:
+			err = MusicTrackNewMetaEvent(track, timeStamp, data);
+			if (err) NSLog(@"MusicTrackNewMetaEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			break;
     }
 
     return !err;

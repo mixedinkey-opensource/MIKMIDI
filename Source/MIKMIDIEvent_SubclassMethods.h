@@ -23,15 +23,15 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
- *  Subclasses of MIKMIDIEvent must override this method, and return YES for any
- *  MIKMIDIEventType values they support. MIKMIDIEvent uses this method to determine which
- *  subclass to use to represent a particular MIDI event type.
+ *  Subclasses of MIKMIDIEvent must override this method, and return the MIKMIDIEventType
+ *  values they support. MIKMIDIEvent uses this method to determine which
+ *  subclass to use to represent a particular MIDI Event type.
  *
- *  @param type An MIKMIDIEventType value.
+ *  Note that the older +supportsMIDIEventType: by default simply calls through to this method.
  *
- *  @return YES if the subclass supports type, NO otherwise.
+ *  @return An NSArray of NSNumber instances containing MIKMIDIEventType values.
  */
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type;
++ (NSArray *)supportedMIDIEventTypes;
 
 /**
  *  The immutable counterpart class of the receiver.
@@ -68,7 +68,7 @@
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 
-@property (nonatomic, readwrite) MusicEventType eventType;
+@property (nonatomic, readwrite) MIKMIDIEventType eventType;
 
 @property (nonatomic, strong, readwrite) NSData *metaData;
 
@@ -82,5 +82,18 @@
  */
 
 - (NSString *)additionalEventDescription;
+
+// Deprecated
+
+/**
+ *  @deprecated This method has been replaced by +supportedMIDIEventTypes
+ *  and by default simply calls through to that method. Subclasses
+ *  no longer need implement this.
+ *
+ *  @param type An MIKMIDIEventType value.
+ *
+ *  @return YES if the subclass supports type, NO otherwise.
+ */
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type DEPRECATED_ATTRIBUTE;
 
 @end

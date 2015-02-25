@@ -18,7 +18,7 @@
 @implementation MIKMIDINoteEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMIDINoteMessage; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMIDINoteMessage)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }

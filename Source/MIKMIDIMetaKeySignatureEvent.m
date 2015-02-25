@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaKeySignatureEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaKeySignature; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaKeySignature)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaKeySignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaKeySignatureEvent class]; }
 + (BOOL)isMutable { return NO; }

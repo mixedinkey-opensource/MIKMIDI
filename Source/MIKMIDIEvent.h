@@ -18,17 +18,18 @@
 
 typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
 {
-    MIKMIDIEventTypeNULL,
-	MIKMIDIEventTypeExtendedNote,
-	MIKMIDIEventTypeExtendedTempo,
-	MIKMIDIEventTypeUser,
-	MIKMIDIEventTypeMIDINoteMessage,
-	MIKMIDIEventTypeMIDIChannelMessage,
-	MIKMIDIEventTypeMIDIRawData,
-	MIKMIDIEventTypeParameter,
-	MIKMIDIEventTypeAUPreset,
-    MIKMIDIEventTypeExtendedControl,
-    MIKMIDIEventTypeMeta,
+    MIKMIDIEventTypeNULL = kMusicEventType_NULL,
+	MIKMIDIEventTypeExtendedNote = kMusicEventType_ExtendedNote,
+	MIKMIDIEventTypeExtendedTempo = kMusicEventType_ExtendedTempo,
+	MIKMIDIEventTypeUser = kMusicEventType_User,
+	MIKMIDIEventTypeMeta = kMusicEventType_Meta,
+	MIKMIDIEventTypeMIDINoteMessage = kMusicEventType_MIDINoteMessage,
+	MIKMIDIEventTypeMIDIChannelMessage = kMusicEventType_MIDIChannelMessage,
+	MIKMIDIEventTypeMIDIRawData = kMusicEventType_MIDIRawData,
+	MIKMIDIEventTypeParameter = kMusicEventType_Parameter,
+	MIKMIDIEventTypeAUPreset = kMusicEventType_AUPreset,
+	
+	// Meta types
     MIKMIDIEventTypeMetaSequence,
     MIKMIDIEventTypeMetaText,
     MIKMIDIEventTypeMetaCopyright,
@@ -43,7 +44,10 @@ typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
     MIKMIDIEventTypeMetaSMPTEOffset,
     MIKMIDIEventTypeMetaTimeSignature,
     MIKMIDIEventTypeMetaKeySignature,
-    MIKMIDIEventTypeMetaSequenceSpecificEvent
+    MIKMIDIEventTypeMetaSequenceSpecificEvent,
+	
+	// Deprecated, and unsupported.
+	MIKMIDIEventTypeExtendedControl = kMusicEventType_ExtendedControl,
 };
 
 typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
@@ -115,9 +119,41 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 @interface MIKMIDIEvent : NSObject <NSCopying>
 
 /**
- *  The MIDI event type. See MusicPlayer.h for a list of possible values.
+ *  Convenience method for creating a new MIKMIDIEvent instance from an NSData instance.
+ *  For event types for which there is a specific MIKMIDIEvent subclass,
+ *  an instance of the appropriate subclass will be returned.
+ *
+ *  The NSData argument is used in conjunction with the eventType to propertly discriminate
+ *  between different kMusicEventType_Meta subtypes.
+ *
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param eventType A MusicEventType value indicating the type of the event.
+ *  @param data An NSData instance containing the raw data for the event. May be nil for an empty event.
+ *
+ *  @return For supported event types, an initialized MIKMIDIEvent subclass. Otherwise, an instance
+ *  of MIKMIDIEvent itself. nil if there is an error.
+ *
+ *  @see +mikEventTypeForMusicEventType:
  */
-@property (nonatomic, readonly) MusicEventType eventType;
++ (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
+
+/**
+ *  Initializes a new MIKMIDIEvent subclass instance. This method may return an instance of a different class than the
+ *  receiver.
+ *
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param eventType An MIKMIDIEventType value indicating the type of the event.
+ *  @param data An NSData instance containing the raw data for the event. May be nil for an empty event.
+ *
+ *  @return For supported command types, an initialized MIKMIDIEvent subclass. Otherwise, an instance of
+ *	MIKMIDICommand itself. nil if there is an error.
+ */
+- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(NSData *)data;
+
+/**
+ *  The MIDI event type.
+ */
+@property (nonatomic, readonly) MIKMIDIEventType eventType;
 
 /**
  *  The timeStamp of the MIDI event. When used in a MusicSequence of type kMusicSequenceType_Beats
@@ -131,25 +167,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
  */
 @property (nonatomic, readonly) NSData *data;
 
-
-/**
- *  Convenience method for creating a new MIKMIDIEvent instance from an NSData instance.
- *  For event types for which there is a specific MIKMIDIEvent subclass,
- *  an instance of the appropriate subclass will be returned.
- *
- *  @param timeStamp The MusicTimeStamp for the event.
- *
- *  @param eventType The MusicEventType of the event.
- *
- *  @param data The data representing the event.
- *
- *  @return For supported event types, an initialized MIKMIDIEvent subclass. Otherwise, an instance
- *  of MIKMIDIEvent itself. nil if there is an error.
- *
- *  @see +mikEventTypeForMusicEventType:
- */
-+ (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
-
 @end
 
 /**
@@ -157,7 +174,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
  */
 @interface MIKMutableMIDIEvent : MIKMIDIEvent
 
-@property (nonatomic, readonly) MusicEventType eventType;
+@property (nonatomic, readonly) MIKMIDIEventType eventType;
 @property (nonatomic) MusicTimeStamp timeStamp;
 @property (nonatomic, strong, readwrite) NSMutableData *data;
 

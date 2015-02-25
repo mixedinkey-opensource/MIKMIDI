@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaTrackSequenceNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaTrackSequenceName; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaTrackSequenceName)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTrackSequenceNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
