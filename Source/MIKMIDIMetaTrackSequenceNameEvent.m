@@ -22,13 +22,23 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
 
++ (NSSet *)keyPathsForValuesAffectingName
+{
+	return [NSSet setWithObjects:@"string", nil];
+}
+
+- (NSString *)name { return self.string; }
+
 @end
 
 @implementation MIKMutableMIDIMetaTrackSequenceNameEvent
 
+- (void)setName:(NSString *)name { self.string = name; }
+
 @dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
+@dynamic string;
 
 + (BOOL)isMutable { return YES; }
 

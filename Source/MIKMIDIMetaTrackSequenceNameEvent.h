@@ -9,9 +9,11 @@
 #import "MIKMIDIMetaTextEvent.h"
 
 /**
- *  A meta event containing track sequence information.
+ *  A meta event containing a track name.
  */
 @interface MIKMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTextEvent
+
+@property (nonatomic, readonly) NSString *name;
 
 @end
 
@@ -20,8 +22,11 @@
  */
 @interface MIKMutableMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTrackSequenceNameEvent
 
+@property (nonatomic, readwrite) NSString *name;
+
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 metadataType;
 @property (nonatomic, readwrite) NSData *metaData;
+@property (nonatomic, readwrite) NSString *string;
 
 @end
