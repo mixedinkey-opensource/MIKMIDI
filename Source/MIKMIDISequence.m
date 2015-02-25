@@ -9,6 +9,7 @@
 #import "MIKMIDISequence.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
@@ -18,7 +19,6 @@
 #endif
 
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
-
 
 @interface MIKMIDISequence ()
 

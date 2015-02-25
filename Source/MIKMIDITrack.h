@@ -159,16 +159,6 @@
 - (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp;
 
 /**
- *  Creates and initializes a new MIKMIDITrack.
- *
- *  @param sequence The MIDI sequence the new track will belong to.
- *  @param musicTrack The MusicTrack to use as the backing for the new MIDI track.
- *
- *  @note You should not call this method. To add a new track to a MIDI sequence use -[MIKMIDISequence addTrack].
- */
-+ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
-
-/**
  *  Sets a temporary length and loopInfo for the track.
  *
  *  @param length The temporary length for the track.

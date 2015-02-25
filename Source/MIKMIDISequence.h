@@ -221,7 +221,8 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 // Properties
 
 /**
- *  The tempo track for the sequence.
+ *  The tempo track for the sequence. Even in a new, empty sequence,
+ *  this will return a tempo track to which tempo events can be added.
  */
 @property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
 
