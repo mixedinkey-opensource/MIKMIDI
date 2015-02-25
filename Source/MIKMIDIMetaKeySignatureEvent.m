@@ -41,7 +41,7 @@
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+    NSMutableData *mutableMetaData = [self.metaData mutableCopy];
     [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&key length:1];
     [self setMetaData:[mutableMetaData copy]];
 }
@@ -55,7 +55,7 @@
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+    NSMutableData *mutableMetaData = [self.metaData mutableCopy];
     [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&scale length:1];
     [self setMetaData:[mutableMetaData copy]];
 }

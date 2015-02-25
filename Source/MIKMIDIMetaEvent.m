@@ -71,7 +71,7 @@
     
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->dataLength = (UInt32)[metaData length];
-    NSMutableData *newMetaData = [self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)].mutableCopy;
+    NSMutableData *newMetaData = [[self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)] mutableCopy];
     [newMetaData appendData:metaData];
     self.internalData = newMetaData;
 }
