@@ -35,6 +35,12 @@
 	[super windowDidLoad];
 	
 	self.sequencer = [MIKMIDISequencer sequencer];
+	
+	NSPredicate *nonBluetoothNetworkPredicate = [NSPredicate predicateWithBlock:^BOOL(MIKMIDIDevice *device, NSDictionary *b) {
+		return ![device.name isEqualToString:@"Bluetooth"] && ![device.name isEqualToString:@"Network"];
+	}];
+	NSArray *devices = [self.deviceManager.availableDevices filteredArrayUsingPredicate:nonBluetoothNetworkPredicate];
+	if (!self.device) self.device = [devices firstObject];
 }
 
 #pragma mark - Actions
@@ -110,6 +116,8 @@
 	
 	// So audio can be heard
 	self.endpointSynth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:source];
+	NSString *soundfontFile = [@"~/Desktop/test.sf2" stringByExpandingTildeInPath];
+	[self.endpointSynth loadSoundfontFromFileAtURL:[NSURL fileURLWithPath:soundfontFile] error:NULL];
 	
 	return YES;
 }
@@ -141,7 +149,7 @@
 {
 	if (device != _device) {
 		[self disconnectFromDevice];
-
+		
 		NSError *error = nil;
 		if (![self connectToDevice:device error:&error]) {
 			[self presentError:error];
