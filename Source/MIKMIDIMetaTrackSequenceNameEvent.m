@@ -35,6 +35,7 @@
 
 - (void)setName:(NSString *)name { self.string = name; }
 
+@dynamic name;
 @dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
