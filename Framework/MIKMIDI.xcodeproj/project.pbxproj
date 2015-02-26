@@ -52,8 +52,8 @@
 		83BC19BC1A23CD0D004F384F /* MIKMIDIMetronome.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC19BA1A23CD0D004F384F /* MIKMIDIMetronome.m */; };
 		83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C3716819D607010017186B /* MIKMIDIClientDestinationEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */; };
-		9D5946CE1A9FA7C800B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D5946CD1A9FA7C200B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h */; };
-		9D5946CF1A9FA7C800B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D5946CD1A9FA7C200B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h */; };
+		9D5946CE1A9FA7C800B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D5946CD1A9FA7C200B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D5946CF1A9FA7C800B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D5946CD1A9FA7C200B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D74EEBF17A712E900BEE89F /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EEBE17A712E900BEE89F /* MIKMIDI-Prefix.pch */; };
 		9D74EEC417A712F100BEE89F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D74EEC117A712F100BEE89F /* InfoPlist.strings */; };
 		9D74EF6317A713A100BEE89F /* MIKMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3017A713A100BEE89F /* MIKMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
