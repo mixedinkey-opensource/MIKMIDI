@@ -46,8 +46,10 @@ typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
     MIKMIDIEventTypeMetaKeySignature,
     MIKMIDIEventTypeMetaSequenceSpecificEvent,
 	
-	// Deprecated, and unsupported.
+#if !TARGET_OS_IPHONE
+	// Deprecated, and unsupported. Unavailable on iOS.
 	MIKMIDIEventTypeExtendedControl = kMusicEventType_ExtendedControl,
+#endif
 };
 
 typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)

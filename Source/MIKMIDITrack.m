@@ -82,10 +82,12 @@
             err = MusicTrackNewExtendedNoteEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewExtendedNoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
-			
+
+#if !TARGET_OS_IPHONE // Unavailable altogether on iOS.
 		case MIKMIDIEventTypeExtendedControl:
 			NSLog(@"Events of type MIKMIDIEventTypeExtendedControl are unsupported because the underlying CoreMIDI API is deprecated.");
 			break;
+#endif
 
         case MIKMIDIEventTypeExtendedTempo:
             err = MusicTrackNewExtendedTempoEvent(track, timeStamp, ((ExtendedTempoEvent *)data)->bpm);
