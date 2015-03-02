@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F5346F31AA21BD7000CF01F /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DB1A262FE100E0CC9F /* MIKMIDISequencer.m in Sources */ = {isa = PBXBuildFile; fileRef = 833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */; };
 		833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B73DC1A26346F00E0CC9F /* MIKMIDIClock.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -782,6 +783,7 @@
 				9DAF8B821A7B00BB00F46528 /* MIKMIDIClock.h in Headers */,
 				9DAF8B6B1A7B00A700F46528 /* MIKMIDISequence.h in Headers */,
 				9DAF8B511A7B004A00F46528 /* MIKMIDI.h in Headers */,
+				5F5346F31AA21BD7000CF01F /* MIKMIDIResponder.h in Headers */,
 				9DAF8B811A7B00BB00F46528 /* MIKMIDICommandThrottler.h in Headers */,
 				9DAF8B6A1A7B009100F46528 /* MIKMIDIMappingManager.h in Headers */,
 				9DAF8B741A7B00A700F46528 /* MIKMIDIMetaLyricEvent.h in Headers */,
