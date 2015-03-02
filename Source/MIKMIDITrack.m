@@ -75,7 +75,8 @@
     const void *data = [event.data bytes];
 
     switch (event.eventType) {
-        case MIKMIDIEventTypeNULL:
+        case kMusicEventType_NULL:
+            NSLog(@"Warning: %s attempted to insert NULL event.", __PRETTY_FUNCTION__);
             break;
 
         case MIKMIDIEventTypeExtendedNote:
@@ -143,6 +144,10 @@
 			err = MusicTrackNewMetaEvent(track, timeStamp, data);
 			if (err) NSLog(@"MusicTrackNewMetaEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 			break;
+		default:
+			err = -1;
+            NSLog(@"Warning: %s attempted to insert unknown event type %d.", __PRETTY_FUNCTION__, event.eventType);
+		break;
     }
 
     return !err;
