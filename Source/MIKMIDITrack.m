@@ -146,7 +146,7 @@
 			break;
 		default:
 			err = -1;
-            NSLog(@"Warning: %s attempted to insert unknown event type %d.", __PRETTY_FUNCTION__, event.eventType);
+            NSLog(@"Warning: %s attempted to insert unknown event type %lu.", __PRETTY_FUNCTION__, event.eventType);
 		break;
     }
 
