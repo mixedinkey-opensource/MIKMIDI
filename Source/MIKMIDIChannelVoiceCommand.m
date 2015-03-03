@@ -70,7 +70,7 @@
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
 	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
-	data[0] &= 0xF0 | (channel & 0x0F);
+	data[0] = (0xF0 & data[0]) | (channel & 0x0F);
 }
 
 - (NSUInteger)value { return self.dataByte2 & 0x7F; }
