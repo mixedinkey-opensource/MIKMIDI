@@ -46,6 +46,9 @@
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="RR2-jX-aC2"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="400" id="kpN-Gh-hnN"/>
                         </constraints>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="CXj-XW-ufX"/>
+                        </connections>
                     </customView>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yxv-Ce-QrW">
                         <rect key="frame" x="348" y="316" width="115" height="26"/>
