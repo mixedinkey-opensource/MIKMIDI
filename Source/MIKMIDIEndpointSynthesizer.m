@@ -20,6 +20,7 @@
 @property (nonatomic, strong, readwrite) MIKMIDIEndpoint *endpoint;
 
 @property (nonatomic, strong) id connectionToken;
+@property (readonly, nonatomic) BOOL isUsingAppleSynth;
 
 @end
 
