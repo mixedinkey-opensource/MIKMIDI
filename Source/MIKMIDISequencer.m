@@ -140,11 +140,12 @@
 	self.pendingNoteOffs = [NSMutableDictionary dictionary];
 	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
-	self.processingTimer = [NSTimer scheduledTimerWithTimeInterval:0.05
-															target:self
-														  selector:@selector(processingTimerFired:)
-														  userInfo:nil
-														   repeats:YES];
+	NSTimer *processingTimer = [NSTimer timerWithTimeInterval:0.05
+													   target:self
+													 selector:@selector(processingTimerFired:)
+													 userInfo:nil
+													  repeats:YES];
+	[[NSRunLoop currentRunLoop] addTimer:processingTimer forMode:NSRunLoopCommonModes];
 	[self.processingTimer fire];
 }
 
