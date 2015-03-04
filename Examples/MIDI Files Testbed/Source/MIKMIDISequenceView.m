@@ -39,7 +39,7 @@
 	for (MIKMIDITrack *track in self.sequence.tracks) {
 		
 		for (MIKMIDINoteEvent *note in [track notes]) {
-			NSColor *noteColor = [self.sequence.tracks count] <= 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
+			NSColor *noteColor = [self.sequence.tracks count] < 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
 			
 			[[NSColor blackColor] setStroke];
 			[noteColor setFill];
