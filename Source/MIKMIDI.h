@@ -48,6 +48,13 @@
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDINoteEvent.h"
 
+// Channel Events
+#import "MIKMIDIChannelEvent.h"
+#import "MIKMIDIPolyphonicKeyPressureEvent.h"
+#import "MIKMIDIControlChangeEvent.h"
+#import "MIKMIDIProgramChangeEvent.h"
+#import "MIKMIDIPitchBendChangeEvent.h"
+
 // Meta Events
 #import "MIKMIDIMetaEvent.h"
 #import "MIKMIDIMetaCopyrightEvent.h"
