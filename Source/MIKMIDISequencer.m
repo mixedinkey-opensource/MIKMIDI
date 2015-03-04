@@ -140,12 +140,11 @@
 	self.pendingNoteOffs = [NSMutableDictionary dictionary];
 	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 	self.lastProcessedMIDITimeStamp = midiTimeStamp - 1;
-	NSTimer *processingTimer = [NSTimer timerWithTimeInterval:0.05
+	self.processingTimer = [NSTimer timerWithTimeInterval:0.05
 													   target:self
 													 selector:@selector(processingTimerFired:)
 													 userInfo:nil
 													  repeats:YES];
-	[[NSRunLoop currentRunLoop] addTimer:processingTimer forMode:NSRunLoopCommonModes];
 	[self.processingTimer fire];
 }
 
@@ -610,6 +609,7 @@
 	if (processingTimer != _processingTimer) {
 		[_processingTimer invalidate];
 		_processingTimer = processingTimer;
+		if (_processingTimer) [[NSRunLoop currentRunLoop] addTimer:_processingTimer forMode:NSRunLoopCommonModes];
 	}
 }
 
