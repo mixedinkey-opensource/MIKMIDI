@@ -10,7 +10,7 @@
 #import "MIKMIDIEvent_SubclassMethods.h"
 
 #if !__has_feature(objc_arc)
-#error __FILE__ must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for __FILE__ in the Build Phases for this target
+#error MIKMIDIChannelEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIChannelEvent.m in the Build Phases for this target
 #endif
 
 @interface MIKMIDIChannelEvent ()
