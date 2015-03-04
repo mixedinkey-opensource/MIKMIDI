@@ -25,15 +25,11 @@
 
 @implementation MIKMIDIChannelEvent
 
-+ (void)load { //[MIKMIDIEvent registerSubclass:self];
-}
++ (void)load { [MIKMIDIEvent registerSubclass:self]; }
 + (NSArray *)supportedMIDIEventTypes
 {
-	return @[@(MIKMIDIEventTypeMIDIPolyphonicKeyPressureMessage),
-			 @(MIKMIDIEventTypeMIDIControlChangeMessage),
-			 @(MIKMIDIEventTypeMIDIProgramChangeMessage),
-			 @(MIKMIDIEventTypeMIDIChannelPressureMessage),
-			 @(MIKMIDIEventTypeMIDIPitchBendChangeMessage)];
+	// We have subclasses for all but MIKMIDIEventTypeMIDIChannelPressureMessage.
+	return @[@(MIKMIDIEventTypeMIDIChannelPressureMessage)];
 }
 + (Class)immutableCounterpartClass { return [MIKMIDIChannelEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIChannelEvent class]; }
