@@ -31,6 +31,9 @@
 
 @end
 
+/**
+ *  The mutable counter part of MIKMIDIControlChangeEvent
+ */
 @interface MIKMutableMIDIControlChangeEvent : MIKMIDIControlChangeEvent
 
 @property (nonatomic, readwrite) NSUInteger controllerNumber;

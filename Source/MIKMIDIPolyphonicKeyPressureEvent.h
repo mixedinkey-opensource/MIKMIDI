@@ -27,6 +27,9 @@
 
 @end
 
+/**
+ *  The mutable counter part of MIKMIDIPolyphonicKeyPressureEvent
+ */
 @interface MIKMutableMIDIPolyphonicKeyPressureEvent : MIKMIDIPolyphonicKeyPressureEvent
 
 @property (nonatomic, readwrite) UInt8 note;

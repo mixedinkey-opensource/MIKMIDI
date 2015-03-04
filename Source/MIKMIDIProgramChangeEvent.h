@@ -27,6 +27,9 @@
 
 @end
 
+/**
+ *  The mutable counter part of MIKMIDIProgramChangeEvent
+ */
 @interface MIKMutableMIDIProgramChangeEvent : MIKMIDIProgramChangeEvent
 
 @property (nonatomic, readwrite) NSUInteger programNumber;
