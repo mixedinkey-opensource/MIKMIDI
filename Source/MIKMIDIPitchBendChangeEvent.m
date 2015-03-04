@@ -8,6 +8,7 @@
 
 #import "MIKMIDIPitchBendChangeEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
+#import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIPitchBendChangeEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIPitchBendChangeEvent.m in the Build Phases for this target

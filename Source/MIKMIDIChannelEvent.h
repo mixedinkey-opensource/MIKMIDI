@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
+#import <MIKMIDI/MIKMIDIEvent.h>
 
 @interface MIKMIDIChannelEvent : MIKMIDIEvent
 

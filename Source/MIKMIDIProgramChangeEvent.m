@@ -8,6 +8,7 @@
 
 #import "MIKMIDIProgramChangeEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
+#import "MIKMIDIUtilities.h"
 
 @interface MIKMIDIChannelEvent (Protected)
 
