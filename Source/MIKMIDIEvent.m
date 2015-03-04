@@ -38,7 +38,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 {
 	MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
 	// -initWithTimeStamp:midiEventType:data: will do subclass lookup too, but this way we avoid a second alloc
-	Class subclass = [[self class] subclassForEventType:eventType];
+	Class subclass = [[self class] subclassForEventType:midiEventType];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] initWithTimeStamp:timeStamp midiEventType:midiEventType data:data];
@@ -99,6 +99,12 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 + (MIKMIDIEventType)mikEventTypeForMusicEventType:(MusicEventType)musicEventType andData:(NSData *)data
 {
+	NSDictionary *channelEventTypeToMIDITypeMap = @{@(MIKMIDIChannelEventTypePolyphonicKeyPressure) : @(MIKMIDIEventTypeMIDIPolyphonicKeyPressureMessage),
+													@(MIKMIDIChannelEventTypeControlChange) : @(MIKMIDIEventTypeMIDIControlChangeMessage),
+													@(MIKMIDIChannelEventTypeProgramChange) : @(MIKMIDIEventTypeMIDIProgramChangeMessage),
+													@(MIKMIDIChannelEventTypeChannelPressure) : @(MIKMIDIEventTypeMIDIChannelPressureMessage),
+													@(MIKMIDIChannelEventTypePitchBendChange) : @(MIKMIDIEventTypeMIDIPitchBendChangeMessage)};
+	
 	NSDictionary *metaTypeToMIDITypeMap = @{@(MIKMIDIMetaEventTypeSequenceNumber) : @(MIKMIDIEventTypeMetaSequence),
 											@(MIKMIDIMetaEventTypeTextEvent) : @(MIKMIDIEventTypeMetaText),
 											@(MIKMIDIMetaEventTypeCopyrightNotice) : @(MIKMIDIEventTypeMetaCopyright),
@@ -114,6 +120,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 											@(MIKMIDIMetaEventTypeTimeSignature) : @(MIKMIDIEventTypeMetaTimeSignature),
 											@(MIKMIDIMetaEventTypeKeySignature) : @(MIKMIDIEventTypeMetaKeySignature),
 											@(MIKMIDIMetaEventTypeSequencerSpecificEvent) : @(MIKMIDIEventTypeMetaSequenceSpecificEvent),};
+	
 	NSDictionary *musicEventToMIDITypeMap = @{@(kMusicEventType_NULL) : @(MIKMIDIEventTypeNULL),
 											  @(kMusicEventType_ExtendedNote) : @(MIKMIDIEventTypeExtendedNote),
 											  @(kMusicEventType_ExtendedTempo) : @(MIKMIDIEventTypeExtendedTempo),
@@ -127,6 +134,9 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	if (musicEventType == kMusicEventType_Meta) {
 		UInt8 metaEventType = *(UInt8 *)[data bytes];
 		return [metaTypeToMIDITypeMap[@(metaEventType)] unsignedIntegerValue];
+	} else if (musicEventType == kMusicEventType_MIDIChannelMessage) {
+		UInt8 channelEventType = *(UInt8 *)[data bytes] & 0xF0;
+		return [channelEventTypeToMIDITypeMap[@(channelEventType)] unsignedIntegerValue];
 	} else {
 		return [musicEventToMIDITypeMap[@(musicEventType)] unsignedIntegerValue];
 	}
