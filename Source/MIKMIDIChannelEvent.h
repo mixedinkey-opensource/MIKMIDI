@@ -39,6 +39,9 @@
 
 @end
 
+/**
+ *  The mutable counterpart of MIKMIDIChannelEvent.
+ */
 @interface MIKMutableMIDIChannelEvent : MIKMIDIChannelEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
@@ -46,5 +49,18 @@
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 dataByte1;
 @property (nonatomic, readwrite) UInt8 dataByte2;
+
+@end
+
+#pragma mark -
+
+#import <MIKMIDI/MIKMIDIControlChangeCommand.h>
+#import <MIKMIDI/MIKMIDIProgramChangeCommand.h>
+
+@class MIKMIDIClock;
+
+@interface MIKMIDICommand (MIKMIDIChannelEventToCommands)
+
++ (instancetype)commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:(MIKMIDIClock *)clock;
 
 @end

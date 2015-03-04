@@ -9,6 +9,7 @@
 #import "MIKMIDIChannelEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
+#import "MIKMIDIClock.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIChannelEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIChannelEvent.m in the Build Phases for this target
@@ -105,5 +106,27 @@
 @dynamic dataByte2;
 
 + (BOOL)isMutable { return YES; }
+
+@end
+
+#pragma mark - MIKMIDICommand+MIKMIDIChannelEventToCommands
+
+@implementation MIKMIDICommand (MIKMIDIChannelEventToCommands)
+
++ (instancetype)commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:(MIKMIDIClock *)clock
+{
+	NSDictionary *classes = @{@(MIKMIDIEventTypeMIDIControlChangeMessage) : [MIKMIDIControlChangeCommand class],
+							  @(MIKMIDIEventTypeMIDIProgramChangeMessage) : [MIKMIDIProgramChangeCommand class]};
+	Class commandClass = classes[@(event.eventType)];
+	if (!commandClass) return nil;
+	
+	MIKMutableMIDIChannelVoiceCommand *result = [[[commandClass mutableCounterpartClass] alloc] init];
+	result.channel = event.channel;
+	result.dataByte1 = event.dataByte1;
+	result.dataByte2 = event.dataByte2;
+	result.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:event.timeStamp];
+	
+	return [result copy];
+}
 
 @end
