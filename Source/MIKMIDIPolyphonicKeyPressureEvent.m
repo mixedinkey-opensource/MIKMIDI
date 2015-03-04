@@ -36,6 +36,13 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIPolyphonicKeyPressureEvent class]; }
 + (BOOL)isMutable { return NO; }
 
+- (NSString *)additionalEventDescription
+{
+	return [NSString stringWithFormat:@"note: %u pressure: %u", (unsigned)self.note, (unsigned)self.pressure];
+}
+
+#pragma mark - Properties
+
 + (NSSet *)keyPathsForValuesAffectingNote
 {
 	return [NSSet setWithObjects:@"dataByte1", nil];
