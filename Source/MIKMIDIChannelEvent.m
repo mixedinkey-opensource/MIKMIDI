@@ -73,8 +73,10 @@
 
 - (void)setDataByte1:(UInt8)dataByte1
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	MIDIChannelMessage *channelMessage = (MIDIChannelMessage*)[self.internalData bytes];
-	channelMessage->data1 = dataByte1;
+	channelMessage->data1 = dataByte1 & 0x7F;
 }
 
 - (UInt8)dataByte2
@@ -85,8 +87,10 @@
 
 - (void)setDataByte2:(UInt8)dataByte2
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	MIDIChannelMessage *channelMessage = (MIDIChannelMessage*)[self.internalData bytes];
-	channelMessage->data2 = dataByte2;
+	channelMessage->data2 = dataByte2 & 0x7F;
 }
 
 @end

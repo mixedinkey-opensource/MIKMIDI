@@ -55,6 +55,8 @@
 
 - (void)setControllerNumber:(NSUInteger)controllerNumber
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.dataByte1 = MIN(controllerNumber, 127);
 }
 
@@ -70,6 +72,8 @@
 
 - (void)setControllerValue:(NSUInteger)controllerValue
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.dataByte2 = MIN(controllerValue, 127);
 }
 

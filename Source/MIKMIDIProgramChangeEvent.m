@@ -50,6 +50,8 @@
 
 - (void)setProgramNumber:(NSUInteger)programNumber
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.dataByte1 = MIN(programNumber, 127);
 }
 

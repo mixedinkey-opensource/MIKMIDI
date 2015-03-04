@@ -48,6 +48,8 @@
 
 - (void)setNote:(UInt8)note
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.dataByte1 = MIN(note, 127);
 }
 
@@ -63,6 +65,8 @@
 
 - (void)setPressure:(UInt8)pressure
 {
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
 	self.dataByte2 = MIN(pressure, 127);
 }
 
