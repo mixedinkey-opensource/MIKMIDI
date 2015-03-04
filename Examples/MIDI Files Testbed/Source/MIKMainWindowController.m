@@ -118,8 +118,6 @@
 	
 	// So audio can be heard
 	self.endpointSynth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:source];
-	NSString *soundfontFile = [@"~/Desktop/test.sf2" stringByExpandingTildeInPath];
-	[self.endpointSynth loadSoundfontFromFileAtURL:[NSURL fileURLWithPath:soundfontFile] error:NULL];
 	
 	return YES;
 }
