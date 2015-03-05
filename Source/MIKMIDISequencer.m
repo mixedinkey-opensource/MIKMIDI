@@ -74,9 +74,8 @@
 @property (nonatomic) MusicTimeStamp startingTimeStamp;
 
 @property (nonatomic, strong) NSMapTable *tracksToDestinationsMap;
+@property (nonatomic, strong) NSMapTable *tracksToDefaultSynthsMap;
 @property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
-
-@property (nonatomic, strong, readonly) MIKMIDIClientDestinationEndpoint *builtinEndpoint;
 
 @end
 
@@ -94,6 +93,7 @@
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
 		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
+		_tracksToDefaultSynthsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 	}
 	return self;
 }
@@ -513,12 +513,28 @@
 - (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track
 {
 	[self.tracksToDestinationsMap setObject:endpoint forKey:track];
+	[self.tracksToDefaultSynthsMap removeObjectForKey:track];
 }
 
 - (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
 {
 	MIKMIDIDestinationEndpoint *result = [self.tracksToDestinationsMap objectForKey:track];
-	return result ?: self.builtinEndpoint;
+	if (!result) {
+		// Create a default endpoint and synthesizer
+		NSString *name = [NSString stringWithFormat:@"<%@: %p> Default Endpoint %d", NSStringFromClass([self class]), self, (int)track.trackNumber];
+		result = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];
+		[self setDestinationEndpoint:result forTrack:track];
+		
+		MIKMIDISynthesizer *synth = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)result];
+		[self.tracksToDefaultSynthsMap setObject:synth forKey:synth];
+	}
+	return result;
+}
+
+- (MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track
+{
+	[[self destinationEndpointForTrack:track] self]; // Will force creation of a synth if one doesn't exist, but should
+	return [self.tracksToDefaultSynthsMap objectForKey:track];
 }
 
 #pragma mark - Click Track
@@ -635,26 +651,6 @@
 		_metronome = metronome;
 		_metronomeEndpoint = (MIKMIDIClientDestinationEndpoint *)metronome.endpoint;
 	}
-}
-
-@synthesize builtinEndpoint = _builtinEndpoint;
-- (MIKMIDIClientDestinationEndpoint *)builtinEndpoint
-{
-	if (!_builtinEndpoint) {
-		NSString *name = [NSString stringWithFormat:@"%@ (%p)", NSStringFromClass([self class]), self];
-		_builtinEndpoint = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];
-		if (_builtinEndpoint) [[self builtinSynthesizer] self]; // Create synth
-	}
-	return _builtinEndpoint;
-}
-
-@synthesize builtinSynthesizer = _builtinSynthesizer;
-- (MIKMIDISynthesizer *)builtinSynthesizer
-{
-	if (!_builtinSynthesizer) {
-		_builtinSynthesizer = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:self.builtinEndpoint];
-	}
-	return _builtinSynthesizer;
 }
 
 @end
