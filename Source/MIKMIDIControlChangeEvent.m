@@ -36,6 +36,16 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIControlChangeEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIControlChangeEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData
+{
+	MIDIChannelMessage message = {
+		.status = MIKMIDIChannelEventTypeControlChange,
+		.data1 = 0,
+		.data2 = 0,
+		.reserved = 0,
+	};
+	return [NSData dataWithBytes:&message length:sizeof(message)];
+}
 
 - (NSString *)additionalEventDescription
 {

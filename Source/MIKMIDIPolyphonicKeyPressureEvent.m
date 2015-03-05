@@ -36,6 +36,16 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIPolyphonicKeyPressureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIPolyphonicKeyPressureEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData
+{
+	MIDIChannelMessage message = {
+		.status = MIKMIDIChannelEventTypePolyphonicKeyPressure,
+		.data1 = 0,
+		.data2 = 0,
+		.reserved = 0,
+	};
+	return [NSData dataWithBytes:&message length:sizeof(message)];
+}
 
 - (NSString *)additionalEventDescription
 {
