@@ -109,11 +109,11 @@
 		9D74EF9517A713A100BEE89F /* NSUIApplication+MIKMIDI.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF6217A713A100BEE89F /* NSUIApplication+MIKMIDI.m */; };
 		9D76DCEC1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D76DCEA1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h */; };
 		9D84951C1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D84951A1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9D84951D1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D84951A1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h */; };
+		9D84951D1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D84951A1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D84951E1AA7678700C52475 /* MIKMIDIProgramChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D84951B1AA7678700C52475 /* MIKMIDIProgramChangeEvent.m */; };
 		9D84951F1AA7678700C52475 /* MIKMIDIProgramChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D84951B1AA7678700C52475 /* MIKMIDIProgramChangeEvent.m */; };
 		9D8495221AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8495201AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9D8495231AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8495201AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h */; };
+		9D8495231AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8495201AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D8495241AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8495211AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.m */; };
 		9D8495251AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8495211AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.m */; };
 		9D877D841A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D877D821A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -245,11 +245,11 @@
 		9DED4E241AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DED4E211AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m */; };
 		9DED4E251AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DED4E211AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m */; };
 		9DEF1CA81AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CA61AA6769E00E10273 /* MIKMIDIChannelEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9DEF1CA91AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CA61AA6769E00E10273 /* MIKMIDIChannelEvent.h */; };
+		9DEF1CA91AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CA61AA6769E00E10273 /* MIKMIDIChannelEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DEF1CAA1AA6769E00E10273 /* MIKMIDIChannelEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEF1CA71AA6769E00E10273 /* MIKMIDIChannelEvent.m */; };
 		9DEF1CAB1AA6769E00E10273 /* MIKMIDIChannelEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEF1CA71AA6769E00E10273 /* MIKMIDIChannelEvent.m */; };
 		9DEF1CAE1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CAC1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9DEF1CAF1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CAC1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h */; };
+		9DEF1CAF1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEF1CAC1AA6800C00E10273 /* MIKMIDIControlChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DEF1CB01AA6800C00E10273 /* MIKMIDIControlChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEF1CAD1AA6800C00E10273 /* MIKMIDIControlChangeEvent.m */; };
 		9DEF1CB11AA6800C00E10273 /* MIKMIDIControlChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEF1CAD1AA6800C00E10273 /* MIKMIDIControlChangeEvent.m */; };
 		9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E771831841A004EE5F4 /* MIKMIDICommandThrottler.h */; settings = {ATTRIBUTES = (Public, ); }; };
