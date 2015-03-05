@@ -17,10 +17,16 @@
 @implementation MIKMIDIMetaKeySignatureEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaKeySignature; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaKeySignature)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaKeySignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaKeySignatureEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData
+{
+	NSMutableData *superData = [[super initialData] mutableCopy];
+	[superData increaseLengthBy:2]; // Account for key and scale bytes
+	return [superData copy];
+}
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
@@ -40,7 +46,7 @@
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+    NSMutableData *mutableMetaData = [self.metaData mutableCopy];
     [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&key length:1];
     [self setMetaData:[mutableMetaData copy]];
 }
@@ -54,7 +60,7 @@
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
-    NSMutableData *mutableMetaData = self.metaData.mutableCopy;
+    NSMutableData *mutableMetaData = [self.metaData mutableCopy];
     [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&scale length:1];
     [self setMetaData:[mutableMetaData copy]];
 }

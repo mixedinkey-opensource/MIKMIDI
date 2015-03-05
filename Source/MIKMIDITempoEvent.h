@@ -14,12 +14,6 @@
 @interface MIKMIDITempoEvent : MIKMIDIEvent
 
 /**
- *  The beats per minute of the tempo event.
- */
-@property (nonatomic, readonly) Float64 bpm;
-
-
-/**
  *  Creates and initializes a new MIKMIDITempoEvent.
  *
  *  @param timeStamp The time stamp for the tempo event.
@@ -30,8 +24,12 @@
  */
 + (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 
-@end
+/**
+ *  The beats per minute of the tempo event.
+ */
+@property (nonatomic, readonly) Float64 bpm;
 
+@end
 
 /**
  *  The mutable counterpart of MIKMIDITempoEvent.

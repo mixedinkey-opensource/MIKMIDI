@@ -115,7 +115,7 @@
  *
  *  @see -setupAUGraph
  */
-@property (nonatomic) AudioUnit instrument;
+@property (nonatomic, readonly) AudioUnit instrumentUnit;
 
 /**
  *  The AUGraph for the instrument.
@@ -126,5 +126,12 @@
  *  @see -setupAUGraph
  */
 @property (nonatomic) AUGraph graph;
+
+// Deprecated
+
+/**
+ *  @deprecated This has been (renamed to) instrumentUnit. Use that instead.
+ */
+@property (nonatomic) AudioUnit instrument DEPRECATED_ATTRIBUTE;
 
 @end

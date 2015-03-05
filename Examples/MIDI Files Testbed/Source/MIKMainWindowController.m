@@ -35,6 +35,12 @@
 	[super windowDidLoad];
 	
 	self.sequencer = [MIKMIDISequencer sequencer];
+	
+	NSPredicate *nonBluetoothNetworkPredicate = [NSPredicate predicateWithBlock:^BOOL(MIKMIDIDevice *device, NSDictionary *b) {
+		return ![device.name isEqualToString:@"Bluetooth"] && ![device.name isEqualToString:@"Network"];
+	}];
+	NSArray *devices = [self.deviceManager.availableDevices filteredArrayUsingPredicate:nonBluetoothNetworkPredicate];
+	if (!self.device) self.device = [devices firstObject];
 }
 
 #pragma mark - Actions
@@ -73,7 +79,9 @@
 
 - (void)midiSequenceView:(MIKMIDISequenceView *)sequenceView receivedDroppedMIDIFiles:(NSArray *)midiFiles
 {
-	[self loadMIDIFile:[midiFiles firstObject]];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self loadMIDIFile:[midiFiles firstObject]];
+	});
 }
 
 #pragma mark - Private
@@ -141,7 +149,7 @@
 {
 	if (device != _device) {
 		[self disconnectFromDevice];
-
+		
 		NSError *error = nil;
 		if (![self connectToDevice:device error:&error]) {
 			[self presentError:error];

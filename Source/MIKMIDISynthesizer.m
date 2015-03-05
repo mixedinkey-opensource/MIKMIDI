@@ -8,6 +8,7 @@
 
 #import "MIKMIDISynthesizer.h"
 #import "MIKMIDICommand.h"
+#import "MIKMIDISynthesizer_SubclassMethods.h"
 
 @implementation MIKMIDISynthesizer
 
@@ -48,7 +49,7 @@
 		UInt32 bankSelectStatus = 0xB0 | channel;
 		UInt32 programChangeStatus = 0xC0 | channel;
 		
-		AudioUnit instrumentUnit = self.instrument;
+		AudioUnit instrumentUnit = self.instrumentUnit;
 		OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
 		if (err) {
 			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
@@ -89,7 +90,7 @@
 		instrumentData.presetID = 0;
 		
 		// set the kAUSamplerProperty_LoadPresetFromBank property
-		err = AudioUnitSetProperty(self.instrument,
+		err = AudioUnitSetProperty(self.instrumentUnit,
 								   kAUSamplerProperty_LoadInstrument,
 								   kAudioUnitScope_Global,
 								   0,
@@ -113,7 +114,7 @@
 			return NO;
 		}
 		
-		err = AudioUnitSetProperty(self.instrument,
+		err = AudioUnitSetProperty(self.instrumentUnit,
 								   kMusicDeviceProperty_SoundBankFSRef,
 								   kAudioUnitScope_Global, 0,
 								   &fsRef, sizeof(fsRef));
@@ -199,7 +200,7 @@
 	}
 	
 	self.graph = graph;
-	self.instrument = instrumentUnit;
+	self.instrumentUnit = instrumentUnit;
 	
 	return YES;
 }
@@ -244,9 +245,15 @@
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
-		OSStatus err = MusicDeviceMIDIEvent(self.instrument, command.commandType, command.dataByte1, command.dataByte2, 0);
+		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, command.commandType, command.dataByte1, command.dataByte2, 0);
 		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %i", command, err);
 	}
 }
+
+#pragma mark - Deprecated
+
++ (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
+- (AudioUnit)instrument { return self.instrumentUnit; }
+- (void)setInstrument:(AudioUnit)instrument { self.instrumentUnit = instrument; }
 
 @end

@@ -18,28 +18,25 @@
 /**
  *  Convenience method for creating a new MIKMIDINoteEvent.
  *
- *  @param channel   The channel for the event.
- *  @param timeStamp The MusicTimeStamp for the event.
- *  @param note      The MIDI note number for the event.
- *  @param velocity  The note's velocity.
- *  @param duration  The duration of the note event.
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param note      The note number for the event, from 0 to 127. 60 is middle C.
+ *  @param velocity  A number from 0-127 specifying the velocity of the note.
+ *  @param duration  The duration of the event in MusicTimeStamp units.
+ *  @param channel   The channel on which the MIDI event should be sent.
  *
- *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
- *
- *  @note If you need to set additional properties, use +noteEventWithTimeStamp:message:, or
- *  create an MIKMutableMIDINoteEventInstead.
+ *  @return An initialized MIKMIDINoteEvent instance, or nil if an error occurred.
  */
-+ (instancetype)noteEventWithChannel:(NSInteger)channel
-						   timeStamp:(MusicTimeStamp)timeStamp
-								note:(NSInteger)note
-							velocity:(NSInteger)velocity
-							duration:(float)duration;
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+								  note:(UInt8)note
+							  velocity:(UInt8)velocity
+							  duration:(Float32)duration
+							   channel:(UInt8)channel;
 
 /**
- *  Convenience method for creating a new MIKMIDINoteEvent.
+ *  Convenience method for creating a new MIKMIDINoteEvent from a CoreMIDI MIDINoteMessage struct.
  *
- *  @param timeStamp The MusicTimeStamp for the event.
- *  @param message The MIDINoteMessage for the event.
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param message A MIDINoteMessage struct containing properties for the event.
  *
  *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
  */
@@ -68,7 +65,7 @@
 @property (nonatomic, readonly) UInt8 releaseVelocity;
 
 /**
- *  The duration of the event.
+ *  The duration of the event in MusicTimeStamp units.
  */
 @property (nonatomic, readonly) Float32 duration;
 
@@ -108,10 +105,6 @@
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 releaseVelocity;
 @property (nonatomic, readwrite) Float32 duration;
-@property (nonatomic, readwrite) MusicTimeStamp endTimeStamp;
-@property (nonatomic, readwrite) float frequency;
-@property (nonatomic, readwrite) NSString *noteLetter;
-@property (nonatomic, readwrite) NSString *noteLetterAndOctave;
 
 @end
 

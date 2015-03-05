@@ -17,18 +17,29 @@
 @implementation MIKMIDIMetaTrackSequenceNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaTrackSequenceName; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaTrackSequenceName)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTrackSequenceNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
+
++ (NSSet *)keyPathsForValuesAffectingName
+{
+	return [NSSet setWithObjects:@"string", nil];
+}
+
+- (NSString *)name { return self.string; }
 
 @end
 
 @implementation MIKMutableMIDIMetaTrackSequenceNameEvent
 
+- (void)setName:(NSString *)name { self.string = name; }
+
+@dynamic name;
 @dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
+@dynamic string;
 
 + (BOOL)isMutable { return YES; }
 
