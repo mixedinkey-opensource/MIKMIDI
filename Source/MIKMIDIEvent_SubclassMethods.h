@@ -59,12 +59,17 @@
 + (BOOL)isMutable;
 
 /**
- *  Subclasses of MIKMIDIEvent can override this to specify a minum internal data length
- *  necessary to hold their contents. For example, MIKMIDINoteEvent returns sizeof(MIDINoteMessage).
+ *  Subclasses of MIKMIDIEvent can override this to provide initial "blank" data including any
+ *  necessary fixed bytes for their class. For example, MIKMIDIChannelEvent subclasses return
+ *  data with the first nibble set to the appropriate status/subtype for their class.
  *
- *  @return A size_t value indicating the minimum size in bytes required to hold the receiver's data.
+ *  Overriding this method can also be used to ensure that the internal data for an empty event
+ *  meets the required minimum length.
+ *
+ *  @return An NSData instance containing properly-sized blank/empty state data required by the receiver.
+ *  Must NOT be nil (empty data is OK).
  */
-+ (size_t)minimumDataSize;
++ (NSData *)initialData;
 
 /**
  *  This is the property used internally by MIKMIDIEvent to store the raw data for

@@ -21,7 +21,12 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaKeySignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaKeySignatureEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return [super minimumDataSize] + 2; /* Account for key and scale bytes */ }
++ (NSData *)initialData
+{
+	NSMutableData *superData = [[super initialData] mutableCopy];
+	[superData increaseLengthBy:2]; // Account for key and scale bytes
+	return [superData copy];
+}
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {

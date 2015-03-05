@@ -32,7 +32,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return 0; }
++ (NSData *)initialData { return [NSData data]; }
 
 + (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
@@ -66,12 +66,8 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 		_timeStamp = timeStamp;
 		_eventType = eventType;
 
-		NSMutableData *internalData = [NSMutableData dataWithData:data];
-		size_t minSize = [[self class] minimumDataSize];
-		if ([internalData length] < minSize) {
-			[internalData increaseLengthBy:(minSize - [internalData length])];
-		}
-		_internalData = internalData;
+		if (!data) data = [[self class] initialData];
+		_internalData = [NSMutableData dataWithData:data];
 	}
 	return self;
 }

@@ -34,7 +34,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIChannelEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIChannelEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return sizeof(MIDIChannelMessage); }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDIChannelMessage){0} length:sizeof(MIDIChannelMessage)]; }
 
 + (instancetype)channelEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDIChannelMessage)message;
 {
