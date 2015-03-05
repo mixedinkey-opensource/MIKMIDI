@@ -41,7 +41,7 @@ extension UIColor {
 			
 			var timestamp: MusicTimeStamp = 0
 			for note in 60...72 {
-				track.insertMIDIEvent(MIKMIDINoteEvent(channel: 0, timeStamp: timestamp, note: note, velocity: 127, duration: 1.0))
+				track.insertMIDIEvent(MIKMIDINoteEvent(timeStamp: timestamp, note: UInt8(note), velocity:UInt8(127), duration: Float32(1.0), channel: UInt8(0)));
 				timestamp += 1
 			}
 			
@@ -67,7 +67,7 @@ extension UIColor {
 		self.noteHeightInPixels = CGRectGetHeight(self.bounds) / 127.0
 		
 		for (index, track) in enumerate(noteTracks!) {
-			let events: [MIKMIDINoteEvent] = track.events.filter({ $0 is MIKMIDINoteEvent }) as [MIKMIDINoteEvent]
+			let events: [MIKMIDINoteEvent] = track.events.filter({ $0 is MIKMIDINoteEvent }) as! [MIKMIDINoteEvent]
 			for note in events {
 				let noteColor = noteTracks!.count == 1 ? self.colorForNote(note) : self.colorForTrackAtIndex(index)
 				noteColor.setFill()
