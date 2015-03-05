@@ -22,6 +22,11 @@
 
 /**
  *  The program (aka patch) number. From 0-127.
+ *
+ *  Assuming the device or synthesizer playing this event
+ *  supports the General MIDI sound set, you can find
+ *  a list of instruments by their program number here:
+ *  http://www.midi.org/techspecs/gm1sound.php
  */
 @property (nonatomic, readonly) NSUInteger programNumber;
 
