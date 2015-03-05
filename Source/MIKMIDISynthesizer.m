@@ -245,7 +245,7 @@
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
-		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, command.commandType, command.dataByte1, command.dataByte2, 0);
+		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, 0);
 		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %i", command, err);
 	}
 }
