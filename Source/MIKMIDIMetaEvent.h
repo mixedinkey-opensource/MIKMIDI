@@ -28,7 +28,7 @@
 /**
  *  The metadata for the event.
  */
-@property (nonatomic, readonly) NSData *metaData;
+@property (nonatomic, strong, readonly) NSData *metaData;
 
 @end
 

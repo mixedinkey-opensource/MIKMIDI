@@ -107,12 +107,17 @@
 
 #pragma mark - MIKMIDICommand+MIKMIDIChannelEventToCommands
 
+#import <MIKMIDI/MIKMIDIControlChangeCommand.h>
+#import <MIKMIDI/MIKMIDIProgramChangeCommand.h>
+#import <MIKMIDI/MIKMIDIPitchBendChangeCommand.h>
+
 @implementation MIKMIDICommand (MIKMIDIChannelEventToCommands)
 
 + (instancetype)commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:(MIKMIDIClock *)clock
 {
 	NSDictionary *classes = @{@(MIKMIDIEventTypeMIDIControlChangeMessage) : [MIKMIDIControlChangeCommand class],
-							  @(MIKMIDIEventTypeMIDIProgramChangeMessage) : [MIKMIDIProgramChangeCommand class]};
+							  @(MIKMIDIEventTypeMIDIProgramChangeMessage) : [MIKMIDIProgramChangeCommand class],
+							  @(MIKMIDIEventTypeMIDIPitchBendChangeMessage) : [MIKMIDIPitchBendChangeCommand class]};
 	Class commandClass = classes[@(event.eventType)];
 	if (!commandClass) return nil;
 	
