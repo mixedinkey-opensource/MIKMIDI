@@ -34,6 +34,7 @@
 #import "MIKMIDIChannelVoiceCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIProgramChangeCommand.h"
+#import "MIKMIDIPitchBendChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
 #import "MIKMIDISystemExclusiveCommand.h"

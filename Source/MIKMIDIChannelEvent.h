@@ -54,8 +54,7 @@
 
 #pragma mark -
 
-#import <MIKMIDI/MIKMIDIControlChangeCommand.h>
-#import <MIKMIDI/MIKMIDIProgramChangeCommand.h>
+#import <MIKMIDI/MIKMIDICommand.h>
 
 @class MIKMIDIClock;
 

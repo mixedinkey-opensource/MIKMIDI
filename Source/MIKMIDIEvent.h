@@ -199,3 +199,15 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 @property (nonatomic, strong, readwrite) NSMutableData *data;
 
 @end
+
+#pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
+
+#import <MIKMIDI/MIKMIDICommand.h>
+
+@class MIKMIDIClock;
+
+@interface MIKMIDICommand (MIKMIDIEventToCommands)
+
++ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
+
+@end

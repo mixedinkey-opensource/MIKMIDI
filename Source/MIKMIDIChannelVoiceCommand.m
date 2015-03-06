@@ -28,9 +28,7 @@
 + (NSArray *)supportedMIDICommandTypes
 {
 	return  @[@(MIKMIDICommandTypePolyphonicKeyPressure),
-			  @(MIKMIDICommandTypeProgramChange),
-			  @(MIKMIDICommandTypeChannelPressure),
-			  @(MIKMIDICommandTypePitchWheelChange)];
+			  @(MIKMIDICommandTypeChannelPressure)];
 }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }

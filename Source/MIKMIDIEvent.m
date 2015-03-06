@@ -217,3 +217,26 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 @dynamic timeStamp;
 
 @end
+
+#pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
+
+#import "MIKMIDIClock.h"
+#import "MIKMIDINoteEvent.h"
+#import "MIKMIDIChannelEvent.h"
+
+@implementation MIKMIDICommand (MIKMIDIEventToCommands)
+
++ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock
+{
+	NSMutableArray *result = [NSMutableArray array];
+	if ([event isKindOfClass:[MIKMIDINoteEvent class]]) {
+		NSArray *commands = [MIKMIDICommand commandsFromNoteEvent:(MIKMIDINoteEvent *)event clock:clock];
+		if (commands) [result addObjectsFromArray:commands];
+	} else if ([event isKindOfClass:[MIKMIDIChannelEvent class]]) {
+		MIKMIDICommand *command = [MIKMIDICommand commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:clock];
+		if (command) [result addObject:command];
+	}
+	return result;
+}
+
+@end
