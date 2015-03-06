@@ -54,6 +54,7 @@
 #import "MIKMIDIPolyphonicKeyPressureEvent.h"
 #import "MIKMIDIControlChangeEvent.h"
 #import "MIKMIDIProgramChangeEvent.h"
+#import "MIKMIDIChannelPressureEvent.h"
 #import "MIKMIDIPitchBendChangeEvent.h"
 
 // Meta Events
