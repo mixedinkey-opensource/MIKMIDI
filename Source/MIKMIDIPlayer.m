@@ -8,6 +8,7 @@
 
 #import "MIKMIDIPlayer.h"
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDISequence.h"
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDINoteEvent.h"

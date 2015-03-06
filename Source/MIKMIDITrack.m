@@ -190,6 +190,28 @@
 
 #pragma mark - Getting Events
 
+// All event getters pass through this method
+- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+	if (![iterator seek:startTimeStamp]) return @[];
+	
+	NSMutableArray *events = [NSMutableArray array];
+	
+	while (iterator.hasCurrentEvent) {
+		MIKMIDIEvent *event = iterator.currentEvent;
+		if (!event || event.timeStamp > endTimeStamp) break;
+		
+		if (!eventClass || [event isKindOfClass:eventClass]) {
+			[events addObject:event];
+		}
+		
+		[iterator moveToNextEvent];
+	}
+	
+	return events;
+}
+
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
     return [self eventsOfClass:Nil fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
@@ -198,27 +220,6 @@
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
     return [self eventsOfClass:[MIKMIDINoteEvent class] fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
-}
-
-- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
-{
-    MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-    if (![iterator seek:startTimeStamp]) return @[];
-
-    NSMutableArray *events = [NSMutableArray array];
-
-    while (iterator.hasCurrentEvent) {
-        MIKMIDIEvent *event = iterator.currentEvent;
-        if (!event || event.timeStamp > endTimeStamp) break;
-
-        if (!eventClass || [event isKindOfClass:eventClass]) {
-            [events addObject:event];
-        }
-
-        [iterator moveToNextEvent];
-    }
-
-    return events;
 }
 
 #pragma mark - Editing Events

@@ -102,6 +102,8 @@
  */
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
+#pragma mark - Event
+
 /**
  *  Moves all of the MIDI events between startTimeStamp and endTimeStamp inclusively by the specified offset.
  *
@@ -157,23 +159,6 @@
  *  @return Whether or not merging the MIDI events was succesful.
  */
 - (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp;
-
-/**
- *  Sets a temporary length and loopInfo for the track.
- *
- *  @param length The temporary length for the track.
- *  @param loopInfo The temporary loopInfo for the track.
- *
- *  @note You should not call this method. It is exclusivley used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
- */
-- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
-
-/**
- *  Restores the length and loopInfo of the track to what it was before calling -setTemporaryLength:andLoopInfo:.
- *
- *  @note You should not call this method. It is exclusively used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
- */
-- (void)restoreLengthAndLoopInfo;
 
 /**
  *  The MIDI sequence the track belongs to.

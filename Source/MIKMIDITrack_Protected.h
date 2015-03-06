@@ -21,4 +21,21 @@
  */
 + (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
 
+/**
+ *  Sets a temporary length and loopInfo for the track.
+ *
+ *  @param length The temporary length for the track.
+ *  @param loopInfo The temporary loopInfo for the track.
+ *
+ *  @note You should not call this method. It is exclusivley used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
+ */
+- (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo;
+
+/**
+ *  Restores the length and loopInfo of the track to what it was before calling -setTemporaryLength:andLoopInfo:.
+ *
+ *  @note You should not call this method. It is exclusively used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
+ */
+- (void)restoreLengthAndLoopInfo;
+
 @end
