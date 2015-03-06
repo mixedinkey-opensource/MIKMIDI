@@ -237,6 +237,10 @@
 		9DBEBD581AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD591AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD5A1AAA21C400E59734 /* MIKMIDIEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DBEBD671AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */; };
+		9DBEBD681AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */; };
+		9DBEBD691AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */; };
+		9DBEBD6A1AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */; };
 		9DE259E519A7B4F800DA93E9 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */; };
 		9DE259E619A7B50100DA93E9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
 		9DE259E819A7B50600DA93E9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */; };
@@ -392,6 +396,8 @@
 		9DB366EF1A964C55001D1CF3 /* MIKMIDISynthesizer.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISynthesizer.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; wrapsLines = 1; };
 		9DB366F41A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISynthesizerInstrument.h; sourceTree = "<group>"; };
 		9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISynthesizerInstrument.m; sourceTree = "<group>"; };
+		9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelPressureEvent.h; sourceTree = "<group>"; };
+		9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelPressureEvent.m; sourceTree = "<group>"; };
 		9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPitchBendChangeEvent.h; sourceTree = "<group>"; };
@@ -624,6 +630,8 @@
 				9DEF1CAD1AA6800C00E10273 /* MIKMIDIControlChangeEvent.m */,
 				9D84951A1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h */,
 				9D84951B1AA7678700C52475 /* MIKMIDIProgramChangeEvent.m */,
+				9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */,
+				9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */,
 				9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */,
 				9DED4E211AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m */,
 			);
@@ -780,6 +788,7 @@
 				9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */,
 				9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */,
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
+				9DBEBD671AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */,
 				833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */,
 				9DB366F01A964C55001D1CF3 /* MIKMIDISynthesizer.h in Headers */,
 				833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */,
@@ -852,6 +861,7 @@
 				9DAF8B531A7B005C00F46528 /* MIKMIDIErrors.h in Headers */,
 				9D8495231AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h in Headers */,
 				9DAF8B7F1A7B00B100F46528 /* MIKMIDISequencer.h in Headers */,
+				9DBEBD681AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */,
 				9DEF1CA91AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */,
 				9DAF8B6E1A7B00A700F46528 /* MIKMIDIEventIterator.h in Headers */,
 				9DB366F11A964C55001D1CF3 /* MIKMIDISynthesizer.h in Headers */,
@@ -980,6 +990,7 @@
 				9D74EF7017A713A100BEE89F /* MIKMIDIDeviceManager.m in Sources */,
 				9D74EF7217A713A100BEE89F /* MIKMIDIEndpoint.m in Sources */,
 				9DAE7D8D19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m in Sources */,
+				9DBEBD691AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */,
 				839D935C19C3A2F5007589C3 /* MIKMIDIMetaMarkerTextEvent.m in Sources */,
 				839D935019C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.m in Sources */,
 				9D74EF7417A713A100BEE89F /* MIKMIDIEntity.m in Sources */,
@@ -1071,6 +1082,7 @@
 				9DEF1CAB1AA6769E00E10273 /* MIKMIDIChannelEvent.m in Sources */,
 				9DAF8B431A7AFF6B00F46528 /* MIKMIDIMetaSequenceEvent.m in Sources */,
 				9DAF8B441A7AFF6B00F46528 /* MIKMIDIMetaTextEvent.m in Sources */,
+				9DBEBD6A1AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */,
 				9DAF8B451A7AFF6B00F46528 /* MIKMIDIMetaTimeSignatureEvent.m in Sources */,
 				9DAF8B461A7AFF6B00F46528 /* MIKMIDIMetaTrackSequenceNameEvent.m in Sources */,
 				9DAF8B471A7AFF6B00F46528 /* MIKMIDINoteEvent.m in Sources */,

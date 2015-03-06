@@ -26,11 +26,7 @@
 @implementation MIKMIDIChannelEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (NSArray *)supportedMIDIEventTypes
-{
-	// We have subclasses for all but MIKMIDIEventTypeMIDIChannelPressureMessage.
-	return @[@(MIKMIDIEventTypeMIDIChannelPressureMessage)];
-}
++ (NSArray *)supportedMIDIEventTypes { return @[]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIChannelEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIChannelEvent class]; }
 + (BOOL)isMutable { return NO; }
