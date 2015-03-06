@@ -54,6 +54,20 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
+ *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
+ *
+ *  @param fileURL The URL of the MIDI file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ *
+ *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
+ */
++ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
@@ -65,10 +79,24 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
+ *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
+ *
+ *  @param fileURL The URL of the MIDI file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ *
+ *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
+ */
+- (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
  *
  *  @param data  An NSData instance containing the data for the MIDI sequence/file.
- *  @param error If an
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
@@ -76,15 +104,43 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 + (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
 
 /**
+ *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ */
++ (instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
  *
  *  @param data  An NSData instance containing the data for the MIDI sequence/file.
- *  @param error If an
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
 - (instancetype)initWithData:(NSData *)data error:(NSError **)error;
+
+/**
+ *  Initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ */
+- (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
