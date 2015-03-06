@@ -21,7 +21,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return sizeof(MIDIMetaEvent); }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDIMetaEvent){0} length:sizeof(MIDIMetaEvent)]; }
 
 - (NSString *)additionalEventDescription
 {

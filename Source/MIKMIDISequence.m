@@ -52,21 +52,41 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
-    return [[self alloc] initWithFileAtURL:fileURL error:error];
+    return [[self alloc] initWithFileAtURL:fileURL convertMIDIChannelsToTracks:NO error:error];
+}
+
++ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	return [[self alloc] initWithFileAtURL:fileURL convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
-    NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
-	return [self initWithData:data error:error];
+	return [self initWithFileAtURL:fileURL convertMIDIChannelsToTracks:NO error:error];
+}
+
+- (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
+	return [self initWithData:data convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 + (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error
 {
-    return [[self alloc] initWithData:data error:error];
+    return [[self alloc] initWithData:data convertMIDIChannelsToTracks:NO error:error];
+}
+
++ (instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	return [[self alloc] initWithData:data convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 - (instancetype)initWithData:(NSData *)data error:(NSError **)error
+{
+	return [self initWithData:data convertMIDIChannelsToTracks:NO error:error];
+}
+
+- (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	
@@ -78,7 +98,8 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
         return nil;
     }
 
-    err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, 0);
+	MusicSequenceLoadFlags flags = convertMIDIChannelsToTracks ? kMusicSequenceLoadSMF_ChannelsToTracks : 0;
+    err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, flags);
     if (err) {
         NSLog(@"MusicSequenceFileLoadData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];

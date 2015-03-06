@@ -32,13 +32,13 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return 0; }
++ (NSData *)initialData { return [NSData data]; }
 
 + (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data
 {
 	MIKMIDIEventType midiEventType = [[self class] mikEventTypeForMusicEventType:eventType andData:data];
 	// -initWithTimeStamp:midiEventType:data: will do subclass lookup too, but this way we avoid a second alloc
-	Class subclass = [[self class] subclassForEventType:eventType];
+	Class subclass = [[self class] subclassForEventType:midiEventType];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] initWithTimeStamp:timeStamp midiEventType:midiEventType data:data];
@@ -66,12 +66,8 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 		_timeStamp = timeStamp;
 		_eventType = eventType;
 
-		NSMutableData *internalData = [NSMutableData dataWithData:data];
-		size_t minSize = [[self class] minimumDataSize];
-		if ([internalData length] < minSize) {
-			[internalData increaseLengthBy:(minSize - [internalData length])];
-		}
-		_internalData = internalData;
+		if (!data) data = [[self class] initialData];
+		_internalData = [NSMutableData dataWithData:data];
 	}
 	return self;
 }
@@ -99,6 +95,12 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 + (MIKMIDIEventType)mikEventTypeForMusicEventType:(MusicEventType)musicEventType andData:(NSData *)data
 {
+	NSDictionary *channelEventTypeToMIDITypeMap = @{@(MIKMIDIChannelEventTypePolyphonicKeyPressure) : @(MIKMIDIEventTypeMIDIPolyphonicKeyPressureMessage),
+													@(MIKMIDIChannelEventTypeControlChange) : @(MIKMIDIEventTypeMIDIControlChangeMessage),
+													@(MIKMIDIChannelEventTypeProgramChange) : @(MIKMIDIEventTypeMIDIProgramChangeMessage),
+													@(MIKMIDIChannelEventTypeChannelPressure) : @(MIKMIDIEventTypeMIDIChannelPressureMessage),
+													@(MIKMIDIChannelEventTypePitchBendChange) : @(MIKMIDIEventTypeMIDIPitchBendChangeMessage)};
+	
 	NSDictionary *metaTypeToMIDITypeMap = @{@(MIKMIDIMetaEventTypeSequenceNumber) : @(MIKMIDIEventTypeMetaSequence),
 											@(MIKMIDIMetaEventTypeTextEvent) : @(MIKMIDIEventTypeMetaText),
 											@(MIKMIDIMetaEventTypeCopyrightNotice) : @(MIKMIDIEventTypeMetaCopyright),
@@ -114,6 +116,7 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 											@(MIKMIDIMetaEventTypeTimeSignature) : @(MIKMIDIEventTypeMetaTimeSignature),
 											@(MIKMIDIMetaEventTypeKeySignature) : @(MIKMIDIEventTypeMetaKeySignature),
 											@(MIKMIDIMetaEventTypeSequencerSpecificEvent) : @(MIKMIDIEventTypeMetaSequenceSpecificEvent),};
+	
 	NSDictionary *musicEventToMIDITypeMap = @{@(kMusicEventType_NULL) : @(MIKMIDIEventTypeNULL),
 											  @(kMusicEventType_ExtendedNote) : @(MIKMIDIEventTypeExtendedNote),
 											  @(kMusicEventType_ExtendedTempo) : @(MIKMIDIEventTypeExtendedTempo),
@@ -127,6 +130,9 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 	if (musicEventType == kMusicEventType_Meta) {
 		UInt8 metaEventType = *(UInt8 *)[data bytes];
 		return [metaTypeToMIDITypeMap[@(metaEventType)] unsignedIntegerValue];
+	} else if (musicEventType == kMusicEventType_MIDIChannelMessage) {
+		UInt8 channelEventType = *(UInt8 *)[data bytes] & 0xF0;
+		return [channelEventTypeToMIDITypeMap[@(channelEventType)] unsignedIntegerValue];
 	} else {
 		return [musicEventToMIDITypeMap[@(musicEventType)] unsignedIntegerValue];
 	}
@@ -209,5 +215,28 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 @dynamic eventType;
 @dynamic data;
 @dynamic timeStamp;
+
+@end
+
+#pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
+
+#import "MIKMIDIClock.h"
+#import "MIKMIDINoteEvent.h"
+#import "MIKMIDIChannelEvent.h"
+
+@implementation MIKMIDICommand (MIKMIDIEventToCommands)
+
++ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock
+{
+	NSMutableArray *result = [NSMutableArray array];
+	if ([event isKindOfClass:[MIKMIDINoteEvent class]]) {
+		NSArray *commands = [MIKMIDICommand commandsFromNoteEvent:(MIKMIDINoteEvent *)event clock:clock];
+		if (commands) [result addObjectsFromArray:commands];
+	} else if ([event isKindOfClass:[MIKMIDIChannelEvent class]]) {
+		MIKMIDICommand *command = [MIKMIDICommand commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:clock];
+		if (command) [result addObject:command];
+	}
+	return result;
+}
 
 @end

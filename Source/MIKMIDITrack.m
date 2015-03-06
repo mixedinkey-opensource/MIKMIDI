@@ -75,7 +75,7 @@
     const void *data = [event.data bytes];
 
     switch (event.eventType) {
-        case kMusicEventType_NULL:
+        case MIKMIDIEventTypeNULL:
             NSLog(@"Warning: %s attempted to insert NULL event.", __PRETTY_FUNCTION__);
             break;
 
@@ -105,11 +105,6 @@
             if (err) NSLog(@"MusicTrackNewMIDINoteEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
 
-        case MIKMIDIEventTypeMIDIChannelMessage:
-            err = MusicTrackNewMIDIChannelEvent(track, timeStamp, data);
-            if (err) NSLog(@"MusicTrackNewMIDIChannelEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-            break;
-
         case MIKMIDIEventTypeMIDIRawData:
             err = MusicTrackNewMIDIRawDataEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewMIDIRawDataEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
@@ -124,6 +119,16 @@
             err = MusicTrackNewAUPresetEvent(track, timeStamp, data);
             if (err) NSLog(@"MusicTrackNewAUPresetEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
             break;
+			
+		case MIKMIDIEventTypeMIDIChannelMessage:
+		case MIKMIDIEventTypeMIDIPolyphonicKeyPressureMessage:
+		case MIKMIDIEventTypeMIDIControlChangeMessage:
+		case MIKMIDIEventTypeMIDIProgramChangeMessage:
+		case MIKMIDIEventTypeMIDIChannelPressureMessage:
+		case MIKMIDIEventTypeMIDIPitchBendChangeMessage:
+			err = MusicTrackNewMIDIChannelEvent(track, timeStamp, data);
+			if (err) NSLog(@"MusicTrackNewMIDIChannelEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			break;
 			
 		case MIKMIDIEventTypeMeta:
 		case MIKMIDIEventTypeMetaSequence:

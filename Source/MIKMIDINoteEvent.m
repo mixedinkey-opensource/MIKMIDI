@@ -22,7 +22,7 @@
 + (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return sizeof(MIDINoteMessage); }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDINoteMessage){0} length:sizeof(MIDINoteMessage)]; }
 
 #pragma mark - Lifecycle
 

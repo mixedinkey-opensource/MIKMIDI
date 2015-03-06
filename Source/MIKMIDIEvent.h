@@ -22,14 +22,23 @@ typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
 	MIKMIDIEventTypeExtendedNote = kMusicEventType_ExtendedNote,
 	MIKMIDIEventTypeExtendedTempo = kMusicEventType_ExtendedTempo,
 	MIKMIDIEventTypeUser = kMusicEventType_User,
-	MIKMIDIEventTypeMeta = kMusicEventType_Meta,
+	MIKMIDIEventTypeMeta = kMusicEventType_Meta, /* See subtypes below */
 	MIKMIDIEventTypeMIDINoteMessage = kMusicEventType_MIDINoteMessage,
-	MIKMIDIEventTypeMIDIChannelMessage = kMusicEventType_MIDIChannelMessage,
+	MIKMIDIEventTypeMIDIChannelMessage = kMusicEventType_MIDIChannelMessage, /* See subtypes below */
 	MIKMIDIEventTypeMIDIRawData = kMusicEventType_MIDIRawData,
 	MIKMIDIEventTypeParameter = kMusicEventType_Parameter,
 	MIKMIDIEventTypeAUPreset = kMusicEventType_AUPreset,
 	
-	// Meta types
+	
+	// Channel Message subtypes
+	MIKMIDIEventTypeMIDIPolyphonicKeyPressureMessage,
+	MIKMIDIEventTypeMIDIControlChangeMessage,
+	MIKMIDIEventTypeMIDIProgramChangeMessage,
+	MIKMIDIEventTypeMIDIChannelPressureMessage,
+	MIKMIDIEventTypeMIDIPitchBendChangeMessage,
+	
+	
+	// Meta subtypes
     MIKMIDIEventTypeMetaSequence,
     MIKMIDIEventTypeMetaText,
     MIKMIDIEventTypeMetaCopyright,
@@ -50,6 +59,15 @@ typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
 	// Deprecated, and unsupported. Unavailable on iOS.
 	MIKMIDIEventTypeExtendedControl = kMusicEventType_ExtendedControl,
 #endif
+};
+
+typedef NS_ENUM(NSUInteger, MIKMIDIChannelEventType)
+{
+	MIKMIDIChannelEventTypePolyphonicKeyPressure        = 0xA0,
+	MIKMIDIChannelEventTypeControlChange				= 0xB0,
+	MIKMIDIChannelEventTypeProgramChange				= 0xC0,
+	MIKMIDIChannelEventTypeChannelPressure				= 0xD0,
+	MIKMIDIChannelEventTypePitchBendChange				= 0xE0,
 };
 
 typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
@@ -179,5 +197,17 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 @property (nonatomic, readonly) MIKMIDIEventType eventType;
 @property (nonatomic) MusicTimeStamp timeStamp;
 @property (nonatomic, strong, readwrite) NSMutableData *data;
+
+@end
+
+#pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
+
+#import <MIKMIDI/MIKMIDICommand.h>
+
+@class MIKMIDIClock;
+
+@interface MIKMIDICommand (MIKMIDIEventToCommands)
+
++ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
 
 @end

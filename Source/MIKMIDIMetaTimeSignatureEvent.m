@@ -21,7 +21,12 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTimeSignatureEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTimeSignatureEvent class]; }
 + (BOOL)isMutable { return NO; }
-+ (size_t)minimumDataSize { return [super minimumDataSize] + 4; /* Account for numerator, denominator, metronome, and 32nd note bytes  */ }
++ (NSData *)initialData
+{
+	NSMutableData *superData = [[super initialData] mutableCopy];
+	[superData increaseLengthBy:2]; // Account for numerator, denominator, metronome, and 32nd note bytes
+	return [superData copy];
+}
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
