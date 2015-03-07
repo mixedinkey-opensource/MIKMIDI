@@ -29,5 +29,6 @@
 - (BOOL)seek:(MusicTimeStamp)timeStamp;
 - (BOOL)moveToNextEvent;
 - (BOOL)moveToPreviousEvent;
+- (BOOL)deleteCurrentEventWithError:(NSError **)error;
 
 @end
