@@ -68,6 +68,7 @@
             UInt8 firstByte = self.dataByte1;
             if (firstByte == 0) {
                 _has3ByteManufacturerID = YES;
+				if ([self.internalData length] < 4) [self.internalData increaseLengthBy:4-[self.internalData length]];
             }
         }
     }
@@ -91,7 +92,8 @@
 	NSUInteger numExistingBytes = _has3ByteManufacturerID ? 3 : 1;
 	NSUInteger numNewBytes = (manufacturerID & 0xFFFF00) != 0 ? 3 : 1;
 	UInt8 manufacturerIDBytes[3] = {(manufacturerID >> 2) & 0x7F, (manufacturerID >> 1) & 0x7F, manufacturerID & 0x7F};
-	if ([self.internalData length] < numNewBytes+1) [self.internalData increaseLengthBy:numNewBytes-[self.internalData length]+1];
+	NSUInteger numRequiredBytes = MAX(numExistingBytes, numNewBytes) + 1;
+	if ([self.internalData length] < numRequiredBytes) [self.internalData increaseLengthBy:numRequiredBytes-[self.internalData length]];
 	
 	UInt8 *replacementBytes = manufacturerIDBytes + 3 - numNewBytes;
 	[self.internalData replaceBytesInRange:NSMakeRange(1, numExistingBytes) withBytes:replacementBytes length:numNewBytes];

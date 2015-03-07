@@ -230,10 +230,8 @@
         MIKMIDISystemExclusiveCommand *identityRequest = [MIKMIDISystemExclusiveCommand identityRequestCommand];
         NSString *identityRequestString = [NSString stringWithFormat:@"%@", identityRequest.data];
         identityRequestString = [identityRequestString substringWithRange:NSMakeRange(1, identityRequestString.length-2)];
-        _availableCommands = @[
-                               @{@"name": @"Identity Request",
-                                 @"value": identityRequestString}
-                               ];
+        _availableCommands = @[@{@"name": @"Identity Request",
+                                 @"value": identityRequestString}];
     }
     return _availableCommands;
 }
