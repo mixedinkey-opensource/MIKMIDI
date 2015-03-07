@@ -39,6 +39,10 @@
 	// Make sure number of tracks is correct
 	XCTAssertEqual([sequence.tracks count], 3);
 	XCTAssertNotNil(sequence.tempoTrack);
+	
+	// Check that the number of events in each track is correct
+	XCTAssertEqual([[sequence.tracks[1] events] count], 242);
+	XCTAssertEqual([[sequence.tracks[2] events] count], 220);
 }
 
 @end

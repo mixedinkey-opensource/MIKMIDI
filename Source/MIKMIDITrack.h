@@ -24,47 +24,37 @@
 @interface MIKMIDITrack : NSObject
 
 /**
- *  Inserts the specified MIDI event into the track.
+ *  Inserts the specified MIDI event into the receiver.
  *
  *  @param event The MIDI event to insert into the track.
- *
- *  @return Whether or not inserting the MIDI event was succesful.
  */
-- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event;
+- (void)addEvent:(MIKMIDIEvent *)event;
 
 /**
- *  Removes the specified MIDI event from the track.
+ *   Inserts the specified MIDI events into the receiver.
+ *
+ *  @param events An NSArray containing the events to be added.
+ */
+- (void)addEvents:(NSArray *)events;
+
+/**
+ *  Removes the specified MIDI event from the receiver.
  *
  *  @param event The MIDI event to remove from the track.
- *
- *  @return Whether or not removing the MIDI event from the track was succesful.
  */
-- (BOOL)removeMIDIEvent:(MIKMIDIEvent *)event;
+- (void)removeEvent:(MIKMIDIEvent *)event;
 
 /**
- *  Inserts MIDI events into the track.
+ *  Removes the specified MIDI events from the receiver.
  *
- *  @param events An NSSet of MIKMIDIEvent to insert into the track.
- *
- *  @return Whether or not inserting the MIDI events was succesful.
+ *  @param events An NSArray containing the events to be removed.
  */
-- (BOOL)insertMIDIEvents:(NSSet *)events;
+- (void)removeEvents:(NSArray *)events;
 
 /**
- *  Removes MIDI events from a track.
- *
- *  @param events An NSSet of MIKMIDIEvent to remove from the track.
- *
- *  @return Whether or not removing the MIDI events was succesful.
+ *  Removes all MIDI events from the receiver.
  */
-- (BOOL)removeMIDIEvents:(NSSet *)events;
-
-/**
- *  Removes all MIDI events from the track.
- *
- *  @return Whether or not removing all of the MIDI events from the track was succesful.
- */
-- (BOOL)clearAllEvents;
+- (void)removeAllEvents;
 
 /**
  *  Gets all of the MIDI events in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
@@ -102,7 +92,7 @@
  */
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
-#pragma mark - Event
+#pragma mark - Event Manipulation
 
 /**
  *  Moves all of the MIDI events between startTimeStamp and endTimeStamp inclusively by the specified offset.
@@ -126,7 +116,7 @@
 - (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 /**
- *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively. Events that fall past the 
+ *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively. Events that fall past the
  *  specified range will be moved back by the specified range time.
  *
  *  @param startTimeStamp The starting time stamp for the range of the events to cut.
@@ -171,12 +161,16 @@
 @property (nonatomic, readonly) MusicTrack musicTrack;
 
 /**
- *  An array of MIKMIDIEvent containing all of the MIDI events for the track.
+ *  An array of MIKMIDIEvent containing all of the MIDI events for the track, sorted by timestamp.
+ * 
+ *  This property can be observed using KVO.
  */
 @property (nonatomic, copy) NSArray *events;
 
 /**
- *  An array of MIKMIDINoteEvent containing all of the MIDI note events for the track.
+ *  An array of MIKMIDINoteEvent containing all of the MIDI note events for the track, sorted by timestamp.
+ *
+ *  This property can be observed using KVO.
  */
 @property (nonatomic, readonly) NSArray *notes;
 
@@ -258,5 +252,47 @@
  *	The destination endpoint for the MIDI events of the track during playback.
  */
 @property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated Use -addEvent: instead.
+ *
+ *  Inserts the specified MIDI event into the track.
+ *
+ *  @param event The MIDI event to insert into the track.
+ *
+ *  @return Whether or not inserting the MIDI event was succesful.
+ */
+- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated Use -addEvent: instead.
+ *
+ *  Inserts MIDI events into the track.
+ *
+ *  @param events An NSSet of MIKMIDIEvent to insert into the track.
+ *
+ *  @return Whether or not inserting the MIDI events was succesful.
+ */
+- (BOOL)insertMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated Use -removeEvent: instead.
+ *
+ *  Removes MIDI events from a track.
+ *
+ *  @param events An NSSet of MIKMIDIEvent to remove from the track.
+ *
+ *  @return Whether or not removing the MIDI events was succesful.
+ */
+- (BOOL)removeMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated Use -removeAllEvents instead.
+ *
+ *  Removes all MIDI events from the track.
+ *
+ *  @return Whether or not removing all of the MIDI events from the track was succesful.
+ */
+- (BOOL)clearAllEvents DEPRECATED_ATTRIBUTE;
 
 @end

@@ -37,6 +37,12 @@ typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	 *  The mapping file did not have the correct file extension (".midimap").
 	 */
 	MIKMIDIMappingIncorrectFileExtensionErrorCode,
+	
+	/**
+	 *  An error ocurred during an operation on event(s) in an MIKMIDITrack
+	 *  because the event(s) could not be found in the track.
+	 */
+	MIKMIDITrackEventNotFoundErrorCode,
 };
 
 /**
