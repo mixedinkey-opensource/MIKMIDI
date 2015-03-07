@@ -91,6 +91,21 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
     return [NSString stringWithFormat:@"%@ Timestamp: %f Type: %u, %@", [super description], self.timeStamp, (unsigned int)self.eventType, additionalDescription];
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (object == self) return YES;
+	if (![object isKindOfClass:[MIKMIDIEvent class]]) return NO;
+	
+	MIKMIDIEvent *otherEvent = (MIKMIDIEvent *)object;
+	if (otherEvent.eventType != self.eventType) return NO;
+	return self.timeStamp == otherEvent.timeStamp && [self.data isEqualToData:otherEvent.data];
+}
+
+- (NSUInteger)hash
+{
+	return (NSUInteger)(self.timeStamp + [self.data hash]);
+}
+
 #pragma mark - Private
 
 + (MIKMIDIEventType)mikEventTypeForMusicEventType:(MusicEventType)musicEventType andData:(NSData *)data
