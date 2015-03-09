@@ -99,11 +99,11 @@
  *
  *  @param startTimeStamp The starting time stamp for the range of the events to move.
  *  @param endTimeStamp The ending time stamp for the range of the events to move.
- *  @param offsetTimeStamp The amount to move the events
+ *  @param timestampOffset The amount to move the events
  *
  *  @return Whether or not moving the events was succesful.
  */
-- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp;
+- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset;
 
 /**
  *  Removes all of the MIDI events between startTimeStamp and endTimeStamp inclusively.

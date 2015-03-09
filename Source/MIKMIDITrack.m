@@ -355,13 +355,47 @@
 
 #pragma mark - Editing Events (Public)
 
-- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)offsetTimeStamp
+- (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
 {
 	MusicTimeStamp length = self.length;
 	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
 	if (endTimeStamp > length) endTimeStamp = length;
 	
-	OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, offsetTimeStamp);
+	if (startTimeStamp == endTimeStamp){
+		// If the start and end timestamps are the same,
+		// MusicTrackMoveEvents() will fail, so iterate the track and move that way instead
+		NSMutableSet *eventsToMove = [NSMutableSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
+		NSSet *eventsBeforeMoving = [eventsToMove copy];
+		NSMutableSet *eventsAfterMoving = [NSMutableSet set];
+		
+		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+		while (iterator.hasCurrentEvent && [eventsToMove count] > 0) {
+			MIKMIDIEvent *currentEvent = iterator.currentEvent;
+			if (![eventsToMove containsObject:currentEvent]) {
+				[iterator moveToNextEvent];
+				continue;
+			}
+			
+			MusicTimeStamp timestamp = currentEvent.timeStamp;
+			if (![iterator moveCurrentEventTo:timestamp+timestampOffset error:NULL]) {
+				[self reloadAllEventsFromMusicTrack];
+				return NO;
+			}
+			MIKMutableMIDIEvent *movedEvent = [currentEvent mutableCopy];
+			movedEvent.timeStamp += timestampOffset;
+			[eventsAfterMoving addObject:[movedEvent copy]];
+			[eventsToMove removeObject:currentEvent];
+			[iterator seek:timestamp]; // Move back to previous position
+		}
+		
+		[self removeInternalEvents:eventsBeforeMoving];
+		[self addInternalEvents:eventsAfterMoving];
+		
+		return YES;
+	}
+	
+	// We can just use MusicTrackMoveEvents() instead.
+	OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, timestampOffset);
 	if (err) {
 		NSLog(@"MusicTrackMoveEvents() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 		[self reloadAllEventsFromMusicTrack];
