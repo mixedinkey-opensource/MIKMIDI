@@ -243,6 +243,112 @@
 	[track removeObserver:self forKeyPath:@"events"];
 }
 
+#pragma mark - Clearing Events
+
+- (void)testClearingSingleEvent
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		// Move event 2 to timestamp 5
+		[track clearEventsFromStartingTimeStamp:2 toEndingTimeStamp:2];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Clearing events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event3, event4, event5];
+		NSArray *eventsAfterMoving = track.events;
+		XCTAssertEqualObjects(eventsAfterMoving, expectedNewEvents, @"Clearing an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testClearingMultipleEventsAtSameTimestamp
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		// Move event 2 to timestamp 5
+		[track clearEventsFromStartingTimeStamp:2 toEndingTimeStamp:2];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Clearing events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event4, event5];
+		NSArray *eventsAfterMoving = track.events;
+		XCTAssertEqualObjects(eventsAfterMoving, expectedNewEvents, @"Clearing an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testClearingEventsInARange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		// Move event 2 to timestamp 5
+		[track clearEventsFromStartingTimeStamp:3 toEndingTimeStamp:4];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Clearing events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event2, event5];
+		NSArray *eventsAfterMoving = track.events;
+		XCTAssertEqualObjects(eventsAfterMoving, expectedNewEvents, @"Clearing an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testClearingEventsInAWiderRange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		// Move event 2 to timestamp 5
+		[track clearEventsFromStartingTimeStamp:2.5 toEndingTimeStamp:4.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Clearing events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event2, event5];
+		NSArray *eventsAfterMoving = track.events;
+		XCTAssertEqualObjects(eventsAfterMoving, expectedNewEvents, @"Clearing an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
 #pragma mark - (KVO Test Helper)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
