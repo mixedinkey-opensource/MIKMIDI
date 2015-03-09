@@ -91,6 +91,18 @@
 	return YES;
 }
 
+- (BOOL)moveCurrentEventTo:(MusicTimeStamp)timestamp error:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = MusicEventIteratorSetEventTime(self.iterator, timestamp);
+	if (err) {
+		NSLog(@"MusicEventIteratorSetEventTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
+}
+
 #pragma mark - Current Event
 
 - (MIKMIDIEvent *)currentEvent

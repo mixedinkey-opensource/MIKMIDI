@@ -30,5 +30,6 @@
 - (BOOL)moveToNextEvent;
 - (BOOL)moveToPreviousEvent;
 - (BOOL)deleteCurrentEventWithError:(NSError **)error;
+- (BOOL)moveCurrentEventTo:(MusicTimeStamp)timestamp error:(NSError **)error;
 
 @end
