@@ -77,6 +77,8 @@
 	[track removeObserver:self forKeyPath:@"events"];
 }
 
+#pragma mark - Moving Events
+
 - (void)testMovingSingleEvent
 {
 	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
@@ -146,7 +148,7 @@
 	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
 	{
 		// Move event 2 to timestamp 5
-		[track moveEventsFromStartingTimeStamp:1.5 toEndingTimeStamp:3.5 byAmount:3];
+		[track moveEventsFromStartingTimeStamp:2 toEndingTimeStamp:3 byAmount:3];
 		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Moving events in MIKMIDITrack did not produce a KVO notification.");
 		MIKMIDIEvent *expectedEvent2AfterMove = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:61 velocity:127 duration:1 channel:0];
 		MIKMIDIEvent *expectedEvent3AfterMove = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:62 velocity:127 duration:1 channel:0];
@@ -240,6 +242,8 @@
 	}
 	[track removeObserver:self forKeyPath:@"events"];
 }
+
+#pragma mark - (KVO Test Helper)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {

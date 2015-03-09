@@ -357,53 +357,39 @@
 
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
 {
+	// MusicTrackMoveEvents() fails in common edge cases, so iterate the track and move that way instead
+	
 	MusicTimeStamp length = self.length;
 	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
 	if (endTimeStamp > length) endTimeStamp = length;
 	
-	if (startTimeStamp == endTimeStamp){
-		// If the start and end timestamps are the same,
-		// MusicTrackMoveEvents() will fail, so iterate the track and move that way instead
-		NSMutableSet *eventsToMove = [NSMutableSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
-		NSSet *eventsBeforeMoving = [eventsToMove copy];
-		NSMutableSet *eventsAfterMoving = [NSMutableSet set];
-		
-		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-		while (iterator.hasCurrentEvent && [eventsToMove count] > 0) {
-			MIKMIDIEvent *currentEvent = iterator.currentEvent;
-			if (![eventsToMove containsObject:currentEvent]) {
-				[iterator moveToNextEvent];
-				continue;
-			}
-			
-			MusicTimeStamp timestamp = currentEvent.timeStamp;
-			if (![iterator moveCurrentEventTo:timestamp+timestampOffset error:NULL]) {
-				[self reloadAllEventsFromMusicTrack];
-				return NO;
-			}
-			MIKMutableMIDIEvent *movedEvent = [currentEvent mutableCopy];
-			movedEvent.timeStamp += timestampOffset;
-			[eventsAfterMoving addObject:[movedEvent copy]];
-			[eventsToMove removeObject:currentEvent];
-			[iterator seek:timestamp]; // Move back to previous position
+	NSMutableSet *eventsToMove = [NSMutableSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
+	NSSet *eventsBeforeMoving = [eventsToMove copy];
+	NSMutableSet *eventsAfterMoving = [NSMutableSet set];
+	
+	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+	while (iterator.hasCurrentEvent && [eventsToMove count] > 0) {
+		MIKMIDIEvent *currentEvent = iterator.currentEvent;
+		if (![eventsToMove containsObject:currentEvent]) {
+			[iterator moveToNextEvent];
+			continue;
 		}
 		
-		[self removeInternalEvents:eventsBeforeMoving];
-		[self addInternalEvents:eventsAfterMoving];
-		
-		return YES;
+		MusicTimeStamp timestamp = currentEvent.timeStamp;
+		if (![iterator moveCurrentEventTo:timestamp+timestampOffset error:NULL]) {
+			[self reloadAllEventsFromMusicTrack];
+			return NO;
+		}
+		MIKMutableMIDIEvent *movedEvent = [currentEvent mutableCopy];
+		movedEvent.timeStamp += timestampOffset;
+		[eventsAfterMoving addObject:[movedEvent copy]];
+		[eventsToMove removeObject:currentEvent];
+		[iterator seek:timestamp]; // Move back to previous position
 	}
 	
-	// We can just use MusicTrackMoveEvents() instead.
-	OSStatus err = MusicTrackMoveEvents(self.musicTrack, startTimeStamp, endTimeStamp, timestampOffset);
-	if (err) {
-		NSLog(@"MusicTrackMoveEvents() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		[self reloadAllEventsFromMusicTrack];
-		return NO;
-	}
-	
-	[self reloadAllEventsFromMusicTrack];
-	
+	[self removeInternalEvents:eventsBeforeMoving];
+	[self addInternalEvents:eventsAfterMoving];
+
 	return YES;
 }
 
