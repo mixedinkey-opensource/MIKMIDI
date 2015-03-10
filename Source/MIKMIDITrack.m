@@ -384,16 +384,21 @@
 
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
 {
-	NSArray *sourceEvents = [origTrack eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
-	if (![sourceEvents count]) return YES;
-	
-	MusicTimeStamp firstSourceTimeStamp = [[sourceEvents firstObject] timeStamp];
-
 	// Move existing events to make room for new events
 	if (![self moveEventsFromStartingTimeStamp:destTimeStamp
 							 toEndingTimeStamp:kMusicTimeStamp_EndOfTrack
 									  byAmount:(endTimeStamp - startTimeStamp)]) return NO;
 	
+	return [self mergeEventsFromMIDITrack:origTrack fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp atTimeStamp:destTimeStamp];
+}
+
+- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
+{
+	NSArray *sourceEvents = [origTrack eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+	if (![sourceEvents count]) return YES;
+	
+	MusicTimeStamp firstSourceTimeStamp = [[sourceEvents firstObject] timeStamp];
+		
 	NSMutableSet *destinationEvents = [NSMutableSet set];
 	for (MIKMIDIEvent *event in sourceEvents) {
 		MIKMutableMIDIEvent *mutableEvent = [event mutableCopy];
@@ -406,24 +411,6 @@
 	}
 	
 	[self addInternalEvents:destinationEvents];
-	return YES;
-}
-
-- (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
-{
-	MusicTimeStamp length = origTrack.length;
-	if (!length || (startTimeStamp > length) || ![origTrack.events count]) return YES;
-	if (endTimeStamp > length) endTimeStamp = length;
-	
-	OSStatus err = MusicTrackMerge(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
-	if (err) {
-		NSLog(@"MusicTrackMerge() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		[self reloadAllEventsFromMusicTrack];
-		return NO;
-	}
-	
-	[self reloadAllEventsFromMusicTrack];
-	
 	return YES;
 }
 
