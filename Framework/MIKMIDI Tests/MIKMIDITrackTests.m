@@ -481,6 +481,180 @@
 	[track removeObserver:self forKeyPath:@"events"];
 }
 
+#pragma mark - Copying Events
+
+- (void)testCopyingSingleEvent
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	
+	MIKMIDITrack *sourceTrack = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:3.5 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+	[sourceTrack addEvents:@[event1, event2, event3, event4, event5]];
+	
+	MIKMIDITrack *destTrack = [sequence addTrack];
+	event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	[destTrack addEvents:@[event1, event2, event4, event5]];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[destTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[destTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:3 toTimeStamp:3 andInsertAtTimeStamp:3];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event2, event3, event4, event5];
+		NSArray *eventsAfterCopy = destTrack.events;
+		XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
+	}
+	[destTrack removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCopyingSingleEventInWiderRange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	
+	MIKMIDITrack *sourceTrack = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+	[sourceTrack addEvents:@[event1, event2, event3, event4, event5]];
+	
+	MIKMIDITrack *destTrack = [sequence addTrack];
+	event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:63 velocity:127 duration:1 channel:0];
+	event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	[destTrack addEvents:@[event1, event2, event4, event5]];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[destTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[destTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:2.5 toTimeStamp:3.5 andInsertAtTimeStamp:3];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent4AfterCopy = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent5AfterCopy = [MIKMIDINoteEvent noteEventWithTimeStamp:7 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[event1, event2, event3, expectedEvent4AfterCopy, expectedEvent5AfterCopy];
+		NSArray *eventsAfterCopy = destTrack.events;
+		XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
+	}
+	[destTrack removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCopyingMultipleEvents
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	
+	MIKMIDITrack *sourceTrack = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+	[sourceTrack addEvents:@[event1, event2, event3, event4, event5]];
+	
+	MIKMIDITrack *destTrack = [sequence addTrack];
+	MIKMIDIEvent *destEvent1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	[destTrack addEvents:@[destEvent1, destEvent2, destEvent4, destEvent5]];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[destTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[destTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:3 toTimeStamp:4 andInsertAtTimeStamp:2.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:62 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:3.5 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent6 = [MIKMIDINoteEvent noteEventWithTimeStamp:7 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[destEvent1, destEvent2, expectedEvent3, expectedEvent4, expectedEvent5, expectedEvent6];
+		NSArray *eventsAfterCopy = destTrack.events;
+		XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
+	}
+	[destTrack removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCopyingMultipleEventsAtSameTimestamp
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	
+	MIKMIDITrack *sourceTrack = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+	[sourceTrack addEvents:@[event1, event2, event3, event4, event5]];
+	
+	MIKMIDITrack *destTrack = [sequence addTrack];
+	MIKMIDIEvent *destEvent1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	[destTrack addEvents:@[destEvent1, destEvent2, destEvent4, destEvent5]];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[destTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[destTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:3 toTimeStamp:3 andInsertAtTimeStamp:2.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:62 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:63 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[destEvent1, destEvent2, expectedEvent3, expectedEvent4, destEvent4, destEvent5];
+		NSArray *eventsAfterCopy = destTrack.events;
+		XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
+	}
+	[destTrack removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCopyingMultipleEventsInAWiderRange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	
+	MIKMIDITrack *sourceTrack = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+	[sourceTrack addEvents:@[event1, event2, event3, event4, event5]];
+	
+	MIKMIDITrack *destTrack = [sequence addTrack];
+	MIKMIDIEvent *destEvent1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *destEvent5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	[destTrack addEvents:@[destEvent1, destEvent2, destEvent4, destEvent5]];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[destTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[destTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:2.5 toTimeStamp:4.5 andInsertAtTimeStamp:2.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:62 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:3.5 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent5 = [MIKMIDINoteEvent noteEventWithTimeStamp:7 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent6 = [MIKMIDINoteEvent noteEventWithTimeStamp:8 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[destEvent1, destEvent2, expectedEvent3, expectedEvent4, expectedEvent5, expectedEvent6];
+		NSArray *eventsAfterCopy = destTrack.events;
+		XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
+	}
+	[destTrack removeObserver:self forKeyPath:@"events"];
+}
+
 #pragma mark - (KVO Test Helper)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
