@@ -327,7 +327,7 @@
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
 {
 	// MusicTrackMoveEvents() fails in common edge cases, so iterate the track and move that way instead
-
+	
 	if (timestampOffset == 0) return YES; // Nothing needs to be done
 	MusicTimeStamp length = self.length;
 	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
@@ -384,19 +384,28 @@
 
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
 {
-	MusicTimeStamp length = origTrack.length;
-	if (!length || (startTimeStamp > length) || ![origTrack.events count]) return YES;
-	if (endTimeStamp > length) endTimeStamp = length;
+	NSArray *sourceEvents = [origTrack eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+	if (![sourceEvents count]) return YES;
 	
-	OSStatus err = MusicTrackCopyInsert(origTrack.musicTrack, startTimeStamp, endTimeStamp, self.musicTrack, destTimeStamp);
-	if (err) {
-		NSLog(@"MusicTrackCopyInsert() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		[self reloadAllEventsFromMusicTrack];
-		return NO;
+	MusicTimeStamp firstSourceTimeStamp = [[sourceEvents firstObject] timeStamp];
+
+	// Move existing events to make room for new events
+	if (![self moveEventsFromStartingTimeStamp:destTimeStamp
+							 toEndingTimeStamp:kMusicTimeStamp_EndOfTrack
+									  byAmount:(endTimeStamp - startTimeStamp)]) return NO;
+	
+	NSMutableSet *destinationEvents = [NSMutableSet set];
+	for (MIKMIDIEvent *event in sourceEvents) {
+		MIKMutableMIDIEvent *mutableEvent = [event mutableCopy];
+		mutableEvent.timeStamp = destTimeStamp + (event.timeStamp - firstSourceTimeStamp);
+		if (![self insertMIDIEventInMusicTrack:mutableEvent error:NULL]) {
+			[self reloadAllEventsFromMusicTrack];
+			return NO;
+		}
+		[destinationEvents addObject:mutableEvent];
 	}
 	
-	[self reloadAllEventsFromMusicTrack];
-	
+	[self addInternalEvents:destinationEvents];
 	return YES;
 }
 
@@ -469,14 +478,14 @@
 
 - (void)addInternalEventsObject:(MIKMIDIEvent *)event
 {
-	[self.internalEvents addObject:event];
+	[self.internalEvents addObject:[event copy]];
 	self.sortedEventsCache = nil;
 }
 
 - (void)addInternalEvents:(NSSet *)events
 {
 	for (MIKMIDIEvent *event in events) {
-		[self addInternalEventsObject:event];
+		[self addInternalEventsObject:[event copy]];
 	}
 }
 
