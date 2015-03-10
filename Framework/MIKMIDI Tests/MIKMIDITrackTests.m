@@ -349,6 +349,138 @@
 	[track removeObserver:self forKeyPath:@"events"];
 }
 
+#pragma mark - Cutting Events
+
+- (void)testCuttingSingleEvent
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[track cutEventsFromStartingTimeStamp:3 toEndingTimeStamp:3];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Cutting events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event2, event4, event5];
+		NSArray *eventsAfterCutting = track.events;
+		XCTAssertEqualObjects(eventsAfterCutting, expectedNewEvents, @"Cutting an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCuttingSingleEventInWiderRange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[track cutEventsFromStartingTimeStamp:2.5 toEndingTimeStamp:3.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Cutting events in MIKMIDITrack did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent4AfterCut = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:63 velocity:127 duration:1 channel:0];
+		MIKMIDIEvent *expectedEvent5AfterCut = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[event1, event2, expectedEvent4AfterCut, expectedEvent5AfterCut];
+		NSArray *eventsAfterCutting = track.events;
+		XCTAssertEqualObjects(eventsAfterCutting, expectedNewEvents, @"Cutting an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCuttingMultipleEventsAtSameTimestamp
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[track cutEventsFromStartingTimeStamp:2 toEndingTimeStamp:2];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Cutting events in MIKMIDITrack did not produce a KVO notification.");
+		
+		NSArray *expectedNewEvents = @[event1, event4, event5];
+		NSArray *eventsAfterCutting = track.events;
+		XCTAssertEqualObjects(eventsAfterCutting, expectedNewEvents, @"Cutting an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCuttingEventsInARange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		[track cutEventsFromStartingTimeStamp:3 toEndingTimeStamp:4];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Cutting events in MIKMIDITrack did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent5AfterCut = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[event1, event2, expectedEvent5AfterCut];
+		NSArray *eventsAfterCut = track.events;
+		XCTAssertEqualObjects(eventsAfterCut, expectedNewEvents, @"Cutting an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
+- (void)testCuttingEventsInAWiderRange
+{
+	MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+	MIKMIDITrack *track = [sequence addTrack];
+	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:1 note:60 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event4 = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:63 velocity:127 duration:1 channel:0];
+	MIKMIDIEvent *event5 = [MIKMIDINoteEvent noteEventWithTimeStamp:6 note:64 velocity:127 duration:1 channel:0];
+	NSArray *allEvents = @[event1, event2, event3, event4, event5];
+	[track addEvents:allEvents];
+	
+	self.eventsChangeNotificationReceived = NO;
+	[track addObserver:self forKeyPath:@"events" options:0 context:NULL];
+	{
+		// Move event 2 to timestamp 5
+		[track cutEventsFromStartingTimeStamp:2.5 toEndingTimeStamp:4.5];
+		XCTAssertTrue(self.eventsChangeNotificationReceived, @"Cutting events in MIKMIDITrack did not produce a KVO notification.");
+		
+		MIKMIDIEvent *expectedEvent5AfterCut = [MIKMIDINoteEvent noteEventWithTimeStamp:4 note:64 velocity:127 duration:1 channel:0];
+		NSArray *expectedNewEvents = @[event1, event2, expectedEvent5AfterCut];
+		NSArray *eventsAfterCut = track.events;
+		XCTAssertEqualObjects(eventsAfterCut, expectedNewEvents, @"Cutting an event in MIKMIDITrack failed.");
+	}
+	[track removeObserver:self forKeyPath:@"events"];
+}
+
 #pragma mark - (KVO Test Helper)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
