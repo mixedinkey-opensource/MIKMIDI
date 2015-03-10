@@ -247,54 +247,23 @@
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	if (![events count]) return YES;
 	
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES];
-	NSArray *sortedEvents = [events sortedArrayUsingDescriptors:@[sortDescriptor]];
-	MusicTimeStamp startTimeStamp = [[sortedEvents firstObject] timeStamp];
-	MusicTimeStamp endTimeStamp = [[sortedEvents lastObject] timeStamp];
-	
-	// If there's only one event, or the start and end timestamps are otherwise the same,
-	// MusicTrackClear() will fail, so iterate the track and delete that way instead
-	if (startTimeStamp == endTimeStamp) {
-		BOOL success = NO;
-		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-		while (iterator.hasCurrentEvent) {
-			MIKMIDIEvent *currentEvent = iterator.currentEvent;
-			if ([events containsObject:currentEvent]) {
-				if (![iterator deleteCurrentEventWithError:error]) return NO;
-				success = YES;
-				continue; // Move to next event is done by delete.
-			}
-			
-			[iterator moveToNextEvent];
+	// MusicTrackClear() doesn't reliably clear events that fall on its boundaries,
+	// so we iterate the track and delete that way instead
+	BOOL success = NO;
+	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+	while (iterator.hasCurrentEvent) {
+		MIKMIDIEvent *currentEvent = iterator.currentEvent;
+		if ([events containsObject:currentEvent]) {
+			if (![iterator deleteCurrentEventWithError:error]) return NO;
+			success = YES;
+			continue; // Move to next event is done by delete.
 		}
 		
-		*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDITrackEventNotFoundErrorCode userInfo:nil];
-		return success;
+		[iterator moveToNextEvent];
 	}
 	
-	NSMutableSet *existingEvents = [NSMutableSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
-	
-	if (![events isSubsetOfSet:existingEvents]) {
-		*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDITrackEventNotFoundErrorCode userInfo:nil];
-		return NO;
-	}
-	[existingEvents minusSet:events];
-	
-	OSStatus err = MusicTrackClear(self.musicTrack, startTimeStamp, endTimeStamp);
-	if (err) {
-		NSLog(@"MusicTrackClear() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	// Read events that shouldn't have been removed.
-	for (MIKMIDIEvent *event in existingEvents) {
-		if (![self insertMIDIEventInMusicTrack:event error:error]) {
-			return NO;
-		}
-	}
-	
-	return YES;
+	*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDITrackEventNotFoundErrorCode userInfo:nil];
+	return success;
 }
 
 #pragma mark - Getting Events
@@ -358,7 +327,8 @@
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
 {
 	// MusicTrackMoveEvents() fails in common edge cases, so iterate the track and move that way instead
-	
+
+	if (timestampOffset == 0) return YES; // Nothing needs to be done
 	MusicTimeStamp length = self.length;
 	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
 	if (endTimeStamp > length) endTimeStamp = length;
@@ -389,46 +359,27 @@
 	
 	[self removeInternalEvents:eventsBeforeMoving];
 	[self addInternalEvents:eventsAfterMoving];
-
+	
 	return YES;
 }
 
 - (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-	NSArray *events = [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
-	
-	MusicTimeStamp length = self.length;
-	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
-	if (endTimeStamp > length) endTimeStamp = length;
-	
-	OSStatus err = MusicTrackClear(self.musicTrack, startTimeStamp, endTimeStamp);
-	if (err) {
-		NSLog(@"MusicTrackClear() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		[self reloadAllEventsFromMusicTrack];
-		return NO;
-	}
-	
-	[self removeInternalEvents:[NSSet setWithArray:events]];
-	return YES;
+	NSSet *events = [NSSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
+	BOOL success = [self removeMIDIEventsFromMusicTrack:events error:NULL];
+	[self reloadAllEventsFromMusicTrack];
+	return success;
 }
 
 - (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-	NSArray *events = [self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
-	
 	MusicTimeStamp length = self.length;
 	if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
 	if (endTimeStamp > length) endTimeStamp = length;
 	
-	OSStatus err = MusicTrackCut(self.musicTrack, startTimeStamp, endTimeStamp);
-	if (err) {
-		NSLog(@"MusicTrackCut() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-		[self reloadAllEventsFromMusicTrack];
-		return NO;
-	}
-	
-	[self removeInternalEvents:[NSSet setWithArray:events]];
-	return YES;
+	if (![self clearEventsFromStartingTimeStamp:startTimeStamp toEndingTimeStamp:endTimeStamp]) return NO;
+	MusicTimeStamp cutAmount = endTimeStamp - startTimeStamp;
+	return [self moveEventsFromStartingTimeStamp:endTimeStamp toEndingTimeStamp:kMusicTimeStamp_EndOfTrack byAmount:-cutAmount];
 }
 
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
