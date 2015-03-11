@@ -526,7 +526,7 @@
 		[self setDestinationEndpoint:result forTrack:track];
 		
 		MIKMIDISynthesizer *synth = [MIKMIDIEndpointSynthesizer synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)result];
-		[self.tracksToDefaultSynthsMap setObject:synth forKey:synth];
+		[self.tracksToDefaultSynthsMap setObject:synth forKey:track];
 	}
 	return result;
 }
