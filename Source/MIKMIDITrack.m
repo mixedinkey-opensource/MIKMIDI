@@ -488,9 +488,17 @@
 	self.sortedEventsCache = nil;
 }
 
++ (NSSet *)keyPathsForValuesAffectingNotes
+{
+	return [NSSet setWithObjects:@"sortedEventsCache", nil];
+}
+
 - (NSArray *)notes
 {
-	return [self notesFromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+	NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *b) {
+		return [(MIKMIDIEvent *)obj eventType] == MIKMIDIEventTypeMIDINoteMessage;
+	}];
+	return [self.sortedEventsCache filteredArrayUsingPredicate:predicate];
 }
 
 - (NSInteger)trackNumber
