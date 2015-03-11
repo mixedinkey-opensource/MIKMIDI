@@ -513,9 +513,19 @@
 	return (NSInteger)trackNumber;
 }
 
++ (NSSet *)keyPathsForValuesAffectingDoesLoop
+{
+	return [NSSet setWithObjects:@"loopDuration", nil];
+}
+
 - (BOOL)doesLoop
 {
 	return self.loopDuration > 0;
+}
+
++ (NSSet *)keyPathsForValuesAffectingNumberOfLoops
+{
+	return [NSSet setWithObjects:@"loopInfo", nil];
 }
 
 - (SInt32)numberOfLoops
@@ -531,6 +541,11 @@
 		loopInfo.numberOfLoops = numberOfLoops;
 		self.loopInfo = loopInfo;
 	}
+}
+
++ (NSSet *)keyPathsForValuesAffectingLoopDuration
+{
+	return [NSSet setWithObjects:@"loopInfo", nil];
 }
 
 - (MusicTimeStamp)loopDuration
@@ -608,6 +623,11 @@
 	Boolean soloBoolean = solo ? TRUE : FALSE;
 	OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &soloBoolean, sizeof(soloBoolean));
 	if (err) NSLog(@"MusicTrackSetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+}
+
++ (NSSet *)keyPathsForValuesAffectingLength
+{
+	return [NSSet setWithObjects:@"events", nil];
 }
 
 - (MusicTimeStamp)length

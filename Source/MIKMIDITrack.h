@@ -162,15 +162,15 @@
 
 /**
  *  An array of MIKMIDIEvent containing all of the MIDI events for the track, sorted by timestamp.
- * 
- *  This property can be observed using KVO.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, copy) NSArray *events;
 
 /**
  *  An array of MIKMIDINoteEvent containing all of the MIDI note events for the track, sorted by timestamp.
  *
- *  This property can be observed using KVO.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) NSArray *notes;
 
@@ -181,13 +181,15 @@
 
 /**
  *  Whether the track is set to loop.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) BOOL doesLoop;
 
 /**
- * The number of times to play the designated portion of the music track. By default, a music track plays once.
+ *	The number of times to play the designated portion of the music track. By default, a music track plays once.
  *
- *  This is a shortcut to the numberOfLoops member of the loopInfo property.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) SInt32 numberOfLoops;
 
@@ -195,32 +197,42 @@
  *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
  *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
  *
- *  This is a shortcut to the loopDuration member of the loopInfo property.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp loopDuration;
 
 /**
  *  The loop info for the track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTrackLoopInfo loopInfo;
 
 /**
  *  A MIDI track’s start time in terms of beat number. By default this value is 0.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp offset;
 
 /**
  *  Whether or not the MIDI track is muted.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, getter = isMuted) BOOL muted;
 
 /**
  *  Whether or not the MIDI track is soloed.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, getter = isSolo) BOOL solo;
 
 /**
  *  The length of the MIDI track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp length;
 
