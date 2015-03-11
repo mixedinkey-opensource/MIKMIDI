@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) MIKMIDISequence *defaultSequence;
 @property (nonatomic, strong) MIKMIDITrack *defaultTrack;
+@property (copy) NSString *receivedKVONotificationKeyPath;
 
 @end
 
@@ -33,7 +34,11 @@
 	[self.defaultTrack addObserver:self forKeyPath:@"notes" options:0 context:NULL];
 }
 
-- (void)tearDown {
+- (void)tearDown
+{
+	self.receivedKVONotificationKeyPath = nil;
+	self.eventsChangeNotificationReceived = NO;
+	self.notesChangeNotificationReceived = NO;
 	
 	[self.defaultTrack removeObserver:self forKeyPath:@"events"];
 	[self.defaultTrack removeObserver:self forKeyPath:@"notes"];
@@ -730,17 +735,145 @@
 	
 }
 
+#pragma mark - Other Properties
+
+- (void)testSettingNumberOfLoops
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"numberOfLoops" options:0 context:NULL];
+	{
+		self.defaultTrack.numberOfLoops = 42;
+		XCTAssertEqual(self.defaultTrack.numberOfLoops, 42, @"Setting numberOfLoops failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"numberOfLoops", @"Setting numberOfLoops did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"numberOfLoops"];
+}
+
+- (void)testSettingLoopDuration
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"loopDuration" options:0 context:NULL];
+	{
+		self.defaultTrack.loopDuration = 42;
+		XCTAssertEqual(self.defaultTrack.loopDuration, 42, @"Setting loopDuration failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"loopDuration", @"Setting loopDuration did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"loopDuration"];
+}
+
+- (void)testSettingLoopInfo
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"loopInfo" options:0 context:NULL];
+	{
+		MusicTrackLoopInfo info = {
+			.loopDuration = 42,
+			.numberOfLoops = 27,
+		};
+		self.defaultTrack.loopInfo = info;
+		XCTAssertEqual(self.defaultTrack.loopInfo.loopDuration, info.loopDuration, @"Setting loopInfo failed.");
+		XCTAssertEqual(self.defaultTrack.loopInfo.numberOfLoops, info.numberOfLoops, @"Setting loopInfo failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"loopInfo", @"Setting loopInfo did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"loopInfo"];
+}
+
+- (void)testSettingOffset
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"offset" options:0 context:NULL];
+	{
+		self.defaultTrack.offset = 42;
+		XCTAssertEqual(self.defaultTrack.offset, 42, @"Setting offset failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"offset", @"Setting offset did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"offset"];
+}
+
+- (void)testSettingMuted
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"muted" options:0 context:NULL];
+	{
+		self.defaultTrack.muted = YES;
+		XCTAssertEqual(self.defaultTrack.muted, YES, @"Setting muted failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"muted", @"Setting muted did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"muted"];
+}
+
+- (void)testSettingSolo
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"solo" options:0 context:NULL];
+	{
+		self.defaultTrack.solo = YES;
+		XCTAssertEqual(self.defaultTrack.solo, YES, @"Setting solo failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"solo", @"Setting solo did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"solo"];
+}
+
+- (void)testSettingLength
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"length" options:0 context:NULL];
+	{
+		self.defaultTrack.length = 42;
+		XCTAssertEqual(self.defaultTrack.length, 42, @"Setting length failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"length", @"Setting length did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"length"];
+}
+
+- (void)testSettingLengthByAddingEvents
+{
+	[self.defaultTrack addObserver:self forKeyPath:@"length" options:0 context:NULL];
+	{
+		MusicTimeStamp startingLength = self.defaultTrack.length;
+		MIKMIDINoteEvent *event = [MIKMIDINoteEvent noteEventWithTimeStamp:startingLength+127 note:60 velocity:127 duration:1 channel:0];
+		[self.defaultTrack addEvent:event];
+		XCTAssertGreaterThanOrEqual(self.defaultTrack.length, event.timeStamp, @"Setting length failed.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"length", @"Setting length did not produce a KVO notification.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"length"];
+}
+
+- (void)testDoesLoopKVO
+{
+	self.defaultTrack.loopDuration = 0;
+	XCTAssertFalse(self.defaultTrack.doesLoop, @"Setting loop duration to zero did not make doesLoop NO.");
+	[self.defaultTrack addObserver:self forKeyPath:@"doesLoop" options:0 context:NULL];
+	{
+		self.defaultTrack.loopDuration = 42;
+		XCTAssertEqual(self.defaultTrack.loopDuration, 42, @"Setting loopDuration failed.");
+		XCTAssert(self.defaultTrack.doesLoop, @"Setting loop duration did not change doesLoop to YES.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"doesLoop", @"Setting loopDuration did not produce a KVO notification for doesLoop.");
+		
+		self.receivedKVONotificationKeyPath = nil;
+		
+		MusicTrackLoopInfo info = {
+			.loopDuration = 0,
+			.numberOfLoops = 1,
+		};
+		self.defaultTrack.loopInfo = info;
+		XCTAssertEqual(self.defaultTrack.loopDuration, 0, @"Setting loopDuration via loop info failed.");
+		XCTAssertFalse(self.defaultTrack.doesLoop, @"Clearing loop duration via loop info did not change doesLoop to NO.");
+		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"doesLoop", @"Setting loop info did not produce a KVO notification for doesLoop.");
+	}
+	[self.defaultTrack removeObserver:self forKeyPath:@"doesLoop"];
+}
+
 #pragma mark - (KVO Test Helper)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([object isKindOfClass:[MIKMIDITrack class]] && [keyPath isEqualToString:@"events"]) {
+	if (![object isKindOfClass:[MIKMIDITrack class]]) return;
+	
+	if ([keyPath isEqualToString:@"events"]) {
 		self.eventsChangeNotificationReceived = YES;
+		return;
 	}
 	
-	if ([object isKindOfClass:[MIKMIDITrack class]] && [keyPath isEqualToString:@"notes"]) {
+	if ([keyPath isEqualToString:@"notes"]) {
 		self.notesChangeNotificationReceived = YES;
+		return;
 	}
+	
+	self.receivedKVONotificationKeyPath = keyPath;
 }
 
 @end
