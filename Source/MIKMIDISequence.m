@@ -257,15 +257,16 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 - (BOOL)setOverallTempo:(Float64)bpm
 {
 	NSArray *timeSignatureEvents = [self timeSignatureEvents];
-    if (![self.tempoTrack clearAllEvents]) return NO;
-	if (timeSignatureEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:timeSignatureEvents]]) return NO;
+	[self.tempoTrack removeAllEvents];
+    if ([self.tempoTrack.events count]) return NO;
+	[self.tempoTrack addEvents:timeSignatureEvents];
     return [self setTempo:bpm atTimeStamp:0];
 }
 
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp
 {
-    MIKMIDITempoEvent *event = [MIKMIDITempoEvent tempoEventWithTimeStamp:timeStamp tempo:bpm];
-    return [self.tempoTrack insertMIDIEvent:event];
+	[self.tempoTrack addEvent:[MIKMIDITempoEvent tempoEventWithTimeStamp:timeStamp tempo:bpm]];
+	return YES;
 }
 
 - (Float64)tempoAtTimeStamp:(MusicTimeStamp)timeStamp
@@ -281,12 +282,12 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
 }
 
-
 - (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature
 {
 	NSArray *tempoEvents = [self tempoEvents];
-	if (![self.tempoTrack clearAllEvents]) return NO;
-	if (tempoEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:tempoEvents]]) return NO;
+	[self.tempoTrack removeAllEvents];
+	if ([self.tempoTrack.events count]) return NO;
+	[self.tempoTrack addEvents:tempoEvents];
 	return [self setTimeSignature:signature atTimeStamp:0];
 }
 
@@ -298,7 +299,8 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	event.denominator = signature.denominator;
 	event.metronomePulse = self.tempoTrack.timeResolution;
 	event.thirtySecondsPerQuarterNote = 8;
-	return [self.tempoTrack insertMIDIEvent:event];
+	[self.tempoTrack addEvent:event];
+	return YES;
 }
 
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp

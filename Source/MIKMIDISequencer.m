@@ -460,11 +460,7 @@
 		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
 	}
 
-	if (event) {
-		for (MIKMIDITrack *track in self.recordEnabledTracks) {
-			[track insertMIDIEvent:event];
-		}
-	}
+	if (event) [self.recordEnabledTracks makeObjectsPerformSelector:@selector(addEvent:) withObject:event];
 }
 
 - (void)recordAllPendingNoteEventsWithOffTimeStamp:(MusicTimeStamp)offTimeStamp
@@ -481,11 +477,7 @@
 	}
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
 
-	if (events.count) {
-		for (MIKMIDITrack *track in self.recordEnabledTracks) {
-			[track insertMIDIEvents:events];
-		}
-	}
+	if ([events count]) [self.recordEnabledTracks makeObjectsPerformSelector:@selector(addEvents:) withObject:events];
 }
 
 - (MIKMIDINoteEvent	*)pendingNoteEventWithNoteNumber:(NSNumber *)noteNumber channel:(UInt8)channel releaseVelocity:(UInt8)releaseVelocity offTimeStamp:(MusicTimeStamp)offTimeStamp
