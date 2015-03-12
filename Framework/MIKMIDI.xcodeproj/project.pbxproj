@@ -246,6 +246,7 @@
 		9DBEBD681AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD691AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */; };
 		9DBEBD6A1AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */; };
+		9DCDDB501AB2363C00F8347E /* Parallax-Loader.mid in Resources */ = {isa = PBXBuildFile; fileRef = 9DCDDB4F1AB2363C00F8347E /* Parallax-Loader.mid */; };
 		9DE259E519A7B4F800DA93E9 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */; };
 		9DE259E619A7B50100DA93E9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
 		9DE259E819A7B50600DA93E9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */; };
@@ -420,6 +421,7 @@
 		9DBEBD5C1AAA27D100E59734 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = SOURCE_ROOT; };
 		9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelPressureEvent.h; sourceTree = "<group>"; };
 		9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelPressureEvent.m; sourceTree = "<group>"; };
+		9DCDDB4F1AB2363C00F8347E /* Parallax-Loader.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = "Parallax-Loader.mid"; sourceTree = "<group>"; };
 		9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPitchBendChangeEvent.h; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 			isa = PBXGroup;
 			children = (
 				9D4DF14E1AAB57C90065F004 /* bach.mid */,
+				9DCDDB4F1AB2363C00F8347E /* Parallax-Loader.mid */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1036,6 +1039,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DCDDB501AB2363C00F8347E /* Parallax-Loader.mid in Resources */,
 				9D4DF14F1AAB57C90065F004 /* bach.mid in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -45,4 +45,13 @@
 	XCTAssertEqual([[sequence.tracks[2] events] count], 220);
 }
 
+- (void)testMIDIFileReadPerformance
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"Parallax-Loader" withExtension:@"mid"];
+	[self measureBlock:^{
+		[MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:NULL];
+	}];
+}
+
 @end
