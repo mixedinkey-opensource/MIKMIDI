@@ -547,12 +547,12 @@
 	[self.defaultTrack copyEventsFromMIDITrack:sourceTrack fromTimeStamp:3 toTimeStamp:3 andInsertAtTimeStamp:2.5];
 	XCTAssertTrue(self.eventsChangeNotificationReceived && self.notesChangeNotificationReceived, @"Copying events between MIKMIDITracks did not produce a KVO notification.");
 	
+	// Use sets, because order of events with the same timestamp is (acceptably) unpredictable
 	MIKMIDIEvent *expectedEvent3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:62 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *expectedEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:63 velocity:127 duration:1 channel:0];
-	NSArray *expectedNewEvents = @[destEvent1, destEvent2, expectedEvent3, expectedEvent4, destEvent4, destEvent5];
-	NSArray *eventsAfterCopy = self.defaultTrack.events;
+	NSSet *expectedNewEvents = [NSSet setWithArray:@[destEvent1, destEvent2, expectedEvent3, expectedEvent4, destEvent4, destEvent5]];
+	NSSet *eventsAfterCopy = [NSSet setWithArray:self.defaultTrack.events];
 	XCTAssertEqualObjects(eventsAfterCopy, expectedNewEvents, @"Copying events between MIKMIDITracks failed.");
-	
 }
 
 - (void)testCopyingMultipleEventsInAWiderRange
@@ -697,12 +697,12 @@
 	[self.defaultTrack mergeEventsFromMIDITrack:sourceTrack fromTimeStamp:3 toTimeStamp:3 atTimeStamp:2.5];
 	XCTAssertTrue(self.eventsChangeNotificationReceived && self.notesChangeNotificationReceived, @"Merging events between MIKMIDITracks did not produce a KVO notification.");
 	
+	// Use sets, because order of events with the same timestamp is (acceptably) unpredictable
 	MIKMIDIEvent *expectedEvent3 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:62 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *expectedEvent4 = [MIKMIDINoteEvent noteEventWithTimeStamp:2.5 note:63 velocity:127 duration:1 channel:0];
-	NSArray *expectedNewEvents = @[destEvent1, destEvent2, expectedEvent3, expectedEvent4, destEvent4, destEvent5];
-	NSArray *eventsAfterMerge = self.defaultTrack.events;
+	NSSet *expectedNewEvents = [NSSet setWithArray:@[destEvent1, destEvent2, expectedEvent3, expectedEvent4, destEvent4, destEvent5]];
+	NSSet *eventsAfterMerge = [NSSet setWithArray:self.defaultTrack.events];
 	XCTAssertEqualObjects(eventsAfterMerge, expectedNewEvents, @"Merging events between MIKMIDITracks failed.");
-	
 }
 
 - (void)testMergingMultipleEventsInAWiderRange
