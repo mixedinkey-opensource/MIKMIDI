@@ -23,8 +23,8 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 @interface MIKMIDISequence ()
 
 @property (nonatomic) MusicSequence musicSequence;
-@property (strong, nonatomic) MIKMIDITrack *tempoTrack;
-@property (strong, nonatomic) NSArray *tracks;
+@property (nonatomic, strong) MIKMIDITrack *tempoTrack;
+@property (nonatomic, strong) NSMutableArray *internalTracks;
 
 @end
 
@@ -155,7 +155,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 			}
 			[tracks addObject:[MIKMIDITrack trackWithSequence:self musicTrack:musicTrack]];
 		}
-		self.tracks = tracks;
+		self.internalTracks = tracks;
 		self.length = MIKMIDISequenceLongestTrackLength;
 	}
 	
@@ -181,27 +181,22 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     }
 
     MIKMIDITrack *track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
-
-    if (track) {
-        NSMutableArray *tracks = [self.tracks mutableCopy];
-        [tracks addObject:track];
-        self.tracks = tracks;
-    }
+	[self addTracksObject:track];
 
     return track;
 }
 
 - (BOOL)removeTrack:(MIKMIDITrack *)track
 {
+	if (!track) return NO;
+	
     OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
     if (err) {
         NSLog(@"MusicSequenceDisposeTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
         return NO;
     }
 
-    NSMutableArray *tracks = [self.tracks mutableCopy];
-    [tracks removeObject:track];
-    self.tracks = tracks;
+	[self removeTracksObject:track];
 
     return YES;
 }
@@ -323,6 +318,42 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 }
 
 #pragma mark - Properties
+
++ (NSSet *)keyPathsForValuesAffectingTracks
+{
+	return [NSSet setWithObjects:@"internalTracks", nil];
+}
+
+- (NSArray *)tracks
+{
+	return [self.internalTracks copy];
+}
+
+- (void)addTracksObject:(MIKMIDITrack *)track
+{
+	if (!track) return;
+	[self insertObject:track inTracksAtIndex:[self.internalTracks count]];
+}
+
+- (void)insertObject:(MIKMIDITrack *)track inTracksAtIndex:(NSUInteger)index
+{
+	if (!track) return;
+	[self.internalTracks insertObject:track atIndex:index];
+}
+
+- (void)removeTracksObject:(MIKMIDITrack *)track
+{
+	if (!track) return;
+	NSInteger index = [self.internalTracks indexOfObject:track];
+	if (index == NSNotFound) return;
+	[self removeObjectFromInternalTracksAtIndex:index];
+}
+
+- (void)removeObjectFromInternalTracksAtIndex:(NSUInteger)index
+{
+	if (index >= [self.internalTracks count]) return;
+	[self.internalTracks removeObjectAtIndex:index];
+}
 
 - (MusicTimeStamp)length
 {
