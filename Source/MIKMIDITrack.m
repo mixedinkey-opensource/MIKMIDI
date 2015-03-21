@@ -498,7 +498,7 @@
 	NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *b) {
 		return [(MIKMIDIEvent *)obj eventType] == MIKMIDIEventTypeMIDINoteMessage;
 	}];
-	return [self.sortedEventsCache filteredArrayUsingPredicate:predicate];
+	return [self.events filteredArrayUsingPredicate:predicate];
 }
 
 - (NSInteger)trackNumber
