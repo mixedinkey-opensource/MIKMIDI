@@ -26,11 +26,17 @@
 	self.receivedNotificationKeyPaths = [NSMutableSet set];
 	self.sequence = [MIKMIDISequence sequence];
 	[self.sequence addObserver:self forKeyPath:@"tracks" options:0 context:NULL];
+	[self.sequence addObserver:self forKeyPath:@"durationInSeconds" options:0 context:NULL];
+	[self.sequence addObserver:self forKeyPath:@"length" options:0 context:NULL];
 }
 
 - (void)tearDown
 {
 	[self.sequence removeObserver:self forKeyPath:@"tracks"];
+	[self.sequence removeObserver:self forKeyPath:@"durationInSeconds"];
+	[self.sequence removeObserver:self forKeyPath:@"length"];
+	
+	self.sequence = nil;
 	
     [super tearDown];
 }
@@ -81,6 +87,34 @@
 	[self.sequence removeTrack:firstTrack];
 	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"tracks"], @"KVO notification when removing a track not received.");
 	XCTAssertEqualObjects(self.sequence.tracks, @[secondTrack], @"Removing a track failed.");
+}
+
+- (void)testLength
+{
+	MIKMIDITrack *firstTrack = [self.sequence addTrack];
+	XCTAssertNotNil(firstTrack, @"Creating an MIKMIDITrack failed.");
+	MIKMIDITrack *secondTrack = [self.sequence addTrack];
+	XCTAssertNotNil(secondTrack, @"Creating an MIKMIDITrack failed.");
+	MIKMIDITrack *thirdTrack = [self.sequence addTrack];
+	XCTAssertNotNil(thirdTrack, @"Creating an MIKMIDITrack failed.");
+
+	self.sequence.length = MIKMIDISequenceLongestTrackLength;
+	
+	[self.receivedNotificationKeyPaths removeAllObjects];
+	[thirdTrack addEvent:[MIKMIDINoteEvent noteEventWithTimeStamp:100 note:60 velocity:127 duration:1 channel:0]];
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"length"], @"KVO notification for length failed after adding event to child track.");
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"durationInSeconds"], @"KVO notification for durationInSeconds failed after adding event to child track.");
+	
+	[self.receivedNotificationKeyPaths removeAllObjects];
+	[thirdTrack removeAllEvents];
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"length"], @"KVO notification for length failed after removing events from child track.");
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"durationInSeconds"], @"KVO notification for durationInSeconds failed after removing events from child track.");
+	
+	[thirdTrack addEvent:[MIKMIDINoteEvent noteEventWithTimeStamp:100 note:60 velocity:127 duration:1 channel:0]];
+	[self.receivedNotificationKeyPaths removeAllObjects];
+	[self.sequence removeTrack:thirdTrack];
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"length"], @"KVO notification for length failed after removing longest child track.");
+	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"durationInSeconds"], @"KVO notification for durationInSeconds failed after removing longest child track.");
 }
 
 #pragma mark - KVO
