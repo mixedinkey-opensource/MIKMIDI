@@ -214,8 +214,6 @@
 	if (description.componentManufacturer != appleSynthDescription.componentManufacturer) return NO;
 	if (description.componentType != appleSynthDescription.componentType) return NO;
 	if (description.componentSubType != appleSynthDescription.componentSubType) return NO;
-	if (description.componentFlags != appleSynthDescription.componentFlags) return NO;
-	if (description.componentFlagsMask != appleSynthDescription.componentFlagsMask) return NO;
 	return YES;
 }
 
