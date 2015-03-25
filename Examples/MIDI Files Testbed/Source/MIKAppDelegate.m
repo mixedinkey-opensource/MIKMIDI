@@ -9,6 +9,8 @@
 #import "MIKAppDelegate.h"
 #import "MIKMainWindowController.h"
 
+@import MIKMIDI;
+
 @implementation MIKAppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification

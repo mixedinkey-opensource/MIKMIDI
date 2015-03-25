@@ -92,6 +92,19 @@
 	
 }
 
+- (void)testLoadFromFile
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"bach" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(sequence);
+	XCTAssertEqual([sequence.tracks count], 3, @"Sequence loaded from file doesn't have expected number of tracks.");
+	
+	MIKMIDITrack *firstNotesTrack = sequence.tracks[1];
+	XCTAssertTrue([firstNotesTrack.notes count] > 0, @"Notes track loaded from file is empty.");
+}
+
 #pragma mark - Moving Events
 
 - (void)testMovingSingleEvent
@@ -111,7 +124,6 @@
 	MIKMIDIEvent *expectedEvent2AfterMove = [MIKMIDINoteEvent noteEventWithTimeStamp:5 note:61 velocity:127 duration:1 channel:0];
 	NSArray *expectedNewEvents = @[event1, event3, expectedEvent2AfterMove, event4];
 	XCTAssertEqualObjects(self.defaultTrack.events, expectedNewEvents, @"Moving an event in MIKMIDITrack failed.");
-	
 }
 
 - (void)testMovingMultipleEventsAtSameTimestamp
