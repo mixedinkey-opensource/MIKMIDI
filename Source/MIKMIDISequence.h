@@ -291,11 +291,13 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 /**
  *  The MIDI music tracks for the sequence. An array of MIKMIDITrack instances.
  *  Does not include the tempo track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) NSArray *tracks;
 
 /**
- *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
+ *  The underlying MusicSequence that backs the instance of MIKMIDISequence.
  */
 @property (nonatomic, readonly) MusicSequence musicSequence;
 
@@ -303,11 +305,15 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  The length of the sequence as a MusicTimeStamp.
  *
  *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp length;
 
 /**
  *  The duration of the sequence in seconds.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) Float64 durationInSeconds;
 
