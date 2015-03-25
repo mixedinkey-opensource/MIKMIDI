@@ -164,7 +164,7 @@
                     <constraint firstAttribute="trailing" secondItem="66N-u6-qWG" secondAttribute="trailing" constant="20" id="y1j-mW-Gt6"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="299" y="335"/>
+            <point key="canvasLocation" x="245" y="212"/>
         </window>
     </objects>
 </document>

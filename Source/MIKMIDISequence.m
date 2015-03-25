@@ -185,7 +185,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 	}
 	
 	MIKMIDITrack *track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
-	[self addTracksObject:track];
+	[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
 	
 	return track;
 }
@@ -200,7 +200,8 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 		return NO;
 	}
 	
-	[self removeTracksObject:track];
+	NSInteger index = [self.internalTracks indexOfObject:track];
+	if (index != NSNotFound) [self removeObjectFromInternalTracksAtIndex:index];
 	
 	return YES;
 }
@@ -393,20 +394,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 - (NSArray *)tracks
 {
 	return [self.internalTracks copy];
-}
-
-- (void)addTracksObject:(MIKMIDITrack *)track
-{
-	if (!track) return;
-	[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
-}
-
-- (void)removeTracksObject:(MIKMIDITrack *)track
-{
-	if (!track) return;
-	NSInteger index = [self.internalTracks indexOfObject:track];
-	if (index == NSNotFound) return;
-	[self removeObjectFromInternalTracksAtIndex:index];
 }
 
 + (NSSet *)keyPathsForValuesAffectingLength
