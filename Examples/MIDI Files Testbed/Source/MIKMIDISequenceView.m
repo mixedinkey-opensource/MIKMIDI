@@ -26,6 +26,16 @@
     return self;
 }
 
+#pragma mark - Layout
+
+- (NSSize)intrinsicContentSize
+{
+	double maxLength = [[self.sequence valueForKeyPath:@"tracks.@max.length"] doubleValue];
+	return NSMakeSize(maxLength * [self pixelsPerTick], 250.0);
+}
+
+#pragma mark - Drawing
+
 - (void)drawRect:(NSRect)dirtyRect
 {
 	if (self.dragInProgress) {
@@ -116,8 +126,7 @@
 
 - (CGFloat)pixelsPerTick
 {
-	double maxLength = [[self.sequence valueForKeyPath:@"tracks.@max.length"] doubleValue];
-	return NSWidth([self bounds]) / maxLength;
+	return 15.0;
 }
 
 - (CGFloat)pixelsPerNote
@@ -132,6 +141,7 @@
 	if (sequence != _sequence) {
 		_sequence = sequence;
 		[self setNeedsDisplay:YES];
+		[self invalidateIntrinsicContentSize];
 	}
 }
 
