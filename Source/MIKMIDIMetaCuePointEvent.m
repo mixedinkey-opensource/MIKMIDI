@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaCuePointEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaCuePoint; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaCuePoint)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaCuePointEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaCuePointEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -25,5 +25,11 @@
 @end
 
 @implementation MIKMutableMIDIMetaCuePointEvent
+
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
+
 + (BOOL)isMutable { return YES; }
+
 @end

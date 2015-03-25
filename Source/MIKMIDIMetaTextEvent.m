@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaTextEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaText; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaText)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTextEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTextEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -33,6 +33,7 @@
 
 - (NSString *)string
 {
+	if (![self.metaData length]) return nil;
     return [[NSString alloc] initWithData:self.metaData encoding:NSUTF8StringEncoding];
 }
 
@@ -52,8 +53,11 @@
 
 @implementation MIKMutableMIDIMetaTextEvent
 
-+ (BOOL)isMutable { return YES; }
-
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
 @dynamic string;
+
++ (BOOL)isMutable { return YES; }
 
 @end

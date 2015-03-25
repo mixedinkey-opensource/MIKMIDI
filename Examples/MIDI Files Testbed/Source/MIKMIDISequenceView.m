@@ -7,10 +7,9 @@
 //
 
 #import "MIKMIDISequenceView.h"
-#import "MIKMIDISequence.h"
-#import "MIKMIDITrack.h"
-#import "MIKMIDIEvent.h"
-#import "MIKMIDINoteEvent.h"
+#import <MIKMIDI/MIKMIDI.h>
+
+void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 
 @interface MIKMIDISequenceView ()
 
@@ -29,6 +28,21 @@
     return self;
 }
 
+- (void)dealloc
+{
+	self.sequence = nil;
+}
+
+#pragma mark - Layout
+
+- (NSSize)intrinsicContentSize
+{
+	double maxLength = [[self.sequence valueForKeyPath:@"tracks.@max.length"] doubleValue];
+	return NSMakeSize(maxLength * [self pixelsPerTick], 250.0);
+}
+
+#pragma mark - Drawing
+
 - (void)drawRect:(NSRect)dirtyRect
 {
 	if (self.dragInProgress) {
@@ -41,10 +55,8 @@
 	NSInteger index=0;
 	for (MIKMIDITrack *track in self.sequence.tracks) {
 		
-		for (MIKMIDINoteEvent *note in [track events]) {
-			if (note.eventType != kMusicEventType_MIDINoteMessage) continue;
-			
-			NSColor *noteColor = [self.sequence.tracks count] <= 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
+		for (MIKMIDINoteEvent *note in [track notes]) {
+			NSColor *noteColor = [self.sequence.tracks count] < 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
 			
 			[[NSColor blackColor] setStroke];
 			[noteColor setFill];
@@ -121,8 +133,7 @@
 
 - (CGFloat)pixelsPerTick
 {
-	double maxLength = [[self.sequence valueForKeyPath:@"tracks.@max.length"] doubleValue];
-	return NSWidth([self bounds]) / maxLength;
+	return 15.0;
 }
 
 - (CGFloat)pixelsPerNote
@@ -130,13 +141,62 @@
 	return NSHeight([self bounds]) / 127.0;
 }
 
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if (context != MIKMIDISequenceViewKVOContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+	
+	if ([keyPath isEqualToString:@"length"]) {
+		[self invalidateIntrinsicContentSize];
+	}
+	
+	if ([keyPath isEqualToString:@"tracks"]) {
+		[self unregisterForKVOOnTracks:change[NSKeyValueChangeOldKey]];
+		[self registerForKVOOnTracks:change[NSKeyValueChangeNewKey]];
+		
+		[self setNeedsDisplay:YES];
+	}
+	
+	if ([object isKindOfClass:[MIKMIDITrack class]]) {
+		[self invalidateIntrinsicContentSize];
+		[self setNeedsDisplay:YES];
+	}
+}
+
+- (void)registerForKVOOnTracks:(NSArray *)tracks
+{
+	for (MIKMIDITrack *track in tracks) {
+		[track addObserver:self forKeyPath:@"events" options:0 context:MIKMIDISequenceViewKVOContext];
+	}
+}
+
+- (void)unregisterForKVOOnTracks:(NSArray *)tracks
+{
+	for (MIKMIDITrack *track in tracks) {
+		[track removeObserver:self forKeyPath:@"events"];
+	}
+}
+
 #pragma mark - Properties
 
 - (void)setSequence:(MIKMIDISequence *)sequence
 {
 	if (sequence != _sequence) {
+		
+		[_sequence removeObserver:self forKeyPath:@"length"];
+		[_sequence removeObserver:self forKeyPath:@"tracks"];
+		[self unregisterForKVOOnTracks:_sequence.tracks];
+		
 		_sequence = sequence;
-		[self setNeedsDisplay:YES];
+		
+		[_sequence addObserver:self forKeyPath:@"length" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceViewKVOContext];
+		NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
+		[_sequence addObserver:self forKeyPath:@"tracks" options:options context:MIKMIDISequenceViewKVOContext];
+		if (_sequence) [self registerForKVOOnTracks:_sequence.tracks];
 	}
 }
 

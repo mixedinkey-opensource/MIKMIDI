@@ -14,6 +14,7 @@
 @class MIKMIDIMetronome;
 @class MIKMIDICommand;
 @class MIKMIDIDestinationEndpoint;
+@class MIKMIDISynthesizer;
 
 /**
  *  Types of click track statuses, that determine when the click track will be audible.
@@ -91,7 +92,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  such as an audio track, or another MIKMIDISequencer instance.
  *
  *  @param timeStamp The position in the sequence to begin playback from.
- *
  *  @param midiTimeStamp The MIDITimeStamp to begin playback at.
  */
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
@@ -165,7 +165,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  Sets the destination endpoint for a track in the sequencer's sequence.
  *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
- *  so that playback "just works".
+ *  connected to synthesizers so that playback "just works".
  *
  *  @note If track is not contained by the receiver's sequence, this method does nothing.
  *
@@ -177,13 +177,36 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  Returns the destination endpoint for a track in the sequencer's sequence.
  *
+ *  MIKMIDISequencer will automatically create its own default endpoints connected to
+ *  MIKMIDISynthesizers for any tracks not configured manually. This means that even if you
+ *  haven't called -setDestinationEndpoint:forTrack:, you can use this method to retrieve
+ *  the default endpoint for a given track.
+ *
  *  @note If track is not contained by the receiver's sequence, this method returns nil.
  *
  *  @param track An MIKMIDITrack instance.
  *
  *  @return The destination endpoint associated with track, or nil if one can't be found.
+ *
+ *  @see -setDestinationEndpoint:forTrack:
+ *  @see -builtinSynthesizerForTrack:
  */
 - (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track;
+
+/**
+ *  Returns synthesizer the receiver will use to synthesize MIDI during playback
+ *  for any tracks whose MIDI has not been routed to a custom endpoint using
+ *  -setDestinationEndpoint:forTrack:. For tracks where a custom endpoint has
+ *  been set, this method returns nil.
+ *
+ *  The caller is free to reconfigure the synthesizer(s) returned by this method,
+ *  e.g. to load a custom soundfont file or select a different instrument.
+ *
+ *  @param track The track for which the builtin synthesizer is desired.
+ *
+ *  @return An MIKMIDISynthesizer instance, or nil if a builtin synthesizer for track doesn't exist.
+ */
+- (MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
 #pragma mark - Properties
 

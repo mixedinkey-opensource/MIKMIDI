@@ -253,6 +253,12 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	data[0] = commandType;
 }
 
+- (UInt8)statusByte
+{
+	if ([self.internalData length] < 1) return 0;
+	return ((UInt8 *)[self.internalData bytes])[0];
+}
+
 - (UInt8)dataByte1
 {
 	if ([self.internalData length] < 2) return 0;

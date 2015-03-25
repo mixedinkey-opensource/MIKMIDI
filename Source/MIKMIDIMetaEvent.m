@@ -17,10 +17,11 @@
 @implementation MIKMIDIMetaEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMeta; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMeta)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDIMetaEvent){0} length:sizeof(MIDIMetaEvent)]; }
 
 - (NSString *)additionalEventDescription
 {
@@ -43,7 +44,7 @@
 - (void)setMetadataType:(UInt8)metadataType
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-    
+	
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->metaEventType = metadataType;
 }
@@ -61,8 +62,7 @@
 
 - (NSData *)metaData
 {
-    MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
-    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, metaEvent->dataLength)];
+    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, self.metadataLength)];
 }
 
 - (void)setMetaData:(NSData *)metaData
@@ -71,7 +71,7 @@
     
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->dataLength = (UInt32)[metaData length];
-    NSMutableData *newMetaData = [self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)].mutableCopy;
+    NSMutableData *newMetaData = [[self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)] mutableCopy];
     [newMetaData appendData:metaData];
     self.internalData = newMetaData;
 }
@@ -81,6 +81,7 @@
 
 @implementation MIKMutableMIDIMetaEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

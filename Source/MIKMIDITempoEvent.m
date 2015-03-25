@@ -17,10 +17,11 @@
 @implementation MIKMIDITempoEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeExtendedTempo; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeExtendedTempo)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDITempoEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(ExtendedTempoEvent){0} length:sizeof(ExtendedTempoEvent)]; }
 
 + (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 {
@@ -62,5 +63,7 @@
 + (BOOL)isMutable { return YES; }
 
 @dynamic bpm;
+@dynamic timeStamp;
+@dynamic data;
 
 @end

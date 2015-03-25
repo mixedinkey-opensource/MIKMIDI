@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaLyricEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaLyricText; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaLyricText)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaLyricEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaLyricEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -25,6 +25,10 @@
 @end
 
 @implementation MIKMutableMIDIMetaLyricEvent
+
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
 
 + (BOOL)isMutable { return YES; }
 

@@ -9,6 +9,7 @@
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDIEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
+#import "MIKMIDIClock.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDINoteEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
@@ -17,12 +18,29 @@
 @implementation MIKMIDINoteEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMIDINoteMessage; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMIDINoteMessage)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDINoteMessage){0} length:sizeof(MIDINoteMessage)]; }
 
 #pragma mark - Lifecycle
+
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+								  note:(UInt8)note
+							  velocity:(UInt8)velocity
+							  duration:(Float32)duration
+							   channel:(UInt8)channel
+{
+	MIDINoteMessage message = {
+		.note = note,
+		.velocity = velocity,
+		.channel = channel,
+		.duration = duration,
+		.releaseVelocity = 0,
+	};
+	return [self noteEventWithTimeStamp:timeStamp message:message];
+}
 
 + (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message
 {
@@ -144,11 +162,39 @@
 
 @implementation MIKMutableMIDINoteEvent
 
+@dynamic timeStamp;
+@dynamic data;
 @dynamic note;
 @dynamic velocity;
+@dynamic channel;
 @dynamic releaseVelocity;
 @dynamic duration;
 
 + (BOOL)isMutable { return YES; }
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDICommand (MIKMIDINoteEventToCommands)
+
++ (NSArray *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
+{
+	// Note On
+	MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
+	noteOn.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp];
+	noteOn.channel = noteEvent.channel;
+	noteOn.note = noteEvent.note;
+	noteOn.velocity = noteEvent.velocity;
+	
+	// Note Off
+	MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
+	noteOff.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+	noteOff.channel = noteEvent.channel;
+	noteOff.note = noteEvent.note;
+	noteOff.velocity = noteEvent.releaseVelocity;
+
+	return @[[noteOn copy], [noteOff copy]];
+}
 
 @end

@@ -7,15 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "MIKMIDISequenceView.h"
 
-@class MIKMIDISequenceView;
+@class MIKMainWindowController;
 
-@interface MIKAppDelegate : NSObject <NSApplicationDelegate, MIKMIDISequenceViewDelegate>
+@interface MIKAppDelegate : NSObject <NSApplicationDelegate>
 
-- (IBAction)loadFile:(id)sender;
-
-@property (assign) IBOutlet NSWindow *window;
-@property (weak) IBOutlet MIKMIDISequenceView *trackView;
+@property (nonatomic, strong) MIKMainWindowController *mainWindowController;
 
 @end
