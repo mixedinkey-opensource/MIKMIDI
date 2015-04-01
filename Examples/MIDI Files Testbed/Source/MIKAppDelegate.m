@@ -37,6 +37,9 @@
 {
 	NSError *error = nil;
 	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:[NSURL fileURLWithPath:path] error:&error];
+	for (MIKMIDITrack *track in sequence.tracks) {
+		NSLog(@"track %p", track);
+	}
 	if (!sequence) {
 		NSLog(@"Error loading MIDI file: %@", error);
 	} else {

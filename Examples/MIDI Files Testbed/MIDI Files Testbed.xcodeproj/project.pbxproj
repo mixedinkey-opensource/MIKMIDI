@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D1D5C071AC4901100F9C2BD /* MIKMIDI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9D54C4FF1A97E5C90050BB43 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9D54C5021A97E5D20050BB43 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D54C4FF1A97E5C90050BB43 /* MIKMIDI.framework */; };
+		9D1D5C071AC4901100F9C2BD /* (null) in Copy Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9D3A2FBF192E85B800314B49 /* MIKMIDITempoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */; };
+		9D7027D01ACC9585009AFAED /* MIKMIDIMacDebugQuickLookSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D7027CF1ACC9585009AFAED /* MIKMIDIMacDebugQuickLookSupport.m */; };
 		9D76DCE71A9E4ACA00A24C16 /* MIKMIDIEventIterator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D76DCE61A9E4ACA00A24C16 /* MIKMIDIEventIterator.m */; };
 		9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */; };
 		9DB2A5F7192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
@@ -69,7 +69,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9D1D5C071AC4901100F9C2BD /* MIKMIDI.framework in Copy Frameworks */,
+				9D1D5C071AC4901100F9C2BD /* (null) in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,6 +79,7 @@
 /* Begin PBXFileReference section */
 		9D3A2FBD192E85B800314B49 /* MIKMIDITempoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDITempoEvent.h; sourceTree = "<group>"; };
 		9D3A2FBE192E85B800314B49 /* MIKMIDITempoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDITempoEvent.m; sourceTree = "<group>"; };
+		9D7027CF1ACC9585009AFAED /* MIKMIDIMacDebugQuickLookSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMacDebugQuickLookSupport.m; sourceTree = "<group>"; };
 		9D76DCE51A9E4ACA00A24C16 /* MIKMIDIEventIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIEventIterator.h; sourceTree = "<group>"; };
 		9D76DCE61A9E4ACA00A24C16 /* MIKMIDIEventIterator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIEventIterator.m; sourceTree = "<group>"; };
 		9DAE7D35192FC1B800B25DD7 /* MIKMIDISequenceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequenceView.h; sourceTree = "<group>"; };
@@ -369,12 +370,13 @@
 				9DB2A672192D19A60047A3EB /* MIKMIDISourceEndpoint.m */,
 				9DB2A673192D19A60047A3EB /* MIKMIDISystemExclusiveCommand.h */,
 				9DB2A674192D19A60047A3EB /* MIKMIDISystemExclusiveCommand.m */,
-				9DB2A675192D19A60047A3EB /* MIKMIDISystemMessageCommand.h */,
 				9DB2A676192D19A60047A3EB /* MIKMIDISystemMessageCommand.m */,
+				9DB2A675192D19A60047A3EB /* MIKMIDISystemMessageCommand.h */,
 				9DB2A677192D19A60047A3EB /* MIKMIDIUtilities.h */,
 				9DB2A678192D19A60047A3EB /* MIKMIDIUtilities.m */,
 				9DB2A679192D19A60047A3EB /* NSUIApplication+MIKMIDI.h */,
 				9DB2A67A192D19A60047A3EB /* NSUIApplication+MIKMIDI.m */,
+				9D7027CF1ACC9585009AFAED /* MIKMIDIMacDebugQuickLookSupport.m */,
 			);
 			name = MIKMIDI;
 			path = ../../Source;
@@ -485,6 +487,7 @@
 				9DB2A686192D19A60047A3EB /* MIKMIDIMapping.m in Sources */,
 				9DB2A680192D19A60047A3EB /* MIKMIDIDevice.m in Sources */,
 				9DB2A697192D19D30047A3EB /* MIKMIDISequence.m in Sources */,
+				9D7027D01ACC9585009AFAED /* MIKMIDIMacDebugQuickLookSupport.m in Sources */,
 				9D76DCE71A9E4ACA00A24C16 /* MIKMIDIEventIterator.m in Sources */,
 				9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */,
 				F263C0C3192FC81C00F1B297 /* MIKMIDIMetaKeySignatureEvent.m in Sources */,
