@@ -21,18 +21,16 @@
 
 @implementation MIKMIDIMetronome
 
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
 + (AudioComponentDescription)appleSynthComponentDescription
 {
 	AudioComponentDescription instrumentcd = (AudioComponentDescription){0};
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
-#if TARGET_OS_IPHONE
 	instrumentcd.componentSubType = kAudioUnitSubType_MIDISynth;
-#else
-	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
-#endif
 	return instrumentcd;
 }
+#endif
 
 - (BOOL)setupMetronome
 {

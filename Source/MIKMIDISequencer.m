@@ -523,6 +523,8 @@
 
 - (NSMutableArray *)clickTrackEventsFromTimeStamp:(MusicTimeStamp)fromTimeStamp toTimeStamp:(MusicTimeStamp)toTimeStamp
 {
+	if (!self.metronome) return [NSMutableArray array];
+
 	MIKMIDISequencerClickTrackStatus clickTrackStatus = self.clickTrackStatus;
 	if (clickTrackStatus == MIKMIDISequencerClickTrackStatusDisabled) return nil;
 	if (!self.isRecording && clickTrackStatus != MIKMIDISequencerClickTrackStatusAlwaysEnabled) return nil;
@@ -623,8 +625,10 @@
 @synthesize metronome = _metronome;
 - (MIKMIDIMetronome *)metronome
 {
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
 	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
 	return _metronome;
+#endif
 }
 
 - (void)setMetronome:(MIKMIDIMetronome *)metronome
