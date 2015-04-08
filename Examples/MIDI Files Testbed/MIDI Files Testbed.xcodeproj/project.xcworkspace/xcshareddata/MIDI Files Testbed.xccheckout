@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>56006FB9-9DF6-42D1-A467-7AA6C3A3D1F9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MIDI Files Testbed</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5C0CF757CB920F47AEB6035D536B7F1E2BB0C345</key>
+		<string>github.com:mixedinkey-opensource/MIKMIDI.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Examples/MIDI Files Testbed/MIDI Files Testbed.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5C0CF757CB920F47AEB6035D536B7F1E2BB0C345</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:mixedinkey-opensource/MIKMIDI.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5C0CF757CB920F47AEB6035D536B7F1E2BB0C345</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5C0CF757CB920F47AEB6035D536B7F1E2BB0C345</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MIKMIDI</string>
+		</dict>
+	</array>
+</dict>
+</plist>
