@@ -18,25 +18,26 @@
 @implementation MIKMIDINoteEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMIDINoteMessage; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMIDINoteMessage)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDINoteEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDINoteEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDINoteMessage){0} length:sizeof(MIDINoteMessage)]; }
 
 #pragma mark - Lifecycle
 
-+ (instancetype)noteEventWithChannel:(NSInteger)channel
-						   timeStamp:(MusicTimeStamp)timeStamp
-								note:(NSInteger)note
-							velocity:(NSInteger)velocity
-							duration:(float)duration
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+								  note:(UInt8)note
+							  velocity:(UInt8)velocity
+							  duration:(Float32)duration
+							   channel:(UInt8)channel
 {
 	MIDINoteMessage message = {
-		.channel = channel,
 		.note = note,
 		.velocity = velocity,
-		.releaseVelocity = 0,
+		.channel = channel,
 		.duration = duration,
+		.releaseVelocity = 0,
 	};
 	return [self noteEventWithTimeStamp:timeStamp message:message];
 }
@@ -161,17 +162,13 @@
 
 @implementation MIKMutableMIDINoteEvent
 
+@dynamic timeStamp;
+@dynamic data;
 @dynamic note;
 @dynamic velocity;
 @dynamic channel;
 @dynamic releaseVelocity;
 @dynamic duration;
-@dynamic endTimeStamp;
-@dynamic frequency;
-@dynamic noteLetter;
-@dynamic noteLetterAndOctave;
-@dynamic timeStamp;
-@dynamic data;
 
 + (BOOL)isMutable { return YES; }
 

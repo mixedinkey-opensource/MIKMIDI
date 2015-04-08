@@ -17,7 +17,7 @@
 @implementation MIKMIDIMetaInstrumentNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaInstrumentName; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaInstrumentName)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaInstrumentNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaInstrumentNameEvent class]; }
 + (BOOL)isMutable { return NO; }

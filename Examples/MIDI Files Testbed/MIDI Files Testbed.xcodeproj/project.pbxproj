@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D1D5C071AC4901100F9C2BD /* MIKMIDI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9D54C4FF1A97E5C90050BB43 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9D54C5021A97E5D20050BB43 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D54C4FF1A97E5C90050BB43 /* MIKMIDI.framework */; };
 		9D54C50B1A97E6F10050BB43 /* MIKMainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D54C5091A97E6F10050BB43 /* MIKMainWindowController.m */; };
 		9D54C50F1A97E7070050BB43 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D54C50D1A97E7070050BB43 /* MainWindow.xib */; };
+		9D891A831ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D891A821ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.m */; };
 		9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */; };
 		9DB2A5F7192D184D0047A3EB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB2A5F6192D184D0047A3EB /* Cocoa.framework */; };
 		9DB2A62F192D18970047A3EB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB2A62B192D18970047A3EB /* main.m */; };
@@ -42,13 +44,36 @@
 			remoteGlobalIDString = 9D74EEA417A7129300BEE89F;
 			remoteInfo = MIKMIDI;
 		};
+		9D891A861ABD0B4000855BD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D54C4F91A97E5C90050BB43 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
+			remoteInfo = "MIKMIDI Tests";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9D1D5C041AC4900100F9C2BD /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9D1D5C071AC4901100F9C2BD /* MIKMIDI.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		9D54C4F91A97E5C90050BB43 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 		9D54C5081A97E6F10050BB43 /* MIKMainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMainWindowController.h; sourceTree = "<group>"; };
 		9D54C5091A97E6F10050BB43 /* MIKMainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMainWindowController.m; sourceTree = "<group>"; };
 		9D54C50E1A97E7070050BB43 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		9D891A811ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKFlippedScrollContentContainerView.h; sourceTree = "<group>"; };
+		9D891A821ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKFlippedScrollContentContainerView.m; sourceTree = "<group>"; };
 		9DAE7D35192FC1B800B25DD7 /* MIKMIDISequenceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequenceView.h; sourceTree = "<group>"; };
 		9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequenceView.m; sourceTree = "<group>"; };
 		9DB2A5F3192D184D0047A3EB /* MIDI Files Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Files Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +114,7 @@
 			children = (
 				9D54C4FF1A97E5C90050BB43 /* MIKMIDI.framework */,
 				9D54C5011A97E5C90050BB43 /* MIKMIDI.framework */,
+				9D891A871ABD0B4000855BD6 /* MIKMIDI Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,12 +122,12 @@
 		9DB2A5EA192D184D0047A3EB = {
 			isa = PBXGroup;
 			children = (
-				9D54C4F91A97E5C90050BB43 /* MIKMIDI.xcodeproj */,
 				9DB2A62A192D18970047A3EB /* Source */,
 				9DB2A631192D189E0047A3EB /* Resources */,
 				9DB2A61A192D184D0047A3EB /* MIDI Files TestbedTests */,
 				9DB2A5F5192D184D0047A3EB /* Frameworks */,
 				9DB2A5F4192D184D0047A3EB /* Products */,
+				9D54C4F91A97E5C90050BB43 /* MIKMIDI.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -162,6 +188,8 @@
 				9DAE7D36192FC1B800B25DD7 /* MIKMIDISequenceView.m */,
 				9D54C5081A97E6F10050BB43 /* MIKMainWindowController.h */,
 				9D54C5091A97E6F10050BB43 /* MIKMainWindowController.m */,
+				9D891A811ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.h */,
+				9D891A821ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -188,6 +216,7 @@
 			buildPhases = (
 				9DB2A5EF192D184D0047A3EB /* Sources */,
 				9DB2A5F0192D184D0047A3EB /* Frameworks */,
+				9D1D5C041AC4900100F9C2BD /* Copy Frameworks */,
 				9DB2A5F1192D184D0047A3EB /* Resources */,
 			);
 			buildRules = (
@@ -249,6 +278,13 @@
 			remoteRef = 9D54C5001A97E5C90050BB43 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		9D891A871ABD0B4000855BD6 /* MIKMIDI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "MIKMIDI Tests.xctest";
+			remoteRef = 9D891A861ABD0B4000855BD6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -272,6 +308,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9DB2A630192D18970047A3EB /* MIKAppDelegate.m in Sources */,
+				9D891A831ABD0B3F00855BD6 /* MIKFlippedScrollContentContainerView.m in Sources */,
 				9DAE7D37192FC1B800B25DD7 /* MIKMIDISequenceView.m in Sources */,
 				9D54C50B1A97E6F10050BB43 /* MIKMainWindowController.m in Sources */,
 				9DB2A62F192D18970047A3EB /* main.m in Sources */,

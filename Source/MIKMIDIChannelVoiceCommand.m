@@ -28,13 +28,24 @@
 + (NSArray *)supportedMIDICommandTypes
 {
 	return  @[@(MIKMIDICommandTypePolyphonicKeyPressure),
-			  @(MIKMIDICommandTypeProgramChange),
-			  @(MIKMIDICommandTypeChannelPressure),
-			  @(MIKMIDICommandTypePitchWheelChange)];
+			  @(MIKMIDICommandTypeChannelPressure)];
 }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIChannelVoiceCommand class]; }
+
+- (instancetype)initWithMIDIPacket:(MIDIPacket *)packet
+{
+	self = [super initWithMIDIPacket:packet];
+	if (self) {
+		if (!packet) {
+			if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
+			UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
+			data[0] &= 0xF0; // Set channel to 0
+		}
+	}
+	return self;
+}
 
 - (NSString *)additionalCommandDescription
 {
@@ -57,7 +68,7 @@
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
 	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
-	data[0] &= 0xF0 | (channel & 0x0F);
+	data[0] = (0xF0 & data[0]) | (channel & 0x0F);
 }
 
 - (NSUInteger)value { return self.dataByte2 & 0x7F; }

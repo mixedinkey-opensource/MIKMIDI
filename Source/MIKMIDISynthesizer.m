@@ -8,6 +8,7 @@
 
 #import "MIKMIDISynthesizer.h"
 #import "MIKMIDICommand.h"
+#import "MIKMIDISynthesizer_SubclassMethods.h"
 
 @implementation MIKMIDISynthesizer
 
@@ -39,36 +40,7 @@
 	if (!self.isUsingAppleSynth) return NO;
 	
 	MusicDeviceInstrumentID instrumentID = instrument.instrumentID;
-	for (UInt8 channel = 0; channel < 16; channel++) {
-		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
-		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
-		UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
-		UInt8 programChange = instrumentID & 0x7F;
-		
-		UInt32 bankSelectStatus = 0xB0 | channel;
-		UInt32 programChangeStatus = 0xC0 | channel;
-		
-		AudioUnit instrumentUnit = self.instrument;
-		OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-		
-		err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-		
-		err = MusicDeviceMIDIEvent(instrumentUnit, programChangeStatus, programChange, 0, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (Program Change) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-	}
-	
-	return YES;
+	return [self sendBankSelectAndProgramChangeForInstrumentID:instrumentID error:NULL];
 }
 
 - (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error
@@ -89,7 +61,7 @@
 		instrumentData.presetID = 0;
 		
 		// set the kAUSamplerProperty_LoadPresetFromBank property
-		err = AudioUnitSetProperty(self.instrument,
+		err = AudioUnitSetProperty(self.instrumentUnit,
 								   kAUSamplerProperty_LoadInstrument,
 								   kAudioUnitScope_Global,
 								   0,
@@ -113,7 +85,7 @@
 			return NO;
 		}
 		
-		err = AudioUnitSetProperty(self.instrument,
+		err = AudioUnitSetProperty(self.instrumentUnit,
 								   kMusicDeviceProperty_SoundBankFSRef,
 								   kAudioUnitScope_Global, 0,
 								   &fsRef, sizeof(fsRef));
@@ -127,6 +99,44 @@
 }
 
 #pragma mark - Private
+
+- (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error
+{
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	
+	for (UInt8 channel = 0; channel < 16; channel++) {
+		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
+		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
+		UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
+		UInt8 programChange = instrumentID & 0x7F;
+		
+		UInt32 bankSelectStatus = 0xB0 | channel;
+		UInt32 programChangeStatus = 0xC0 | channel;
+		
+		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		
+		err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		
+		err = MusicDeviceMIDIEvent(self.instrumentUnit, programChangeStatus, programChange, 0, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (Program Change) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+	}
+	
+	return YES;
+}
 
 #pragma mark Audio Graph
 
@@ -199,7 +209,7 @@
 	}
 	
 	self.graph = graph;
-	self.instrument = instrumentUnit;
+	self.instrumentUnit = instrumentUnit;
 	
 	return YES;
 }
@@ -213,8 +223,6 @@
 	if (description.componentManufacturer != appleSynthDescription.componentManufacturer) return NO;
 	if (description.componentType != appleSynthDescription.componentType) return NO;
 	if (description.componentSubType != appleSynthDescription.componentSubType) return NO;
-	if (description.componentFlags != appleSynthDescription.componentFlags) return NO;
-	if (description.componentFlagsMask != appleSynthDescription.componentFlagsMask) return NO;
 	return YES;
 }
 
@@ -244,9 +252,15 @@
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
-		OSStatus err = MusicDeviceMIDIEvent(self.instrument, command.commandType, command.dataByte1, command.dataByte2, 0);
+		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, 0);
 		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %i", command, err);
 	}
 }
+
+#pragma mark - Deprecated
+
++ (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
+- (AudioUnit)instrument { return self.instrumentUnit; }
+- (void)setInstrument:(AudioUnit)instrument { self.instrumentUnit = instrument; }
 
 @end

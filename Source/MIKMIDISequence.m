@@ -9,6 +9,7 @@
 #import "MIKMIDISequence.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
@@ -17,14 +18,16 @@
 #error MIKMIDISequence.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
 #endif
 
-const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
+void * MIKMIDISequenceKVOContext = &MIKMIDISequenceKVOContext;
 
+const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 @interface MIKMIDISequence ()
 
 @property (nonatomic) MusicSequence musicSequence;
-@property (strong, nonatomic) MIKMIDITrack *tempoTrack;
-@property (strong, nonatomic) NSArray *tracks;
+@property (nonatomic, strong) MIKMIDITrack *tempoTrack;
+@property (nonatomic, strong) NSMutableArray *internalTracks;
+@property (nonatomic) MusicTimeStamp lengthDefinedByTracks;
 
 @end
 
@@ -35,56 +38,77 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 + (instancetype)sequence
 {
-    return [[self alloc] init];
+	return [[self alloc] init];
 }
 
 - (instancetype)init
 {
-    MusicSequence sequence;
-    OSStatus err = NewMusicSequence(&sequence);
-    if (err) {
-        NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return nil;
-    }
-
-    return [self initWithMusicSequence:sequence error:NULL];
+	MusicSequence sequence;
+	OSStatus err = NewMusicSequence(&sequence);
+	if (err) {
+		NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return nil;
+	}
+	
+	return [self initWithMusicSequence:sequence error:NULL];
 }
 
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
-    return [[self alloc] initWithFileAtURL:fileURL error:error];
+	return [[self alloc] initWithFileAtURL:fileURL convertMIDIChannelsToTracks:NO error:error];
+}
+
++ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	return [[self alloc] initWithFileAtURL:fileURL convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 {
-    NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
-	return [self initWithData:data error:error];
+	return [self initWithFileAtURL:fileURL convertMIDIChannelsToTracks:NO error:error];
+}
+
+- (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
+	return [self initWithData:data convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 + (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error
 {
-    return [[self alloc] initWithData:data error:error];
+	return [[self alloc] initWithData:data convertMIDIChannelsToTracks:NO error:error];
+}
+
++ (instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
+	return [[self alloc] initWithData:data convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
 - (instancetype)initWithData:(NSData *)data error:(NSError **)error
 {
+	return [self initWithData:data convertMIDIChannelsToTracks:NO error:error];
+}
+
+- (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
+{
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	
-    MusicSequence sequence;
-    OSStatus err = NewMusicSequence(&sequence);
-    if (err) {
-        NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+	MusicSequence sequence;
+	OSStatus err = NewMusicSequence(&sequence);
+	if (err) {
+		NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-        return nil;
-    }
-
-    err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, 0);
-    if (err) {
-        NSLog(@"MusicSequenceFileLoadData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return nil;
+	}
+	
+	MusicSequenceLoadFlags flags = convertMIDIChannelsToTracks ? kMusicSequenceLoadSMF_ChannelsToTracks : 0;
+	err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, flags);
+	if (err) {
+		NSLog(@"MusicSequenceFileLoadData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-        return nil;
-    }
-
+		return nil;
+	}
+	
 	return [self initWithMusicSequence:sequence error:error];
 }
 
@@ -134,7 +158,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 			}
 			[tracks addObject:[MIKMIDITrack trackWithSequence:self musicTrack:musicTrack]];
 		}
-		self.tracks = tracks;
+		self.internalTracks = tracks;
 		self.length = MIKMIDISequenceLongestTrackLength;
 	}
 	
@@ -143,108 +167,106 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 - (void)dealloc
 {
-    self.callBackBlock = nil;
-    OSStatus err = DisposeMusicSequence(_musicSequence);
-    if (err) NSLog(@"DisposeMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+	self.internalTracks = nil; // Unregister for KVO
+	self.callBackBlock = nil;
+	OSStatus err = DisposeMusicSequence(_musicSequence);
+	if (err) NSLog(@"DisposeMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
 }
 
 #pragma mark - Adding and Removing Tracks
 
 - (MIKMIDITrack *)addTrack
 {
-    MusicTrack musicTrack;
-    OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
-    if (err) {
-        NSLog(@"MusicSequenceNewTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return nil;
-    }
-
-    MIKMIDITrack *track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
-
-    if (track) {
-        NSMutableArray *tracks = [self.tracks mutableCopy];
-        [tracks addObject:track];
-        self.tracks = tracks;
-    }
-
-    return track;
+	MusicTrack musicTrack;
+	OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
+	if (err) {
+		NSLog(@"MusicSequenceNewTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return nil;
+	}
+	
+	MIKMIDITrack *track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
+	[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
+	
+	return track;
 }
 
 - (BOOL)removeTrack:(MIKMIDITrack *)track
 {
-    OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
-    if (err) {
-        NSLog(@"MusicSequenceDisposeTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return NO;
-    }
-
-    NSMutableArray *tracks = [self.tracks mutableCopy];
-    [tracks removeObject:track];
-    self.tracks = tracks;
-
-    return YES;
+	if (!track) return NO;
+	
+	OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
+	if (err) {
+		NSLog(@"MusicSequenceDisposeTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return NO;
+	}
+	
+	NSInteger index = [self.internalTracks indexOfObject:track];
+	if (index != NSNotFound) [self removeObjectFromInternalTracksAtIndex:index];
+	
+	return YES;
 }
 
 #pragma mark - File Saving
 
 - (BOOL)writeToURL:(NSURL *)fileURL error:(NSError *__autoreleasing *)error
 {
-    return [self.dataValue writeToURL:fileURL options:NSDataWritingAtomic error:error];
+	return [self.dataValue writeToURL:fileURL options:NSDataWritingAtomic error:error];
 }
 
 #pragma mark - Callback
 
 static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, MusicTrack inTrack, MusicTimeStamp inEventTime, const MusicEventUserData *inEventData, MusicTimeStamp inStartSliceBeat, MusicTimeStamp inEndSliceBeat)
 {
-    MIKMIDISequence *self = (__bridge MIKMIDISequence *)inClientData;
-    if (!self.callBackBlock) return;
-
-    UInt32 trackIndex;
-    OSStatus err = MusicSequenceGetTrackIndex(inSequence, inTrack, &trackIndex);
-    if (err) {
-        NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return;
-    }
-
-    MIKMIDITrack *track = self.tracks[trackIndex];
-    if (track && self.callBackBlock) {
-        self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
-    }
+	MIKMIDISequence *self = (__bridge MIKMIDISequence *)inClientData;
+	if (!self.callBackBlock) return;
+	
+	UInt32 trackIndex;
+	OSStatus err = MusicSequenceGetTrackIndex(inSequence, inTrack, &trackIndex);
+	if (err) {
+		NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return;
+	}
+	
+	MIKMIDITrack *track = self.tracks[trackIndex];
+	if (track && self.callBackBlock) {
+		self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
+	}
 }
 
 #pragma mark - Looping
 
 - (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp
 {
-    MusicTimeStamp length = self.length;
-
-    if (loopedTimeStamp > length) {
-        NSInteger numTimesLooped = loopedTimeStamp / length;
-        loopedTimeStamp -= (length * numTimesLooped);
-    }
-
-    return loopedTimeStamp;
+	MusicTimeStamp length = self.length;
+	
+	if (loopedTimeStamp > length) {
+		NSInteger numTimesLooped = loopedTimeStamp / length;
+		loopedTimeStamp -= (length * numTimesLooped);
+	}
+	
+	return loopedTimeStamp;
 }
 
 #pragma mark - Tempo
 
 - (NSArray *)tempoEvents
 {
-    return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+	return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
 }
 
 - (BOOL)setOverallTempo:(Float64)bpm
 {
 	NSArray *timeSignatureEvents = [self timeSignatureEvents];
-    if (![self.tempoTrack clearAllEvents]) return NO;
-	if (timeSignatureEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:timeSignatureEvents]]) return NO;
-    return [self setTempo:bpm atTimeStamp:0];
+	[self.tempoTrack removeAllEvents];
+	if ([self.tempoTrack.events count]) return NO;
+	[self.tempoTrack addEvents:timeSignatureEvents];
+	return [self setTempo:bpm atTimeStamp:0];
 }
 
 - (BOOL)setTempo:(Float64)bpm atTimeStamp:(MusicTimeStamp)timeStamp
 {
-    MIKMIDITempoEvent *event = [MIKMIDITempoEvent tempoEventWithTimeStamp:timeStamp tempo:bpm];
-    return [self.tempoTrack insertMIDIEvent:event];
+	[self.tempoTrack addEvent:[MIKMIDITempoEvent tempoEventWithTimeStamp:timeStamp tempo:bpm]];
+	return YES;
 }
 
 - (Float64)tempoAtTimeStamp:(MusicTimeStamp)timeStamp
@@ -260,12 +282,12 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return [self.tempoTrack eventsOfClass:[MIKMIDIMetaTimeSignatureEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
 }
 
-
 - (BOOL)setOverallTimeSignature:(MIKMIDITimeSignature)signature
 {
 	NSArray *tempoEvents = [self tempoEvents];
-	if (![self.tempoTrack clearAllEvents]) return NO;
-	if (tempoEvents.count && ![self.tempoTrack insertMIDIEvents:[NSSet setWithArray:tempoEvents]]) return NO;
+	[self.tempoTrack removeAllEvents];
+	if ([self.tempoTrack.events count]) return NO;
+	[self.tempoTrack addEvents:tempoEvents];
 	return [self setTimeSignature:signature atTimeStamp:0];
 }
 
@@ -277,7 +299,8 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	event.denominator = signature.denominator;
 	event.metronomePulse = self.tempoTrack.timeResolution;
 	event.thirtySecondsPerQuarterNote = 8;
-	return [self.tempoTrack insertMIDIEvent:event];
+	[self.tempoTrack addEvent:event];
+	return YES;
 }
 
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp
@@ -296,42 +319,118 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
+	return [NSString stringWithFormat:@"%@ tempo track: %@ tracks: %@", [super description], self.tempoTrack, self.tracks];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if (context != MIKMIDISequenceKVOContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+	
+	if ([self.internalTracks containsObject:object] &&
+		([keyPath isEqualToString:@"length"] || [keyPath isEqualToString:@"offset"])) {
+		[self updateLengthDefinedByTracks];
+	}
+}
+
+- (void)updateLengthDefinedByTracks
+{
+	MusicTimeStamp length = 0;
+	for (MIKMIDITrack *track in self.tracks) {
+		MusicTimeStamp trackLength = track.length + track.offset;
+		if (trackLength > length) length = trackLength;
+	}
+	
+	self.lengthDefinedByTracks = length;
 }
 
 #pragma mark - Properties
 
+- (void)setInternalTracks:(NSMutableArray *)internalTracks
+{
+	if (internalTracks != _internalTracks) {
+		for (MIKMIDITrack *track in _internalTracks) {
+			[track removeObserver:self forKeyPath:@"length"];
+			[track removeObserver:self forKeyPath:@"offset"];
+		}
+		
+		_internalTracks = internalTracks;
+		
+		for (MIKMIDITrack *track in _internalTracks) {
+			[track addObserver:self forKeyPath:@"length" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
+			[track addObserver:self forKeyPath:@"offset" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
+		}
+	}
+}
+
+- (void)insertObject:(MIKMIDITrack *)track inInternalTracksAtIndex:(NSUInteger)index
+{
+	if (!track) return;
+	
+	[self.internalTracks insertObject:track atIndex:index];
+	[track addObserver:self forKeyPath:@"length" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
+	[track addObserver:self forKeyPath:@"offset" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
+}
+
+- (void)removeObjectFromInternalTracksAtIndex:(NSUInteger)index
+{
+	if (index >= [self.internalTracks count]) return;
+	MIKMIDITrack *track = self.internalTracks[index];
+	[self.internalTracks removeObjectAtIndex:index];
+	[track removeObserver:self forKeyPath:@"length"];
+	[track removeObserver:self forKeyPath:@"offset"];
+	[self updateLengthDefinedByTracks];
+}
+
++ (NSSet *)keyPathsForValuesAffectingTracks
+{
+	return [NSSet setWithObjects:@"internalTracks", nil];
+}
+
+- (NSArray *)tracks
+{
+	return [self.internalTracks copy];
+}
+
++ (NSSet *)keyPathsForValuesAffectingLength
+{
+	return [NSSet setWithObjects:@"lengthDefinedByTracks", nil];
+}
+
 - (MusicTimeStamp)length
 {
-    if (_length != MIKMIDISequenceLongestTrackLength) return _length;
+	if (_length != MIKMIDISequenceLongestTrackLength) return _length;
+	
+	return self.lengthDefinedByTracks;
+}
 
-    MusicTimeStamp length = 0;
-    for (MIKMIDITrack *track in self.tracks) {
-        MusicTimeStamp trackLength = track.length + track.offset;
-        if (trackLength > length) length = trackLength;
-    }
-
-    return length;
++ (NSSet *)keyPathsForValuesAffectingDurationInSeconds
+{
+	return [NSSet setWithObjects:@"length", nil];
 }
 
 - (Float64)durationInSeconds
 {
-    Float64 duration = 0;
-    OSStatus err = MusicSequenceGetSecondsForBeats(self.musicSequence, self.length, &duration);
-    if (err) NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-    return duration;
+	Float64 duration = 0;
+	OSStatus err = MusicSequenceGetSecondsForBeats(self.musicSequence, self.length, &duration);
+	if (err) NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+	return duration;
 }
 
 - (NSData *)dataValue
 {
-    CFDataRef data;
-    OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, 0, 0, &data);
-    if (err) {
-        NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-        return nil;
-    }
-
-    return (__bridge_transfer NSData *)data;
+	CFDataRef data;
+	OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, 0, 0, &data);
+	if (err) {
+		NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return nil;
+	}
+	
+	return (__bridge_transfer NSData *)data;
 }
 
 #pragma mark - Deprecated

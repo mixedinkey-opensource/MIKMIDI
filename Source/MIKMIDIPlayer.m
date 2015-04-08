@@ -8,6 +8,7 @@
 
 #import "MIKMIDIPlayer.h"
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDISequence.h"
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDINoteEvent.h"
@@ -184,8 +185,8 @@
 	self.clickPlayer = [[MIKMIDIPlayer alloc] init];
 	self.clickPlayer->_isClickPlayer = YES;
 	MIKMIDISequence *clickSequence = [MIKMIDISequence sequence];
-	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.tempoEvents]];
-	[clickSequence.tempoTrack insertMIDIEvents:[NSSet setWithArray:self.sequence.timeSignatureEvents]];
+	[clickSequence.tempoTrack addEvents:self.sequence.tempoEvents];
+	[clickSequence.tempoTrack addEvents:self.sequence.timeSignatureEvents];
 	self.clickPlayer.sequence = clickSequence;
 	MIKMIDITrack *clickTrack = [clickSequence addTrack];
 
@@ -212,7 +213,7 @@
 		[clickEvents addObject:[MIKMIDINoteEvent noteEventWithTimeStamp:clickTimeStamp message:clickMessage]];
 	}
 
-	[clickTrack insertMIDIEvents:clickEvents];
+	[clickTrack addEvents:[clickEvents allObjects]];
 }
 
 #pragma mark - Properties

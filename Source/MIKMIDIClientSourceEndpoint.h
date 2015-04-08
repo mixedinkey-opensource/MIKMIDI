@@ -7,8 +7,26 @@
 
 #import "MIKMIDISourceEndpoint.h"
 
+/**
+ *	MIKMIDIClientSourceEndpoint represents a virtual endpoint created by your application to send MIDI
+ *	to other applications on the system.
+ *
+ *  Instances of this class will be visible and can be connected to by other applications.
+ */
 @interface MIKMIDIClientSourceEndpoint : MIKMIDISourceEndpoint
 
+/**
+ *  Initializes a new virtual source endpoint.
+ *
+ *  This is essentially equivalent to creating a Core MIDI source endpoint
+ *  using MIDISourceCreate(). Source endpoints created using this
+ *  method can be used by your application to *send* MIDI rather than receive
+ *  it. They can be seen and connected to by other applications on the system.
+ *
+ *  @param name	A name for the new virtual endpoint.
+ *
+ *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
+ */
 - (instancetype)initWithName:(NSString*)name;
 
 /**

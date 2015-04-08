@@ -54,6 +54,20 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 + (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
+ *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
+ *
+ *  @param fileURL The URL of the MIDI file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ *
+ *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
+ */
++ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
  *
  *  @param fileURL The URL of the MIDI file.
@@ -65,10 +79,24 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
+ *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
+ *
+ *  @param fileURL The URL of the MIDI file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ *
+ *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
+ */
+- (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
  *
  *  @param data  An NSData instance containing the data for the MIDI sequence/file.
- *  @param error If an
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
@@ -76,15 +104,43 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 + (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
 
 /**
+ *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ */
++ (instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+
+/**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
  *
  *  @param data  An NSData instance containing the data for the MIDI sequence/file.
- *  @param error If an
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
 - (instancetype)initWithData:(NSData *)data error:(NSError **)error;
+
+/**
+ *  Initializes a new instance of MIKMIDISequence from MIDI data.
+ *
+ *  @param data  An NSData instance containing the data for the MIDI sequence/file.
+ *  @param convertMIDIChannelsToTracks Determines whether or not the track structure should be altered. When YES, the resulting sequence will
+ *  contain a tempo track, 1 track for each MIDI Channel that is found in the MIDI file, and 1 track for SysEx or MetaEvents as the last track in
+ *  the sequence. When NO, the track structure of the original MIDI file is left unaltered.
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *
+ *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ */
+- (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
@@ -96,6 +152,8 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return Whether or not the file write was successful.
  */
 - (BOOL)writeToURL:(NSURL *)fileURL error:(NSError **)error;
+
+#pragma mark - Track Management
 
 /**
  *  Creates and adds a new MIDI track to the sequence.
@@ -111,18 +169,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  */
 - (BOOL)removeTrack:(MIKMIDITrack *)track;
 
-/**
- *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
- *
- *  When the music sequence is being looped by an MIKMIDIPlayer, the time stamp of the player continuosly increases. This method can be
- *  used to find where in the MIDI sequence the looped playback is at. For example, in a sequence with a length of 16,
- *  calling this method with a loopedTimeStamp of 17 would return 1.
- *
- *  @param loopedTimeStamp The time stamp that you would like an equivalent time stamp for.
- *
- *  @return The MusicTimeStamp of the sequence that is in an equivalent position in the sequence as loopedTimeStamp.
- */
-- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp;
+#pragma mark - Tempo & Time Signature
 
 /**
  *  Returns an array of MIKMIDIEvent from the tempo track.
@@ -218,21 +265,39 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  */
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp;
 
-// Properties
+#pragma mark - Timing
 
 /**
- *  The tempo track for the sequence.
+ *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
+ *
+ *  When the music sequence is being looped by an MIKMIDIPlayer, the time stamp of the player continuosly increases. This method can be
+ *  used to find where in the MIDI sequence the looped playback is at. For example, in a sequence with a length of 16,
+ *  calling this method with a loopedTimeStamp of 17 would return 1.
+ *
+ *  @param loopedTimeStamp The time stamp that you would like an equivalent time stamp for.
+ *
+ *  @return The MusicTimeStamp of the sequence that is in an equivalent position in the sequence as loopedTimeStamp.
+ */
+- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp;
+
+#pragma mark - Properties
+
+/**
+ *  The tempo track for the sequence. Even in a new, empty sequence,
+ *  this will return a tempo track to which tempo events can be added.
  */
 @property (nonatomic, readonly) MIKMIDITrack *tempoTrack;
 
 /**
  *  The MIDI music tracks for the sequence. An array of MIKMIDITrack instances.
  *  Does not include the tempo track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) NSArray *tracks;
 
 /**
- *  The underlaying MusicSequence that backs the instance of MIKMIDISequence.
+ *  The underlying MusicSequence that backs the instance of MIKMIDISequence.
  */
 @property (nonatomic, readonly) MusicSequence musicSequence;
 
@@ -240,11 +305,15 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  The length of the sequence as a MusicTimeStamp.
  *
  *  Set to MIKMIDISequenceLongestTrackLength to make the length equal to the length of the longest track.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp length;
 
 /**
  *  The duration of the sequence in seconds.
+ *
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, readonly) Float64 durationInSeconds;
 
