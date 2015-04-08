@@ -28,6 +28,10 @@ typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestina
  *  method can be used by your application to *receive* MIDI rather than send
  *  it. They can be seen and connected to by other applications on the system.
  *
+ *  @note On iOS, in order to create MIKMIDIClientDestinationEndpoint instances,
+ *  your app must include the 'audio' key in its UIBackgroundModes in its Info.plist.
+ *  Please see https://github.com/mixedinkey-opensource/MIKMIDI/wiki/Adding-Audio-to-UIBackgroundModes .
+ *
  *  @param name	A name for the new virtual endpoint.
  *  @param handler A block to be called when the endpoint receives MIDI messages.
  *

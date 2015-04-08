@@ -10,6 +10,8 @@
 
 @interface MIKMIDISynthesizer ()
 
+- (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error;
+
 @property (nonatomic, readwrite) AudioUnit instrumentUnit;
 
 @end

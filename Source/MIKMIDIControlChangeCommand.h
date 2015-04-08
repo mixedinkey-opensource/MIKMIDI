@@ -23,6 +23,10 @@
  *  message's controllerNumber plus 32, and whose value is the least significant 7-bits of 
  *  the 14-bit value.
  *
+ *  @note This method is used internally by MIKMIDI, to coalesce incoming 14-bit control change commands.
+ *  it is not generally useful to external users of MIKMIDI. If you're simply trying to create a new
+ *  MIKMIDIControlChangeCommand instance, you should use plain alloc/init instead.
+ *
  *  @param msbCommand The command containing the most significant 7 bits of value data (ie. the first command).
  *  @param lsbCommand The command containing the least significant 7 bits of value data (ie. the second command).
  *
