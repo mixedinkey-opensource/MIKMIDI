@@ -13,7 +13,7 @@ class ViewController: UIViewController {
 	
 	var sequenceView: MIDISequenceView {
 		get {
-			return self.view as MIDISequenceView
+			return self.view as! MIDISequenceView
 		}
 	}
 
