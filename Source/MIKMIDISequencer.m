@@ -629,6 +629,7 @@
 	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
 	return _metronome;
 #endif
+	return nil;
 }
 
 - (void)setMetronome:(MIKMIDIMetronome *)metronome
