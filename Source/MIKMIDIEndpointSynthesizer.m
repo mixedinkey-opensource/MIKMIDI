@@ -144,6 +144,45 @@
 	}
 }
 
+- (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error
+{
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	
+	for (UInt8 channel = 0; channel < 16; channel++) {
+		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
+		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
+		UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
+		UInt8 programChange = instrumentID & 0x7F;
+		
+		UInt32 bankSelectStatus = 0xB0 | channel;
+		UInt32 programChangeStatus = 0xC0 | channel;
+		
+		AudioUnit instrumentUnit = self.instrument;
+		OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		
+		err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+		
+		err = MusicDeviceMIDIEvent(instrumentUnit, programChangeStatus, programChange, 0, 0);
+		if (err) {
+			NSLog(@"MusicDeviceMIDIEvent() (Program Change) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
+	}
+	
+	return YES;
+}
+
 #pragma mark Audio Graph
 
 - (BOOL)setupAUGraph
@@ -242,36 +281,7 @@
 	if (!self.isUsingAppleSynth) return NO;
 	
 	MusicDeviceInstrumentID instrumentID = instrument.instrumentID;
-	for (UInt8 channel = 0; channel < 16; channel++) {
-		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
-		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
-		UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
-		UInt8 programChange = instrumentID & 0x7F;
-		
-		UInt32 bankSelectStatus = 0xB0 | channel;
-		UInt32 programChangeStatus = 0xC0 | channel;
-		
-		AudioUnit instrumentUnit = self.instrument;
-		OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-		
-		err = MusicDeviceMIDIEvent(instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-		
-		err = MusicDeviceMIDIEvent(instrumentUnit, programChangeStatus, programChange, 0, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (Program Change) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			return NO;
-		}
-	}
-	
-	return YES;
+	return [self sendBankSelectAndProgramChangeForInstrumentID:instrumentID error:NULL];
 }
 
 #pragma mark - Properties

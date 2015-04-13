@@ -44,7 +44,18 @@
 	__unsafe_unretained id *trampoline = (__unsafe_unretained id *)malloc(sizeof(id));
 	
 	MIDIEndpointRef endpoint;
-	MIDIDestinationCreate([[self class] MIDIClient], (__bridge CFStringRef)name, MIKMIDIDestinationReadProc, trampoline, &endpoint);
+	OSStatus err = MIDIDestinationCreate([[self class] MIDIClient], (__bridge CFStringRef)name, MIKMIDIDestinationReadProc, trampoline, &endpoint);
+	if (err != noErr) {
+		NSLog(@"%s failed. Unable to create MIDIDestination.", __PRETTY_FUNCTION__);
+#if TARGET_OS_IPHONE
+		if (err == kMIDINotPermitted) {
+			NSLog(@"MIKMIDI's use of some CoreMIDI functions requires that your app have the audio key in its UIBackgroundModes.\n"
+				  "Please see https://github.com/mixedinkey-opensource/MIKMIDI/wiki/Adding-Audio-to-UIBackgroundModes");
+		}
+#endif
+		free(trampoline);
+		return nil;
+	}
 	
 	self = [self initWithObjectRef:endpoint];
 	if (!self) {

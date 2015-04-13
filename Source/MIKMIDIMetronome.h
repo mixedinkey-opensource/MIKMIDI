@@ -11,9 +11,16 @@
 
 @interface MIKMIDIMetronome : MIKMIDIEndpointSynthesizer
 
-- (void)setupMetronome;
-
 @property (nonatomic) MIDINoteMessage tickMessage;
 @property (nonatomic) MIDINoteMessage tockMessage;
+
+@end
+
+@interface MIKMIDIMetronome (Private)
+
+/**
+ *  This should not be called directly. Consider it private to MIKMIDI.
+ */
+- (BOOL)setupMetronome;
 
 @end
