@@ -635,9 +635,11 @@
 @synthesize metronome = _metronome;
 - (MIKMIDIMetronome *)metronome
 {
-#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0) || !TARGET_OS_IPHONE
 	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithClientDestinationEndpoint:self.metronomeEndpoint];
 	return _metronome;
+#else
+	return nil;
 #endif
 }
 

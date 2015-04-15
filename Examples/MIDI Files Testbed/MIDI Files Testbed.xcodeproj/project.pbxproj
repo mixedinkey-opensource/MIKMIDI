@@ -60,7 +60,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9D1D5C071AC4901100F9C2BD /* MIKMIDI.framework in Copy Frameworks */,
+				9D1D5C071AC4901100F9C2BD /* (null) in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
