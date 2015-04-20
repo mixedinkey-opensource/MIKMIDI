@@ -103,6 +103,8 @@
 			 orTimeoutInterval:(NSTimeInterval)timeout
 			   completionBlock:(MIKMIDIMappingGeneratorMappingCompletionBlock)completionBlock;
 {
+	self.currentMappingCompletionBlock = completionBlock;
+	
 	self.existingMappingItems = [self.mapping mappingItemsForCommandIdentifier:commandID responder:control];
 	// Determine if existing mapping items for this control should be removed.
 	BOOL shouldRemoveExisting = YES;
@@ -125,7 +127,6 @@
 		}
 	}
 	
-	self.currentMappingCompletionBlock = completionBlock;
 	self.controlBeingLearned = control;
 	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
