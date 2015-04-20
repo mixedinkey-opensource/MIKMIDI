@@ -51,7 +51,7 @@
 - (UInt8)denominator
 {
     UInt8 denominator = *((UInt8*)[self.metaData bytes] + 1);
-    return pow(2.0, (float)denominator);
+    return (UInt8)pow(2.0, (float)denominator);
 }
 
 - (void)setDenominator:(UInt8)denominator
@@ -59,7 +59,7 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = self.metaData.mutableCopy;
-    UInt8 denominatorPower = log2(denominator);
+    UInt8 denominatorPower = (UInt8)log2(denominator);
     [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&denominatorPower length:1];
     [self setMetaData:[mutableMetaData copy]];
 }

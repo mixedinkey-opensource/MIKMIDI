@@ -219,7 +219,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     MusicTimeStamp length = self.length;
 
     if (loopedTimeStamp > length) {
-        NSInteger numTimesLooped = loopedTimeStamp / length;
+        NSInteger numTimesLooped = (NSInteger)(loopedTimeStamp / length);
         loopedTimeStamp -= (length * numTimesLooped);
     }
 
@@ -280,7 +280,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	event.timeStamp = timeStamp;
 	event.numerator = signature.numerator;
 	event.denominator = signature.denominator;
-	event.metronomePulse = self.tempoTrack.timeResolution;
+	event.metronomePulse = (UInt8)self.tempoTrack.timeResolution;
 	event.thirtySecondsPerQuarterNote = 8;
 	return [self.tempoTrack insertMIDIEvent:event];
 }

@@ -35,7 +35,7 @@
 - (void)setNote:(NSUInteger)value
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	self.dataByte1 = value;
+	self.dataByte1 = (UInt8)value;
 }
 
 - (NSUInteger)velocity { return self.value; }

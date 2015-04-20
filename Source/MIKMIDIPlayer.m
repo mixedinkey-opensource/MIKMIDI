@@ -205,7 +205,7 @@
 		if (![clickSequence getTimeSignature:&timeSignature atTimeStamp:clickTimeStamp]) continue;
 		if (!timeSignature.numerator || !timeSignature.denominator) continue;
 
-		NSInteger adjustedTimeStamp = clickTimeStamp * timeSignature.denominator / 4.0;
+		NSInteger adjustedTimeStamp = (NSInteger)(clickTimeStamp * timeSignature.denominator / 4.0);
 		BOOL isTick = !((adjustedTimeStamp + timeSignature.numerator) % (timeSignature.numerator));
 		increment = 4.0 / timeSignature.denominator;
 
