@@ -43,7 +43,7 @@
         MusicPlayer musicPlayer;
         OSStatus err = NewMusicPlayer(&musicPlayer);
         if (err) {
-            NSLog(@"NewMusicPlayer() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            NSLog(@"NewMusicPlayer() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
             return nil;
         }
 
@@ -59,7 +59,7 @@
     if (self.isPlaying) [self stopPlayback];
 
     OSStatus err = DisposeMusicPlayer(_musicPlayer);
-    if (err) NSLog(@"DisposeMusicPlayer() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"DisposeMusicPlayer() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
 #pragma mark - Playback
@@ -67,7 +67,7 @@
 - (void)preparePlayback
 {
     OSStatus err = MusicPlayerPreroll(self.musicPlayer);
-    if (err) NSLog(@"MusicPlayerPreroll() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicPlayerPreroll() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
 - (void)startPlayback
@@ -83,16 +83,16 @@
 	[self addClickTrackWhenNeededFromTimeStamp:position];
 
     OSStatus err = MusicPlayerSetTime(self.musicPlayer, position);
-    if (err) return NSLog(@"MusicPlayerSetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) return NSLog(@"MusicPlayerSetTime() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 
     Float64 sequenceDuration = self.sequence.durationInSeconds;
     Float64 positionInTime;
 
     err = MusicSequenceGetSecondsForBeats(self.sequence.musicSequence, position, &positionInTime);
-    if (err) return NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) return NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 
     err = MusicPlayerStart(self.musicPlayer);
-    if (err) return NSLog(@"MusicPlayerStart() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) return NSLog(@"MusicPlayerStart() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 	[self.clickPlayer startPlaybackFromPosition:position];
 
     self.isPlaying = YES;
@@ -130,7 +130,7 @@
     Boolean musicPlayerIsPlaying = TRUE;
     OSStatus err = MusicPlayerIsPlaying(self.musicPlayer, &musicPlayerIsPlaying);
     if (err) {
-        NSLog(@"MusicPlayerIsPlaying() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicPlayerIsPlaying() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     }
 
     self.lastStoppedAtTimeStampNumber = @(self.currentTimeStamp);
@@ -138,7 +138,7 @@
     if (musicPlayerIsPlaying) {
         err = MusicPlayerStop(self.musicPlayer);
         if (err) {
-            NSLog(@"MusicPlayerStop() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            NSLog(@"MusicPlayerStop() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         }
     }
 
@@ -191,7 +191,7 @@
 
 	OSStatus err = MusicTrackSetDestMIDIEndpoint(clickTrack.musicTrack, (MIDIEndpointRef)self.metronomeEndpoint.objectRef);
 	if (err) {
-		NSLog(@"MusicTrackGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 		return;
 	}
 	MusicTimeStamp toTimeStamp = self.stopPlaybackAtEndOfSequence ? self.sequence.length : self.maxClickTrackTimeStamp;
@@ -238,7 +238,7 @@
 
         MusicSequence musicSequence = sequence.musicSequence;
         OSStatus err = MusicPlayerSetSequence(self.musicPlayer, musicSequence);
-        if (err) return NSLog(@"MusicPlayerSetSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        if (err) return NSLog(@"MusicPlayerSetSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 
         _sequence = sequence;
     }
@@ -248,14 +248,14 @@
 {
     MusicTimeStamp position = 0;
     OSStatus err = MusicPlayerGetTime(self.musicPlayer, &position);
-    if (err) NSLog(@"MusicPlayerGetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicPlayerGetTime() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return position;
 }
 
 - (void)setCurrentTimeStamp:(MusicTimeStamp)currentTimeStamp
 {
     OSStatus err = MusicPlayerSetTime(self.musicPlayer, currentTimeStamp);
-    if (err) NSLog(@"MusicPlayerSetTime() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicPlayerSetTime() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
 - (MIKMIDIClientDestinationEndpoint *)metronomeEndpoint

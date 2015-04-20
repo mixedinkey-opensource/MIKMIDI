@@ -43,7 +43,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     MusicSequence sequence;
     OSStatus err = NewMusicSequence(&sequence);
     if (err) {
-        NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"NewMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return nil;
     }
 
@@ -73,14 +73,14 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     MusicSequence sequence;
     OSStatus err = NewMusicSequence(&sequence);
     if (err) {
-        NSLog(@"NewMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"NewMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
         return nil;
     }
 
     err = MusicSequenceFileLoadData(sequence, (__bridge CFDataRef)data, kMusicSequenceFile_MIDIType, 0);
     if (err) {
-        NSLog(@"MusicSequenceFileLoadData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicSequenceFileLoadData() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
         return nil;
     }
@@ -100,7 +100,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 	if (self = [super init]) {
 		OSStatus err = MusicSequenceSetUserCallback(musicSequence, MIKSequenceCallback, (__bridge void *)self);
 		if (err) {
-			NSLog(@"MusicSequenceSetUserCallback() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			NSLog(@"MusicSequenceSetUserCallback() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			return nil;
 		}
@@ -109,7 +109,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 		MusicTrack tempoTrack;
 		err = MusicSequenceGetTempoTrack(musicSequence, &tempoTrack);
 		if (err) {
-			NSLog(@"MusicSequenceGetTempoTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			NSLog(@"MusicSequenceGetTempoTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			return nil;
 		}
@@ -118,7 +118,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 		UInt32 numTracks = 0;
 		err = MusicSequenceGetTrackCount(musicSequence, &numTracks);
 		if (err) {
-			NSLog(@"MusicSequenceGetTrackCount() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+			NSLog(@"MusicSequenceGetTrackCount() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			return nil;
 		}
@@ -128,7 +128,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 			MusicTrack musicTrack;
 			err = MusicSequenceGetIndTrack(musicSequence, i, &musicTrack);
 			if (err){
-				NSLog(@"MusicSequenceGetIndTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				NSLog(@"MusicSequenceGetIndTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 				*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 				return nil;
 			}
@@ -145,7 +145,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 {
     self.callBackBlock = nil;
     OSStatus err = DisposeMusicSequence(_musicSequence);
-    if (err) NSLog(@"DisposeMusicSequence() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"DisposeMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
 #pragma mark - Adding and Removing Tracks
@@ -155,7 +155,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     MusicTrack musicTrack;
     OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
     if (err) {
-        NSLog(@"MusicSequenceNewTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return nil;
     }
 
@@ -174,7 +174,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 {
     OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
     if (err) {
-        NSLog(@"MusicSequenceDisposeTrack() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicSequenceDisposeTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return NO;
     }
 
@@ -202,7 +202,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     UInt32 trackIndex;
     OSStatus err = MusicSequenceGetTrackIndex(inSequence, inTrack, &trackIndex);
     if (err) {
-        NSLog(@"MusicSequenceGetTrackIndex() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicSequenceGetTrackIndex() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return;
     }
 
@@ -327,7 +327,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
     Float64 duration = 0;
     OSStatus err = MusicSequenceGetSecondsForBeats(self.musicSequence, self.length, &duration);
-    if (err) NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicSequenceGetSecondsForBeats() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return duration;
 }
 
@@ -336,7 +336,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     CFDataRef data;
     OSStatus err = MusicSequenceFileCreateData(self.musicSequence, kMusicSequenceFile_MIDIType, 0, 0, &data);
     if (err) {
-        NSLog(@"MusicSequenceFileCreateData() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicSequenceFileCreateData() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return nil;
     }
 

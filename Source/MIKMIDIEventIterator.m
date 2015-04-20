@@ -30,7 +30,7 @@
     if (self = [super init]) {
         OSStatus err = NewMusicEventIterator(track.musicTrack, &_iterator);
         if (err) {
-            NSLog(@"NewMusicEventIterator() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+            NSLog(@"NewMusicEventIterator() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
             return nil;
         }
     }
@@ -53,7 +53,7 @@
 - (void)dealloc
 {
     OSStatus err = DisposeMusicEventIterator(_iterator);
-    if (err) NSLog(@"DisposeMusicEventIterator() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"DisposeMusicEventIterator() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
 #pragma mark - Navigating
@@ -61,21 +61,21 @@
 - (BOOL)seek:(MusicTimeStamp)timeStamp
 {
     OSStatus err = MusicEventIteratorSeek(self.iterator, timeStamp);
-    if (err) NSLog(@"MusicEventIteratorSeek() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorSeek() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return !err;
 }
 
 - (BOOL)moveToNextEvent
 {
     OSStatus err = MusicEventIteratorNextEvent(self.iterator);
-    if (err) NSLog(@"MusicEventIteratorNextEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorNextEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return !err;
 }
 
 - (BOOL)moveToPreviousEvent
 {
     OSStatus err = MusicEventIteratorPreviousEvent(self.iterator);
-    if (err) NSLog(@"MusicEventIteratorPreviousEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorPreviousEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return !err;
 }
 
@@ -90,7 +90,7 @@
 
     OSStatus err = MusicEventIteratorGetEventInfo(self.iterator, &timeStamp, &type, &data , &dataSize);
     if (err) {
-        NSLog(@"MusicEventIteratorGetEventInfo() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+        NSLog(@"MusicEventIteratorGetEventInfo() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
         return nil;
     }
     
@@ -103,7 +103,7 @@
 {
     Boolean hasPreviousEvent = FALSE;
     OSStatus err = MusicEventIteratorHasPreviousEvent(self.iterator, &hasPreviousEvent);
-    if (err) NSLog(@"MusicEventIteratorHasPreviousEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorHasPreviousEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return hasPreviousEvent ? YES : NO;
 }
 
@@ -111,7 +111,7 @@
 {
     Boolean hasCurrentEvent = FALSE;
     OSStatus err = MusicEventIteratorHasCurrentEvent(self.iterator, &hasCurrentEvent);
-    if (err) NSLog(@"MusicEventIteratorHasCurrentEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorHasCurrentEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return hasCurrentEvent ? YES : NO;
 }
 
@@ -119,7 +119,7 @@
 {
     Boolean hasNextEvent = FALSE;
     OSStatus err = MusicEventIteratorHasNextEvent(self.iterator, &hasNextEvent);
-    if (err) NSLog(@"MusicEventIteratorHasNextEvent() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+    if (err) NSLog(@"MusicEventIteratorHasNextEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
     return hasNextEvent ? YES : NO;
 }
 
