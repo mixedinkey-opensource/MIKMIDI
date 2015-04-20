@@ -140,7 +140,7 @@
 {
 	for (MIKMIDICommand *command in commands) {
 		OSStatus err = MusicDeviceMIDIEvent(self.instrument, command.commandType, command.dataByte1, command.dataByte2, 0);
-		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %i", command, err);
+		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %@", command, @(err));
 	}
 }
 
@@ -190,7 +190,7 @@
 	AUGraph graph;
 	OSStatus err = 0;
 	if ((err = NewAUGraph(&graph))) {
-		NSLog(@"Unable to create AU graph: %i", err);
+		NSLog(@"Unable to create AU graph: %@", @(err));
 		return NO;
 	}
 	
@@ -206,7 +206,7 @@
 	
 	AUNode outputNode;
 	if ((err = AUGraphAddNode(graph, &outputcd, &outputNode))) {
-		NSLog(@"Unable to add ouptput node to graph: %i", err);
+		NSLog(@"Unable to add ouptput node to graph: %@", @(err));
 		return NO;
 	}
 	
@@ -214,28 +214,28 @@
 	
 	AUNode instrumentNode;
 	if ((err = AUGraphAddNode(graph, &instrumentcd, &instrumentNode))) {
-		NSLog(@"Unable to add instrument node to AU graph: %i", err);
+		NSLog(@"Unable to add instrument node to AU graph: %@", @(err));
 		return NO;
 	}
 	
 	if ((err = AUGraphOpen(graph))) {
-		NSLog(@"Unable to open AU graph: %i", err);
+		NSLog(@"Unable to open AU graph: %@", @(err));
 		return NO;
 	}
 	
 	AudioUnit instrumentUnit;
 	if ((err = AUGraphNodeInfo(graph, instrumentNode, NULL, &instrumentUnit))) {
-		NSLog(@"Unable to get instrument AU unit: %i", err);
+		NSLog(@"Unable to get instrument AU unit: %@", @(err));
 		return NO;
 	}
 	
 	if ((err = AUGraphConnectNodeInput(graph, instrumentNode, 0, outputNode, 0))) {
-		NSLog(@"Unable to connect instrument to output: %i", err);
+		NSLog(@"Unable to connect instrument to output: %@", @(err));
 		return NO;
 	}
 	
 	if ((err = AUGraphInitialize(graph))) {
-		NSLog(@"Unable to initialize AU graph: %i", err);
+		NSLog(@"Unable to initialize AU graph: %@", @(err));
 		return NO;
 	}
 	
@@ -243,13 +243,13 @@
 	// Turn down reverb which is way too high by default
 	if (instrumentcd.componentSubType == kAudioUnitSubType_DLSSynth) {
 		if ((err = AudioUnitSetParameter(instrumentUnit, kMusicDeviceParam_ReverbVolume, kAudioUnitScope_Global, 0, -120, 0))) {
-			NSLog(@"Unable to set reverb level to -120: %i", err);
+			NSLog(@"Unable to set reverb level to -120: %@", @(err));
 		}
 	}
 #endif
 	
 	if ((err = AUGraphStart(graph))) {
-		NSLog(@"Unable to start AU graph: %i", err);
+		NSLog(@"Unable to start AU graph: %@", @(err));
 		return NO;
 	}
 	
