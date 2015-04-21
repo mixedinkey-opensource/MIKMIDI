@@ -9,6 +9,7 @@
 #import "MIKMIDISynthesizer.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDISynthesizer_SubclassMethods.h"
+#import "MIKMIDIErrors.h"
 
 @implementation MIKMIDISynthesizer
 
@@ -34,13 +35,64 @@
 
 #pragma mark - Public
 
-- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument;
+- (NSArray *)availableInstruments
 {
-	if (!instrument) return NO;
-	if (!self.isUsingAppleSynth) return NO;
+#if TARGET_OS_IPHONE
+	return @[];
+#else
 	
-	MusicDeviceInstrumentID instrumentID = instrument.instrumentID;
-	return [self sendBankSelectAndProgramChangeForInstrumentID:instrumentID error:NULL];
+	AudioUnit audioUnit = [self instrumentUnit];
+	NSMutableArray *result = [NSMutableArray array];
+	
+	UInt32 instrumentCount;
+	UInt32 instrumentCountSize = sizeof(instrumentCount);
+	
+	OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentCount, kAudioUnitScope_Global, 0, &instrumentCount, &instrumentCountSize);
+	if (err) {
+		NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+		return @[];
+	}
+	
+#if !TARGET_OS_IPHONE
+	if (self.componentDescription.componentSubType == kAudioUnitSubType_DLSSynth) {
+		for (UInt32 i = 0; i < instrumentCount; i++) {
+			MusicDeviceInstrumentID instrumentID;
+			UInt32 idSize = sizeof(instrumentID);
+			err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentNumber, kAudioUnitScope_Global, i, &instrumentID, &idSize);
+			if (err) {
+				NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				continue;
+			}
+			
+			char cName[256];
+			UInt32 cNameSize = sizeof(cName);
+			OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
+			if (err) {
+				NSLog(@"AudioUnitGetProperty() failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				return nil;
+			}
+			
+			NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
+			MIKMIDISynthesizerInstrument *instrument = [MIKMIDISynthesizerInstrument instrumentWithID:instrumentID name:name];
+			if (instrument) [result addObject:instrument];
+		}
+	} else if (self.componentDescription.componentSubType == kAudioUnitSubType_MIDISynth)
+#endif
+	{
+	}
+	
+	return result;
+#endif
+}
+
+- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument error:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	if (!instrument) {
+		*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDIInvalidArgumentError userInfo:nil];
+		return NO;
+	}
+	return [self sendBankSelectAndProgramChangeForInstrumentID:instrument.instrumentID error:error];
 }
 
 - (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error
@@ -78,23 +130,23 @@
 		return NO;
 	}
 #else
-		FSRef fsRef;
-		err = FSPathMakeRef((const UInt8*)[[fileURL path] cStringUsingEncoding:NSUTF8StringEncoding], &fsRef, 0);
-		if (err != noErr) {
-			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-			return NO;
-		}
-		
-		err = AudioUnitSetProperty(self.instrumentUnit,
-								   kMusicDeviceProperty_SoundBankFSRef,
-								   kAudioUnitScope_Global, 0,
-								   &fsRef, sizeof(fsRef));
-		if (err != noErr) {
-			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-			return NO;
-		}
-		return YES;
+	FSRef fsRef;
+	err = FSPathMakeRef((const UInt8*)[[fileURL path] cStringUsingEncoding:NSUTF8StringEncoding], &fsRef, 0);
+	if (err != noErr) {
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
 	}
+	
+	err = AudioUnitSetProperty(self.instrumentUnit,
+							   kMusicDeviceProperty_SoundBankFSRef,
+							   kAudioUnitScope_Global, 0,
+							   &fsRef, sizeof(fsRef));
+	if (err != noErr) {
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
+}
 #endif
 }
 
@@ -106,27 +158,40 @@
 	
 	for (UInt8 channel = 0; channel < 16; channel++) {
 		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
-		UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
-		UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
-		UInt8 programChange = instrumentID & 0x7F;
 		
-		UInt32 bankSelectStatus = 0xB0 | channel;
+		
+		CFURLRef loadedSoundfontURL = NULL;
+		UInt32 size = sizeof(loadedSoundfontURL);
+		OSStatus err = AudioUnitGetProperty(self.instrumentUnit,
+											kMusicDeviceProperty_SoundBankURL,
+											kAudioUnitScope_Global,
+											0,
+											&loadedSoundfontURL,
+											&size);
+		
+		if (loadedSoundfontURL) {
+			
+			UInt32 bankSelectStatus = 0xB0 | channel;
+			
+			UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
+			err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
+			if (err) {
+				NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+				return NO;
+			}
+			
+			UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
+			err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
+			if (err) {
+				NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
+				*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+				return NO;
+			}
+		}
+		
 		UInt32 programChangeStatus = 0xC0 | channel;
-		
-		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (MSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
-			return NO;
-		}
-		
-		err = MusicDeviceMIDIEvent(self.instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
-		if (err) {
-			NSLog(@"MusicDeviceMIDIEvent() (LSB Bank Select) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
-			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
-			return NO;
-		}
-		
+		UInt8 programChange = instrumentID & 0x7F;
 		err = MusicDeviceMIDIEvent(self.instrumentUnit, programChangeStatus, programChange, 0, 0);
 		if (err) {
 			NSLog(@"MusicDeviceMIDIEvent() (Program Change) failed with error %d in %s.", err, __PRETTY_FUNCTION__);
@@ -232,7 +297,7 @@
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
 #if TARGET_OS_IPHONE
-	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
+	instrumentcd.componentSubType = kAudioUnitSubType_MIDISynth;
 #else
 	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
 #endif
@@ -262,5 +327,10 @@
 + (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
 - (AudioUnit)instrument { return self.instrumentUnit; }
 - (void)setInstrument:(AudioUnit)instrument { self.instrumentUnit = instrument; }
+
+- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument
+{
+	return [self selectInstrument:instrument error:NULL];
+}
 
 @end

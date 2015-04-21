@@ -48,6 +48,18 @@
 - (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription NS_DESIGNATED_INITIALIZER;
 
 /**
+ *  This synthesizer's available instruments. An array of 
+ *  MIKMIDISynthesizerInstrument instances.
+ *
+ *  Note that this method currently always returns an empty array
+ *  on iOS. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/76
+ * 
+ *  Instruments returned by this property can be selected using
+ *  -selectInstrument:
+ */
+@property (nonatomic, readonly) NSArray *availableInstruments;
+
+/**
  * Changes the instrument/voice used by the synthesizer.
  *
  *  @param instrument An MIKMIDISynthesizerInstrument instance.
