@@ -297,7 +297,7 @@
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
 #if TARGET_OS_IPHONE
-	instrumentcd.componentSubType = kAudioUnitSubType_MIDISynth;
+	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
 #else
 	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
 #endif
