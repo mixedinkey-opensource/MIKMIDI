@@ -24,6 +24,6 @@
 /**
  *  Whether or not the endpoint is private or hidden. See kMIDIPropertyPrivate in MIDIServices.h.
  */
-@property (nonatomic, readonly, getter=isPrivate) BOOL private;
+@property (nonatomic, readonly) BOOL isPrivate;
 
 @end
