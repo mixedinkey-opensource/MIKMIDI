@@ -58,7 +58,7 @@
 - (UInt8)denominator
 {
     UInt8 denominator = *((UInt8*)[self.metaData bytes] + 1);
-    return pow(2.0, (float)denominator);
+    return (UInt8)pow(2.0, (float)denominator);
 }
 
 - (void)setDenominator:(UInt8)denominator

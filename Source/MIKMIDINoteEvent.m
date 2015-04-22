@@ -138,8 +138,8 @@
 - (float)frequency
 {
     //tuning based on A4 = 440 hz
-    float A = 440.0;
-    return (A / 32.0) * powf(2.0, (((float)self.note - 9.0) / 12.0));
+    float A = 440.0f;
+    return (A / 32.0f) * powf(2.0f, (((float)self.note - 9.0f) / 12.0f));
 }
 
 - (NSString *)noteLetter
