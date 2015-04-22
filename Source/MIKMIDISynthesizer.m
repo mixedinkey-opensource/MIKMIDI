@@ -49,7 +49,7 @@
 	
 	OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentCount, kAudioUnitScope_Global, 0, &instrumentCount, &instrumentCountSize);
 	if (err) {
-		NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %@ in %s."@(err), __PRETTY_FUNCTION__);
+		NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 		return @[];
 	}
 	
@@ -60,7 +60,7 @@
 			UInt32 idSize = sizeof(instrumentID);
 			err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentNumber, kAudioUnitScope_Global, i, &instrumentID, &idSize);
 			if (err) {
-				NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %@ in %s."@(err), __PRETTY_FUNCTION__);
+				NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 				continue;
 			}
 			
@@ -68,7 +68,7 @@
 			UInt32 cNameSize = sizeof(cName);
 			OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
 			if (err) {
-				NSLog(@"AudioUnitGetProperty() failed with error %@ in %s."@(err), __PRETTY_FUNCTION__);
+				NSLog(@"AudioUnitGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 				return nil;
 			}
 			
