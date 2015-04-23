@@ -274,11 +274,12 @@
 
 	NSArray *commands = nil;
 	if (event.eventType == MIKMIDIEventTypeMIDINoteMessage) {
-		commands = [MIKMIDICommand commandsFromNoteEvent:(MIKMIDINoteEvent *)event clock:self.clock];
+		NSArray *noteCommands = [MIKMIDICommand commandsFromNoteEvent:(MIKMIDINoteEvent *)event clock:self.clock];
+		commands = @[ [noteCommands firstObject] ]; // note on
 		
 		// Add note off to pending note offs
-		MIKMIDINoteOffCommand *noteOff = [commands lastObject];
-		MIDITimeStamp noteOffTimeStamp = noteOff.midiTimestamp + [self.clock midiTimeStampForMusicTimeStamp:self.playbackOffset];
+		MIKMIDINoteOffCommand *noteOff = [noteCommands lastObject];
+		MIDITimeStamp noteOffTimeStamp = noteOff.midiTimestamp + [self.clock midiTimeStampsPerMusicTimeStamp:self.playbackOffset];
 		NSMutableArray *pendingNoteOffsAtTimeStamp = pendingNoteOffs[@(noteOffTimeStamp)];
 		if (!pendingNoteOffsAtTimeStamp) pendingNoteOffsAtTimeStamp	= [NSMutableArray array];
 		NSNumber *timeStampNumber = @(noteOffTimeStamp);
@@ -294,8 +295,7 @@
 	NSMutableArray *adjustedCommands = [NSMutableArray array];
 	for (MIKMIDICommand *command in commands) {
 		MIKMutableMIDICommand *scratch = [command mutableCopy];
-		MusicTimeStamp musicTimestamp = [self.clock musicTimeStampForMIDITimeStamp:scratch.midiTimestamp];
-		scratch.midiTimestamp = [self.clock midiTimeStampForMusicTimeStamp:(musicTimestamp + self.playbackOffset)];
+		scratch.midiTimestamp += [self.clock midiTimeStampsPerMusicTimeStamp:self.playbackOffset];
 		[adjustedCommands addObject:scratch];
 	}
 

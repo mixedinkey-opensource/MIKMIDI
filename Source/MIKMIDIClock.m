@@ -52,6 +52,11 @@
 	return (musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
 }
 
+- (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	return musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp;
+}
+
 #pragma mark - Class Methods
 
 + (Float64)secondsPerMIDITimeStamp

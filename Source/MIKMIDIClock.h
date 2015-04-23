@@ -84,5 +84,20 @@
  */
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
+/**
+ *  Converts the specified number of beats in the MusicTimeStamp into the 
+ *  corresponding number of MIDITimeStamps.
+ *
+ *  @param musicTimeStamp The number of beats to convert into MIDITimeStamps.
+ *
+ *  @return The number of MIDITimeStamps that will occur during the specified number of beats.
+ *
+ *  @note For this method to return any meaningful values, you must first call
+ *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
+ *
+ *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
+ */
+- (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
+
 @end
 
