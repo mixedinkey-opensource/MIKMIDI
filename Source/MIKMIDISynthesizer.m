@@ -168,6 +168,11 @@
 											0,
 											&loadedSoundfontURL,
 											&size);
+		if (err) {
+			NSLog(@"AudioUnitGetProperty() (kMusicDeviceProperty_SoundBankURL) failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
+			return NO;
+		}
 		
 		if (loadedSoundfontURL) {
 			
