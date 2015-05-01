@@ -235,6 +235,12 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
 
 /**
+ *  The tempo the sequencer should play its sequence at. When set to 0, the sequence will be played using 
+ *  the tempo events from the sequence's tempo track. Default is 0.
+ */
+@property (nonatomic) Float64 tempo;
+
+/**
  *  The current playback position in the sequence.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;

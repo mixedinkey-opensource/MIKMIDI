@@ -77,6 +77,8 @@
 @property (nonatomic, strong) NSMapTable *tracksToDefaultSynthsMap;
 @property (nonatomic, strong) MIKMIDIClientDestinationEndpoint *metronomeEndpoint;
 
+@property (nonatomic) BOOL needsCurrentTempoUpdate;
+
 @end
 
 
@@ -195,12 +197,30 @@
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:actualToMIDITimeStamp];
 
 	// Get relevant tempo events
+	NSMutableDictionary *allEventsByTimeStamp = [NSMutableDictionary dictionary];
 	NSMutableDictionary *tempoEventsByTimeStamp = [NSMutableDictionary dictionary];
-	NSMutableDictionary *otherEventsByTimeStamp = [NSMutableDictionary dictionary];
-	for (MIKMIDITempoEvent *tempoEvent in [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
-		NSNumber *timeStampKey = @(tempoEvent.timeStamp + playbackOffset);
-		otherEventsByTimeStamp[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
-		tempoEventsByTimeStamp[timeStampKey] = tempoEvent;
+	Float64 overrideTempo = self.tempo;
+
+	if (!overrideTempo) {
+		NSArray *sequenceTempoEvents = [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
+		for (MIKMIDITempoEvent *tempoEvent in sequenceTempoEvents) {
+			NSNumber *timeStampKey = @(tempoEvent.timeStamp + playbackOffset);
+			allEventsByTimeStamp[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
+			tempoEventsByTimeStamp[timeStampKey] = tempoEvent;
+		}
+	}
+
+	if (self.needsCurrentTempoUpdate) {
+		if (!tempoEventsByTimeStamp.count) {
+			if (!overrideTempo) overrideTempo = [self.sequence tempoAtTimeStamp:fromMusicTimeStamp];
+			if (!overrideTempo) overrideTempo = MIKMIDISequencerDefaultTempo;
+
+			MIKMIDITempoEvent *tempoEvent = [MIKMIDITempoEvent tempoEventWithTimeStamp:fromMusicTimeStamp tempo:overrideTempo];
+			NSNumber *timeStampKey = @(fromMusicTimeStamp);
+			allEventsByTimeStamp[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
+			tempoEventsByTimeStamp[timeStampKey] = tempoEvent;
+		}
+		self.needsCurrentTempoUpdate = NO;
 	}
 
 	// Get other events
@@ -208,23 +228,23 @@
 		MIKMIDIDestinationEndpoint *destination = [self destinationEndpointForTrack:track];
 		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
-			NSMutableArray *eventsAtTimeStamp = otherEventsByTimeStamp[timeStampKey] ? otherEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
+			NSMutableArray *eventsAtTimeStamp = allEventsByTimeStamp[timeStampKey] ? allEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
 			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
-			otherEventsByTimeStamp[timeStampKey] = eventsAtTimeStamp;
+			allEventsByTimeStamp[timeStampKey] = eventsAtTimeStamp;
 		}
 	}
 
 	// Get click track events
 	for (MIKMIDIEventWithDestination *destinationEvent in [self clickTrackEventsFromTimeStamp:fromMusicTimeStamp toTimeStamp:toMusicTimeStamp]) {
 		NSNumber *timeStampKey = @(destinationEvent.event.timeStamp + playbackOffset);
-		NSMutableArray *eventsAtTimesStamp = otherEventsByTimeStamp[timeStampKey] ? otherEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
+		NSMutableArray *eventsAtTimesStamp = allEventsByTimeStamp[timeStampKey] ? allEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
 		[eventsAtTimesStamp addObject:destinationEvent];
-		otherEventsByTimeStamp[timeStampKey] = eventsAtTimesStamp;
+		allEventsByTimeStamp[timeStampKey] = eventsAtTimesStamp;
 	}
 
 	// Schedule events
 	MIDITimeStamp lastProcessedMIDITimeStamp = fromMIDITimeStamp;
-	for (NSNumber *timeStampKey in [otherEventsByTimeStamp.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
+	for (NSNumber *timeStampKey in [allEventsByTimeStamp.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
 		MusicTimeStamp musicTimeStamp = timeStampKey.doubleValue;
 		if (isLooping && (musicTimeStamp < loopStartTimeStamp || musicTimeStamp >= loopEndTimeStamp)) continue;
 		MIDITimeStamp midiTimeStamp = [clock midiTimeStampForMusicTimeStamp:musicTimeStamp];
@@ -233,7 +253,7 @@
 		MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEventsByTimeStamp[timeStampKey];
 		if (tempoEventAtTimeStamp) [self updateClockWithMusicTimeStamp:musicTimeStamp tempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
 
-		NSArray *events = otherEventsByTimeStamp[timeStampKey];
+		NSArray *events = allEventsByTimeStamp[timeStampKey];
 		for (id eventObject in events) {
 			if ([eventObject isKindOfClass:[MIKMIDIEventWithDestination class]]) {
 				[self scheduleEventWithDestination:eventObject];
@@ -342,6 +362,10 @@
 
 - (void)updateClockWithMusicTimeStamp:(MusicTimeStamp)musicTimeStamp tempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
+	// Override tempo if neccessary
+	Float64 tempoOverride = self.tempo;
+	if (tempoOverride) tempo = tempoOverride;
+	
 	MIKMIDIClock *clock = self.clock;
 	NSMutableDictionary *historicalClocks = self.historicalClocks;
 	if (!historicalClocks) {
@@ -648,6 +672,15 @@
 	if (_metronome != metronome) {
 		_metronome = metronome;
 		_metronomeEndpoint = (MIKMIDIClientDestinationEndpoint *)metronome.endpoint;
+	}
+}
+
+- (void)setTempo:(Float64)tempo
+{
+	if (tempo < 0) tempo = 0;
+	if (_tempo != tempo) {
+		_tempo = tempo;
+		if (self.isPlaying) self.needsCurrentTempoUpdate = YES;
 	}
 }
 
