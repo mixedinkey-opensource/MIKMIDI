@@ -52,7 +52,10 @@
 	
 	MIKMIDIDummyResponder *sub2sub1 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2Sub1" subresponders:nil];
 	MIKMIDIDummyResponder *sub2sub2 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2Sub2" subresponders:nil];
-	MIKMIDIDummyResponder *sub2 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2" subresponders:@[sub2sub1, sub2sub2]];
+	MIKMIDIDummyResponder *sub2sub3sub1 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2Sub3Sub1" subresponders:nil];
+	MIKMIDIDummyResponder *sub2sub3 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2Sub3" subresponders:@[sub2sub3sub1]];
+	MIKMIDIDummyResponder *sub2sub4 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2Sub4" subresponders:nil];
+	MIKMIDIDummyResponder *sub2 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub2" subresponders:@[sub2sub1, sub2sub2, sub2sub3, sub2sub4]];
 	
 	MIKMIDIDummyResponder *sub3 = [[MIKMIDIDummyResponder alloc] initWithMIDIIdentifier:@"Sub3" subresponders:nil];
 	
@@ -72,11 +75,23 @@
 - (void)testUncachedResponderSearchPerformance
 {
     NSApplication *app = [NSApplication sharedApplication];
+	app.shouldCacheMIKMIDISubresponders = NO;
     [self measureBlock:^{
 		for (NSUInteger i=0; i<50000; i++) {
 			[app MIDIResponderWithIdentifier:@"Sub2Sub1"];
 		}
     }];
+}
+
+- (void)testCachedResponderSearchPerformance
+{
+	NSApplication *app = [NSApplication sharedApplication];
+	app.shouldCacheMIKMIDISubresponders = YES;
+	[self measureBlock:^{
+		for (NSUInteger i=0; i<50000; i++) {
+			[app MIDIResponderWithIdentifier:@"Sub2Sub1"];
+		}
+	}];
 }
 
 @end

@@ -44,10 +44,21 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 @interface MIKMIDIResponderHierarchyManager : NSObject
 
+// Public
+- (void)refreshRespondersAndSubresponders;
+- (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+
+// Properties
 @property (nonatomic, strong) NSHashTable *registeredMIKMIDIResponders;
-@property (nonatomic, strong) NSSet *registeredMIKMIDIRespondersAndSubresponders;
+@property (nonatomic, strong, readonly) NSSet *registeredMIKMIDIRespondersAndSubresponders;
+
+@property (nonatomic, strong) NSHashTable *subrespondersCache;
+
+@property (nonatomic) BOOL shouldCacheMIKMIDISubresponders;
 
 @property (nonatomic, strong, readonly) NSSet *allMIDIResponders;
+
+@property (nonatomic, strong, readonly) NSPredicate *midiIdentifierPredicate;
 
 @end
 
@@ -70,6 +81,8 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	if (self) {
 		NSPointerFunctionsOptions options = [[self class] hashTableOptions];
 		_registeredMIKMIDIResponders = [[NSHashTable alloc] initWithOptions:options capacity:0];
+
+		_shouldCacheMIKMIDISubresponders = NO;
 	}
 	return self;
 }
@@ -77,21 +90,33 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 - (void)registerMIDIResponder:(id<MIKMIDIResponder>)responder;
 {
 	[self.registeredMIKMIDIResponders addObject:responder];
+	[self refreshRespondersAndSubresponders];
 }
 
 - (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder;
 {
 	[self.registeredMIKMIDIResponders addObject:responder];
+	[self refreshRespondersAndSubresponders];
 }
 
 #pragma mark - Public
 
+- (void)refreshRespondersAndSubresponders
+{
+	self.subrespondersCache = nil;
+}
+
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier
 {
 	NSSet *registeredResponders = self.registeredMIKMIDIRespondersAndSubresponders;
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"MIDIIdentifier LIKE %@", identifier];
-	NSSet *results = [registeredResponders filteredSetUsingPredicate:predicate];
-	id<MIKMIDIResponder> result = [results anyObject];
+	
+	id<MIKMIDIResponder> result = nil;
+	for (id<MIKMIDIResponder> responder in registeredResponders) {
+		if ([[responder MIDIIdentifier] isEqualToString:identifier]) {
+			result = responder;
+			break;
+		}
+	}
 	
 #if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
 	if (!result) {
@@ -127,6 +152,10 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (NSSet *)registeredMIKMIDIRespondersAndSubresponders
 {
+	if (self.shouldCacheMIKMIDISubresponders && self.subrespondersCache != nil) {
+		return [self.subrespondersCache setRepresentation];
+	}
+	
 	NSMutableSet *result = [NSMutableSet set];
 	for (id<MIKMIDIResponder> responder in self.registeredMIKMIDIResponders) {
 		[result unionSet:[self recursiveSubrespondersOfMIDIResponder:responder]];
@@ -136,12 +165,33 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	[result unionSet:[self MIDIRespondersInViewHierarchy]];
 #endif
 
+	if (self.shouldCacheMIKMIDISubresponders) {
+		// Load cache with result
+		NSPointerFunctionsOptions options = [[self class] hashTableOptions];
+		self.subrespondersCache = [[NSHashTable alloc] initWithOptions:options capacity:0];
+		for (id object in result) { [self.subrespondersCache addObject:object]; }
+	}
+	
 	return [result copy];
+}
+
++ (NSSet *)keyPathsForValuesAffectingAllMIDIResponders
+{
+	return [NSSet setWithObjects:@"registeredMIKMIDIRespondersAndSubresponders", nil];
 }
 
 - (NSSet *)allMIDIResponders
 {
 	return self.registeredMIKMIDIRespondersAndSubresponders;
+}
+
+@synthesize midiIdentifierPredicate = _midiIdentifierPredicate;
+- (NSPredicate *)midiIdentifierPredicate
+{
+	if (!_midiIdentifierPredicate) {
+		_midiIdentifierPredicate = [NSPredicate predicateWithFormat:@"MIDIIdentifier LIKE $MIDIIdentifier"];
+	}
+	return _midiIdentifierPredicate;
 }
 
 #pragma mark - Deprecated
@@ -185,29 +235,13 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 @implementation MIK_APPLICATION_CLASS (MIKMIDI)
 
-+ (MIKMIDIResponderHierarchyManager *)mik_MIDIResponderHierarchyManager
-{
-	static MIKMIDIResponderHierarchyManager *manager = nil;
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		manager = [[MIKMIDIResponderHierarchyManager alloc] init];
-	});
-	return manager;
-}
+- (void)registerMIDIResponder:(id<MIKMIDIResponder>)responder; { [self.mikmidi_responderHierarchyManager registerMIDIResponder:responder]; }
 
-- (void)registerMIDIResponder:(id<MIKMIDIResponder>)responder;
-{
-	[[[self class] mik_MIDIResponderHierarchyManager] registerMIDIResponder:responder];
-}
-
-- (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder;
-{
-	[[[self class] mik_MIDIResponderHierarchyManager] unregisterMIDIResponder:responder];
-}
+- (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder; { [self.mikmidi_responderHierarchyManager unregisterMIDIResponder:responder]; }
 
 - (BOOL)respondsToMIDICommand:(MIKMIDICommand *)command;
 {
-	MIKMIDIResponderHierarchyManager *manager = [[self class] mik_MIDIResponderHierarchyManager];
+	MIKMIDIResponderHierarchyManager *manager = self.mikmidi_responderHierarchyManager;
 	
 	NSSet *registeredResponders = [self respondersForCommand:command inResponders:manager.allMIDIResponders];
 	if ([registeredResponders count]) return YES;
@@ -221,7 +255,7 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command;
 {
-	MIKMIDIResponderHierarchyManager *manager = [[self class] mik_MIDIResponderHierarchyManager];
+	MIKMIDIResponderHierarchyManager *manager = self.mikmidi_responderHierarchyManager;
 	NSSet *registeredResponders = [self respondersForCommand:command inResponders:manager.allMIDIResponders];
 	for (id<MIKMIDIResponder> responder in registeredResponders) {
 		[responder handleMIDICommand:command];
@@ -240,13 +274,11 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
 {
-	return [[[self class] mik_MIDIResponderHierarchyManager] MIDIResponderWithIdentifier:identifier];
+	return [self.mikmidi_responderHierarchyManager MIDIResponderWithIdentifier:identifier];
 }
 
-- (NSSet *)allMIDIResponders
-{
-	return [[[self class] mik_MIDIResponderHierarchyManager] allMIDIResponders];
-}
+- (NSSet *)allMIDIResponders { return [self.mikmidi_responderHierarchyManager allMIDIResponders]; }
+- (void)refreshRespondersAndSubresponders { [self.mikmidi_responderHierarchyManager refreshRespondersAndSubresponders]; }
 
 #pragma mark - Private
 
@@ -257,14 +289,29 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	}]];
 }
 
+#pragma mark - Properties
+
+- (MIKMIDIResponderHierarchyManager *)mikmidi_responderHierarchyManager
+{
+	static MIKMIDIResponderHierarchyManager *manager = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		manager = [[MIKMIDIResponderHierarchyManager alloc] init];
+	});
+	return manager;
+}
+
++ (NSSet *)keyPathsForValuesAffectingShouldCacheMIKMIDISubresponders
+{
+	return [NSSet setWithObject:@"mikmidi_responderHierarchyManager.shouldCacheMIKMIDISubresponders"];
+}
+- (BOOL)shouldCacheMIKMIDISubresponders { return [self.mikmidi_responderHierarchyManager shouldCacheMIKMIDISubresponders]; }
+- (void)setShouldCacheMIKMIDISubresponders:(BOOL)flag { [self.mikmidi_responderHierarchyManager setShouldCacheMIKMIDISubresponders:flag]; }
+
 #pragma mark - Deprecated
 
 #if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-- (NSSet *)MIDIRespondersInViewHierarchy
-{
-	return [[[self class] mik_MIDIResponderHierarchyManager] MIDIRespondersInViewHierarchy];
-}
-
+- (NSSet *)MIDIRespondersInViewHierarchy { return [self.mikmidi_responderHierarchyManager MIDIRespondersInViewHierarchy]; }
 #endif // MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
 
 @end
