@@ -306,20 +306,30 @@ CLEANUP_AND_EXIT:
 }
 
 - (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
-{
-	NSPredicate *commandPredicate = [NSPredicate predicateWithFormat:@"commandIdentifier IN %@", [responder commandIdentifiers]];
-	NSPredicate *responderPredicate = [NSPredicate predicateWithFormat:@"MIDIResponderIdentifier LIKE %@", [responder MIDIIdentifier]];
-	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[commandPredicate, responderPredicate]];
-	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
+{	
+	NSString *MIDIIdentifer = [responder MIDIIdentifier];
+	
+	NSMutableSet *matches = [NSMutableSet set];
+	for (MIKMIDIMappingItem *item in self.internalMappingItems) {
+		if (![item.MIDIResponderIdentifier isEqualToString:MIDIIdentifer]) continue;
+		if (![[responder commandIdentifiers] containsObject:item.commandIdentifier]) continue;
+		[matches addObject:item];
+	}
+	
 	return matches;
 }
 
 - (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
 {
-	NSPredicate *commandPredicate = [NSPredicate predicateWithFormat:@"commandIdentifier LIKE %@", identifier];
-	NSPredicate *responderPredicate = [NSPredicate predicateWithFormat:@"MIDIResponderIdentifier LIKE %@", [responder MIDIIdentifier]];
-	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[commandPredicate, responderPredicate]];
-	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
+	NSString *MIDIIdentifer = [responder MIDIIdentifier];
+
+	NSMutableSet *matches = [NSMutableSet set];
+	for (MIKMIDIMappingItem *item in self.internalMappingItems) {
+		if (![item.MIDIResponderIdentifier isEqualToString:MIDIIdentifer]) continue;
+		if (![item.commandIdentifier isEqualToString:identifier]) continue;
+		[matches addObject:item];
+	}
+	
 	return matches;
 }
 
@@ -328,12 +338,15 @@ CLEANUP_AND_EXIT:
 	NSUInteger controlNumber = MIKMIDIControlNumberFromCommand(command);
 	UInt8 channel = command.channel;
 	MIKMIDICommandType commandType = command.commandType;
+
+	NSMutableSet *matches = [NSMutableSet set];
+	for (MIKMIDIMappingItem *item in self.internalMappingItems) {
+		if (item.controlNumber != controlNumber) continue;
+		if (item.channel != channel) continue;
+		if (item.commandType != commandType) continue;
+		[matches addObject:item];
+	}
 	
-	NSPredicate *controlNumberPredicate = [NSPredicate predicateWithFormat:@"controlNumber == %@", @(controlNumber)];
-	NSPredicate *channelPredicate = [NSPredicate predicateWithFormat:@"channel == %@", @(channel)];
-	NSPredicate *commandTypePredicate = [NSPredicate predicateWithFormat:@"commandType == %@", @(commandType)];
-	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[controlNumberPredicate, channelPredicate, commandTypePredicate]];
-	NSSet *matches = [self.mappingItems filteredSetUsingPredicate:predicate];
 	return matches;
 }
 
