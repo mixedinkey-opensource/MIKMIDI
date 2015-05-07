@@ -95,7 +95,7 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 
 - (void)unregisterMIDIResponder:(id<MIKMIDIResponder>)responder;
 {
-	[self.registeredMIKMIDIResponders addObject:responder];
+	[self.registeredMIKMIDIResponders removeObject:responder];
 	[self refreshRespondersAndSubresponders];
 }
 
