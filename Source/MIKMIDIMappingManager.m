@@ -94,21 +94,35 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (NSSet *)bundledMappingsForControllerName:(NSString *)name
 {
 	if (![name length]) return [NSSet set];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
-	return [self.bundledMappings filteredSetUsingPredicate:predicate];
+	NSMutableSet *result = [NSMutableSet set];
+	for (MIKMIDIMapping *mapping in self.bundledMappings) {
+		if ([mapping.controllerName isEqualToString:name]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
 }
 
 - (NSSet *)userMappingsForControllerName:(NSString *)name
 {
 	if (![name length]) return [NSSet set];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
-	return [self.userMappings filteredSetUsingPredicate:predicate];
+	NSMutableSet *result = [NSMutableSet set];
+	for (MIKMIDIMapping *mapping in self.userMappings) {
+		if ([mapping.controllerName isEqualToString:name]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
 }
 
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
 {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name LIKE %@", mappingName];
-	return [[self.mappings filteredSetUsingPredicate:predicate] anyObject];
+	for (MIKMIDIMapping *mapping in self.mappings) {
+		if ([mapping.name isEqualToString:mappingName]) {
+			return mapping;
+		}
+	}
+	return nil;
 }
 
 - (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
