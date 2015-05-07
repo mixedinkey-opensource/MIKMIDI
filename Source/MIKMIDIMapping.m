@@ -296,11 +296,7 @@ CLEANUP_AND_EXIT:
 {
 	NSUInteger result = [self.name hash];
 	result += [self.controllerName hash];
-	
-	for (MIKMIDIMappingItem *mappingItem in self.mappingItems) {
-		result += [mappingItem hash];
-	}
-	
+	result += [self.internalMappingItems count];
 	return result;
 }
 
