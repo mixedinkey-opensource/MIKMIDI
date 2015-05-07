@@ -76,7 +76,7 @@
  *
  *  @see shouldCacheMIKMIDISubresponders
  */
-- (void)refreshRespondersAndSubresponders;
+- (void)refreshMIDIRespondersAndSubresponders;
 
 /**
  *  NSApplication (OS X) or UIApplication (iOS) itself implements to methods in the MIKMIDIResponder protocol.

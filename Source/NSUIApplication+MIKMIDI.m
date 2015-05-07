@@ -278,7 +278,7 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 }
 
 - (NSSet *)allMIDIResponders { return [self.mikmidi_responderHierarchyManager allMIDIResponders]; }
-- (void)refreshRespondersAndSubresponders { [self.mikmidi_responderHierarchyManager refreshRespondersAndSubresponders]; }
+- (void)refreshMIDIRespondersAndSubresponders { [self.mikmidi_responderHierarchyManager refreshRespondersAndSubresponders]; }
 
 #pragma mark - Private
 
