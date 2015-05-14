@@ -87,6 +87,11 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  */
 - (void)cancelCurrentCommandLearning;
 
+/**
+ *  Stops mapping generation, disconnecting from the device.
+ */
+- (void)endMapping;
+
 // Properties
 
 #if !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)

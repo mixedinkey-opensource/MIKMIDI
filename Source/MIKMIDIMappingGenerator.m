@@ -146,6 +146,12 @@
 	[self finishMappingItem:nil error:error];
 }
 
+- (void)endMapping;
+{
+	[self disconnectFromDevice];
+	self.device = nil;
+}
+
 #pragma mark - Private
 
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
