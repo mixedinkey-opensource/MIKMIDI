@@ -71,7 +71,7 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    noteMessage->channel = note;
+    noteMessage->note = note;
 }
 
 - (UInt8)channel
