@@ -60,17 +60,18 @@
 		
 		self.blockBasedObservers = [NSMutableArray array];
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-		__weak MIKMIDIMappingGenerator *weakSelf = self;
+		__weak typeof(self) weakSelf = self;
 		id observer = [nc addObserverForName:MIKMIDIDeviceWasRemovedNotification
 									  object:nil
 									   queue:[NSOperationQueue mainQueue]
 								  usingBlock:^(NSNotification *note) {
+									  __strong typeof(self) strongSelf = weakSelf;
 									  MIKMIDIDevice *device = [[note userInfo] objectForKey:MIKMIDIDeviceKey];
-									  if (![device isEqual:self.device]) return;
-									  [self disconnectFromDevice];
-									  weakSelf.device = nil;
+									  if (![device isEqual:strongSelf.device]) return;
+									  [strongSelf disconnectFromDevice];
+									  strongSelf.device = nil;
 									  NSError *error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceConnectionLostErrorCode userInfo:nil];
-									  [weakSelf finishMappingItem:nil error:error];
+									  [strongSelf finishMappingItem:nil error:error];
 								  }];
 		[self.blockBasedObservers addObject:observer];
 	}
