@@ -112,6 +112,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 			self.midiTimestamp = packet->timeStamp;
 			self.internalData = [NSMutableData dataWithBytes:packet->data length:packet->length];
 		} else {
+			self.midiTimestamp = MIKMIDIGetCurrentTimeStamp();
 			self.internalData = [NSMutableData dataWithLength:3];
 			MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
 			((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
