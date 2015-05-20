@@ -10,6 +10,7 @@
 
 #import "MIKMIDI.h"
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingItem.h"
 #import "MIKMIDIPrivateUtilities.h"
 
 #if !__has_feature(objc_arc)

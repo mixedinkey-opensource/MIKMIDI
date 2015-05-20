@@ -79,6 +79,8 @@
 
 // MIDI Mapping
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingItem.h"
+#import "MIKMIDIMappableResponder.h"
 #import "MIKMIDIMappingManager.h"
 #import "MIKMIDIMappingGenerator.h"
 
