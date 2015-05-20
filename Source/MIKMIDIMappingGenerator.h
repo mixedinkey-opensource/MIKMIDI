@@ -117,6 +117,13 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  */
 @property (nonatomic, strong) MIKMIDIMapping *mapping;
 
+/**
+ *  Set this to YES to enable printing diagnostic messages to the console. This is intended
+ *  to help with eg. debugging trouble mapping specific controllers. The default
+ *  is NO, ie. logging is disabled.
+ */
+@property (nonatomic, getter=isDiagnosticLoggingEnabled) BOOL diagnosticLoggingEnabled;
+
 @end
 
 

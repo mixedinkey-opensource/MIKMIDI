@@ -134,6 +134,10 @@
 	self.numMessagesRequired = numMessages ? numMessages : [self defaultMinimumNumberOfMessagesRequiredForResponderType:controlResponderType];
 	self.timeoutInteveral = timeout ? timeout : 0.6;
 	self.messagesTimeoutTimer = nil;
+	
+	if (self.isDiagnosticLoggingEnabled) {
+		NSLog(@"MIDI Mapping Generator: Beginning mapping of %@ (%@)", control, commandID);
+	}
 }
 
 - (void)cancelCurrentCommandLearning;
@@ -409,10 +413,18 @@
 		goto FINALIZE_RESULT_AND_RETURN;
 	}
 	
+	if (self.isDiagnosticLoggingEnabled) {
+		NSLog(@"MIDI Mapping Generator: Unable to create mapping for %@ (%@) from messages: %@", responder, commandID, messages);
+	}
+	
 	return nil;
 	
 FINALIZE_RESULT_AND_RETURN:
 	result.commandType = [messages[0] commandType];
+	
+	if (self.isDiagnosticLoggingEnabled) {
+		NSLog(@"MIDI Mapping Generator: Created mapping item: %@ for %@ (%@) from messages: %@", result, responder, commandID, messages);
+	}
 	
 	return result;
 }
