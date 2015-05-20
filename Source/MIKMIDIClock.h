@@ -107,7 +107,7 @@
  *  as the clock instance that dispensed the synced clock.
  *
  *  Attempting to call -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced
- *  has no effect.
+ *  clock has no effect.
  */
 - (MIKMIDIClock *)syncedClock;
 
