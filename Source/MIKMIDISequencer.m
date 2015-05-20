@@ -29,6 +29,8 @@
 
 #define MIKMIDISequencerDefaultTempo			120
 
+NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
+
 
 #pragma mark -
 
@@ -91,6 +93,7 @@
 	if (self = [super init]) {
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
+		_syncedClock = [_clock syncedClock];
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
@@ -275,6 +278,8 @@
 
 			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
+
+			[[NSNotificationCenter defaultCenter] postNotificationName:MIKMIDISequencerWillLoopNotification object:self userInfo:nil];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
 	} else if (!self.isRecording) { // Don't stop automatically during recording
@@ -358,6 +363,20 @@
 	for (MIKMIDIDestinationEndpoint *endpoint in [[noteOffDestinationsToCommands keyEnumerator] allObjects]) {
 		[self sendCommands:[noteOffDestinationsToCommands objectForKey:endpoint] toDestinationEndpoint:endpoint];
 	}
+}
+
+- (MIKMIDIClock *)clockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	MIKMIDIClock *clock;
+	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
+			clock = self.historicalClocks[historicalClockTimeStamp];
+		} else {
+			break;
+		}
+	}
+	if (!clock) clock = self.clock;
+	return clock;
 }
 
 - (void)updateClockWithMusicTimeStamp:(MusicTimeStamp)musicTimeStamp tempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
@@ -450,16 +469,8 @@
 	if (!self.isRecording) return;
 	
 	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
-	MIKMIDIClock *clockAtTimeStamp;
-	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
-		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
-			clockAtTimeStamp = self.historicalClocks[historicalClockTimeStamp];
-		} else {
-			break;
-		}
-	}
-	if (!clockAtTimeStamp) clockAtTimeStamp = self.clock;
-
+	MIKMIDIClock *clockAtTimeStamp = [self clockForMIDITimeStamp:midiTimeStamp];
+	
 	MusicTimeStamp playbackOffset = self.playbackOffset;
 	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - playbackOffset;
 

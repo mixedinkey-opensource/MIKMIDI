@@ -15,6 +15,7 @@
 @class MIKMIDICommand;
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDISynthesizer;
+@class MIKMIDIClock;
 
 /**
  *  Types of click track statuses, that determine when the click track will be audible.
@@ -311,4 +312,12 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  */
 @property (copy, nonatomic) NSSet *recordEnabledTracks;
 
+/**
+ *  An MIKMIDIClock that is synced with the sequencer's internal clock.
+ */
+@property (readonly, nonatomic) MIKMIDIClock *syncedClock;
+
 @end
+
+
+FOUNDATION_EXPORT NSString * const MIKMIDISequencerWillLoopNotification;

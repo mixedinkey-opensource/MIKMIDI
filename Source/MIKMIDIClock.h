@@ -99,5 +99,22 @@
  */
 - (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
+
+/**
+ *  A readonly copy of the clock that remains synced with this instance.
+ *  
+ *  This clock can be queried and will always return the same timing information
+ *  as the clock instance that dispensed the synced clock.
+ *
+ *  Attempting to call -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced
+ *  has no effect.
+ */
+- (MIKMIDIClock *)syncedClock;
+
+/**
+ *  The tempo that was set in the last call to -setMusicTimeStamp:withTempo:atMIDITimeStamp:
+ */
+@property (readonly, nonatomic) Float64 tempo;
+
 @end
 

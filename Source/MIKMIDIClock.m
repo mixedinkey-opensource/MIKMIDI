@@ -13,13 +13,24 @@
 #error MIKMIDIClock.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
 #endif
 
+
+#pragma mark -
+@interface MIKMIDISyncedClockProxy : NSProxy
++ (instancetype)syncedClockWithClock:(MIKMIDIClock *)masterClock;
+@property (readonly, nonatomic) MIKMIDIClock *masterClock;
+@end
+
+
+#pragma mark -
 @interface MIKMIDIClock ()
+@property (nonatomic) Float64 tempo;
 @property (nonatomic) MIDITimeStamp timeStampZero;
 @property (nonatomic) Float64 musicTimeStampsPerMIDITimeStamp;
 @property (nonatomic) Float64 midiTimeStampsPerMusicTimeStamp;
 @end
 
 
+#pragma mark -
 @implementation MIKMIDIClock
 
 #pragma mark - Lifecycle
@@ -37,6 +48,7 @@
 	Float64 secondsPerMusicTimeStamp = 1.0 / (tempo / 60.0);
 	Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
+	self.tempo = tempo;
 	self.timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
 	self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
 	self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
@@ -44,7 +56,8 @@
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	return (midiTimeStamp - self.timeStampZero) * self.musicTimeStampsPerMIDITimeStamp;
+	MIDITimeStamp timeStampZero = self.timeStampZero;
+	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * self.musicTimeStampsPerMIDITimeStamp) : -((midiTimeStamp - timeStampZero) * self.musicTimeStampsPerMIDITimeStamp);
 }
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
@@ -85,6 +98,44 @@
 	clock.musicTimeStampsPerMIDITimeStamp = self.musicTimeStampsPerMIDITimeStamp;
 	clock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
 	return clock;
+}
+
+#pragma mark - Synced Clock
+
+- (MIKMIDIClock *)syncedClock
+{
+	return (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
+}
+
+@end
+
+
+#pragma mark -
+@implementation MIKMIDISyncedClockProxy
+
++ (instancetype)syncedClockWithClock:(MIKMIDIClock *)masterClock
+{
+	MIKMIDISyncedClockProxy *proxy = [self alloc];
+	proxy->_masterClock = masterClock;
+	return proxy;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+	SEL selector = invocation.selector;
+	if (selector == @selector(setMusicTimeStamp:withTempo:atMIDITimeStamp:)) return;
+
+	if (selector == @selector(syncedClock)) {
+		MIKMIDISyncedClockProxy *syncedClock = self;
+		return [invocation setReturnValue:&syncedClock];
+	}
+
+	[invocation invokeWithTarget:self.masterClock];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
+{
+	return [self.masterClock methodSignatureForSelector:sel];
 }
 
 @end
