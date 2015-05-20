@@ -115,14 +115,30 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return result;
 }
 
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+- (MIKMIDIMapping *)userMappingWithName:(NSString *)mappingName;
 {
-	for (MIKMIDIMapping *mapping in self.mappings) {
+	for (MIKMIDIMapping *mapping in self.userMappings) {
 		if ([mapping.name isEqualToString:mappingName]) {
 			return mapping;
 		}
 	}
 	return nil;
+}
+
+- (MIKMIDIMapping *)bundledMappingWithName:(NSString *)mappingName;
+{
+	for (MIKMIDIMapping *mapping in self.bundledMappings) {
+		if ([mapping.name isEqualToString:mappingName]) {
+			return mapping;
+		}
+	}
+	return nil;
+}
+
+- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+{
+	MIKMIDIMapping *result = [self userMappingWithName:mappingName];
+	return result ?: [self bundledMappingWithName:mappingName];
 }
 
 - (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
@@ -275,7 +291,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)addUserMappingsObject:(MIKMIDIMapping *)mapping
 {
-	MIKMIDIMapping *existing = [self mappingWithName:mapping.name];
+	MIKMIDIMapping *existing = [self userMappingWithName:mapping.name];
 	if (existing) [self.internalUserMappings removeObject:existing];
 	mapping.bundledMapping = NO;
 	[self.internalUserMappings addObject:mapping];
