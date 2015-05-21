@@ -8,6 +8,7 @@
 
 #import "MIKMIDIMappingXMLParser.h"
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingItem.h"
 #import "MIKMIDIUtilities.h"
 
 @interface NSString (MIKMIDIMappingXMLParserUtilities)
