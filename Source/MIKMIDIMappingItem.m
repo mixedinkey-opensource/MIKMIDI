@@ -10,6 +10,10 @@
 #import "MIKMIDIPrivateUtilities.h"
 #import "MIKMIDIUtilities.h"
 
+#if TARGET_OS_IPHONE
+#import <libxml/xmlwriter.h>
+#endif
+
 @implementation MIKMIDIMappingItem
 
 - (instancetype)initWithMIDIResponderIdentifier:(NSString *)MIDIResponderIdentifier andCommandIdentifier:(NSString *)commandIdentifier;
