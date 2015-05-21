@@ -212,7 +212,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 #pragma mark - Clock
 
 /**
- *  Returns a clock synced to a clock that contains all of the timing information
+ *  Returns a clock that contains all of the tempo and timing information
  *  that was valid at the specified midiTimeStamp.
  *
  *  Historical clocks older than 1 second may not be available, as the clock
@@ -222,15 +222,16 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  immediately after setting currentTimeStamp.
  *
  *  If no historical clock is available, this method will return the same
- *  synced clock as -syncedClock.
+ *  clock as -syncedClock.
  *
  *  @param midiTimeStamp The MIDITimeStamp that you would like a synced clock for.
  *
- *  @return A clock synced to a clock that contains all of the timing information
+ *  @return A synced clock that contains all of the tempo and timing information
  *  that was valid at the specified midiTimeStamp, or the current -syncedClock,
  *  if no historical clock could be found.
  *
  *  @see -syncedClock
+ *  @see MIKMIDISequencerWillLoopNotification
  */
 - (MIKMIDIClock *)syncedClockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
 
@@ -340,17 +341,25 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  An MIKMIDIClock that is synced with the sequencer's internal clock.
  *
- *  Shortly before a tempo change, or before looping playback, this clock
- *  will already be updated with the future timing information.
- *
- *  If you need historical timing information use -syncedClockForMIDITimeStamp:
- *  instead.
+ *  Shortly before looping playback, and shortly before a tempo change in 
+ *  the sequencer's sequence, this clock will already be updated with the
+ *  future tempo and timing information. If you need older tempo and timing
+ *  information, you should use -syncedClockForMIDITimeStamp: instead.
  *
  *  @see -syncedClockForMIDITimeStamp:
+ *  @see MIKMIDISequencerWillLoopNotification;
  */
 @property (readonly, nonatomic) MIKMIDIClock *syncedClock;
 
 @end
 
 
+/**
+ *  Sent out shortly before playback loops.
+ *
+ *  The sequencer's synced clock will already be updated with the 
+ *  post-loop tempo and timing information when this notification is sent.
+ *
+ *  @see -syncedClock
+ */
 FOUNDATION_EXPORT NSString * const MIKMIDISequencerWillLoopNotification;

@@ -103,8 +103,8 @@
 /**
  *  A readonly copy of the clock that remains synced with this instance.
  *  
- *  This clock can be queried and will always return the same timing information
- *  as the clock instance that dispensed the synced clock.
+ *  This clock can be queried and will always return the same tempo and timing
+ *  information as the clock instance that dispensed the synced clock.
  *
  *  Calling -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced clock
  *  has no effect.
@@ -113,6 +113,9 @@
 
 /**
  *  The tempo that was set in the last call to -setMusicTimeStamp:withTempo:atMIDITimeStamp:
+ *  or 0 if that method has not yet been called.
+ *
+ *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
  */
 @property (readonly, nonatomic) Float64 tempo;
 
