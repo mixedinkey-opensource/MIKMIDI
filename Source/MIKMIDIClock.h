@@ -106,10 +106,10 @@
  *  This clock can be queried and will always return the same timing information
  *  as the clock instance that dispensed the synced clock.
  *
- *  Attempting to call -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced
- *  clock has no effect.
+ *  Calling -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced clock
+ *  has no effect.
  */
-- (MIKMIDIClock *)syncedClock;
+@property (readonly, nonatomic) MIKMIDIClock *syncedClock;
 
 /**
  *  The tempo that was set in the last call to -setMusicTimeStamp:withTempo:atMIDITimeStamp:

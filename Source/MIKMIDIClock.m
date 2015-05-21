@@ -100,11 +100,13 @@
 	return clock;
 }
 
-#pragma mark - Synced Clock
+#pragma mark - Properties
 
+@synthesize syncedClock = _syncedClock;
 - (MIKMIDIClock *)syncedClock
 {
-	return (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
+	if (!_syncedClock) _syncedClock = (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
+	return _syncedClock;
 }
 
 @end

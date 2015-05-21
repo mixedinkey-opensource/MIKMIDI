@@ -27,7 +27,8 @@
 #error MIKMIDISequencer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
 #endif
 
-#define MIKMIDISequencerDefaultTempo			120
+#define kDefaultTempo	120
+#define kDurationToKeepHistoricalClocks	1.0
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
 
@@ -93,7 +94,6 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	if (self = [super init]) {
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
-		_syncedClock = [_clock syncedClock];
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
@@ -139,7 +139,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	self.startingTimeStamp = startingTimeStamp;
 
 	Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
-	if (!startingTempo) startingTempo = MIKMIDISequencerDefaultTempo;
+	if (!startingTempo) startingTempo = kDefaultTempo;
 	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 
 	self.playing = YES;
@@ -216,7 +216,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	if (self.needsCurrentTempoUpdate) {
 		if (!tempoEventsByTimeStamp.count) {
 			if (!overrideTempo) overrideTempo = [self.sequence tempoAtTimeStamp:fromMusicTimeStamp];
-			if (!overrideTempo) overrideTempo = MIKMIDISequencerDefaultTempo;
+			if (!overrideTempo) overrideTempo = kDefaultTempo;
 
 			MIKMIDITempoEvent *tempoEvent = [MIKMIDITempoEvent tempoEventWithTimeStamp:fromMusicTimeStamp tempo:overrideTempo];
 			NSNumber *timeStampKey = @(fromMusicTimeStamp);
@@ -273,7 +273,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
 			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
 			Float64 tempo = [sequence tempoAtTimeStamp:loopStartTimeStamp];
-			if (!tempo) tempo = MIKMIDISequencerDefaultTempo;
+			if (!tempo) tempo = kDefaultTempo;
 			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
 
 			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
@@ -379,6 +379,11 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	return clock;
 }
 
+- (MIKMIDIClock *)syncedClockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	return [[self clockForMIDITimeStamp:midiTimeStamp] syncedClock];
+}
+
 - (void)updateClockWithMusicTimeStamp:(MusicTimeStamp)musicTimeStamp tempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
 	// Override tempo if neccessary
@@ -396,7 +401,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 		NSMutableOrderedSet *historicalClockMIDITimeStamps = self.historicalClockMIDITimeStamps;
 
 		// Remove clocks old enough to not be needed anymore
-		MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - [MIKMIDIClock midiTimeStampsPerTimeInterval:1];
+		MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - [MIKMIDIClock midiTimeStampsPerTimeInterval:kDurationToKeepHistoricalClocks];
 		NSUInteger count = historicalClockMIDITimeStamps.count;
 		NSMutableArray *timeStampsToRemove = [NSMutableArray array];
 		NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
@@ -693,6 +698,11 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 		_tempo = tempo;
 		if (self.isPlaying) self.needsCurrentTempoUpdate = YES;
 	}
+}
+
+- (MIKMIDIClock *)syncedClock
+{
+	return self.clock.syncedClock;
 }
 
 @end

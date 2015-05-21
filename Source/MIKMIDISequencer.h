@@ -209,6 +209,31 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  */
 - (MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
+#pragma mark - Clock
+
+/**
+ *  Returns a clock synced to a clock that contains all of the timing information
+ *  that was valid at the specified midiTimeStamp.
+ *
+ *  Historical clocks older than 1 second may not be available, as the clock
+ *  history is pruned by the sequencer prior to tempo changes or looping playback.
+ *
+ *  Historical clocks are also not available after stopping playback, and
+ *  immediately after setting currentTimeStamp.
+ *
+ *  If no historical clock is available, this method will return the same
+ *  synced clock as -syncedClock.
+ *
+ *  @param midiTimeStamp The MIDITimeStamp that you would like a synced clock for.
+ *
+ *  @return A clock synced to a clock that contains all of the timing information
+ *  that was valid at the specified midiTimeStamp, or the current -syncedClock,
+ *  if no historical clock could be found.
+ *
+ *  @see -syncedClock
+ */
+- (MIKMIDIClock *)syncedClockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
+
 #pragma mark - Properties
 
 /**
@@ -314,6 +339,14 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 
 /**
  *  An MIKMIDIClock that is synced with the sequencer's internal clock.
+ *
+ *  Shortly before a tempo change, or before looping playback, this clock
+ *  will already be updated with the future timing information.
+ *
+ *  If you need historical timing information use -syncedClockForMIDITimeStamp:
+ *  instead.
+ *
+ *  @see -syncedClockForMIDITimeStamp:
  */
 @property (readonly, nonatomic) MIKMIDIClock *syncedClock;
 
