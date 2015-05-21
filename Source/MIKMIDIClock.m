@@ -7,11 +7,15 @@
 //
 
 #import "MIKMIDIClock.h"
+#import "MIKMIDIUtilities.h"
 #import <mach/mach_time.h>
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIClock.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
 #endif
+
+
+#define kDurationToKeepHistoricalClocks	1.0
 
 
 #pragma mark -
@@ -23,10 +27,17 @@
 
 #pragma mark -
 @interface MIKMIDIClock ()
-@property (nonatomic) Float64 tempo;
+
+@property (nonatomic) Float64 currentTempo;
 @property (nonatomic) MIDITimeStamp timeStampZero;
+@property (nonatomic) MIDITimeStamp lastSyncedMIDITimeStamp;
+
 @property (nonatomic) Float64 musicTimeStampsPerMIDITimeStamp;
 @property (nonatomic) Float64 midiTimeStampsPerMusicTimeStamp;
+
+@property (nonatomic, strong) NSMutableDictionary *historicalClocks;
+@property (nonatomic, strong) NSMutableOrderedSet *historicalClockMIDITimeStamps;
+
 @end
 
 
@@ -44,11 +55,57 @@
 
 - (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
+	if (self.lastSyncedMIDITimeStamp) {
+		// Add a clock to the historical clocks
+		NSMutableDictionary *historicalClocks = self.historicalClocks;
+		NSNumber *midiTimeStampNumber = @(midiTimeStamp);
+		NSMutableOrderedSet *historicalClockMIDITimeStamps = self.historicalClockMIDITimeStamps;
+
+		if (!historicalClocks) {
+			historicalClocks = [NSMutableDictionary dictionary];
+			self.historicalClocks = historicalClocks;
+			self.historicalClockMIDITimeStamps = [NSMutableOrderedSet orderedSet];
+		} else {
+			// Remove clocks old enough to not be needed anymore
+			MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - [MIKMIDIClock midiTimeStampsPerTimeInterval:kDurationToKeepHistoricalClocks];
+			NSUInteger count = historicalClockMIDITimeStamps.count;
+			NSMutableArray *timeStampsToRemove = [NSMutableArray array];
+			NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
+			for (NSUInteger i = 0; i < count; i++) {
+				NSNumber *timeStampNumber = historicalClockMIDITimeStamps[i];
+				MIDITimeStamp timeStamp = timeStampNumber.unsignedLongLongValue;
+				if (timeStamp <= oldTimeStamp) {
+					[timeStampsToRemove addObject:timeStampNumber];
+					[indexesToRemove addIndex:i];
+				} else {
+					break;
+				}
+			}
+			if (timeStampsToRemove.count) {
+				[historicalClocks removeObjectsForKeys:timeStampsToRemove];
+				[historicalClockMIDITimeStamps removeObjectsAtIndexes:indexesToRemove];
+			}
+		}
+
+		// Add clock to history
+		MIKMIDIClock *historicalClock = [MIKMIDIClock clock];
+		historicalClock.currentTempo = self.currentTempo;
+		historicalClock.timeStampZero = self.timeStampZero;
+		historicalClock.lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
+		historicalClock.musicTimeStampsPerMIDITimeStamp = self.musicTimeStampsPerMIDITimeStamp;
+		historicalClock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
+		historicalClocks[midiTimeStampNumber] = historicalClock;
+		[historicalClockMIDITimeStamps addObject:midiTimeStampNumber];
+
+	}
+
+	// Update new tempo and timing information
 	Float64 secondsPerMIDITimeStamp = [[self class] secondsPerMIDITimeStamp];
 	Float64 secondsPerMusicTimeStamp = 1.0 / (tempo / 60.0);
 	Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
-	self.tempo = tempo;
+	self.currentTempo = tempo;
+	self.lastSyncedMIDITimeStamp = midiTimeStamp;
 	self.timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
 	self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
 	self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
@@ -56,18 +113,73 @@
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	MIDITimeStamp timeStampZero = self.timeStampZero;
-	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * self.musicTimeStampsPerMIDITimeStamp) : -((midiTimeStamp - timeStampZero) * self.musicTimeStampsPerMIDITimeStamp);
+	if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) {
+		return [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
+	}
+
+	return [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];
+}
+
+- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp withClock:(MIKMIDIClock *)clock
+{
+	MIDITimeStamp timeStampZero = clock.timeStampZero;
+	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp) : -((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp);
 }
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
-	return (musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+	MIDITimeStamp midiTimeStamp = (musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+	if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) return midiTimeStamp;
+
+	NSDictionary *historicalClocks = self.historicalClocks;
+	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+		MIKMIDIClock *clock = historicalClocks[historicalClockTimeStamp];
+		midiTimeStamp = (musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
+		if (midiTimeStamp >= clock.lastSyncedMIDITimeStamp) return midiTimeStamp;
+	}
+
+	return midiTimeStamp;
 }
 
 - (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
 	return musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp;
+}
+
+#pragma mark - Tempo
+
+- (Float64)tempoAtMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) return self.currentTempo;
+	return [[self clockForMIDITimeStamp:midiTimeStamp] currentTempo];
+}
+
+- (Float64)tempoAtMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	return [self tempoAtMIDITimeStamp:[self midiTimeStampForMusicTimeStamp:musicTimeStamp]];
+}
+
+#pragma mark - Historical Clocks
+
+- (MIKMIDIClock *)clockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	MIKMIDIClock *clock = self;
+	NSDictionary *historicalClocks = self.historicalClocks;
+	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
+			clock = historicalClocks[historicalClockTimeStamp];
+		} else {
+			break;
+		}
+	}
+	return clock;
+}
+
+#pragma mark - Synced Clock
+
+- (MIKMIDIClock *)syncedClock
+{
+	return (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
 }
 
 #pragma mark - Class Methods
@@ -87,26 +199,6 @@
 + (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
 {
 	return (1.0 / [self secondsPerMIDITimeStamp]) * timeInterval;
-}
-
-#pragma mark - NSCopying
-
-- (id)copyWithZone:(NSZone *)zone
-{
-	MIKMIDIClock *clock = [[[self class] alloc] init];
-	clock.timeStampZero = self.timeStampZero;
-	clock.musicTimeStampsPerMIDITimeStamp = self.musicTimeStampsPerMIDITimeStamp;
-	clock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
-	return clock;
-}
-
-#pragma mark - Properties
-
-@synthesize syncedClock = _syncedClock;
-- (MIKMIDIClock *)syncedClock
-{
-	if (!_syncedClock) _syncedClock = (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
-	return _syncedClock;
 }
 
 @end

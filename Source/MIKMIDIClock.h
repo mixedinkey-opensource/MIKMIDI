@@ -14,10 +14,10 @@
  *  MIKMIDIClock provides the number of seconds per MIDITimeStamp, as well as the
  *  number of MIDITimeStamps per a specified time interval.
  *
- *  Instances of MIKMIDIClock can also be used to convert between MIDITimeStamp
+ *  Instances of MIKMIDIClock can be used to convert between MIDITimeStamp
  *  and MusicTimeStamp.
  */
-@interface MIKMIDIClock : NSObject <NSCopying>
+@interface MIKMIDIClock : NSObject
 
 /**
  *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
@@ -50,6 +50,12 @@
  *  @param musicTimeStamp The MusicTimeStamp to synchronize the clock to.
  *  @param tempo The beats per minute at which MusicTimeStamps should tick.
  *  @param midiTimeStamp The MIDITimeStamp to synchronize the clock to.
+ *
+ *  @note When this method is called, historical tempo and timing information more than 1 second
+ *  old is pruned. At that point, calls to -musicTimeStampForMIDITimeStamp:,
+ *  -midiTimeStampForMusicTimeStamp:, -tempoAtMIDITimeStamp:, and -tempoAtMusicTimeStamp:
+ *  with time stamps more than one second older than the time stamps set with this method
+ *  may not necessarily return accurate information.
  *
  *  @see -musicTimeStampForMIDITimeStamp:
  *  @see -midiTimeStampForMusicTimeStamp:
@@ -109,15 +115,24 @@
  *  Calling -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced clock
  *  has no effect.
  */
-@property (readonly, nonatomic) MIKMIDIClock *syncedClock;
+- (MIKMIDIClock *)syncedClock;
+
+/**
+ *
+ */
+- (Float64)tempoAtMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
+- (Float64)tempoAtMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
 /**
  *  The tempo that was set in the last call to -setMusicTimeStamp:withTempo:atMIDITimeStamp:
  *  or 0 if that method has not yet been called.
  *
+ *  If you need earlier tempo information use either -tempoAtMIDITimeStamp:
+ *  or -tempoAtMusicTimeStamp:
+ *
  *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
  */
-@property (readonly, nonatomic) Float64 tempo;
+@property (readonly, nonatomic) Float64 currentTempo;
 
 @end
 

@@ -28,7 +28,7 @@
 #endif
 
 #define kDefaultTempo	120
-#define kDurationToKeepHistoricalClocks	1.0
+
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
 
@@ -68,9 +68,6 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 @property (nonatomic, strong) NSMutableDictionary *pendingNoteOffs;
 @property (nonatomic, strong) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
 
-@property (nonatomic, strong) NSMutableDictionary *historicalClocks;
-@property (nonatomic, strong) NSMutableOrderedSet *historicalClockMIDITimeStamps;
-
 @property (nonatomic, strong) NSMutableDictionary *pendingRecordedNoteEvents;
 
 @property (nonatomic) MusicTimeStamp playbackOffset;
@@ -94,6 +91,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	if (self = [super init]) {
 		_sequence = sequence;
 		_clock = [MIKMIDIClock clock];
+		_syncedClock = [_clock syncedClock];
 		_loopEndTimeStamp = -1;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
@@ -169,8 +167,6 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
 	[self recordAllPendingNoteEventsWithOffTimeStamp:[self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
-	self.historicalClocks = nil;
-	self.historicalClockMIDITimeStamps = nil;
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
 	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length;
@@ -365,67 +361,12 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	}
 }
 
-- (MIKMIDIClock *)clockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
-{
-	MIKMIDIClock *clock;
-	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
-		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
-			clock = self.historicalClocks[historicalClockTimeStamp];
-		} else {
-			break;
-		}
-	}
-	if (!clock) clock = self.clock;
-	return clock;
-}
-
-- (MIKMIDIClock *)syncedClockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
-{
-	return [[self clockForMIDITimeStamp:midiTimeStamp] syncedClock];
-}
-
 - (void)updateClockWithMusicTimeStamp:(MusicTimeStamp)musicTimeStamp tempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
 	// Override tempo if neccessary
 	Float64 tempoOverride = self.tempo;
 	if (tempoOverride) tempo = tempoOverride;
-	
-	MIKMIDIClock *clock = self.clock;
-	NSMutableDictionary *historicalClocks = self.historicalClocks;
-	if (!historicalClocks) {
-		historicalClocks = [NSMutableDictionary dictionary];
-		self.historicalClocks = historicalClocks;
-		self.historicalClockMIDITimeStamps = [NSMutableOrderedSet orderedSet];
-	} else {
-		NSNumber *midiTimeStampNumber = @(midiTimeStamp);
-		NSMutableOrderedSet *historicalClockMIDITimeStamps = self.historicalClockMIDITimeStamps;
-
-		// Remove clocks old enough to not be needed anymore
-		MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - [MIKMIDIClock midiTimeStampsPerTimeInterval:kDurationToKeepHistoricalClocks];
-		NSUInteger count = historicalClockMIDITimeStamps.count;
-		NSMutableArray *timeStampsToRemove = [NSMutableArray array];
-		NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
-		for (NSUInteger i = 0; i < count; i++) {
-			NSNumber *timeStampNumber = historicalClockMIDITimeStamps[i];
-			MIDITimeStamp timeStamp = timeStampNumber.unsignedLongLongValue;
-			if (timeStamp <= oldTimeStamp) {
-				[timeStampsToRemove addObject:timeStampNumber];
-				[indexesToRemove addIndex:i];
-			} else {
-				break;
-			}
-		}
-		if (timeStampsToRemove.count) {
-			[historicalClocks removeObjectsForKeys:timeStampsToRemove];
-			[historicalClockMIDITimeStamps removeObjectsAtIndexes:indexesToRemove];
-		}
-
-		// Add clock to history
-		historicalClocks[midiTimeStampNumber] = [clock copy];
-		[historicalClockMIDITimeStamps addObject:midiTimeStampNumber];
-	}
-
-	[clock setMusicTimeStamp:musicTimeStamp withTempo:tempo atMIDITimeStamp:midiTimeStamp];
+	[self.clock setMusicTimeStamp:musicTimeStamp withTempo:tempo atMIDITimeStamp:midiTimeStamp];
 }
 
 - (void)sendCommands:(NSArray *)commands toDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint
@@ -474,10 +415,9 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	if (!self.isRecording) return;
 	
 	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
-	MIKMIDIClock *clockAtTimeStamp = [self clockForMIDITimeStamp:midiTimeStamp];
-	
+
 	MusicTimeStamp playbackOffset = self.playbackOffset;
-	MusicTimeStamp musicTimeStamp = [clockAtTimeStamp musicTimeStampForMIDITimeStamp:midiTimeStamp] - playbackOffset;
+	MusicTimeStamp musicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:midiTimeStamp] - playbackOffset;
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
@@ -698,11 +638,6 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 		_tempo = tempo;
 		if (self.isPlaying) self.needsCurrentTempoUpdate = YES;
 	}
-}
-
-- (MIKMIDIClock *)syncedClock
-{
-	return self.clock.syncedClock;
 }
 
 @end
