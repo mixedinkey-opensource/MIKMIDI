@@ -105,6 +105,18 @@
  */
 - (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
+
+/**
+ *  A readonly copy of the clock that remains synced with this instance.
+ *  
+ *  This clock can be queried and will always return the same tempo and timing
+ *  information as the clock instance that dispensed the synced clock.
+ *
+ *  Calling -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced clock
+ *  has no effect.
+ */
+- (MIKMIDIClock *)syncedClock;
+
 /**
  *  Returns the tempo of the clock at the specified MIDITimeStamp.
  *
