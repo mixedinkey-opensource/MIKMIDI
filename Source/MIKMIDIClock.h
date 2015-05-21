@@ -69,7 +69,7 @@
  *
  *  @return The MusicTimeStamp that will occur at the same time as the specified MIDITimeStamp.
  *
- *  @note For this method to return any meaningful values, you must first call
+ *  @note For this method to return any meaningful value, you must first call
  *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
  *
  *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
@@ -83,7 +83,7 @@
  *
  *  @return The MIDITimeStamp that will occur at the same time as the specified MusicTimeStamp.
  *
- *  @note For this method to return any meaningful values, you must first call
+ *  @note For this method to return any meaningful value, you must first call
  *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
  *
  *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
@@ -98,29 +98,39 @@
  *
  *  @return The number of MIDITimeStamps that will occur during the specified number of beats.
  *
- *  @note For this method to return any meaningful values, you must first call
+ *  @note For this method to return any meaningful value, you must first call
  *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
  *
  *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
  */
 - (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
-
 /**
- *  A readonly copy of the clock that remains synced with this instance.
- *  
- *  This clock can be queried and will always return the same tempo and timing
- *  information as the clock instance that dispensed the synced clock.
+ *  Returns the tempo of the clock at the specified MIDITimeStamp.
  *
- *  Calling -setMusicTimeStamp:withTempo:atMusicTimeStamp on the synced clock
- *  has no effect.
- */
-- (MIKMIDIClock *)syncedClock;
-
-/**
+ *  @param midiTimeStamp The MIDITimeStamp you would like the clock's tempo for.
  *
+ *  @return The tempo of the clock at the specified MIDITimeStamp.
+ *
+ *  @note For this method to return any meaningful value, you must first call
+ *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
+ *
+ *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
  */
 - (Float64)tempoAtMIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
+
+/**
+ *  Returns the tempo of the clock at the specified MusicTimeStamp.
+ *
+ *  @param musicTimeStamp The MusicTimeStamp you would like the clock's tempo for.
+ *
+ *  @return The tempo of the clock at the specified MusicTimeStamp.
+ *
+ *  @note For this method to return any meaningful value, you must first call
+ *  -setMusicTimeStamp:withTempo:atMIDITimeStamp: at least once.
+ *
+ *  @see -setMusicTimeStamp:withTempo:atMIDITimeStamp:
+ */
 - (Float64)tempoAtMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
 
 /**
