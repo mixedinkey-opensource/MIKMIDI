@@ -123,7 +123,7 @@
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp withClock:(MIKMIDIClock *)clock
 {
 	MIDITimeStamp timeStampZero = clock.timeStampZero;
-	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp) : -((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp);
+	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp) : -((timeStampZero - midiTimeStamp) * clock.musicTimeStampsPerMIDITimeStamp);
 }
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
