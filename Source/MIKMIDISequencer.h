@@ -315,9 +315,15 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  An MIKMIDIClock that is synced with the sequencer's internal clock.
  *
- @  @see -[MIKMIDIClock syncedClock]
+ *  @  @see -[MIKMIDIClock syncedClock]
  */
 @property (readonly, nonatomic) MIKMIDIClock *syncedClock;
+
+
+/**
+ *  The latest MIDITimeStamp the sequencer has looked ahead to to schedule MIDI events.
+ */
+@property (readonly, nonatomic) MIDITimeStamp latestScheduledMIDITimeStamp;
 
 @end
 
