@@ -242,9 +242,19 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 @property (nonatomic) Float64 tempo;
 
 /**
+ *  The length the that the sequencer should consider its sequence to be. When set to 0, the sequencer
+ *  will use sequence.length instead.
+ *
+ *  This can be handy if you want to alter the duration of playback to be shorter or longer
+ *  than the sequence's length without affecting the sequence itself.
+ */
+@property (nonatomic) MusicTimeStamp overriddenSequenceLength;
+
+/**
  *  The current playback position in the sequence.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
+
 
 /**
  *  The amount of time (in beats) to pre-roll the sequence before recording.
