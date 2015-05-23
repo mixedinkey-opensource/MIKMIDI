@@ -128,14 +128,14 @@
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
-	MIDITimeStamp midiTimeStamp = (musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+	MIDITimeStamp midiTimeStamp = round(musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
 	if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) return midiTimeStamp;
 
 	NSDictionary *historicalClocks = self.historicalClocks;
 	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
 		MIKMIDIClock *clock = historicalClocks[historicalClockTimeStamp];
-		midiTimeStamp = (musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
-		if (midiTimeStamp >= clock.lastSyncedMIDITimeStamp) return midiTimeStamp;
+		MIDITimeStamp historicalMIDITimeStamp = round(musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
+		if (historicalMIDITimeStamp >= clock.lastSyncedMIDITimeStamp) return historicalMIDITimeStamp;
 	}
 
 	return midiTimeStamp;
