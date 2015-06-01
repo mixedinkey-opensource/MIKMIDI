@@ -96,12 +96,11 @@
 		historicalClock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
 		historicalClocks[midiTimeStampNumber] = historicalClock;
 		[historicalClockMIDITimeStamps addObject:midiTimeStampNumber];
-
 	}
 
 	// Update new tempo and timing information
 	Float64 secondsPerMIDITimeStamp = [[self class] secondsPerMIDITimeStamp];
-	Float64 secondsPerMusicTimeStamp = 1.0 / (tempo / 60.0);
+	Float64 secondsPerMusicTimeStamp = 60.0 / tempo;
 	Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
 	self.currentTempo = tempo;
