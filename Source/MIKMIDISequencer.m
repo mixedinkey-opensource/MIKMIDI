@@ -91,7 +91,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 - (instancetype)initWithSequence:(MIKMIDISequence *)sequence
 {
 	if (self = [super init]) {
-		_sequence = sequence;
+		self.sequence = sequence;
 		_clock = [MIKMIDIClock clock];
 		_syncedClock = [_clock syncedClock];
 		_loopEndTimeStamp = -1;
@@ -116,6 +116,11 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 + (instancetype)sequencer
 {
 	return [[self alloc] init];
+}
+
+- (void)dealloc
+{
+	self.sequence = nil;	// remove KVO
 }
 
 #pragma mark - Playback
@@ -226,8 +231,9 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
-		MIKMIDIDestinationEndpoint *destination = [self destinationEndpointForTrack:track];
-		for (MIKMIDIEvent *event in [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset]) {
+		NSArray *events = [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
+		MIKMIDIDestinationEndpoint *destination = events.count ? [self destinationEndpointForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
+		for (MIKMIDIEvent *event in events) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
 			NSMutableArray *eventsAtTimeStamp = allEventsByTimeStamp[timeStampKey] ? allEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
 			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
@@ -561,6 +567,29 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	[self processSequenceStartingFromMIDITimeStamp:self.latestScheduledMIDITimeStamp + 1];
 }
 
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	NSSet *currentTracks = [NSSet setWithArray:self.sequence.tracks];
+
+	NSMapTable *tracksToDestinationMap = self.tracksToDestinationsMap;
+	NSMutableSet *tracksToRemoveFromDestinationMap = [NSMutableSet setWithArray:[[tracksToDestinationMap keyEnumerator] allObjects]];
+	[tracksToRemoveFromDestinationMap minusSet:currentTracks];
+
+	for (MIKMIDITrack *track in tracksToRemoveFromDestinationMap) {
+		[tracksToDestinationMap removeObjectForKey:track];
+	}
+
+	NSMapTable *tracksToSynthsMap = self.tracksToDefaultSynthsMap;
+	NSMutableSet *tracksToRemoveFromSynthsMap = [NSMutableSet setWithArray:[[tracksToSynthsMap keyEnumerator] allObjects]];
+	[tracksToRemoveFromSynthsMap minusSet:currentTracks];
+
+	for (MIKMIDITrack *track in tracksToRemoveFromSynthsMap) {
+		[tracksToSynthsMap removeObjectForKey:track];
+	}
+}
+
 #pragma mark - Properties
 
 @synthesize currentTimeStamp = _currentTimeStamp;
@@ -643,6 +672,15 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 {
 	MusicTimeStamp length = self.overriddenSequenceLength;
 	return length ? length : self.sequence.length;
+}
+
+- (void)setSequence:(MIKMIDISequence *)sequence
+{
+	if (_sequence != sequence) {
+		[_sequence removeObserver:self forKeyPath:@"tracks"];
+		_sequence = sequence;
+		[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
+	}
 }
 
 @end
