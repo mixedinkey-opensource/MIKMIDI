@@ -168,7 +168,10 @@
 	self.historicalClockMIDITimeStamps = nil;
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
-	_currentTimeStamp = (stopTimeStamp <= self.sequence.length + self.playbackOffset) ? stopTimeStamp : self.sequence.length;
+
+	MusicTimeStamp stopMusicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
+	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
+
 	self.playbackOffset = 0;
 	self.playing = NO;
 	self.recording = NO;
@@ -581,20 +584,20 @@
 	if (self.isPlaying) {
 		MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
 		MusicTimeStamp playbackOffset = self.playbackOffset;
-		_currentTimeStamp = (timeStamp <= self.sequence.length + playbackOffset) ? timeStamp - playbackOffset : self.sequence.length;
+		_currentTimeStamp = (timeStamp <= self.sequenceLength + playbackOffset) ? timeStamp - playbackOffset : self.sequenceLength;
 	}
 	return _currentTimeStamp;
 }
 
 - (void)setCurrentTimeStamp:(MusicTimeStamp)currentTimeStamp
 {
-	_currentTimeStamp = currentTimeStamp;
-
 	if (self.isPlaying) {
 		BOOL isRecording = self.isRecording;
 		[self stop];
 		if (isRecording) [self prepareForRecordingWithPreRoll:NO];
-		[self startPlaybackAtTimeStamp:_currentTimeStamp];
+		[self startPlaybackAtTimeStamp:currentTimeStamp];
+	} else {
+		_currentTimeStamp = currentTimeStamp;
 	}
 }
 
