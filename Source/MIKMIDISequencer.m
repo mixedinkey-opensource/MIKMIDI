@@ -176,7 +176,10 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	[self recordAllPendingNoteEventsWithOffTimeStamp:[self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
-	_currentTimeStamp = (stopTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopTimeStamp : self.sequenceLength;
+
+	MusicTimeStamp stopMusicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
+	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
+
 	self.playbackOffset = 0;
 	self.playing = NO;
 	self.recording = NO;
@@ -605,13 +608,13 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 - (void)setCurrentTimeStamp:(MusicTimeStamp)currentTimeStamp
 {
-	_currentTimeStamp = currentTimeStamp;
-
 	if (self.isPlaying) {
 		BOOL isRecording = self.isRecording;
 		[self stop];
 		if (isRecording) [self prepareForRecordingWithPreRoll:NO];
-		[self startPlaybackAtTimeStamp:_currentTimeStamp];
+		[self startPlaybackAtTimeStamp:currentTimeStamp];
+	} else {
+		_currentTimeStamp = currentTimeStamp;
 	}
 }
 
