@@ -170,7 +170,7 @@
 	self.looping = NO;
 
 	MusicTimeStamp stopMusicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
-	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
+	_currentTimeStamp = (stopMusicTimeStamp <= self.sequence.length + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequence.length;
 
 	self.playbackOffset = 0;
 	self.playing = NO;
@@ -584,7 +584,7 @@
 	if (self.isPlaying) {
 		MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
 		MusicTimeStamp playbackOffset = self.playbackOffset;
-		_currentTimeStamp = (timeStamp <= self.sequenceLength + playbackOffset) ? timeStamp - playbackOffset : self.sequenceLength;
+		_currentTimeStamp = (timeStamp <= self.sequence.length + playbackOffset) ? timeStamp - playbackOffset : self.sequence.length;
 	}
 	return _currentTimeStamp;
 }
