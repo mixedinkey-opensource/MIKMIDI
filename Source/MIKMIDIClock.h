@@ -62,12 +62,12 @@
 - (void)syncMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withMIDITimeStamp:(MIDITimeStamp)midiTimeStamp tempo:(Float64)tempo;
 
 /**
- *	Internally unsynchronizes the tempo and MusictimeSTamp information with MIDITimeStamps.
+ *	Internally unsynchronizes the tempo and MusicTimeStamp information with MIDITimeStamps.
  *
  *  @see -syncMusicTimeStamp:withMIDITimeStamp:tempo:
  *	@see -isReady
  */
-- (void)unsyncMusicTimeStampsTemposFromMIDITimeStamps;
+- (void)unsyncMusicTimeStampsAndTemposFromMIDITimeStamps;
 
 /**
  *  Converts the specified MIDITimeStamp into the corresponding MusicTimeStamp.

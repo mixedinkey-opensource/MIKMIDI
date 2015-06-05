@@ -182,7 +182,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	MusicTimeStamp stopMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
 	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
 
-	[clock unsyncMusicTimeStampsTemposFromMIDITimeStamps];
+	[clock unsyncMusicTimeStampsAndTemposFromMIDITimeStamps];
 
 	self.playbackOffset = 0;
 	self.playing = NO;

@@ -113,7 +113,7 @@
 	self.ready = YES;
 }
 
-- (void)unsyncMusicTimeStampsTemposFromMIDITimeStamps
+- (void)unsyncMusicTimeStampsAndTemposFromMIDITimeStamps
 {
 	self.ready = NO;
 	self.currentTempo = 0;
