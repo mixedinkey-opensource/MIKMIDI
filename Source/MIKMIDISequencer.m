@@ -28,7 +28,6 @@
 #endif
 
 #define kDefaultTempo	120
-#define kBufferDuration	0.1
 
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
@@ -191,7 +190,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:kBufferDuration];
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 
@@ -287,6 +286,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 			MIDITimeStamp loopStartMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:loopStartTimeStamp + loopLength];
 			[self updateClockWithMusicTimeStamp:loopStartTimeStamp tempo:tempo atMIDITimeStamp:loopStartMIDITimeStamp];
 
+			self.startingTimeStamp = loopStartTimeStamp;
 			[[NSNotificationCenter defaultCenter] postNotificationName:MIKMIDISequencerWillLoopNotification object:self userInfo:nil];
 			[self processSequenceStartingFromMIDITimeStamp:loopStartMIDITimeStamp];
 		}
@@ -604,9 +604,9 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 {
 	MIKMIDIClock *clock = self.clock;
 	if (clock.isReady) {
-		MusicTimeStamp timeStamp = [clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:kBufferDuration]];
+		MusicTimeStamp timeStamp = [clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
 		MusicTimeStamp playbackOffset = self.playbackOffset;
-		_currentTimeStamp = (timeStamp <= self.sequenceLength + playbackOffset) ? timeStamp - playbackOffset : self.sequenceLength;
+		_currentTimeStamp = MAX(((timeStamp <= self.sequenceLength + playbackOffset) ? timeStamp - playbackOffset : self.sequenceLength), self.startingTimeStamp);
 	}
 	return _currentTimeStamp;
 }
