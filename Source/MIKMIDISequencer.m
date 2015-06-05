@@ -28,6 +28,7 @@
 #endif
 
 #define kDefaultTempo	120
+#define kBufferDuration	0.1
 
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
@@ -169,16 +170,19 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
+	MIKMIDIClock *clock = self.clock;
 	self.processingTimer = nil;
 	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
 	self.pendingNoteOffs = nil;
 	self.pendingNoteOffMIDITimeStamps = nil;
-	[self recordAllPendingNoteEventsWithOffTimeStamp:[self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
+	[self recordAllPendingNoteEventsWithOffTimeStamp:[clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
 	self.pendingRecordedNoteEvents = nil;
 	self.looping = NO;
 
-	MusicTimeStamp stopMusicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
+	MusicTimeStamp stopMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
 	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
+
+	[clock unsyncMusicTimeStampsTemposFromMIDITimeStamps];
 
 	self.playbackOffset = 0;
 	self.playing = NO;
@@ -187,7 +191,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:kBufferDuration];
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 
@@ -374,7 +378,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	// Override tempo if neccessary
 	Float64 tempoOverride = self.tempo;
 	if (tempoOverride) tempo = tempoOverride;
-	[self.clock setMusicTimeStamp:musicTimeStamp withTempo:tempo atMIDITimeStamp:midiTimeStamp];
+	[self.clock syncMusicTimeStamp:musicTimeStamp withMIDITimeStamp:midiTimeStamp tempo:tempo];
 }
 
 - (void)sendCommands:(NSArray *)commands toDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint
@@ -598,8 +602,9 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 @synthesize currentTimeStamp = _currentTimeStamp;
 - (MusicTimeStamp)currentTimeStamp
 {
-	if (self.isPlaying) {
-		MusicTimeStamp timeStamp = [self.clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp()];
+	MIKMIDIClock *clock = self.clock;
+	if (clock.isReady) {
+		MusicTimeStamp timeStamp = [clock musicTimeStampForMIDITimeStamp:MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:kBufferDuration]];
 		MusicTimeStamp playbackOffset = self.playbackOffset;
 		_currentTimeStamp = (timeStamp <= self.sequenceLength + playbackOffset) ? timeStamp - playbackOffset : self.sequenceLength;
 	}
