@@ -57,18 +57,39 @@
 
 - (instancetype)init
 {
+	return [self initWithQueue:YES];
+}
+
+- (instancetype)initWithQueue:(BOOL)createQueue
+{
 	if (self = [super init]) {
-		NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
-		self.clockQueue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+		if (createQueue) {
+			NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
+			self.clockQueue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+		}
 	}
 	return self;
+}
+
+#pragma mark - Queue
+
+- (void)dispatchToClockQueue:(void (^)())block
+{
+	if (!block) return;
+
+	dispatch_queue_t queue = self.clockQueue;
+	if (queue) {
+		dispatch_sync(queue, block);
+	} else {
+		block();
+	}
 }
 
 #pragma mark - Time Stamps
 
 - (void)syncMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withMIDITimeStamp:(MIDITimeStamp)midiTimeStamp tempo:(Float64)tempo
 {
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		if (self.lastSyncedMIDITimeStamp) {
 			// Add a clock to the historical clocks
 			NSMutableDictionary *historicalClocks = self.historicalClocks;
@@ -102,7 +123,7 @@
 			}
 
 			// Add clock to history
-			MIKMIDIClock *historicalClock = [MIKMIDIClock clock];
+			MIKMIDIClock *historicalClock = [[MIKMIDIClock alloc] initWithQueue:NO];
 			historicalClock.currentTempo = self.currentTempo;
 			historicalClock.timeStampZero = self.timeStampZero;
 			historicalClock.lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
@@ -123,24 +144,24 @@
 		self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
 		self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
 		self.ready = YES;
-	});
+	}];
 }
 
 - (void)unsyncMusicTimeStampsAndTemposFromMIDITimeStamps
 {
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		self.ready = NO;
 		self.currentTempo = 0;
 		self.historicalClocks = nil;
 		self.historicalClockMIDITimeStamps = nil;
-	});
+	}];
 }
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
 	__block MusicTimeStamp musicTimeStamp = 0;
 
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		if (self.isReady) {
 			if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) {
 				musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
@@ -148,7 +169,7 @@
 				musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];
 			}
 		}
-	});
+	}];
 
 	return musicTimeStamp;
 }
@@ -164,7 +185,7 @@
 {
 	__block MIDITimeStamp midiTimeStamp = 0;
 
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		if (self.isReady) {
 			midiTimeStamp = round(musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
 
@@ -180,7 +201,7 @@
 				}
 			}
 		}
-	});
+	}];
 
 	return midiTimeStamp;
 }
@@ -189,9 +210,9 @@
 {
 	__block MIDITimeStamp midiTimeStamps = 0;
 
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		if (self.isReady) midiTimeStamps = musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp;
-	});
+	}];
 
 	return midiTimeStamps;
 }
@@ -202,7 +223,7 @@
 {
 	__block Float64 tempo = 0;
 
-	dispatch_sync(self.clockQueue, ^{
+	[self dispatchToClockQueue:^{
 		if (self.isReady) {
 			if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) {
 				tempo = self.currentTempo;
@@ -210,7 +231,7 @@
 				tempo = [[self clockForMIDITimeStamp:midiTimeStamp] currentTempo];
 			}
 		}
-	});
+	}];
 
 	return tempo;
 }
