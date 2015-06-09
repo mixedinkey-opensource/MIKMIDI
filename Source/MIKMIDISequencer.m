@@ -63,7 +63,6 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 @property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
 
 @property (nonatomic) MIDITimeStamp latestScheduledMIDITimeStamp;
-@property (nonatomic, strong) NSTimer *processingTimer;
 
 @property (nonatomic, strong) NSMutableDictionary *pendingNoteOffs;
 @property (nonatomic, strong) NSMutableOrderedSet *pendingNoteOffMIDITimeStamps;
@@ -80,6 +79,9 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 @property (nonatomic) BOOL needsCurrentTempoUpdate;
 
 @property (readonly, nonatomic) MusicTimeStamp sequenceLength;
+
+@property (nonatomic) dispatch_queue_t processingQueue;
+@property (nonatomic) dispatch_source_t processingTimer;
 
 @end
 
@@ -121,6 +123,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 - (void)dealloc
 {
 	self.sequence = nil;	// remove KVO
+	self.processingTimer = NULL;
 }
 
 #pragma mark - Playback
@@ -140,23 +143,34 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 {
 	if (self.isPlaying) [self stop];
 
-	MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
-	self.startingTimeStamp = startingTimeStamp;
+	NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
+	self.processingQueue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+	dispatch_sync(self.processingQueue, ^{
+		MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
+		self.startingTimeStamp = startingTimeStamp;
 
-	Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
-	if (!startingTempo) startingTempo = kDefaultTempo;
-	[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
+		Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
+		if (!startingTempo) startingTempo = kDefaultTempo;
+		[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
+	});
 
 	self.playing = YES;
-	self.pendingNoteOffs = [NSMutableDictionary dictionary];
-	self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
-	self.latestScheduledMIDITimeStamp = midiTimeStamp - 1;
-	self.processingTimer = [NSTimer timerWithTimeInterval:0.05
-													   target:self
-													 selector:@selector(processingTimerFired:)
-													 userInfo:nil
-													  repeats:YES];
-	[self.processingTimer fire];
+
+	dispatch_sync(self.processingQueue, ^{
+		self.pendingNoteOffs = [NSMutableDictionary dictionary];
+		self.pendingNoteOffMIDITimeStamps = [NSMutableOrderedSet orderedSet];
+		self.latestScheduledMIDITimeStamp = midiTimeStamp - 1;
+		dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.processingQueue);
+		if (!timer) return NSLog(@"Unable to create processing timer for %@.", [self class]);
+		self.processingTimer = timer;
+
+		dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 0.05, 0.05);
+		dispatch_source_set_event_handler(timer, ^{
+			[self processSequenceStartingFromMIDITimeStamp:self.latestScheduledMIDITimeStamp + 1];
+		});
+
+		dispatch_resume(timer);
+	});
 }
 
 - (void)resumePlayback
@@ -169,20 +183,24 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
-	MIKMIDIClock *clock = self.clock;
-	self.processingTimer = nil;
-	[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
-	self.pendingNoteOffs = nil;
-	self.pendingNoteOffMIDITimeStamps = nil;
-	[self recordAllPendingNoteEventsWithOffTimeStamp:[clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
-	self.pendingRecordedNoteEvents = nil;
-	self.looping = NO;
+	dispatch_sync(self.processingQueue, ^{
+		self.processingTimer = NULL;
 
-	MusicTimeStamp stopMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
-	_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
+		MIKMIDIClock *clock = self.clock;
+		[self sendPendingNoteOffCommandsUpToMIDITimeStamp:0];
+		self.pendingNoteOffs = nil;
+		self.pendingNoteOffMIDITimeStamps = nil;
+		[self recordAllPendingNoteEventsWithOffTimeStamp:[clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
+		self.pendingRecordedNoteEvents = nil;
+		self.looping = NO;
 
-	[clock unsyncMusicTimeStampsAndTemposFromMIDITimeStamps];
+		MusicTimeStamp stopMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
+		_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
 
+		[clock unsyncMusicTimeStampsAndTemposFromMIDITimeStamps];
+	});
+
+	self.processingQueue = NULL;
 	self.playbackOffset = 0;
 	self.playing = NO;
 	self.recording = NO;
@@ -199,7 +217,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp + playbackOffset;
 	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp + playbackOffset;
 	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
-	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
+	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];\
 	BOOL isLooping = (self.shouldLoop && !self.isLooping && calculatedToMusicTimeStamp > loopStartTimeStamp && loopEndTimeStamp > loopStartTimeStamp);
 	self.looping = isLooping;
 	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, isLooping ? loopEndTimeStamp : self.sequenceLength);
@@ -633,12 +651,13 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 	_preRoll = (preRoll >= 0) ? preRoll : 0;
 }
 
-- (void)setProcessingTimer:(NSTimer *)processingTimer
+- (void)setProcessingTimer:(dispatch_source_t)processingTimer
 {
-	if (processingTimer != _processingTimer) {
-		[_processingTimer invalidate];
+	if (_processingTimer != processingTimer) {
+		if (_processingTimer) {
+			dispatch_source_cancel(_processingTimer);
+		}
 		_processingTimer = processingTimer;
-		if (_processingTimer) [[NSRunLoop currentRunLoop] addTimer:_processingTimer forMode:NSRunLoopCommonModes];
 	}
 }
 
