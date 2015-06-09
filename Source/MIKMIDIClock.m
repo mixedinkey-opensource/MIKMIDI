@@ -190,7 +190,7 @@
 	__block MIDITimeStamp midiTimeStamps = 0;
 
 	dispatch_sync(self.clockQueue, ^{
-		midiTimeStamps = self.isReady ? (musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) : 0;
+		if (self.isReady) midiTimeStamps = musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp;
 	});
 
 	return midiTimeStamps;
