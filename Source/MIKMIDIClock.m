@@ -31,6 +31,7 @@
 @property (nonatomic) Float64 currentTempo;
 @property (nonatomic) MIDITimeStamp timeStampZero;
 @property (nonatomic) MIDITimeStamp lastSyncedMIDITimeStamp;
+@property (nonatomic) MusicTimeStamp lastSyncedMusicTimeStamp;
 
 @property (nonatomic) Float64 musicTimeStampsPerMIDITimeStamp;
 @property (nonatomic) Float64 midiTimeStampsPerMusicTimeStamp;
@@ -140,6 +141,7 @@
 
 		self.currentTempo = tempo;
 		self.lastSyncedMIDITimeStamp = midiTimeStamp;
+		self.lastSyncedMusicTimeStamp = musicTimeStamp;
 		self.timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
 		self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
 		self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
@@ -159,6 +161,7 @@
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
+	if (midiTimeStamp == self.lastSyncedMIDITimeStamp) return self.lastSyncedMusicTimeStamp;
 	__block MusicTimeStamp musicTimeStamp = 0;
 
 	[self dispatchToClockQueue:^{
@@ -183,6 +186,7 @@
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
+	if (musicTimeStamp == self.lastSyncedMusicTimeStamp) return self.lastSyncedMIDITimeStamp;
 	__block MIDITimeStamp midiTimeStamp = 0;
 
 	[self dispatchToClockQueue:^{
