@@ -401,11 +401,15 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 - (void)sendCommands:(NSArray *)commands toDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint
 {
+	commands = [self modifiedMIDICommandsFromCommandsToBeScheduled:commands forEndpoint:endpoint];
+	
 	NSError *error;
 	if (commands.count && ![[MIKMIDIDeviceManager sharedDeviceManager] sendCommands:commands toEndpoint:endpoint error:&error]) {
 		NSLog(@"%@: An error occurred scheduling the commands %@ for destination endpoint %@. %@", NSStringFromClass([self class]), commands, endpoint, error);
 	}
 }
+
+- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint { return commandsToBeScheduled; }
 
 #pragma mark - Recording
 

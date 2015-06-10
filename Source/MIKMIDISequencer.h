@@ -161,6 +161,23 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  */
 - (void)recordMIDICommand:(MIKMIDICommand *)command;
 
+/**
+ *	Allows subclasses to modify the MIDI commands that are about to be
+ *	scheduled with a destination endpoint.
+ *
+ *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
+ *	to be scheduled.
+ *
+ *	@param endpoint The destination endpoint the commands will be sent to after
+ *	they are modified.
+ *
+ *	@note You should not call this method directly. It is made public solely to
+ *	give subclasses a chance to alter or override any MIDI commands parsed from the
+ *	MIDI sequence before they get sent to their destination endpoint.
+ *
+ */
+- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint;
+
 #pragma mark - Configuration
 
 /**
