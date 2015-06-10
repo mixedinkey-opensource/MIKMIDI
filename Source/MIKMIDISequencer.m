@@ -242,7 +242,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 
 	if (self.needsCurrentTempoUpdate) {
 		if (!tempoEventsByTimeStamp.count) {
-			if (!overrideTempo) overrideTempo = [self.sequence tempoAtTimeStamp:fromMusicTimeStamp];
+			if (!overrideTempo) overrideTempo = [sequence tempoAtTimeStamp:fromMusicTimeStamp];
 			if (!overrideTempo) overrideTempo = kDefaultTempo;
 
 			MIKMIDITempoEvent *tempoEvent = [MIKMIDITempoEvent tempoEventWithTimeStamp:fromMusicTimeStamp tempo:overrideTempo];
