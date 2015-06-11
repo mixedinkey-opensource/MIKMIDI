@@ -161,6 +161,23 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  */
 - (void)recordMIDICommand:(MIKMIDICommand *)command;
 
+/**
+ *	Allows subclasses to modify the MIDI commands that are about to be
+ *	scheduled with a destination endpoint.
+ *
+ *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
+ *	to be scheduled.
+ *
+ *	@param endpoint The destination endpoint the commands will be sent to after
+ *	they are modified.
+ *
+ *	@note You should not call this method directly. It is made public solely to
+ *	give subclasses a chance to alter or override any MIDI commands parsed from the
+ *	MIDI sequence before they get sent to their destination endpoint.
+ *
+ */
+- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint;
+
 #pragma mark - Configuration
 
 /**
@@ -242,9 +259,19 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 @property (nonatomic) Float64 tempo;
 
 /**
+ *  The length the that the sequencer should consider its sequence to be. When set to 0, the sequencer
+ *  will use sequence.length instead.
+ *
+ *  This can be handy if you want to alter the duration of playback to be shorter or longer
+ *  than the sequence's length without affecting the sequence itself.
+ */
+@property (nonatomic) MusicTimeStamp overriddenSequenceLength;
+
+/**
  *  The current playback position in the sequence.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
+
 
 /**
  *  The amount of time (in beats) to pre-roll the sequence before recording.
