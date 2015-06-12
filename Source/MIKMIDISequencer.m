@@ -399,7 +399,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	}
 
 	for (MIKMIDIDestinationEndpoint *endpoint in [[noteOffDestinationsToCommands keyEnumerator] allObjects]) {
-		[self sendCommands:[noteOffDestinationsToCommands objectForKey:endpoint] toDestinationEndpoint:endpoint];
+		NSArray *commands = [self modifiedMIDICommandsFromCommandsToBeScheduled:[noteOffDestinationsToCommands objectForKey:endpoint] forEndpoint:endpoint];
+		[self sendCommands:commands toDestinationEndpoint:endpoint];
 	}
 
 	[noteOffs removeAllObjects];
