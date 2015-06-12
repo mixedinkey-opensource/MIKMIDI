@@ -154,14 +154,29 @@
 /**
  *  The mapping items that map controls to a specific command identifier supported by a MIDI responder.
  *
- *  @param identifier An NSString containing one of the responder's supported command identifiers.
+ *  @param commandID An NSString containing one of the responder's supported command identifiers.
  *  @param responder  An object that coforms to the MIKMIDIMappableResponder protocol.
  *
  *  @return An NSSet containing MIKMIDIMappingItems for the responder and command identifer, or an empty set if none are found.
  *
  *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
+ *  @see -mappingItemsForCommandIdentifier:responderWithIdentifier:
  */
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
+
+/**
+ *  The mapping items that map controls to a specific command identifier supported by a MIDI responder with a given
+ *  identifier.
+ *
+ *  @param commandID An NSString containing one of the responder's supported command identifiers.
+ *  @param responderID An NSString
+ *
+ *  @return An NSSet containing MIKMIDIMappingItems for the responder and command identifer, or an empty set if none are found.
+ *
+ *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
+ *  @see -mappingItemsForCommandIdentifier:responder:
+ */
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID;
 
 /**
  *  The mapping items for a particular MIDI command (corresponding to a physical control).

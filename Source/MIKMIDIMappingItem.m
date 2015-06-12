@@ -14,6 +14,12 @@
 #import <libxml/xmlwriter.h>
 #endif
 
+@interface MIKMIDIMappingItem ()
+
+@property (nonatomic, weak, readwrite) MIKMIDIMapping *mapping;
+
+@end
+
 @implementation MIKMIDIMappingItem
 
 - (instancetype)initWithMIDIResponderIdentifier:(NSString *)MIDIResponderIdentifier andCommandIdentifier:(NSString *)commandIdentifier;

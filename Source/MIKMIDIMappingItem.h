@@ -10,6 +10,8 @@
 #import "MIKMIDIMappableResponder.h"
 #import "MIKMIDICommand.h"
 
+@class MIKMIDIMapping;
+
 /**
  *  MIKMIDIMappingItem contains information about a mapping between a physical MIDI control,
  *  and a single command supported by a particular MIDI responder object.
@@ -91,5 +93,11 @@
  *  Optional additional key value pairs, which will be saved as attributes in this item's XML representation. Keys and values must be NSStrings.
  */
 @property (nonatomic, copy) NSDictionary *additionalAttributes;
+
+/**
+ *  The MIDI Mapping the receiver belongs to. May be nil if the mappping item hasn't been added to a mapping yet,
+ *  or its mapping has been deallocated.
+ */
+@property (nonatomic, weak, readonly) MIKMIDIMapping *mapping;
 
 @end

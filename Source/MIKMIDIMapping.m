@@ -32,6 +32,8 @@
 - (NSXMLElement *)XMLRepresentation;
 #endif
 
+@property (nonatomic, weak, readwrite) MIKMIDIMapping *mapping;
+
 @end
 
 @interface MIKMIDIMapping ()
@@ -320,14 +322,18 @@ CLEANUP_AND_EXIT:
 	return matches;
 }
 
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)identifier responder:(id<MIKMIDIMappableResponder>)responder;
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
 {
 	NSString *MIDIIdentifer = [responder MIDIIdentifier];
+	return [self mappingItemsForCommandIdentifier:commandID responderWithIdentifier:MIDIIdentifer];
+}
 
+- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID
+{
 	NSMutableSet *matches = [NSMutableSet set];
 	for (MIKMIDIMappingItem *item in self.internalMappingItems) {
-		if (![item.MIDIResponderIdentifier isEqualToString:MIDIIdentifer]) continue;
-		if (![item.commandIdentifier isEqualToString:identifier]) continue;
+		if (![item.MIDIResponderIdentifier isEqualToString:responderID]) continue;
+		if (![item.commandIdentifier isEqualToString:commandID]) continue;
 		[matches addObject:item];
 	}
 	
@@ -382,7 +388,7 @@ CLEANUP_AND_EXIT:
 	for (NSXMLElement *element in mappingItemElements) {
 		MIKMIDIMappingItem *item = [[MIKMIDIMappingItem alloc] initWithXMLElement:element];
 		if (!item) continue;
-		[self.internalMappingItems addObject:item];
+		[self addMappingItemsObject:item];
 	}
 	
 	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
@@ -420,21 +426,27 @@ CLEANUP_AND_EXIT:
 - (void)addMappingItemsObject:(MIKMIDIMappingItem *)mappingItem
 {
 	[self.internalMappingItems addObject:mappingItem];
+	mappingItem.mapping = self;
 }
 
 - (void)addMappingItems:(NSSet *)mappingItems
 {
 	[self.internalMappingItems unionSet:mappingItems];
+	[mappingItems setValue:self forKey:@"mapping"];
 }
 
 - (void)removeMappingItemsObject:(MIKMIDIMappingItem *)mappingItem
 {
+	mappingItem.mapping = nil;
 	[self.internalMappingItems removeObject:mappingItem];
 }
 
 - (void)removeMappingItems:(NSSet *)mappingItems
 {
+	NSMutableSet *removedMappingItems = [self.internalMappingItems mutableCopy];
 	[self.internalMappingItems minusSet:mappingItems];
+	[removedMappingItems minusSet:self.internalMappingItems];
+	for (MIKMIDIMappingItem *item in removedMappingItems) { item.mapping = nil; }
 }
 
 - (NSString *)name
