@@ -104,6 +104,45 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  */
 - (void)resumePlayback;
 
+/**
+ *  Stops all playback and recording.
+ */
+- (void)stop;
+
+/**
+ *	Allows subclasses to modify the MIDI commands that are about to be
+ *	scheduled with a destination endpoint.
+ *
+ *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
+ *	to be scheduled.
+ *
+ *	@param endpoint The destination endpoint the commands will be sent to after
+ *	they are modified.
+ *
+ *	@note You should not call this method directly. It is made public solely to
+ *	give subclasses a chance to alter or override any MIDI commands parsed from the
+ *	MIDI sequence before they get sent to their destination endpoint.
+ *
+ */
+- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint;
+
+/**
+ *	Sets the loopStartTimeStamp and loopEndTimeStamp properties.
+ *
+ *	@param loopStartTimeStamp The MusicTimeStamp to begin looping at.
+ *
+ *	@param loopEndTimeStamp The MusicTimeStamp to end looping at. To have
+ *	the loop end at the end of the sequence, regardless of sequence length, 
+ *	pass in MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *
+ *	@see loopStartTimeStamp
+ *	@see loopEndTimeStamp
+ *	@see loop
+ *	@see looping
+ */
+- (void)setLoopStartTimeStamp:(MusicTimeStamp)loopStartTimeStamp endTimeStamp:(MusicTimeStamp)loopEndTimeStamp;
+
+
 #pragma mark - Recording
 
 /**
@@ -145,11 +184,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 - (void)resumeRecording;
 
 /**
- *  Stops all playback and recording.
- */
-- (void)stop;
-
-/**
  *  Records a MIDI command to the record enabled tracks.
  *
  *  @param command The MIDI command to record to the record enabled tracks.
@@ -160,23 +194,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see recordEnabledTracks
  */
 - (void)recordMIDICommand:(MIKMIDICommand *)command;
-
-/**
- *	Allows subclasses to modify the MIDI commands that are about to be
- *	scheduled with a destination endpoint.
- *
- *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
- *	to be scheduled.
- *
- *	@param endpoint The destination endpoint the commands will be sent to after
- *	they are modified.
- *
- *	@note You should not call this method directly. It is made public solely to
- *	give subclasses a chance to alter or override any MIDI commands parsed from the
- *	MIDI sequence before they get sent to their destination endpoint.
- *
- */
-- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint;
 
 #pragma mark - Configuration
 
@@ -302,23 +319,28 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see loop
  *  @see loopStartTimeStamp
  *  @see loopEndTimeStamp
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  *  @see currentTimeStamp
  */
 @property (readonly, nonatomic, getter=isLooping) BOOL looping;
 
 /**
  *  The loop's beginning time stamp during looped playback.
+ *
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  */
-@property (nonatomic) MusicTimeStamp loopStartTimeStamp;
+@property (readonly, nonatomic) MusicTimeStamp loopStartTimeStamp;
 
 /**
  *  The loop's ending time stamp during looped playback.
  *
- *  @note To have the loop end at the end of the sequence, regardless of
- *  sequence length, set this value to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
- *	The default is MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *	@note When this is set to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp
+ *	the loopEndTimeStamp will be treated as if it is set to the length of the
+ *	sequence. The default is MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  */
-@property (nonatomic) MusicTimeStamp loopEndTimeStamp;
+@property (readonly, nonatomic) MusicTimeStamp loopEndTimeStamp;
 
 /**
  *  The metronome to send click track events to.

@@ -603,6 +603,30 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	return clickEvents;
 }
 
+#pragma mark - Loop Points
+
+- (void)setLoopStartTimeStamp:(MusicTimeStamp)loopStartTimeStamp endTimeStamp:(MusicTimeStamp)loopEndTimeStamp
+{
+	if (loopEndTimeStamp != MIKMIDISequencerEndOfSequenceLoopEndTimeStamp && (loopStartTimeStamp >= loopEndTimeStamp)) return;
+
+	[self willChangeValueForKey:@"loopStartTimeStamp"];
+	[self didChangeValueForKey:@"loopStartTimeStamp"];
+
+	dispatch_queue_t queue = self.processingQueue;
+	if (queue) {
+		dispatch_sync(queue, ^{
+			_loopStartTimeStamp = loopStartTimeStamp;
+			_loopEndTimeStamp = loopEndTimeStamp;
+		});
+	} else {
+		_loopStartTimeStamp = loopStartTimeStamp;
+		_loopEndTimeStamp = loopEndTimeStamp;
+	}
+
+	[self willChangeValueForKey:@"loopEndTimeStamp"];
+	[self didChangeValueForKey:@"loopEndTimeStamp"];
+}
+
 #pragma mark - Timer
 
 - (void)processingTimerFired:(NSTimer *)timer
