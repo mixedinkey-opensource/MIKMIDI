@@ -315,7 +315,8 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  The loop's ending time stamp during looped playback.
  *
  *  @note To have the loop end at the end of the sequence, regardless of
- *  sequence length, set this value to less than 0. The default is -1.
+ *  sequence length, set this value to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *	The default is MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
  */
 @property (nonatomic) MusicTimeStamp loopEndTimeStamp;
 
@@ -359,3 +360,9 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  Sent out shortly before playback loops.
  */
 FOUNDATION_EXPORT NSString * const MIKMIDISequencerWillLoopNotification;
+
+/**
+ *	Set loopEndTimeStamp to this to have the loop end at the end of the
+ *	sequence regardless of sequence length.
+ */
+FOUNDATION_EXPORT const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp;

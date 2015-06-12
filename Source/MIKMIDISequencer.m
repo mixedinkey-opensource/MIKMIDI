@@ -31,6 +31,7 @@
 
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
+const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 
 #pragma mark -
@@ -103,7 +104,7 @@ NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLo
 		self.sequence = sequence;
 		_clock = [MIKMIDIClock clock];
 		_syncedClock = [_clock syncedClock];
-		_loopEndTimeStamp = -1;
+		_loopEndTimeStamp = MIKMIDISequencerEndOfSequenceLoopEndTimeStamp;
 		_preRoll = 4;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
 		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
