@@ -311,7 +311,7 @@
 {
 	SEL selector = invocation.selector;
 	if (selector == @selector(syncMusicTimeStamp:withMIDITimeStamp:tempo:)) return;
-	if (selector == @selector(unsyncMusicTimeStampsTemposFromMIDITimeStamps)) return;
+	if (selector == @selector(unsyncMusicTimeStampsAndTemposFromMIDITimeStamps)) return;
 	if (selector == @selector(setMusicTimeStamp:withTempo:atMIDITimeStamp:)) return;	// deprecated
 
 	if (selector == @selector(syncedClock)) {

@@ -56,7 +56,7 @@
  *  with time stamps more than one second older than the time stamps set with this method
  *  may not necessarily return accurate information.
  *
- *	@see -unsyncMusicTimeStampsTemposFromMIDITimeStamps
+ *	@see -unsyncMusicTimeStampsAndTemposFromMIDITimeStamps
  *  @see -isReady
  */
 - (void)syncMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withMIDITimeStamp:(MIDITimeStamp)midiTimeStamp tempo:(Float64)tempo;
@@ -117,7 +117,7 @@
  *  information as the clock instance that dispensed the synced clock.
  *
  *  Calling -syncMusicTimeStamp:withMIDITimeStamp:tempo: or 
- *  -unsyncMusicTimeStampsTemposFromMIDITimeStamps on the synced clock
+ *  -unsyncMusicTimeStampsAndTemposFromMIDITimeStamps on the synced clock
  *  has no effect.
  */
 - (MIKMIDIClock *)syncedClock;
@@ -153,7 +153,7 @@
  *  and is ready to use for getting tempo and timing information.
  *
  *	@see -syncMusicTimeStamp:withMIDITimeStamp:tempo:
- *	@see -unsyncMusicTimeStampsTemposFromMIDITimeStamps
+ *	@see -unsyncMusicTimeStampsAndTemposFromMIDITimeStamps
  */
 @property (readonly, nonatomic, getter=isReady) BOOL ready;
 
