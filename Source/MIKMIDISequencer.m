@@ -152,8 +152,11 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (self.isPlaying) [self stop];
 
 	NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
-	self.processingQueue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
-	dispatch_sync(self.processingQueue, ^{
+
+	dispatch_queue_t queue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+	self.processingQueue = queue;
+
+	dispatch_sync(queue, ^{
 		MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
 		self.startingTimeStamp = startingTimeStamp;
 
@@ -164,7 +167,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	self.playing = YES;
 
-	dispatch_sync(self.processingQueue, ^{
+	dispatch_sync(queue, ^{
 		self.pendingNoteOffs = [NSMutableDictionary dictionary];
 		self.latestScheduledMIDITimeStamp = midiTimeStamp - 1;
 		dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.processingQueue);
@@ -187,10 +190,15 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)stop
 {
+	[self stopWithDispatchToProcessingQueue:YES];
+}
+
+- (void)stopWithDispatchToProcessingQueue:(BOOL)dispatchToProcessingQueue
+{
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
-	dispatch_sync(self.processingQueue, ^{
+	void (^stopPlayback)() = ^{
 		self.processingTimer = NULL;
 
 		MIKMIDIClock *clock = self.clock;
@@ -204,7 +212,9 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength + self.playbackOffset) ? stopMusicTimeStamp - self.playbackOffset : self.sequenceLength;
 
 		[clock unsyncMusicTimeStampsAndTemposFromMIDITimeStamps];
-	});
+	};
+
+	dispatchToProcessingQueue ? dispatch_sync(self.processingQueue, stopPlayback) : stopPlayback();
 
 	self.processingQueue = NULL;
 	self.playbackOffset = 0;
@@ -335,7 +345,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	} else if (!self.isRecording) { // Don't stop automatically during recording
 		MIDITimeStamp systemTimeStamp = MIKMIDIGetCurrentTimeStamp();
 		if ((systemTimeStamp > actualToMIDITimeStamp) && ([clock musicTimeStampForMIDITimeStamp:systemTimeStamp] >= self.sequenceLength + playbackOffset)) {
-			[self stop];
+			[self stopWithDispatchToProcessingQueue:NO];
 		}
 	}
 }
