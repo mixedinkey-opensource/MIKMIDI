@@ -180,21 +180,27 @@
 
 + (NSArray *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
 {
-	// Note On
+	return @[[self noteOnCommandFromNoteEvent:noteEvent clock:clock], [self noteOffCommandFromNoteEvent:noteEvent clock:clock]];
+}
+
++ (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
+{
 	MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
 	noteOn.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp];
 	noteOn.channel = noteEvent.channel;
 	noteOn.note = noteEvent.note;
 	noteOn.velocity = noteEvent.velocity;
-	
-	// Note Off
+	return [noteOn copy];
+}
+
+ +(MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
+{
 	MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
 	noteOff.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
 	noteOff.channel = noteEvent.channel;
 	noteOff.note = noteEvent.note;
 	noteOff.velocity = noteEvent.releaseVelocity;
-
-	return @[[noteOn copy], [noteOff copy]];
+	return [noteOff copy];
 }
 
 @end
