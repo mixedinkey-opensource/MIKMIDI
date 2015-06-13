@@ -161,16 +161,18 @@
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	if (midiTimeStamp == self.lastSyncedMIDITimeStamp) return self.lastSyncedMusicTimeStamp;
 	__block MusicTimeStamp musicTimeStamp = 0;
 
 	[self dispatchToClockQueue:^{
-		if (self.isReady) {
-			if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) {
-				musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
-			} else {
-				musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];
-			}
+		if (!self.isReady) return;
+
+		MIDITimeStamp lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
+		if (midiTimeStamp == lastSyncedMIDITimeStamp) {
+			musicTimeStamp = self.lastSyncedMusicTimeStamp;
+		} else if (midiTimeStamp > lastSyncedMIDITimeStamp) {
+			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
+		} else {
+			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];
 		}
 	}];
 
@@ -179,29 +181,29 @@
 
 - (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp withClock:(MIKMIDIClock *)clock
 {
-	if (!self.isReady) return 0;
+	if (midiTimeStamp == clock.lastSyncedMIDITimeStamp) return clock.lastSyncedMusicTimeStamp;
 	MIDITimeStamp timeStampZero = clock.timeStampZero;
 	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp) : -((timeStampZero - midiTimeStamp) * clock.musicTimeStampsPerMIDITimeStamp);
 }
 
 - (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
-	if (musicTimeStamp == self.lastSyncedMusicTimeStamp) return self.lastSyncedMIDITimeStamp;
 	__block MIDITimeStamp midiTimeStamp = 0;
 
 	[self dispatchToClockQueue:^{
-		if (self.isReady) {
-			midiTimeStamp = round(musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+		if (!self.isReady) return;
+		if (musicTimeStamp == self.lastSyncedMusicTimeStamp) { midiTimeStamp = self.lastSyncedMIDITimeStamp; return; }
 
-			if (midiTimeStamp < self.lastSyncedMIDITimeStamp) {
-				NSDictionary *historicalClocks = self.historicalClocks;
-				for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
-					MIKMIDIClock *clock = historicalClocks[historicalClockTimeStamp];
-					MIDITimeStamp historicalMIDITimeStamp = round(musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
-					if (historicalMIDITimeStamp >= clock.lastSyncedMIDITimeStamp) {
-						midiTimeStamp = historicalMIDITimeStamp;
-						break;
-					}
+		midiTimeStamp = round(musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+
+		if (midiTimeStamp < self.lastSyncedMIDITimeStamp) {
+			NSDictionary *historicalClocks = self.historicalClocks;
+			for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+				MIKMIDIClock *clock = historicalClocks[historicalClockTimeStamp];
+				MIDITimeStamp historicalMIDITimeStamp = round(musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
+				if (historicalMIDITimeStamp >= clock.lastSyncedMIDITimeStamp) {
+					midiTimeStamp = historicalMIDITimeStamp;
+					break;
 				}
 			}
 		}
