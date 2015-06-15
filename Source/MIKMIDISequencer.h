@@ -332,15 +332,25 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 @property (readonly, nonatomic) MusicTimeStamp loopStartTimeStamp;
 
 /**
- *  The loop's ending time stamp during looped playback.
+ *  The loop's ending time stamp during looped playback, or MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
  *
  *	@note When this is set to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp
  *	the loopEndTimeStamp will be treated as if it is set to the length of the
  *	sequence. The default is MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
  *
+  *	@see effectiveLoopEndTimeStamp
  *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  */
 @property (readonly, nonatomic) MusicTimeStamp loopEndTimeStamp;
+
+/**
+ *	The loop's ending time stamp during looped playback.
+ *
+ *	@note When loopEndTimeStamp is set to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp,
+ *	this will return the same length as the sequence.length. Otherwise loopEndTimeStamp
+ *	will be returned.
+ */
+@property (readonly, nonatomic) MusicTimeStamp effectiveLoopEndTimeStamp;
 
 /**
  *  The metronome to send click track events to.

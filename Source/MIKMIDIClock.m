@@ -167,9 +167,7 @@
 		if (!self.isReady) return;
 
 		MIDITimeStamp lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
-		if (midiTimeStamp == lastSyncedMIDITimeStamp) {
-			musicTimeStamp = self.lastSyncedMusicTimeStamp;
-		} else if (midiTimeStamp > lastSyncedMIDITimeStamp) {
+		if (midiTimeStamp >= lastSyncedMIDITimeStamp) {
 			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
 		} else {
 			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];

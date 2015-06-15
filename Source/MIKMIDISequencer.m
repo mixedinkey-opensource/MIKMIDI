@@ -69,8 +69,6 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 @property (nonatomic, getter=isRecording) BOOL recording;
 @property (nonatomic, getter=isLooping) BOOL looping;
 
-@property (readonly, nonatomic) MusicTimeStamp actualLoopEndTimeStamp;
-
 @property (nonatomic) MIDITimeStamp latestScheduledMIDITimeStamp;
 
 @property (nonatomic, strong) NSMutableDictionary *pendingNoteOffs;
@@ -231,7 +229,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	MIKMIDISequence *sequence = self.sequence;
 	MusicTimeStamp playbackOffset = self.playbackOffset;
 	MusicTimeStamp loopStartTimeStamp = self.loopStartTimeStamp + playbackOffset;
-	MusicTimeStamp loopEndTimeStamp = self.actualLoopEndTimeStamp + playbackOffset;
+	MusicTimeStamp loopEndTimeStamp = self.effectiveLoopEndTimeStamp + playbackOffset;
 	MusicTimeStamp fromMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:fromMIDITimeStamp];
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	BOOL isLooping = (self.shouldLoop && calculatedToMusicTimeStamp > loopStartTimeStamp && loopEndTimeStamp > loopStartTimeStamp);
@@ -647,6 +645,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 #pragma mark - KVO
 
++ (NSSet *)keyPathsForValuesAffectingEffectiveLoopEndTimeStamp { return [NSSet setWithObjects:@"loopEndTimeStamp", @"sequence.length", nil]; }
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	NSSet *currentTracks = [NSSet setWithArray:self.sequence.tracks];
@@ -694,7 +694,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	}
 }
 
-- (MusicTimeStamp)actualLoopEndTimeStamp
+- (MusicTimeStamp)effectiveLoopEndTimeStamp
 {
 	return (_loopEndTimeStamp < 0) ? self.sequenceLength : _loopEndTimeStamp;
 }
