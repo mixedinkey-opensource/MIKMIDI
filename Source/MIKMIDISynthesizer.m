@@ -173,9 +173,9 @@
 			*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
 			return NO;
 		}
-		
-		if (loadedSoundfontURL) {
-			
+
+		if (loadedSoundfontURL || [self isUsingAppleDLSSynth]) {
+
 			UInt32 bankSelectStatus = 0xB0 | channel;
 			
 			UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
@@ -293,6 +293,15 @@
 	if (description.componentManufacturer != appleSynthDescription.componentManufacturer) return NO;
 	if (description.componentType != appleSynthDescription.componentType) return NO;
 	if (description.componentSubType != appleSynthDescription.componentSubType) return NO;
+	return YES;
+}
+
+- (BOOL)isUsingAppleDLSSynth
+{
+	AudioComponentDescription description = self.componentDescription;
+	if (description.componentManufacturer != kAudioUnitManufacturer_Apple) return NO;
+	if (description.componentType != kAudioUnitType_MusicDevice) return NO;
+	if (description.componentSubType != kAudioUnitSubType_DLSSynth) return NO;
 	return YES;
 }
 
