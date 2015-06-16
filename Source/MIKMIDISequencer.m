@@ -107,6 +107,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		_clickTrackStatus = MIKMIDISequencerClickTrackStatusEnabledInRecord;
 		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		_tracksToDefaultSynthsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
+		_createSynthsAndEndpointsIfNeeded = YES;
 	}
 	return self;
 }
@@ -424,6 +425,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)sendCommands:(NSArray *)commands toDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint
 {
+	if (!endpoint) return;
 	commands = [self modifiedMIDICommandsFromCommandsToBeScheduled:commands forEndpoint:endpoint];
 	
 	NSError *error;
@@ -548,7 +550,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
 {
 	MIKMIDIDestinationEndpoint *result = [self.tracksToDestinationsMap objectForKey:track];
-	if (!result) {
+	if (!result && self.createSynthsAndEndpointsIfNeeded) {
 		// Create a default endpoint and synthesizer
 		NSString *name = [NSString stringWithFormat:@"<%@: %p> Default Endpoint %d", NSStringFromClass([self class]), self, (int)track.trackNumber];
 		result = [[MIKMIDIClientDestinationEndpoint alloc] initWithName:name receivedMessagesHandler:nil];

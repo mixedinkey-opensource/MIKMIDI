@@ -225,6 +225,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *
  *  @see -setDestinationEndpoint:forTrack:
  *  @see -builtinSynthesizerForTrack:
+ *	@see createSynthsAndEndpointsIfNeeded
  */
 - (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track;
 
@@ -351,6 +352,20 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *	will be returned.
  */
 @property (readonly, nonatomic) MusicTimeStamp effectiveLoopEndTimeStamp;
+
+
+/**
+ *	Whether or not the sequencer should create synthesizers and endpoints
+ *	for MIDI tracks that are not assigned an endpoint.
+ *
+ *	When this property is YES, -destinationEndpointForTrack: will create an
+ *	endpoint and a synthesizer for any track that has MIDI commands sent to it
+ *	and doesn't already have an assigned endpoint. The default for this property
+ *	is YES.
+ *
+ *	@see -destinationEndpointForTrack:
+ */
+@property (nonatomic, getter=shouldCreateSynthsAndEndpointsIfNeeded) BOOL createSynthsAndEndpointsIfNeeded;
 
 /**
  *  The metronome to send click track events to.
