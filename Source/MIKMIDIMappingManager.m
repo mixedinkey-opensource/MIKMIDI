@@ -115,30 +115,33 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return result;
 }
 
-- (MIKMIDIMapping *)userMappingWithName:(NSString *)mappingName;
+- (NSArray *)userMappingWithName:(NSString *)mappingName;
 {
+	NSMutableArray *result = [NSMutableArray array];
 	for (MIKMIDIMapping *mapping in self.userMappings) {
 		if ([mapping.name isEqualToString:mappingName]) {
-			return mapping;
+			[result addObject:mapping];
 		}
 	}
-	return nil;
+	return result;
 }
 
-- (MIKMIDIMapping *)bundledMappingWithName:(NSString *)mappingName;
+- (NSArray *)bundledMappingsWithName:(NSString *)mappingName;
 {
+	NSMutableArray *result = [NSMutableArray array];
 	for (MIKMIDIMapping *mapping in self.bundledMappings) {
 		if ([mapping.name isEqualToString:mappingName]) {
-			return mapping;
+			[result addObject:mapping];
 		}
 	}
-	return nil;
+	return result;
 }
 
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+- (NSArray *)mappingsWithName:(NSString *)mappingName;
 {
-	MIKMIDIMapping *result = [self userMappingWithName:mappingName];
-	return result ?: [self bundledMappingWithName:mappingName];
+	NSMutableArray *result = [NSMutableArray arrayWithArray:[self userMappingWithName:mappingName]];
+	[result addObjectsFromArray:[self bundledMappingsWithName:mappingName]];
+	return result;
 }
 
 - (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
@@ -174,7 +177,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
 #if !TARGET_OS_IPHONE
 	for (MIKMIDIMapping *mapping in self.userMappings) {
-		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
+		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:YES];
 		if (!fileURL) {
 			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
 			continue;
@@ -311,6 +314,18 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	if (![fm removeItemAtURL:mappingURL error:&error]) {
 		NSLog(@"Error removing mapping file for MIDI mapping %@: %@", mapping, error);
 	}
+}
+
+@end
+
+#pragma mark - Deprecated
+
+@implementation MIKMIDIMappingManager (Deprecated)
+
+- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+{
+	MIKMIDIMapping *result = [[self userMappingWithName:mappingName] firstObject];
+	return result ?: [[self bundledMappingsWithName:mappingName] firstObject];
 }
 
 @end

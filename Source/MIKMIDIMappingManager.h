@@ -68,9 +68,9 @@
  *
  *  @param mappingName NSString representing the mapping name for the desired mapping.
  *
- *  @return An MIKMIDIMapping instance, or nil if no mapping could be found.
+ *  @return An array of MIKMIDIMapping instances, or an empty array if no mapping could be found.
  */
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+- (NSArray *)mappingsWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
 /**
@@ -141,5 +141,20 @@
  *
  */
 @property (nonatomic, strong, readonly) NSSet *mappings;
+
+@end
+
+@interface MIKMIDIMappingManager (Deprecated)
+
+/**
+ *  Used to obtaining a mapping file with a given mapping name.
+ *
+ *  @param mappingName NSString representing the mapping name for the desired mapping.
+ *
+ *  @return An MIKMIDIMapping instance, or nil if no mapping could be found.
+ *
+ *  @deprecated Deprecated. Use -mappingsWithName: instead.
+ */
+- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
 
 @end

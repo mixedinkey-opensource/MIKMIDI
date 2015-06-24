@@ -307,7 +307,7 @@ CLEANUP_AND_EXIT:
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ %@ for %@ Mapping Items: %@", [super description], self.name, self.controllerName, self.mappingItems];
+	return [NSString stringWithFormat:@"%@ %@ for %@ Mapping Items: %@ Additional Attributes: %@", [super description], self.name, self.controllerName, self.mappingItems, self.additionalAttributes];
 }
 
 - (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
