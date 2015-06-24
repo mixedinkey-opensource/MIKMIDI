@@ -291,6 +291,7 @@ CLEANUP_AND_EXIT:
 	if (self == otherMapping) return YES;
 	if (![self.name isEqualToString:otherMapping.name]) return NO;
 	if (![self.controllerName isEqualToString:otherMapping.controllerName]) return NO;
+	if (![self.additionalAttributes isEqualToDictionary:otherMapping.additionalAttributes]) return NO;
 	
 	return [self.mappingItems isEqualToSet:otherMapping.mappingItems];
 }
@@ -299,6 +300,7 @@ CLEANUP_AND_EXIT:
 {
 	NSUInteger result = [self.name hash];
 	result += [self.controllerName hash];
+	result += [self.additionalAttributes hash];
 	result += [self.internalMappingItems count];
 	return result;
 }
