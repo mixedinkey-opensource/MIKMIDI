@@ -291,8 +291,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)addUserMappingsObject:(MIKMIDIMapping *)mapping
 {
-	MIKMIDIMapping *existing = [self userMappingWithName:mapping.name];
-	if (existing) [self.internalUserMappings removeObject:existing];
 	mapping.bundledMapping = NO;
 	[self.internalUserMappings addObject:mapping];
 	
