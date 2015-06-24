@@ -760,7 +760,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 {
 	if (_sequence != sequence) {
 		[_sequence removeObserver:self forKeyPath:@"tracks"];
-		_sequence = sequence;
+
+		dispatch_queue_t queue = self.processingQueue;
+		if (queue) {
+			dispatch_sync(queue, ^{ _sequence = sequence; });
+		} else {
+			_sequence = sequence;
+		}
+
 		[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
 	}
 }
