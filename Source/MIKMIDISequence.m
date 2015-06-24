@@ -167,8 +167,15 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 - (void)dealloc
 {
+	NSArray *tracks = self.internalTracks;
 	self.internalTracks = nil; // Unregister for KVO
     self.callBackBlock = nil;
+
+	for (MIKMIDITrack *track in tracks) {
+		OSStatus err = MusicSequenceDisposeTrack(_musicSequence, track.musicTrack);
+		if (err) NSLog(@"MusicSequenceDisposeTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}
+
     OSStatus err = DisposeMusicSequence(_musicSequence);
     if (err) NSLog(@"DisposeMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
