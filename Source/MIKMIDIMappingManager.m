@@ -177,7 +177,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 {
 #if !TARGET_OS_IPHONE
 	for (MIKMIDIMapping *mapping in self.userMappings) {
-		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:YES];
+		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
 		if (!fileURL) {
 			NSLog(@"Unable to saving mapping %@ to disk. No file path could be generated", mapping);
 			continue;
@@ -261,6 +261,9 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		NSFileManager *fm = [NSFileManager defaultManager];
 		unsigned long numberSuffix = 0;
 		while ([fm fileExistsAtPath:[result path]]) {
+			MIKMIDIMapping *existingMapping = [[MIKMIDIMapping alloc] initWithFileAtURL:result error:NULL];
+			if ([existingMapping isEqualTo:mapping]) break;
+			
 			if (numberSuffix > 1000) return nil; // Don't go crazy
 			NSString *name = [mapping.name stringByAppendingFormat:@" %lu", ++numberSuffix];
 			filename = [name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
