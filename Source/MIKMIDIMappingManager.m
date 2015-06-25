@@ -115,7 +115,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return result;
 }
 
-- (NSArray *)userMappingWithName:(NSString *)mappingName;
+- (NSArray *)userMappingsWithName:(NSString *)mappingName;
 {
 	NSMutableArray *result = [NSMutableArray array];
 	for (MIKMIDIMapping *mapping in self.userMappings) {
@@ -139,7 +139,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (NSArray *)mappingsWithName:(NSString *)mappingName;
 {
-	NSMutableArray *result = [NSMutableArray arrayWithArray:[self userMappingWithName:mappingName]];
+	NSMutableArray *result = [NSMutableArray arrayWithArray:[self userMappingsWithName:mappingName]];
 	[result addObjectsFromArray:[self bundledMappingsWithName:mappingName]];
 	return result;
 }
@@ -327,7 +327,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
 {
-	MIKMIDIMapping *result = [[self userMappingWithName:mappingName] firstObject];
+	MIKMIDIMapping *result = [[self userMappingsWithName:mappingName] firstObject];
 	return result ?: [[self bundledMappingsWithName:mappingName] firstObject];
 }
 
