@@ -82,7 +82,7 @@
 - (id)init
 {
 	[NSException raise:NSInternalInconsistencyException format:@"-initWithDevice: is the designated initializer for %@", NSStringFromClass([self class])];
-	self = nil;
+	self = [self initWithDevice:nil error:NULL]; // Keep the compiler happy
 	return nil;
 }
 
@@ -516,7 +516,19 @@ FINALIZE_RESULT_AND_RETURN:
 	id connectionToken = [manager connectInput:source error:error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
 		for (MIKMIDICommand *command in commands) {
 			if (![command isKindOfClass:[MIKMIDIChannelVoiceCommand class]]) continue;
-			[weakSelf handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command];
+			
+			MIKMIDICommand *processedCommand = command;
+			if ([weakSelf.delegate respondsToSelector:@selector(mappingGenerator:commandByProcessingIncomingCommand:)]) {
+				processedCommand = [weakSelf.delegate mappingGenerator:self
+									commandByProcessingIncomingCommand:(MIKMIDIChannelVoiceCommand *)command];
+				if (!processedCommand) continue;
+				if (![processedCommand isKindOfClass:[MIKMIDIChannelVoiceCommand class]]) {
+					[NSException raise:NSInternalInconsistencyException format:@"-mappingGenerator:commandByProcessingCommand: must only return instances of MIKMIDIChannelVoiceCommand or one of its subclasses."];
+					continue;
+				}
+			}
+			
+			[weakSelf handleMIDICommand:(MIKMIDIChannelVoiceCommand *)processedCommand];
 		}
 	}];
 	self.connectionToken = connectionToken;

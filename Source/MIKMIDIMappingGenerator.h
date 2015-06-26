@@ -65,7 +65,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  *
  *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
  */
-- (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
+- (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Begins mapping a given MIDIResponder. This method returns immediately.
@@ -204,5 +204,17 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
 - (BOOL)mappingGenerator:(MIKMIDIMappingGenerator *)generator
 shouldRemoveExistingMappingItems:(NSSet *)mappingItems
  forResponderBeingMapped:(id<MIKMIDIMappableResponder>)responder;
+
+/**
+ *  The delegate can implement this to do some transformation of incoming commands in order to customize
+ *  mapping. For instance, controls can be dynamically remapped, or incoming commands can be selectively ignored.
+ *  Most users of MIKMIDIMappingGenerator will not need to use this.
+ *
+ *  @param command An incoming MIKMIDICommand.
+ *
+ *  @return A processed/modified copy of the incoming command, or nil to ignore the command.
+ */
+- (MIKMIDIChannelVoiceCommand *)mappingGenerator:(MIKMIDIMappingGenerator *)generator
+			  commandByProcessingIncomingCommand:(MIKMIDIChannelVoiceCommand *)command;
 
 @end
