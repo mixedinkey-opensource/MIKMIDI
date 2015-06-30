@@ -180,38 +180,12 @@
 @property (nonatomic, readonly) NSInteger trackNumber;
 
 /**
- *  Whether the track is set to loop.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic, readonly) BOOL doesLoop;
-
-/**
- *	The number of times to play the designated portion of the music track. By default, a music track plays once.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) SInt32 numberOfLoops;
-
-/**
- *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
- *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) MusicTimeStamp loopDuration;
-
-/**
- *  The loop info for the track.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) MusicTrackLoopInfo loopInfo;
-
-/**
  *  A MIDI track’s start time in terms of beat number. By default this value is 0.
  *
  *  This property can be observed using Key Value Observing.
+ *
+ *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
+ *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
  */
 @property (nonatomic) MusicTimeStamp offset;
 
@@ -219,6 +193,9 @@
  *  Whether or not the MIDI track is muted.
  *
  *  This property can be observed using Key Value Observing.
+ *
+ *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
+ *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
  */
 @property (nonatomic, getter = isMuted) BOOL muted;
 
@@ -226,6 +203,9 @@
  *  Whether or not the MIDI track is soloed.
  *
  *  This property can be observed using Key Value Observing.
+ *
+ *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
+ *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
  */
 @property (nonatomic, getter = isSolo) BOOL solo;
 
@@ -246,6 +226,35 @@
 @property (nonatomic, readonly) SInt16 timeResolution;
 
 #pragma mark - Deprecated
+
+/**
+ *  Whether the track is set to loop.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic, readonly) BOOL doesLoop DEPRECATED_ATTRIBUTE;
+
+/**
+ *	The number of times to play the designated portion of the music track. By default, a music track plays once.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) SInt32 numberOfLoops DEPRECATED_ATTRIBUTE;
+
+/**
+ *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
+ *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) MusicTimeStamp loopDuration DEPRECATED_ATTRIBUTE;
+
+/**
+ *  The loop info for the track.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) MusicTrackLoopInfo loopInfo DEPRECATED_ATTRIBUTE;
 
 /**
  *  Gets the track's track number in it's owning MIDI sequence.

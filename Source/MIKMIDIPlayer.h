@@ -15,6 +15,7 @@
 /**
  *  MIKMIDIPlayer can be used to play an MIKMIDISequence.
  */
+__attribute((deprecated("use MIKMIDISequencer instead")))
 @interface MIKMIDIPlayer : NSObject
 
 /**

@@ -14,6 +14,9 @@
 #import "MIKMIDIEventIterator.h"
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIErrors.h"
+#import "MIKMIDITrack+MIKMIDIPrivate.h"
+#import "MIKMIDISequencer+MIKMIDIPrivate.h"
+
 
 #if !__has_feature(objc_arc)
 #error MIKMIDITrack.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
@@ -70,72 +73,94 @@
     return nil;
 }
 
+#pragma mark - Sequencer Synchronization
+
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)())block
+{
+	if (!block) return;
+
+	MIKMIDISequencer *sequencer = self.sequence.sequencer;
+	if (sequencer) {
+		[sequencer dispatchSyncToProcessingQueueAsNeeded:block];
+	} else {
+		block();
+	}
+}
+
 #pragma mark - Adding and Removing Events
 
 #pragma mark Public
 
 - (void)addEvent:(MIKMIDIEvent *)event
 {
-	if (!event) return;
-	if ([self.internalEvents containsObject:event]) return; // Don't allow duplicates
-	
-	NSError *error = nil;
-	if (![self insertMIDIEventInMusicTrack:event error:&error]) {
-		NSLog(@"Error adding %@ to %@: %@", event, self, error);
-		[self reloadAllEventsFromMusicTrack];
-		return;
-	}
-	
-	[self addInternalEventsObject:event];
-}
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		if (!event) return;
+		if ([self.internalEvents containsObject:event]) return; // Don't allow duplicates
 
-- (void)addEvents:(NSArray *)events
-{
-	NSMutableSet *scratch = [NSMutableSet setWithArray:events];
-	[scratch minusSet:self.internalEvents]; // Don't allow duplicates
-	if (![scratch count]) return;
-	
-	NSError *error = nil;
-	for (MIKMIDIEvent *event in scratch) {
+		NSError *error = nil;
 		if (![self insertMIDIEventInMusicTrack:event error:&error]) {
 			NSLog(@"Error adding %@ to %@: %@", event, self, error);
 			[self reloadAllEventsFromMusicTrack];
 			return;
 		}
-	}
-	
-	[self addInternalEvents:scratch];
+
+		[self addInternalEventsObject:event];
+	}];
+}
+
+- (void)addEvents:(NSArray *)events
+{
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		NSMutableSet *scratch = [NSMutableSet setWithArray:events];
+		[scratch minusSet:self.internalEvents]; // Don't allow duplicates
+		if (![scratch count]) return;
+
+		NSError *error = nil;
+		for (MIKMIDIEvent *event in scratch) {
+			if (![self insertMIDIEventInMusicTrack:event error:&error]) {
+				NSLog(@"Error adding %@ to %@: %@", event, self, error);
+				[self reloadAllEventsFromMusicTrack];
+				return;
+			}
+		}
+
+		[self addInternalEvents:scratch];
+	}];
 }
 
 - (void)removeEvent:(MIKMIDIEvent *)event
 {
-	if (!event) return;
-	if (![self.internalEvents containsObject:event]) return;
-	
-	NSError *error = nil;
-	if (![self removeMIDIEventsFromMusicTrack:[NSSet setWithObject:event] error:&error]) {
-		NSLog(@"Error removing %@ from %@: %@", event, self, error);
-		[self reloadAllEventsFromMusicTrack];
-		return;
-	}
-	
-	[self removeInternalEventsObject:event];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		if (!event) return;
+		if (![self.internalEvents containsObject:event]) return;
+
+		NSError *error = nil;
+		if (![self removeMIDIEventsFromMusicTrack:[NSSet setWithObject:event] error:&error]) {
+			NSLog(@"Error removing %@ from %@: %@", event, self, error);
+			[self reloadAllEventsFromMusicTrack];
+			return;
+		}
+
+		[self removeInternalEventsObject:event];
+	}];
 }
 
 - (void)removeEvents:(NSArray *)events
 {
-	if (![events count]) return;
-	NSMutableSet *scratch = [NSMutableSet setWithArray:events];
-	[scratch intersectSet:self.internalEvents];
-	
-	NSError *error = nil;
-	if (![self removeMIDIEventsFromMusicTrack:scratch error:&error]) {
-		NSLog(@"Error removing %@ from %@: %@", events, self, error);
-		[self reloadAllEventsFromMusicTrack];
-		return;
-	}
-	
-	[self removeInternalEvents:scratch];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		if (![events count]) return;
+		NSMutableSet *scratch = [NSMutableSet setWithArray:events];
+		[scratch intersectSet:self.internalEvents];
+
+		NSError *error = nil;
+		if (![self removeMIDIEventsFromMusicTrack:scratch error:&error]) {
+			NSLog(@"Error removing %@ from %@: %@", events, self, error);
+			[self reloadAllEventsFromMusicTrack];
+			return;
+		}
+
+		[self removeInternalEvents:scratch];
+	}];
 }
 
 - (void)removeAllEvents
@@ -270,26 +295,16 @@
 
 #pragma mark Public
 
-// All event getters pass through this method
+// All public event getters pass through this method
 - (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-    MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-    if (![iterator seek:startTimeStamp]) return @[];
+	__block NSArray *events;
 
-    NSMutableArray *events = [NSMutableArray array];
+    [self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		events = [self private_eventsOfClass:eventClass fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+	}];
 
-    while (iterator.hasCurrentEvent) {
-        MIKMIDIEvent *event = iterator.currentEvent;
-        if (!event || event.timeStamp > endTimeStamp) break;
-
-        if (!eventClass || [event isKindOfClass:eventClass]) {
-            [events addObject:event];
-        }
-
-        [iterator moveToNextEvent];
-    }
-
-    return events;
+	return events;
 }
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
@@ -326,24 +341,35 @@
 
 - (BOOL)moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
 {
+	__block BOOL success = NO;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		success = [self private_moveEventsFromStartingTimeStamp:startTimeStamp toEndingTimeStamp:endTimeStamp byAmount:timestampOffset];
+	}];
+
+	return success;
+}
+
+- (BOOL)private_moveEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp byAmount:(MusicTimeStamp)timestampOffset
+{
 	// MusicTrackMoveEvents() fails in common edge cases, so iterate the track and move that way instead
-	
+
 	if (timestampOffset == 0) return YES; // Nothing needs to be done
-    MusicTimeStamp length = self.length;
-    if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
-    if (endTimeStamp > length) endTimeStamp = length;
+	MusicTimeStamp length = self.length;
+	if (!length || (startTimeStamp > length) || ![self.internalEvents count]) return YES;
+	if (endTimeStamp > length) endTimeStamp = length;
 
 	NSMutableSet *eventsToMove = [NSMutableSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
 	NSSet *eventsBeforeMoving = [eventsToMove copy];
 	NSMutableSet *eventsAfterMoving = [NSMutableSet set];
-	
+
 	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
 	while (iterator.hasCurrentEvent && [eventsToMove count] > 0) {
 		MIKMIDIEvent *currentEvent = iterator.currentEvent;
 		if (![eventsToMove containsObject:currentEvent]) {
 			[iterator moveToNextEvent];
 			continue;
-}
+		}
 
 		MusicTimeStamp timestamp = currentEvent.timeStamp;
 		if (![iterator moveCurrentEventTo:timestamp+timestampOffset error:NULL]) {
@@ -356,14 +382,25 @@
 		[eventsToMove removeObject:currentEvent];
 		[iterator seek:timestamp]; // Move back to previous position
 	}
-	
+
 	[self removeInternalEvents:eventsBeforeMoving];
 	[self addInternalEvents:eventsAfterMoving];
-	
+
 	return YES;
 }
 
 - (BOOL)clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+	__block BOOL success = NO;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		success = [self private_clearEventsFromStartingTimeStamp:startTimeStamp toEndingTimeStamp:endTimeStamp];
+	}];
+
+	return success;
+}
+
+- (BOOL)private_clearEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
 	NSSet *events = [NSSet setWithArray:[self eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp]];
 	BOOL success = [self removeMIDIEventsFromMusicTrack:events error:NULL];
@@ -373,26 +410,51 @@
 
 - (BOOL)cutEventsFromStartingTimeStamp:(MusicTimeStamp)startTimeStamp toEndingTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-    MusicTimeStamp length = self.length;
-    if (!length || (startTimeStamp > length) || ![self.events count]) return YES;
-    if (endTimeStamp > length) endTimeStamp = length;
+	__block BOOL success = NO;
 
-	if (![self clearEventsFromStartingTimeStamp:startTimeStamp toEndingTimeStamp:endTimeStamp]) return NO;
-	MusicTimeStamp cutAmount = endTimeStamp - startTimeStamp;
-	return [self moveEventsFromStartingTimeStamp:endTimeStamp toEndingTimeStamp:kMusicTimeStamp_EndOfTrack byAmount:-cutAmount];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		MusicTimeStamp length = self.length;
+		if (!length || (startTimeStamp > length) || ![self.internalEvents count]) { success = YES; return; }
+
+		MusicTimeStamp actualEndTimeStamp = endTimeStamp;
+		if (actualEndTimeStamp > length) actualEndTimeStamp = length;
+
+		if (![self private_clearEventsFromStartingTimeStamp:startTimeStamp toEndingTimeStamp:actualEndTimeStamp]) return;
+		MusicTimeStamp cutAmount = actualEndTimeStamp - startTimeStamp;
+		success = [self private_moveEventsFromStartingTimeStamp:actualEndTimeStamp toEndingTimeStamp:kMusicTimeStamp_EndOfTrack byAmount:-cutAmount];
+	}];
+
+	return success;
 }
 
 - (BOOL)copyEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp andInsertAtTimeStamp:(MusicTimeStamp)destTimeStamp
 {
-	// Move existing events to make room for new events
-	if (![self moveEventsFromStartingTimeStamp:destTimeStamp
-							 toEndingTimeStamp:kMusicTimeStamp_EndOfTrack
-									  byAmount:(endTimeStamp - startTimeStamp)]) return NO;
+	__block BOOL success = NO;
 
-	return [self mergeEventsFromMIDITrack:origTrack fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp atTimeStamp:destTimeStamp];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		// Move existing events to make room for new events
+		if (![self private_moveEventsFromStartingTimeStamp:destTimeStamp
+										 toEndingTimeStamp:kMusicTimeStamp_EndOfTrack
+												  byAmount:(endTimeStamp - startTimeStamp)]) return;
+
+		success = [self private_mergeEventsFromMIDITrack:origTrack fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp atTimeStamp:destTimeStamp];
+	}];
+
+	return success;
 }
 
 - (BOOL)mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
+{
+	__block BOOL success = NO;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		success = [self private_mergeEventsFromMIDITrack:origTrack fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp atTimeStamp:destTimeStamp];
+	}];
+
+	return success;
+}
+
+- (BOOL)private_mergeEventsFromMIDITrack:(MIKMIDITrack *)origTrack fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp atTimeStamp:(MusicTimeStamp)destTimeStamp
 {
 	NSArray *sourceEvents = [origTrack eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
 	if (![sourceEvents count]) return YES;
@@ -406,7 +468,7 @@
 		if (![self insertMIDIEventInMusicTrack:mutableEvent error:NULL]) {
 			[self reloadAllEventsFromMusicTrack];
 			return NO;
-}
+		}
 		[destinationEvents addObject:mutableEvent];
 	}
 
@@ -418,20 +480,26 @@
 
 - (void)setTemporaryLength:(MusicTimeStamp)length andLoopInfo:(MusicTrackLoopInfo)loopInfo
 {
-    self.restoredLength = self.length;
-    self.restoredLoopInfo = self.loopInfo;
-    self.length = length;
-    self.loopInfo = loopInfo;
-    self.hasTemporaryLengthAndLoopInfo = YES;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+	self.restoredLength = self.length;
+	self.restoredLoopInfo = self.loopInfo;
+	self.length = length;
+	self.loopInfo = loopInfo;
+	self.hasTemporaryLengthAndLoopInfo = YES;
+#pragma clang diagnostic pop
 }
 
 - (void)restoreLengthAndLoopInfo
 {
-    if (!self.hasTemporaryLengthAndLoopInfo) return;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+	if (!self.hasTemporaryLengthAndLoopInfo) return;
 
-    self.hasTemporaryLengthAndLoopInfo = NO;
-    self.length = self.restoredLength;
-    self.loopInfo = self.restoredLoopInfo;
+	self.hasTemporaryLengthAndLoopInfo = NO;
+	self.length = self.restoredLength;
+	self.loopInfo = self.restoredLoopInfo;
+#pragma clang diagnostic pop
 }
 
 #pragma mark - Properties
@@ -443,16 +511,24 @@
 
 - (NSArray *)events
 {
-	if (!self.sortedEventsCache) {
-		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES];
-		_sortedEventsCache = [self.internalEvents sortedArrayUsingDescriptors:@[sortDescriptor]];
-}
-	return self.sortedEventsCache;
+	__block NSArray *events;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		if (!self.sortedEventsCache) {
+			NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES];
+			_sortedEventsCache = [self.internalEvents sortedArrayUsingDescriptors:@[sortDescriptor]];
+		}
+		events = self.sortedEventsCache;
+	}];
+
+	return events;
 }
 
 - (void)setEvents:(NSArray *)events
 {
-	self.internalEvents = [NSMutableSet setWithArray:events];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		self.internalEvents = [NSMutableSet setWithArray:events];
+	}];
 }
 
 - (void)setInternalEvents:(NSMutableSet *)internalEvents
@@ -513,71 +589,6 @@
 	return (NSInteger)trackNumber;
 }
 
-+ (NSSet *)keyPathsForValuesAffectingDoesLoop
-{
-	return [NSSet setWithObjects:@"loopDuration", nil];
-}
-
-- (BOOL)doesLoop
-{
-    return self.loopDuration > 0;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingNumberOfLoops
-{
-	return [NSSet setWithObjects:@"loopInfo", nil];
-}
-
-- (SInt32)numberOfLoops
-{
-    return self.loopInfo.numberOfLoops;
-}
-
-- (void)setNumberOfLoops:(SInt32)numberOfLoops
-{
-    MusicTrackLoopInfo loopInfo = self.loopInfo;
-
-    if (loopInfo.numberOfLoops != numberOfLoops) {
-        loopInfo.numberOfLoops = numberOfLoops;
-        self.loopInfo = loopInfo;
-    }
-}
-
-+ (NSSet *)keyPathsForValuesAffectingLoopDuration
-{
-	return [NSSet setWithObjects:@"loopInfo", nil];
-}
-
-- (MusicTimeStamp)loopDuration
-{
-    return self.loopInfo.loopDuration;
-}
-
-- (void)setLoopDuration:(MusicTimeStamp)loopDuration
-{
-    MusicTrackLoopInfo loopInfo = self.loopInfo;
-
-    if (loopInfo.loopDuration != loopDuration) {
-        loopInfo.loopDuration = loopDuration;
-        self.loopInfo = loopInfo;
-    }
-}
-
-- (MusicTrackLoopInfo)loopInfo
-{
-    MusicTrackLoopInfo info;
-    UInt32 infoSize = sizeof(info);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &info, &infoSize);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return info;
-}
-
-- (void)setLoopInfo:(MusicTrackLoopInfo)loopInfo
-{
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &loopInfo, sizeof(loopInfo));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-}
-
 - (MusicTimeStamp)offset
 {
     MusicTimeStamp offset = 0;
@@ -632,17 +643,22 @@
 
 - (MusicTimeStamp)length
 {
-    MusicTimeStamp length = 0;
-    UInt32 lengthLength = sizeof(length);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return length;
+	__block MusicTimeStamp length = 0;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		length = self.private_length;
+	}];
+
+	return length;
 }
 
 - (void)setLength:(MusicTimeStamp)length
 {
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, sizeof(length));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		MusicTimeStamp newLength = length;
+		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &newLength, sizeof(length));
+		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}];
 }
 
 - (SInt16)timeResolution
@@ -654,9 +670,72 @@
     return resolution;
 }
 
-#pragma mark - Properties
-
 #pragma mark - Deprecated
+
++ (NSSet *)keyPathsForValuesAffectingDoesLoop
+{
+	return [NSSet setWithObjects:@"loopDuration", nil];
+}
+
+- (BOOL)doesLoop
+{
+	return self.loopDuration > 0;
+}
+
++ (NSSet *)keyPathsForValuesAffectingNumberOfLoops
+{
+	return [NSSet setWithObjects:@"loopInfo", nil];
+}
+
+- (SInt32)numberOfLoops
+{
+	return self.loopInfo.numberOfLoops;
+}
+
+- (void)setNumberOfLoops:(SInt32)numberOfLoops
+{
+	MusicTrackLoopInfo loopInfo = self.loopInfo;
+
+	if (loopInfo.numberOfLoops != numberOfLoops) {
+		loopInfo.numberOfLoops = numberOfLoops;
+		self.loopInfo = loopInfo;
+	}
+}
+
++ (NSSet *)keyPathsForValuesAffectingLoopDuration
+{
+	return [NSSet setWithObjects:@"loopInfo", nil];
+}
+
+- (MusicTimeStamp)loopDuration
+{
+	return self.loopInfo.loopDuration;
+}
+
+- (void)setLoopDuration:(MusicTimeStamp)loopDuration
+{
+	MusicTrackLoopInfo loopInfo = self.loopInfo;
+
+	if (loopInfo.loopDuration != loopDuration) {
+		loopInfo.loopDuration = loopDuration;
+		self.loopInfo = loopInfo;
+	}
+}
+
+- (MusicTrackLoopInfo)loopInfo
+{
+	MusicTrackLoopInfo info;
+	UInt32 infoSize = sizeof(info);
+	OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &info, &infoSize);
+	if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	return info;
+}
+
+- (void)setLoopInfo:(MusicTrackLoopInfo)loopInfo
+{
+	OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_LoopInfo, &loopInfo, sizeof(loopInfo));
+	if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+}
 
 - (BOOL)getTrackNumber:(UInt32 *)trackNumber
 {
@@ -739,6 +818,44 @@
 	
 	[self removeAllEvents];
 	return YES;
+}
+
+@end
+
+
+#pragma mark -
+@implementation MIKMIDITrack (MIKMIDIPrivate)
+
+- (NSArray *)private_eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
+{
+	if (!self.internalEvents.count) return @[];	// possible WORKAROUND for Issue #100
+
+	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+	if (![iterator seek:startTimeStamp]) return @[];
+
+	NSMutableArray *events = [NSMutableArray array];
+
+	while (iterator.hasCurrentEvent) {
+		MIKMIDIEvent *event = iterator.currentEvent;
+		if (!event || event.timeStamp > endTimeStamp) break;
+
+		if (!eventClass || [event isKindOfClass:eventClass]) {
+			[events addObject:event];
+		}
+
+		[iterator moveToNextEvent];
+	}
+
+	return events;
+}
+
+- (MusicTimeStamp)private_length
+{
+	MusicTimeStamp length = 0;
+	UInt32 lengthLength = sizeof(length);
+	OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
+	if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	return length;
 }
 
 @end

@@ -13,6 +13,9 @@
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
+#import "MIKMIDISequence+MIKMIDIPrivate.h"
+#import "MIKMIDITrack+MIKMIDIPrivate.h"
+#import "MIKMIDISequencer+MIKMIDIPrivate.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDISequence.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
@@ -23,6 +26,9 @@ void * MIKMIDISequenceKVOContext = &MIKMIDISequenceKVOContext;
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 @interface MIKMIDISequence ()
+{
+	MIKMIDISequencer *_sequencer;
+}
 
 @property (nonatomic) MusicSequence musicSequence;
 @property (nonatomic, strong) MIKMIDITrack *tempoTrack;
@@ -180,37 +186,54 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
     if (err) NSLog(@"DisposeMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
+#pragma mark - Sequencer Synchronization
+
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)())block
+{
+	if (!block) return;
+
+	MIKMIDISequencer *sequencer = self.sequencer;
+	if (sequencer) {
+		[sequencer dispatchSyncToProcessingQueueAsNeeded:block];
+	} else {
+		block();
+	}
+}
+
 #pragma mark - Adding and Removing Tracks
 
 - (MIKMIDITrack *)addTrack
 {
-    MusicTrack musicTrack;
-    OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
-    if (err) {
-        NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-        return nil;
-    }
+	__block MIKMIDITrack *track;
 
-    MIKMIDITrack *track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
-	[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		MusicTrack musicTrack;
+		OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
+		if (err) return NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 
-    return track;
+		track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
+		[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
+	}];
+
+	return track;
 }
 
 - (BOOL)removeTrack:(MIKMIDITrack *)track
 {
 	if (!track) return NO;
-	
-    OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
-    if (err) {
-        NSLog(@"MusicSequenceDisposeTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-        return NO;
-    }
 
-	NSInteger index = [self.internalTracks indexOfObject:track];
-	if (index != NSNotFound) [self removeObjectFromInternalTracksAtIndex:index];
+	__block BOOL success = NO;
 
-    return YES;
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		OSStatus err = MusicSequenceDisposeTrack(self.musicSequence, track.musicTrack);
+		if (err) return NSLog(@"MusicSequenceDisposeTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+
+		NSInteger index = [self.internalTracks indexOfObject:track];
+		if (index != NSNotFound) [self removeObjectFromInternalTracksAtIndex:index];
+		success = YES;
+	}];
+
+    return success;
 }
 
 #pragma mark - File Saving
@@ -278,8 +301,13 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (Float64)tempoAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-    NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-	return [[events lastObject] bpm];
+    __block Float64 tempo = 0;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		tempo = [self private_tempoAtTimeStamp:timeStamp];
+	}];
+
+	return tempo;
 }
 
 #pragma mark - Time Signature
@@ -348,7 +376,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
     MusicTimeStamp length = 0;
     for (MIKMIDITrack *track in self.tracks) {
-        MusicTimeStamp trackLength = track.length + track.offset;
+        MusicTimeStamp trackLength = track.private_length + track.offset;
         if (trackLength > length) length = trackLength;
     }
 
@@ -408,11 +436,23 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return [NSSet setWithObjects:@"lengthDefinedByTracks", nil];
 }
 
+@synthesize length = _length;
 - (MusicTimeStamp)length
 {
-	if (_length != MIKMIDISequenceLongestTrackLength) return _length;
-	
-	return self.lengthDefinedByTracks;
+	__block MusicTimeStamp length = 0;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		length = self.private_length;
+	}];
+
+	return length;
+}
+
+- (void)setLength:(MusicTimeStamp)length
+{
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		_length = length;
+	}];
 }
 
 + (NSSet *)keyPathsForValuesAffectingDurationInSeconds
@@ -439,6 +479,8 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
     return (__bridge_transfer NSData *)data;
 }
+
+- (MIKMIDISequencer *)sequencer { return _sequencer; }
 
 #pragma mark - Deprecated
 
@@ -495,6 +537,27 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	signature->numerator = result.numerator;
 	signature->denominator = result.denominator;
 	return YES;
+}
+
+@end
+
+
+
+#pragma mark -
+@implementation MIKMIDISequence (MIKMIDIPrivate)
+
+- (Float64)private_tempoAtTimeStamp:(MusicTimeStamp)timeStamp
+{
+	NSArray *events = [self.tempoTrack private_eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
+	return [[events lastObject] bpm];
+}
+
+- (void)setSequencer:(MIKMIDISequencer *)sequencer { _sequencer = sequencer; }
+
+- (MusicTimeStamp)private_length
+{
+	if (_length != MIKMIDISequenceLongestTrackLength) return _length;
+	return self.lengthDefinedByTracks;
 }
 
 @end

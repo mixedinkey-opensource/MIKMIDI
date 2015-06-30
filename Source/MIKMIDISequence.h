@@ -23,15 +23,16 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 }
 
 @class MIKMIDITrack;
+@class MIKMIDISequencer;
 @class MIKMIDIDestinationEndpoint;
 
 /**
  *  Instances of MIKMIDISequence contain a collection of MIDI tracks. MIKMIDISequences may be thought
  *  of as MIDI "songs". They can be loaded from and saved to MIDI files. They can also be played
- *  using an MIKMIDIPlayer.
+ *  using an MIKMIDISequencer.
  *
  *  @see MIKMIDITrack
- *  @see MIKMIDIPlayer
+ *  @see MIKMIDISequencer
  */
 @interface MIKMIDISequence : NSObject
 
@@ -265,22 +266,12 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  */
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp;
 
-#pragma mark - Timing
+#pragma mark - Properties
 
 /**
- *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
- *
- *  When the music sequence is being looped by an MIKMIDIPlayer, the time stamp of the player continuosly increases. This method can be
- *  used to find where in the MIDI sequence the looped playback is at. For example, in a sequence with a length of 16,
- *  calling this method with a loopedTimeStamp of 17 would return 1.
- *
- *  @param loopedTimeStamp The time stamp that you would like an equivalent time stamp for.
- *
- *  @return The MusicTimeStamp of the sequence that is in an equivalent position in the sequence as loopedTimeStamp.
+ *	The sequencer this sequence is assigned to for playback.
  */
-- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp;
-
-#pragma mark - Properties
+@property (nonatomic, readonly) MIKMIDISequencer *sequencer;
 
 /**
  *  The tempo track for the sequence. Even in a new, empty sequence,
@@ -383,6 +374,22 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return YES if getting the time signature was successful, NO if an error occurred.
  */
 - (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
+
+/**
+ *	@deprecated This method is only useful in the context of using a sequence in MIKMIDIPlayer, which has been deprecated.
+ *
+ *  A MusicTimeStamp that is less than the sequence's length, but is at an equivalent position in the looped sequence as loopedTimeStamp
+ *
+ *  When the music sequence is being looped by an MIKMIDIPlayer, the time stamp of the player continuosly increases. This method can be
+ *  used to find where in the MIDI sequence the looped playback is at. For example, in a sequence with a length of 16,
+ *  calling this method with a loopedTimeStamp of 17 would return 1.
+ *
+ *  @param loopedTimeStamp The time stamp that you would like an equivalent time stamp for.
+ *
+ *  @return The MusicTimeStamp of the sequence that is in an equivalent position in the sequence as loopedTimeStamp.
+ */
+- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp DEPRECATED_ATTRIBUTE;
+
 
 @end
 

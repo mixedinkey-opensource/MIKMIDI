@@ -37,10 +37,9 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  MIKMIDISequencer can be used to play and record to an MIKMIDISequence.
  *
- *  @note MIKMIDISequencer currently only supports the playback and recording
- *  of MIDI note events. If you need to playback other events from a MIKMIDISequence, 
- *  use MIKMIDIPlayer for now, keeping in mind that once MIKMIDISequencer is 
- *  fully functional, MIKMIDIPlayer will be deprecated.
+ *  @note Recording and using the click track may not yet be fully functional, and should
+ *	be considered experimental in the meantime. Please submit issues and/or pull requests
+ *	when you find areas that don't work as expected.
  */
 @interface MIKMIDISequencer : NSObject
 
@@ -384,6 +383,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  Each incoming event is added to every track in this set.
  *
  *  @see recording
+ *
  */
 @property (copy, nonatomic) NSSet *recordEnabledTracks;
 
