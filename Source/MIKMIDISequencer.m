@@ -629,16 +629,16 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 {
 	if (loopEndTimeStamp != MIKMIDISequencerEndOfSequenceLoopEndTimeStamp && (loopStartTimeStamp >= loopEndTimeStamp)) return;
 
-	[self willChangeValueForKey:@"loopStartTimeStamp"];
-	[self didChangeValueForKey:@"loopStartTimeStamp"];
-
 	[self dispatchSyncToProcessingQueueAsNeeded:^{
+		[self willChangeValueForKey:@"loopStartTimeStamp"];
+		[self didChangeValueForKey:@"loopStartTimeStamp"];
+
 		_loopStartTimeStamp = loopStartTimeStamp;
 		_loopEndTimeStamp = loopEndTimeStamp;
-	}];
 
-	[self willChangeValueForKey:@"loopEndTimeStamp"];
-	[self didChangeValueForKey:@"loopEndTimeStamp"];
+		[self willChangeValueForKey:@"loopEndTimeStamp"];
+		[self didChangeValueForKey:@"loopEndTimeStamp"];
+	}];
 }
 
 #pragma mark - Timer
@@ -650,6 +650,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 #pragma mark - KVO
 
++ (BOOL)automaticallyNotifiesObserversOfSequence { return NO; }
 + (NSSet *)keyPathsForValuesAffectingEffectiveLoopEndTimeStamp { return [NSSet setWithObjects:@"loopEndTimeStamp", @"sequence.length", nil]; }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -763,6 +764,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 {
 	if (_sequence != sequence) {
 		[self dispatchSyncToProcessingQueueAsNeeded:^{
+			[self willChangeValueForKey:@"sequence"];
 			[_sequence removeObserver:self forKeyPath:@"tracks"];
 			
 			if (_sequence.sequencer == self) _sequence.sequencer = nil;
@@ -770,6 +772,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 			_sequence.sequencer = self;
 
 			[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
+			[self didChangeValueForKey:@"sequence"];
 		}];
 	}
 }
