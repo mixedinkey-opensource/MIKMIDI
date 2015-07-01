@@ -177,7 +177,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		if (!timer) return NSLog(@"Unable to create processing timer for %@.", [self class]);
 		self.processingTimer = timer;
 
-		dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 0.05 * NSEC_PER_SEC, 0.05 * NSEC_PER_SEC);
+		dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC, 0.05 * NSEC_PER_SEC);
 		dispatch_source_set_event_handler(timer, ^{
 			[self processSequenceStartingFromMIDITimeStamp:self.latestScheduledMIDITimeStamp + 1];
 		});
@@ -757,15 +757,15 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (void)setSequence:(MIKMIDISequence *)sequence
 {
 	if (_sequence != sequence) {
-		[_sequence removeObserver:self forKeyPath:@"tracks"];
-
 		[self dispatchSyncToProcessingQueueAsNeeded:^{
+			[_sequence removeObserver:self forKeyPath:@"tracks"];
+			
 			if (_sequence.sequencer == self) _sequence.sequencer = nil;
 			_sequence = sequence;
 			_sequence.sequencer = self;
-		}];
 
-		[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
+			[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
+		}];
 	}
 }
 
