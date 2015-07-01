@@ -54,7 +54,6 @@
 		83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C3716819D607010017186B /* MIKMIDIClientDestinationEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */; };
 		83FB360E1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */; };
-		83FB36121B42E90900F91DCD /* MIKMIDITrack+MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB36101B42E90900F91DCD /* MIKMIDITrack+MIKMIDIPrivate.h */; };
 		9D0895EE1B0D29F200A5872E /* MIKMIDIMappingItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895EF1B0D29F200A5872E /* MIKMIDIMappingItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895F01B0D29F200A5872E /* MIKMIDIMappingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */; };
@@ -342,7 +341,6 @@
 		83C3716519D607010017186B /* MIKMIDIClientDestinationEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIClientDestinationEndpoint.h; sourceTree = "<group>"; };
 		83C3716619D607010017186B /* MIKMIDIClientDestinationEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIClientDestinationEndpoint.m; sourceTree = "<group>"; };
 		83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDISequence+MIKMIDIPrivate.h"; sourceTree = "<group>"; };
-		83FB36101B42E90900F91DCD /* MIKMIDITrack+MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDITrack+MIKMIDIPrivate.h"; sourceTree = "<group>"; };
 		9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingItem.h; sourceTree = "<group>"; };
 		9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMappingItem.m; sourceTree = "<group>"; };
 		9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappableResponder.h; sourceTree = "<group>"; };
@@ -497,7 +495,6 @@
 				839D936C19C3A30B007589C3 /* MIKMIDISequence.m */,
 				83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */,
 				839D937119C3A319007589C3 /* MIKMIDITrack.h */,
-				83FB36101B42E90900F91DCD /* MIKMIDITrack+MIKMIDIPrivate.h */,
 				9D76DCEA1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h */,
 				839D937219C3A319007589C3 /* MIKMIDITrack.m */,
 				9DEE37BF1A9D66C2007B7FC7 /* Events */,
@@ -905,7 +902,6 @@
 				83BC19BB1A23CD0D004F384F /* MIKMIDIMetronome.h in Headers */,
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
 				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
-				83FB36121B42E90900F91DCD /* MIKMIDITrack+MIKMIDIPrivate.h in Headers */,
 				9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
 			);

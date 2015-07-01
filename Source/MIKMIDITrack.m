@@ -14,7 +14,6 @@
 #import "MIKMIDIEventIterator.h"
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIErrors.h"
-#import "MIKMIDITrack+MIKMIDIPrivate.h"
 #import "MIKMIDISequencer+MIKMIDIPrivate.h"
 
 
@@ -301,7 +300,25 @@
 	__block NSArray *events;
 
     [self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		events = [self private_eventsOfClass:eventClass fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+		if (!self.internalEvents.count) { events = @[]; return; }	// possible WORKAROUND for Issue #100
+
+		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
+		if (![iterator seek:startTimeStamp]) { events = @[]; return; }
+
+		NSMutableArray *mutableEvents = [NSMutableArray array];
+
+		while (iterator.hasCurrentEvent) {
+			MIKMIDIEvent *event = iterator.currentEvent;
+			if (!event || event.timeStamp > endTimeStamp) break;
+
+			if (!eventClass || [event isKindOfClass:eventClass]) {
+				[mutableEvents addObject:event];
+			}
+
+			[iterator moveToNextEvent];
+		}
+
+		events = mutableEvents;
 	}];
 
 	return events;
@@ -646,7 +663,9 @@
 	__block MusicTimeStamp length = 0;
 
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		length = self.private_length;
+		UInt32 lengthLength = sizeof(length);
+		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
+		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 	}];
 
 	return length;
@@ -821,42 +840,3 @@
 }
 
 @end
-
-
-#pragma mark -
-@implementation MIKMIDITrack (MIKMIDIPrivate)
-
-- (NSArray *)private_eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
-{
-	if (!self.internalEvents.count) return @[];	// possible WORKAROUND for Issue #100
-
-	MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-	if (![iterator seek:startTimeStamp]) return @[];
-
-	NSMutableArray *events = [NSMutableArray array];
-
-	while (iterator.hasCurrentEvent) {
-		MIKMIDIEvent *event = iterator.currentEvent;
-		if (!event || event.timeStamp > endTimeStamp) break;
-
-		if (!eventClass || [event isKindOfClass:eventClass]) {
-			[events addObject:event];
-		}
-
-		[iterator moveToNextEvent];
-	}
-
-	return events;
-}
-
-- (MusicTimeStamp)private_length
-{
-	MusicTimeStamp length = 0;
-	UInt32 lengthLength = sizeof(length);
-	OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
-	if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-	return length;
-}
-
-@end
-

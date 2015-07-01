@@ -14,7 +14,6 @@
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDISequence+MIKMIDIPrivate.h"
-#import "MIKMIDITrack+MIKMIDIPrivate.h"
 #import "MIKMIDISequencer+MIKMIDIPrivate.h"
 
 #if !__has_feature(objc_arc)
@@ -304,7 +303,8 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
     __block Float64 tempo = 0;
 
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		tempo = [self private_tempoAtTimeStamp:timeStamp];
+		NSArray *events = [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
+		tempo = [[events lastObject] bpm];
 	}];
 
 	return tempo;
@@ -376,7 +376,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
     MusicTimeStamp length = 0;
     for (MIKMIDITrack *track in self.tracks) {
-        MusicTimeStamp trackLength = track.private_length + track.offset;
+        MusicTimeStamp trackLength = track.length + track.offset;
         if (trackLength > length) length = trackLength;
     }
 
@@ -428,7 +428,13 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSArray *)tracks
 {
-	return [self.internalTracks copy];
+	__block NSArray *tracks;
+
+	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		tracks = self.internalTracks;
+	}];
+
+	return tracks;
 }
 
 + (NSSet *)keyPathsForValuesAffectingLength
@@ -442,7 +448,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	__block MusicTimeStamp length = 0;
 
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		length = self.private_length;
+		length = (_length == MIKMIDISequenceLongestTrackLength) ? self.lengthDefinedByTracks : _length;
 	}];
 
 	return length;
@@ -546,18 +552,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 #pragma mark -
 @implementation MIKMIDISequence (MIKMIDIPrivate)
 
-- (Float64)private_tempoAtTimeStamp:(MusicTimeStamp)timeStamp
-{
-	NSArray *events = [self.tempoTrack private_eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:timeStamp];
-	return [[events lastObject] bpm];
-}
-
 - (void)setSequencer:(MIKMIDISequencer *)sequencer { _sequencer = sequencer; }
-
-- (MusicTimeStamp)private_length
-{
-	if (_length != MIKMIDISequenceLongestTrackLength) return _length;
-	return self.lengthDefinedByTracks;
-}
 
 @end

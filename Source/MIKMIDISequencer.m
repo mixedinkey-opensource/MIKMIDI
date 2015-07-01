@@ -24,7 +24,6 @@
 #import "MIKMIDISynthesizer.h"
 #import "MIKMIDISequencer+MIKMIDIPrivate.h"
 #import "MIKMIDISequence+MIKMIDIPrivate.h"
-#import "MIKMIDITrack+MIKMIDIPrivate.h"
 
 
 #if !__has_feature(objc_arc)
@@ -32,7 +31,6 @@
 #endif
 
 #define kDefaultTempo	120
-
 
 NSString * const MIKMIDISequencerWillLoopNotification = @"MIKMIDISequencerWillLoopNotification";
 const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
@@ -66,6 +64,10 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 #pragma mark -
 
 @interface MIKMIDISequencer ()
+{
+	void *_processingQueueKey;
+	void *_processingQueueContext;
+}
 
 @property (readonly, nonatomic) MIKMIDIClock *clock;
 
@@ -112,6 +114,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		_tracksToDestinationsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		_tracksToDefaultSynthsMap = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		_createSynthsAndEndpointsIfNeeded = YES;
+		_processingQueueKey = &_processingQueueKey;
+		_processingQueueContext = &_processingQueueContext;
 	}
 	return self;
 }
@@ -157,13 +161,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
 
 	dispatch_queue_t queue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+	dispatch_queue_set_specific(queue, &_processingQueueKey, &_processingQueueContext, NULL);
 	self.processingQueue = queue;
 
 	dispatch_sync(queue, ^{
 		MusicTimeStamp startingTimeStamp = timeStamp + self.playbackOffset;
 		self.startingTimeStamp = startingTimeStamp;
 
-		Float64 startingTempo = [self.sequence private_tempoAtTimeStamp:startingTimeStamp];
+		Float64 startingTempo = [self.sequence tempoAtTimeStamp:startingTimeStamp];
 		if (!startingTempo) startingTempo = kDefaultTempo;
 		[self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
 	});
@@ -250,7 +255,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	Float64 overrideTempo = self.tempo;
 
 	if (!overrideTempo) { 
-		NSArray *sequenceTempoEvents = [sequence.tempoTrack private_eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
+		NSArray *sequenceTempoEvents = [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
 		for (MIKMIDITempoEvent *tempoEvent in sequenceTempoEvents) {
 			NSNumber *timeStampKey = @(tempoEvent.timeStamp + playbackOffset);
 			allEventsByTimeStamp[timeStampKey] = [NSMutableArray arrayWithObject:tempoEvent];
@@ -260,7 +265,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	if (self.needsCurrentTempoUpdate) {
 		if (!tempoEventsByTimeStamp.count) {
-			if (!overrideTempo) overrideTempo = [sequence private_tempoAtTimeStamp:fromMusicTimeStamp];
+			if (!overrideTempo) overrideTempo = [sequence tempoAtTimeStamp:fromMusicTimeStamp];
 			if (!overrideTempo) overrideTempo = kDefaultTempo;
 
 			MIKMIDITempoEvent *tempoEvent = [MIKMIDITempoEvent tempoEventWithTimeStamp:fromMusicTimeStamp tempo:overrideTempo];
@@ -287,7 +292,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	// Get other events
 	for (MIKMIDITrack *track in sequence.tracks) {
-		NSArray *events = [track private_eventsOfClass:Nil fromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
+		NSArray *events = [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
 		MIKMIDIDestinationEndpoint *destination = events.count ? [self destinationEndpointForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
 		for (MIKMIDIEvent *event in events) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
@@ -333,7 +338,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (isLooping) {
 		if (calculatedToMusicTimeStamp > toMusicTimeStamp) {
 			[self recordAllPendingNoteEventsWithOffTimeStamp:loopEndTimeStamp];
-			Float64 tempo = [sequence private_tempoAtTimeStamp:loopStartTimeStamp];
+			Float64 tempo = [sequence tempoAtTimeStamp:loopStartTimeStamp];
 			if (!tempo) tempo = kDefaultTempo;
 			MusicTimeStamp loopLength = loopEndTimeStamp - loopStartTimeStamp;
 
@@ -751,7 +756,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (MusicTimeStamp)sequenceLength
 {
 	MusicTimeStamp length = self.overriddenSequenceLength;
-	return length ? length : self.sequence.private_length;
+	return length ? length : self.sequence.length;
 }
 
 - (void)setSequence:(MIKMIDISequence *)sequence
@@ -780,7 +785,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (!block) return;
 
 	dispatch_queue_t processingQueue = self.processingQueue;
-	if (processingQueue) {
+	if (processingQueue && dispatch_get_specific(_processingQueueKey) != _processingQueueContext) {
 		dispatch_sync(processingQueue, block);
 	} else {
 		block();

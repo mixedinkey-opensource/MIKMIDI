@@ -15,8 +15,4 @@
 
 @property (weak, nonatomic) MIKMIDISequencer *sequencer;
 
-@property (readonly, nonatomic) MusicTimeStamp private_length;
-
-- (Float64)private_tempoAtTimeStamp:(MusicTimeStamp)timeStamp;
-
 @end
