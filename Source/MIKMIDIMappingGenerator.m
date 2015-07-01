@@ -83,6 +83,7 @@
 {
 	[NSException raise:NSInternalInconsistencyException format:@"-initWithDevice: is the designated initializer for %@", NSStringFromClass([self class])];
 	self = [self initWithDevice:nil error:NULL]; // Keep the compiler happy
+	[self self]; // Keep the compiler happy part 2
 	return nil;
 }
 
