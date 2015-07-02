@@ -631,12 +631,12 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	[self dispatchSyncToProcessingQueueAsNeeded:^{
 		[self willChangeValueForKey:@"loopStartTimeStamp"];
-		[self didChangeValueForKey:@"loopStartTimeStamp"];
+		[self willChangeValueForKey:@"loopEndTimeStamp"];
 
 		_loopStartTimeStamp = loopStartTimeStamp;
 		_loopEndTimeStamp = loopEndTimeStamp;
 
-		[self willChangeValueForKey:@"loopEndTimeStamp"];
+		[self didChangeValueForKey:@"loopStartTimeStamp"];
 		[self didChangeValueForKey:@"loopEndTimeStamp"];
 	}];
 }
