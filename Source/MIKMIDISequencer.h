@@ -16,6 +16,7 @@
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDISynthesizer;
 @class MIKMIDIClock;
+@protocol MIKMIDICommandScheduler;
 
 /**
  *  Types of click track statuses, that determine when the click track will be audible.
@@ -110,20 +111,20 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 
 /**
  *	Allows subclasses to modify the MIDI commands that are about to be
- *	scheduled with a destination endpoint.
+ *	scheduled with a command scheduler.
  *
  *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
  *	to be scheduled.
  *
- *	@param endpoint The destination endpoint the commands will be sent to after
- *	they are modified.
+ *	@param scheduler The command scheduler the commands will be scheduled with
+ *	after they are modified.
  *
  *	@note You should not call this method directly. It is made public solely to
  *	give subclasses a chance to alter or override any MIDI commands parsed from the
  *	MIDI sequence before they get sent to their destination endpoint.
  *
  */
-- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forEndpoint:(MIKMIDIDestinationEndpoint *)endpoint;
+- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler;
 
 /**
  *	Sets the loopStartTimeStamp and loopEndTimeStamp properties.
@@ -197,41 +198,42 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 #pragma mark - Configuration
 
 /**
- *  Sets the destination endpoint for a track in the sequencer's sequence.
- *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
- *  connected to synthesizers so that playback "just works".
+ *  Sets the command scheduler for a track in the sequencer's sequence.
+ *  Calling this method is optional. By default, the sequencer will setup internal synthesizers
+ *	so that playback "just works".
  *
  *  @note If track is not contained by the receiver's sequence, this method does nothing.
  *
- *  @param endpoint The MIKMIDIDestinationEndpoint instance to which events in track should be sent during playback.
- *  @param track    An MIKMIDITrack instance.
+ *  @param commandScheduler	An object that conforms to MIKMIDICommandScheduler with which events
+ *	in track should be scheduled during playback.
+ *  @param track	An MIKMIDITrack instance.
  */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track;
+- (void)setCommandScheduler:(id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track;
 
 /**
- *  Returns the destination endpoint for a track in the sequencer's sequence.
+ *  Returns the command scheduler for a track in the sequencer's sequence.
  *
- *  MIKMIDISequencer will automatically create its own default endpoints connected to
- *  MIKMIDISynthesizers for any tracks not configured manually. This means that even if you
- *  haven't called -setDestinationEndpoint:forTrack:, you can use this method to retrieve
- *  the default endpoint for a given track.
+ *  MIKMIDISequencer will automatically create its own default synthesizers connected 
+ *	for any tracks not configured manually. This means that even if you haven't called
+ *	-setCommandScheduler:forTrack:, you can use this method to retrieve
+ *  the default command scheduler for a given track.
  *
  *  @note If track is not contained by the receiver's sequence, this method returns nil.
  *
  *  @param track An MIKMIDITrack instance.
  *
- *  @return The destination endpoint associated with track, or nil if one can't be found.
+ *  @return The command scheduler associated with track, or nil if one can't be found.
  *
- *  @see -setDestinationEndpoint:forTrack:
+ *  @see -setCommandScheduler:forTrack:
  *  @see -builtinSynthesizerForTrack:
- *	@see createSynthsAndEndpointsIfNeeded
+ *	@see createSynthsIfNeeded
  */
-- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track;
+- (id<MIKMIDICommandScheduler>)commandSchedulerForTrack:(MIKMIDITrack *)track;
 
 /**
  *  Returns synthesizer the receiver will use to synthesize MIDI during playback
- *  for any tracks whose MIDI has not been routed to a custom endpoint using
- *  -setDestinationEndpoint:forTrack:. For tracks where a custom endpoint has
+ *  for any tracks whose MIDI has not been routed to a custom scheduler using
+ *  -setCommandScheduler:forTrack:. For tracks where a custom scheduler has
  *  been set, this method returns nil.
  *
  *  The caller is free to reconfigure the synthesizer(s) returned by this method,
@@ -357,14 +359,14 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *	Whether or not the sequencer should create synthesizers and endpoints
  *	for MIDI tracks that are not assigned an endpoint.
  *
- *	When this property is YES, -destinationEndpointForTrack: will create an
- *	endpoint and a synthesizer for any track that has MIDI commands sent to it
- *	and doesn't already have an assigned endpoint. The default for this property
+ *	When this property is YES, -commandSchedulerForTrack: will create a 
+ *	synthesizer for any track that has MIDI commands scheduled for it
+ *	and doesn't already have an assigned scheduler. The default for this property
  *	is YES.
  *
- *	@see -destinationEndpointForTrack:
+ *	@see -commandSchedulerForTrack:
  */
-@property (nonatomic, getter=shouldCreateSynthsAndEndpointsIfNeeded) BOOL createSynthsAndEndpointsIfNeeded;
+@property (nonatomic, getter=shouldCreateSynthsIfNeeded) BOOL createSynthsIfNeeded;
 
 /**
  *  The metronome to send click track events to.
@@ -399,6 +401,44 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  The latest MIDITimeStamp the sequencer has looked ahead to to schedule MIDI events.
  */
 @property (readonly, nonatomic) MIDITimeStamp latestScheduledMIDITimeStamp;
+
+#pragma mark - Deprecated
+
+/**
+ *	@deprecated Use -setCommandScheduler:forTrack: instead.
+ *
+ *  Sets the destination endpoint for a track in the sequencer's sequence.
+ *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
+ *  connected to synthesizers so that playback "just works".
+ *
+ *  @note If track is not contained by the receiver's sequence, this method does nothing.
+ *
+ *  @param endpoint The MIKMIDIDestinationEndpoint instance to which events in track should be sent during playback.
+ *  @param track    An MIKMIDITrack instance.
+ */
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
+
+/**
+ *	@deprecated Use -commandSchedulerForTrack: instead.
+ *
+ *  Returns the destination endpoint for a track in the sequencer's sequence.
+ *
+ *  MIKMIDISequencer will automatically create its own default endpoints connected to
+ *  MIKMIDISynthesizers for any tracks not configured manually. This means that even if you
+ *  haven't called -setDestinationEndpoint:forTrack:, you can use this method to retrieve
+ *  the default endpoint for a given track.
+ *
+ *  @note If track is not contained by the receiver's sequence, this method returns nil.
+ *
+ *  @param track An MIKMIDITrack instance.
+ *
+ *  @return The destination endpoint associated with track, or nil if one can't be found.
+ *
+ *  @see -setDestinationEndpoint:forTrack:
+ *  @see -builtinSynthesizerForTrack:
+ *	@see createSynthsAndEndpointsIfNeeded
+ */
+- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
 
 @end
 

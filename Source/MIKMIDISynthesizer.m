@@ -10,6 +10,15 @@
 #import "MIKMIDICommand.h"
 #import "MIKMIDISynthesizer_SubclassMethods.h"
 #import "MIKMIDIErrors.h"
+#import "MIKMIDIClock.h"
+
+
+@interface MIKMIDISynthesizer ()
+@property (strong, nonatomic) NSMutableDictionary *scheduledCommandsByTimeStamp;
+@property (strong, nonatomic) NSMutableIndexSet *scheduledCommandTimeStamps;
+@property (nonatomic) dispatch_queue_t scheduledCommandQueue;
+@end
+
 
 @implementation MIKMIDISynthesizer
 
@@ -318,6 +327,111 @@
 	return instrumentcd;
 }
 
+#pragma mark - MIKMIDICommandScheduler
+
+- (void)scheduleMIDICommands:(NSArray *)commands
+{
+	dispatch_queue_t queue = self.scheduledCommandQueue;
+	if (!queue) {
+		NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
+		queue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+		self.scheduledCommandQueue = queue;
+	}
+
+	dispatch_sync(queue, ^{
+		NSMutableDictionary *commandsByTimeStamp = self.scheduledCommandsByTimeStamp;
+		if (!commandsByTimeStamp) {
+			commandsByTimeStamp = [NSMutableDictionary dictionaryWithCapacity:commands.count];
+			self.scheduledCommandsByTimeStamp = commandsByTimeStamp;
+		}
+
+		NSMutableIndexSet *commandTimeStamps = self.scheduledCommandTimeStamps;
+		if (!commandTimeStamps) {
+			commandTimeStamps = [NSMutableIndexSet indexSet];
+			self.scheduledCommandTimeStamps = commandTimeStamps;
+		}
+
+		for (MIKMIDICommand *command in commands) {
+			MIDITimeStamp timeStamp = command.midiTimestamp;
+			NSNumber *timeStampNumber = @(timeStamp);
+			NSMutableArray *commandsAtTimeStamp = commandsByTimeStamp[timeStampNumber];
+			if (!commandsAtTimeStamp) {
+				commandsAtTimeStamp = [NSMutableArray array];
+				commandsByTimeStamp[timeStampNumber] = commandsAtTimeStamp;
+				[commandTimeStamps addIndex:timeStamp];
+			}
+
+			[commandsAtTimeStamp addObject:command];
+		}
+	});
+}
+
+#pragma mark - Callbacks
+
+static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRefCon,
+															   AudioUnitRenderActionFlags *	ioActionFlags,
+															   const AudioTimeStamp *		inTimeStamp,
+															   UInt32						inBusNumber,
+															   UInt32						inNumberFrames,
+															   AudioBufferList *			ioData)
+{
+	if (*ioActionFlags & kAudioUnitRenderAction_PreRender) {
+		if (!(inTimeStamp->mFlags & kAudioTimeStampHostTimeValid)) return noErr;
+		if (!(inTimeStamp->mFlags & kAudioTimeStampSampleTimeValid)) return noErr;
+
+		MIKMIDISynthesizer *synth = (__bridge MIKMIDISynthesizer *)inRefCon;
+		dispatch_queue_t queue = synth.scheduledCommandQueue;
+		if (!queue) return noErr;	// no commands have been scheduled with this synth
+
+		AudioUnit instrumentUnit = synth.instrumentUnit;
+		AudioStreamBasicDescription LPCMASBD;
+		UInt32 sizeOfLPCMASBD = sizeof(LPCMASBD);
+		OSStatus err = AudioUnitGetProperty(instrumentUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &LPCMASBD, &sizeOfLPCMASBD);
+		if (err) {
+			NSLog(@"Unable to get stream description for instrument unit %p: %i", instrumentUnit, err);
+			return err;
+		}
+
+		NSTimeInterval timeUntilNextCallback = inNumberFrames / LPCMASBD.mSampleRate;
+		MIDITimeStamp toTimeStamp = inTimeStamp->mHostTime + [MIKMIDIClock midiTimeStampsPerTimeInterval:timeUntilNextCallback];
+
+		__block NSMutableArray *commandsToSend;
+		dispatch_sync(queue, ^{
+			NSMutableDictionary *commandsByTimeStamp = synth.scheduledCommandsByTimeStamp;
+			if (!commandsByTimeStamp.count) return;
+
+			NSMutableIndexSet *commandTimeStamps = synth.scheduledCommandTimeStamps;
+			commandsToSend = [NSMutableArray array];
+
+			NSRange range = NSMakeRange(0, toTimeStamp);
+			[commandTimeStamps enumerateRangesInRange:range options:0 usingBlock:^(NSRange range, BOOL *stop) {
+				MIDITimeStamp rangeStart = range.location;
+				MIDITimeStamp rangeEnd = rangeStart + range.length;
+
+				for (MIDITimeStamp timeStamp = rangeStart; timeStamp < rangeEnd; timeStamp++) {
+					NSNumber *timeStampNumber = @(timeStamp);
+					[commandsToSend addObjectsFromArray:commandsByTimeStamp[timeStampNumber]];
+					[commandsByTimeStamp removeObjectForKey:timeStampNumber];
+				}
+			}];
+			[commandTimeStamps removeIndexesInRange:range];
+		});
+
+		for (MIKMIDICommand *command in commandsToSend) {
+			MIDITimeStamp sendTimeStamp = MAX(command.midiTimestamp, inTimeStamp->mHostTime);
+			MIDITimeStamp timeStampOffset = sendTimeStamp - inTimeStamp->mHostTime;
+			Float64 sampleOffset = [MIKMIDIClock secondsPerMIDITimeStamp] * timeStampOffset * LPCMASBD.mSampleRate;
+
+			OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, sampleOffset);
+			if (err) {
+				NSLog(@"Unable to schedule MIDI command %@ for instrument unit %p: %i", command, instrumentUnit, err);
+				return err;
+			}
+		}
+	}
+	return noErr;
+}
+
 #pragma mark - Properties
 
 - (void)setGraph:(AUGraph)graph
@@ -333,6 +447,22 @@
 	for (MIKMIDICommand *command in commands) {
 		OSStatus err = MusicDeviceMIDIEvent(self.instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, 0);
 		if (err) NSLog(@"Unable to send MIDI command to synthesizer %@: %@", command, @(err));
+	}
+}
+
+- (void)setInstrumentUnit:(AudioUnit)instrumentUnit
+{
+	if (_instrumentUnit != instrumentUnit) {
+		OSStatus err;
+		if (_instrumentUnit) {
+			err = AudioUnitRemoveRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
+			if (err) NSLog(@"Unable to remove render notify from instrument unit %p: %i", _instrumentUnit, err);
+		}
+
+		_instrumentUnit = instrumentUnit;
+
+		err = AudioUnitAddRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
+		if (err) NSLog(@"Unable to add render notify to instrument unit %p: %i", _instrumentUnit, err);
 	}
 }
 

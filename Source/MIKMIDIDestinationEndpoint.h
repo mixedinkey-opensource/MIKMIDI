@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIEndpoint.h"
+#import "MIKMIDICommandScheduler.h"
 
 /**
  *  MIKMIDIDestinationEndpoint represents a source (input) MIDI endpoint.
@@ -26,7 +27,7 @@
  *  @see -[MIKMIDIDeviceManager sendCommands:toEndpoint:error:]
  *  @see MIKMIDIClientDestinationEndpoint
  */
-@interface MIKMIDIDestinationEndpoint : MIKMIDIEndpoint
+@interface MIKMIDIDestinationEndpoint : MIKMIDIEndpoint <MIKMIDICommandScheduler>
 
 /**
  *  Unschedules previously-sent events. Events that have been scheduled with timestamps

@@ -48,20 +48,4 @@
 	return self;
 }
 
-- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription
-{
-	if (self = [super initWithClientDestinationEndpoint:destination componentDescription:componentDescription]) {
-		if (![self setupMetronome]) return nil;
-	}
-	return self;
-}
-
-- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription
-{
-	if (self = [super initWithMIDISource:source componentDescription:componentDescription]) {
-		if (![self setupMetronome]) return nil;
-	}
-	return self;
-}
-
 @end

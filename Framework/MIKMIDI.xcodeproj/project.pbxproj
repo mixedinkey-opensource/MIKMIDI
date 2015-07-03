@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DB1A262FE100E0CC9F /* MIKMIDISequencer.m in Sources */ = {isa = PBXBuildFile; fileRef = 833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */; };
 		833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B73DC1A26346F00E0CC9F /* MIKMIDIClock.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -294,6 +295,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDICommandScheduler.h; sourceTree = "<group>"; };
 		833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequencer.h; sourceTree = "<group>"; };
 		833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequencer.m; sourceTree = "<group>"; };
 		833B73DC1A26346F00E0CC9F /* MIKMIDIClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIClock.h; sourceTree = "<group>"; };
@@ -658,6 +660,7 @@
 		9DAF8B001A7AFB1900F46528 /* Sequencing */ = {
 			isa = PBXGroup;
 			children = (
+				8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */,
 				839D936719C3A303007589C3 /* MIKMIDIPlayer.h */,
 				839D936819C3A303007589C3 /* MIKMIDIPlayer.m */,
 				833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */,
@@ -893,6 +896,7 @@
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
 				9DBEBD671AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */,
 				833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */,
+				8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */,
 				9DB366F01A964C55001D1CF3 /* MIKMIDISynthesizer.h in Headers */,
 				833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */,
 				9D76DCEC1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h in Headers */,

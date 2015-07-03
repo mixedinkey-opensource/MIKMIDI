@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import <MIKMIDI/MIKMIDISynthesizerInstrument.h>
+#import "MIKMIDISynthesizerInstrument.h"
+#import "MIKMIDICommandScheduler.h"
 
 /**
  *  MIKMIDISynthesizer provides a simple way to synthesize MIDI messages to
@@ -23,7 +24,7 @@
  *  @see MIKMIDIEndpointSynthesizer
  *
  */
-@interface MIKMIDISynthesizer : NSObject
+@interface MIKMIDISynthesizer : NSObject <MIKMIDICommandScheduler>
 
 /**
  *  Initializes an MIKMIDISynthesizer instance which uses the default 
