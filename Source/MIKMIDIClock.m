@@ -284,7 +284,9 @@
 
 + (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
 {
-	return (1.0 / [self secondsPerMIDITimeStamp]) * timeInterval;
+	static Float64 midiTimeStampsPerSecond = 0;
+	if (!midiTimeStampsPerSecond) midiTimeStampsPerSecond = (1.0 / [self secondsPerMIDITimeStamp]);
+	return midiTimeStampsPerSecond * timeInterval;
 }
 
 #pragma mark - Deprecated Methods
