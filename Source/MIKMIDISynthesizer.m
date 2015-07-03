@@ -434,7 +434,8 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 		if (!secondsPerMIDITimeStamp) secondsPerMIDITimeStamp = [MIKMIDIClock secondsPerMIDITimeStamp];
 
 		for (MIKMIDICommand *command in commandsToSend) {
-			MIDITimeStamp sendTimeStamp = MAX(command.midiTimestamp, inTimeStamp->mHostTime);
+			MIDITimeStamp sendTimeStamp = command.midiTimestamp;
+			if (sendTimeStamp < inTimeStamp->mHostTime) sendTimeStamp = inTimeStamp->mHostTime;
 			MIDITimeStamp timeStampOffset = sendTimeStamp - inTimeStamp->mHostTime;
 			Float64 sampleOffset = secondsPerMIDITimeStamp * timeStampOffset * LPCMASBD.mSampleRate;
 
