@@ -39,6 +39,7 @@
 
 - (void)dealloc
 {
+	self.instrumentUnit = NULL;
 	self.graph = NULL;
 }
 
@@ -461,8 +462,10 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 
 		_instrumentUnit = instrumentUnit;
 
-		err = AudioUnitAddRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
-		if (err) NSLog(@"Unable to add render notify to instrument unit %p: %i", _instrumentUnit, err);
+		if (_instrumentUnit) {
+			err = AudioUnitAddRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
+			if (err) NSLog(@"Unable to add render notify to instrument unit %p: %i", _instrumentUnit, err);
+		}
 	}
 }
 
