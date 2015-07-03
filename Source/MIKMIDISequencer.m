@@ -159,7 +159,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (self.isPlaying) [self stop];
 
 	NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
-	dispatch_queue_t queue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+	dispatch_queue_t queue = dispatch_queue_create(queueLabel.UTF8String, dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INITIATED, DISPATCH_QUEUE_PRIORITY_HIGH));
 	dispatch_queue_set_specific(queue, &_processingQueueKey, &_processingQueueContext, NULL);
 	self.processingQueue = queue;
 

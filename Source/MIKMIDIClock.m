@@ -66,7 +66,7 @@
 	if (self = [super init]) {
 		if (createQueue) {
 			NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
-			self.clockQueue = dispatch_queue_create(queueLabel.UTF8String, DISPATCH_QUEUE_SERIAL);
+			self.clockQueue = dispatch_queue_create(queueLabel.UTF8String, dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, DISPATCH_QUEUE_PRIORITY_HIGH));
 		}
 	}
 	return self;
