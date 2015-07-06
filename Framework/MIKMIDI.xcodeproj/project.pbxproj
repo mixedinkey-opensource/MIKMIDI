@@ -134,6 +134,8 @@
 		9D877D851A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877D831A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m */; };
 		9D877DFC1A670261001BA997 /* MIKMIDIProgramChangeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877DFA1A670261001BA997 /* MIKMIDIProgramChangeCommand.m */; };
 		9D877DFD1A6706E6001BA997 /* MIKMIDIProgramChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D877DF91A670261001BA997 /* MIKMIDIProgramChangeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D9FBCCB1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5717A713A100BEE89F /* MIKMIDIPort_SubclassMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9D9FBCCC1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5717A713A100BEE89F /* MIKMIDIPort_SubclassMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9DAE7D8D19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE7D8B19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.m */; };
 		9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DAE7D8C19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DAF8B1F1A7AFF5900F46528 /* MIKMIDIDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */; };
@@ -908,6 +910,7 @@
 				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
+				9D9FBCCB1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -962,6 +965,7 @@
 				9DAF8B7E1A7B00B100F46528 /* MIKMIDIMetronome.h in Headers */,
 				9DAF8B831A7B00BB00F46528 /* MIKMIDIPrivateUtilities.h in Headers */,
 				9DAF8B591A7B007300F46528 /* MIKMIDIInputPort.h in Headers */,
+				9D9FBCCC1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */,
 				9DBEBD5A1AAA21C400E59734 /* MIKMIDIEvent_SubclassMethods.h in Headers */,
 				9DAF8B561A7B007300F46528 /* MIKMIDIDevice.h in Headers */,
 				9DAF8B761A7B00A700F46528 /* MIKMIDIMetaSequenceEvent.h in Headers */,
