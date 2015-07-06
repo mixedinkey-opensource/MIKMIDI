@@ -261,6 +261,7 @@
 		9DBEBD6A1AAA303700E59734 /* MIKMIDIChannelPressureEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */; };
 		9DCDDB501AB2363C00F8347E /* Parallax-Loader.mid in Resources */ = {isa = PBXBuildFile; fileRef = 9DCDDB4F1AB2363C00F8347E /* Parallax-Loader.mid */; };
 		9DCDDB5A1AB3514100F8347E /* MIKMIDISequencerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DCDDB591AB3514100F8347E /* MIKMIDISequencerTests.m */; };
+		9DD48D481B4A2D4A00A50942 /* MIKMIDICommandScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DE259E519A7B4F800DA93E9 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */; };
 		9DE259E619A7B50100DA93E9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
 		9DE259E819A7B50600DA93E9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */; };
@@ -983,6 +984,7 @@
 				9DAF8B821A7B00BB00F46528 /* MIKMIDIClock.h in Headers */,
 				9DAF8B6B1A7B00A700F46528 /* MIKMIDISequence.h in Headers */,
 				9DAF8B511A7B004A00F46528 /* MIKMIDI.h in Headers */,
+				9DD48D481B4A2D4A00A50942 /* MIKMIDICommandScheduler.h in Headers */,
 				9DAF8B811A7B00BB00F46528 /* MIKMIDICommandThrottler.h in Headers */,
 				9DAF8B6A1A7B009100F46528 /* MIKMIDIMappingManager.h in Headers */,
 				9DAF8B741A7B00A700F46528 /* MIKMIDIMetaLyricEvent.h in Headers */,

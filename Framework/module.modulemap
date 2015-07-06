@@ -2,7 +2,6 @@ framework module MIKMIDI {
 	umbrella header "MIKMIDI.h"
 	
 	private header "MIKMIDIPort_SubclassMethods.h"
-	private header "MIKMIDIPrivateUtilities.h"
 	private header "MIKMIDISynthesizer_SubclassMethods.h"
 	
 	export *
