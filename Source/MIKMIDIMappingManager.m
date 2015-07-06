@@ -262,7 +262,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		unsigned long numberSuffix = 0;
 		while ([fm fileExistsAtPath:[result path]]) {
 			MIKMIDIMapping *existingMapping = [[MIKMIDIMapping alloc] initWithFileAtURL:result error:NULL];
-			if ([existingMapping isEqualTo:mapping]) break;
+			if ([existingMapping isEqual:mapping]) break;
 			
 			if (numberSuffix > 1000) return nil; // Don't go crazy
 			NSString *name = [mapping.name stringByAppendingFormat:@" %lu", ++numberSuffix];
