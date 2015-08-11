@@ -21,4 +21,9 @@ framework module MIKMIDI {
 		header "MIKMIDISynthesizer_SubclassMethods.h"
 		export *
 	}
+
+	explicit module MIKMIDIMappingManager {
+		header "MIKMIDIMappingManager_SubclassMethods.h"
+		export *
+	}
 }
