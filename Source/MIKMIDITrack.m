@@ -18,7 +18,7 @@
 
 
 #if !__has_feature(objc_arc)
-#error MIKMIDITrack.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDITrack.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDITrack.m in the Build Phases for this target
 #endif
 
 @interface MIKMIDITrack ()
