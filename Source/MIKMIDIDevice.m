@@ -70,6 +70,12 @@
 	return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (![super isEqual:object]) return NO;
+	return [self.entities isEqualToArray:[(MIKMIDIDevice *)object entities]];
+}
+
 #pragma mark - Public
 
 - (NSString *)description
