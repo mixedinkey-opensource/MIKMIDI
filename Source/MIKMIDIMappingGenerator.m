@@ -292,6 +292,14 @@
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
+	NSInteger minValue, maxValue = firstMessage.value;
+	for (MIKMIDIChannelVoiceCommand *command in messages) {
+		minValue = MIN(command.value, minValue);
+		maxValue = MAX(command.value, maxValue);
+	}
+	NSInteger range = maxValue - minValue;
+	if (range > 25) return NO; // Probably not a turntable, more likely an absolute knob
+	
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeTurntableKnob;
 	result.channel = firstMessage.channel;
