@@ -470,7 +470,7 @@ FINALIZE_RESULT_AND_RETURN:
 
 - (NSUInteger)defaultMinimumNumberOfMessagesRequiredForResponderType:(MIKMIDIResponderType)responderType
 {
-	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 50;
+	if (responderType & MIKMIDIResponderTypeTurntableKnob) return 40;
 	if (responderType & MIKMIDIResponderTypeAbsoluteSliderOrKnob) return 5;
 	return 3;
 }
