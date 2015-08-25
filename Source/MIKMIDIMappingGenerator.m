@@ -292,7 +292,7 @@
 	
 	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
 	
-	NSInteger minValue, maxValue = firstMessage.value;
+	NSInteger minValue = firstMessage.value, maxValue = firstMessage.value;
 	for (MIKMIDIChannelVoiceCommand *command in messages) {
 		minValue = MIN(command.value, minValue);
 		maxValue = MAX(command.value, maxValue);
