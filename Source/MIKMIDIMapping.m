@@ -292,6 +292,7 @@ CLEANUP_AND_EXIT:
 	if (![self.name isEqualToString:otherMapping.name]) return NO;
 	if (![self.controllerName isEqualToString:otherMapping.controllerName]) return NO;
 	if (![self.additionalAttributes isEqualToDictionary:otherMapping.additionalAttributes]) return NO;
+	if (self.isBundledMapping != otherMapping.isBundledMapping) return NO;
 	
 	return [self.mappingItems isEqualToSet:otherMapping.mappingItems];
 }
