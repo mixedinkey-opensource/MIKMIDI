@@ -290,21 +290,25 @@
 	
 	if ([messages count] < [self defaultMinimumNumberOfMessagesRequiredForResponderType:MIKMIDIResponderTypeTurntableKnob]) return NO;
 	
-	MIKMIDIChannelVoiceCommand *firstMessage = [messages objectAtIndex:0];
+	MIKMIDIControlChangeCommand *firstMessage = [messages firstObject];
 	
-	NSInteger minValue = firstMessage.value, maxValue = firstMessage.value;
-	for (MIKMIDIChannelVoiceCommand *command in messages) {
-		minValue = MIN(command.value, minValue);
-		maxValue = MAX(command.value, maxValue);
+	float avgChangePerMessage = 0;
+	int maxChangePerMessage = 0;
+	int lastValue = (int)[firstMessage controllerValue];
+	for (MIKMIDIControlChangeCommand *command in messages) {
+		int change = (int)command.value - lastValue;
+		avgChangePerMessage += (float)change / (float)[messages count];
+		maxChangePerMessage = MAX(abs(change), maxChangePerMessage);
+		lastValue = (int)command.value;
 	}
-	NSInteger range = maxValue - minValue;
-	if (range > 25) return NO; // Probably not a turntable, more likely an absolute knob
+	
+	if (fabsf(avgChangePerMessage) > 0.9 && maxChangePerMessage < 63) return NO; // Probably not a turntable, more likely an absolute knob
 	
 	MIKMIDIMappingItem *result = *mappingItem;
 	result.interactionType = MIKMIDIResponderTypeTurntableKnob;
 	result.channel = firstMessage.channel;
 	result.controlNumber = MIKMIDIControlNumberFromCommand(firstMessage);
-	result.flipped = ([(MIKMIDIChannelVoiceCommand *)[messages lastObject] value] < 64);
+	result.flipped = ([(MIKMIDIControlChangeCommand *)[messages lastObject] value] < 64);
 	return YES;
 }
 
