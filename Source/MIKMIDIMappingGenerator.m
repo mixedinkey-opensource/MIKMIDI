@@ -150,32 +150,6 @@
 
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
 {
-	NSSet *existingMappingItemsForOtherControls = [self existingMappingItemsForRespondersOtherThanCurrentForCommand:command];
-	
-	if ([existingMappingItemsForOtherControls count]) {
-		MIKMIDIMappingGeneratorRemapBehavior behavior = MIKMIDIMappingGeneratorRemapDefault;
-		if ([self.delegate respondsToSelector:@selector(mappingGenerator:behaviorForRemappingControlMappedWithItems:toNewResponder:commandIdentifier:)]) {
-			behavior = [self.delegate mappingGenerator:self
-			behaviorForRemappingControlMappedWithItems:existingMappingItemsForOtherControls
-										toNewResponder:self.controlBeingLearned
-									 commandIdentifier:self.commandIdentifierBeingLearned];
-		}
-		
-		switch (behavior) {
-			default:
-			case MIKMIDIMappingGeneratorRemapDisallow:
-				return; // Ignore this command
-				break;
-			case MIKMIDIMappingGeneratorRemapAllowDuplicate:
-				// Do nothing special
-				break;
-			case MIKMIDIMappingGeneratorRemapReplace:
-				// Remove the existing mapping items.
-				[self.mapping removeMappingItems:existingMappingItemsForOtherControls];
-				break;
-		}
-	}
-	
 	if ([self.receivedMessages count]) {
 		// If we get a message from a different controller number, channel,
 		// or command type (not counting note on vs note off), restart the mapping
@@ -428,6 +402,33 @@ FINALIZE_RESULT_AND_RETURN:
 	MIKMIDIMappingItem *mappingItem = [self mappingItemForCommandIdentifier:self.commandIdentifierBeingLearned
 																  inControl:self.controlBeingLearned
 													   fromReceivedMessages:self.receivedMessages];
+
+	NSSet *existingMappingItemsForOtherControls = [self existingMappingItemsForResponderMappedTo:mappingItem];
+	
+	if (mappingItem && [existingMappingItemsForOtherControls count]) {
+		MIKMIDIMappingGeneratorRemapBehavior behavior = MIKMIDIMappingGeneratorRemapDefault;
+		if ([self.delegate respondsToSelector:@selector(mappingGenerator:behaviorForRemappingControlMappedWithItems:toNewResponder:commandIdentifier:)]) {
+			behavior = [self.delegate mappingGenerator:self
+			behaviorForRemappingControlMappedWithItems:existingMappingItemsForOtherControls
+										toNewResponder:self.controlBeingLearned
+									 commandIdentifier:self.commandIdentifierBeingLearned];
+		}
+		
+		switch (behavior) {
+			default:
+			case MIKMIDIMappingGeneratorRemapDisallow:
+				mappingItem = nil; // Discard this mapping item
+				break;
+			case MIKMIDIMappingGeneratorRemapAllowDuplicate:
+				// Do nothing special
+				break;
+			case MIKMIDIMappingGeneratorRemapReplace:
+				// Remove the existing mapping items.
+				[self.mapping removeMappingItems:existingMappingItemsForOtherControls];
+				break;
+		}
+	}
+	
 	if (mappingItem) {
 		[self finishMappingItem:mappingItem error:nil];
 	} else {
@@ -486,11 +487,15 @@ FINALIZE_RESULT_AND_RETURN:
 	return YES;
 }
 
-- (NSSet *)existingMappingItemsForRespondersOtherThanCurrentForCommand:(MIKMIDIChannelVoiceCommand *)command
+- (NSSet *)existingMappingItemsForResponderMappedTo:(MIKMIDIMappingItem *)mappingItem
 {
-	if (!command) return [NSMutableSet set];
+	if (!mappingItem) return [NSMutableSet set];
 	
-	NSSet *existingMappingItems = [self.mapping mappingItemsForMIDICommand:command];
+	MIKMutableMIDIChannelVoiceCommand *matchingCommand = [MIKMutableMIDIChannelVoiceCommand commandForCommandType:mappingItem.commandType];
+	matchingCommand.channel = mappingItem.channel;
+	matchingCommand.dataByte1 = mappingItem.controlNumber;
+	
+	NSSet *existingMappingItems = [self.mapping mappingItemsForMIDICommand:matchingCommand];
 	NSMutableSet *result = [existingMappingItems mutableCopy];
 	if ([self.commandIdentifierBeingLearned length] && self.controlBeingLearned) {
 		NSSet *existingForCurrentResponder = [self.mapping mappingItemsForCommandIdentifier:self.commandIdentifierBeingLearned responder:self.controlBeingLearned];
