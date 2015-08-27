@@ -28,7 +28,6 @@
 
 @property (nonatomic) NSTimeInterval timeoutInteveral;
 @property (nonatomic, strong) NSTimer *messagesTimeoutTimer;
-@property (nonatomic) NSUInteger numMessagesRequired;
 @property (nonatomic, strong) NSMutableArray *receivedMessages;
 
 @property (nonatomic, strong) id connectionToken;
@@ -124,7 +123,6 @@
 	self.controlBeingLearned = control;
 	self.commandIdentifierBeingLearned = commandID;
 	self.responderTypeOfControlBeingLearned = controlResponderType;
-	self.numMessagesRequired = numMessages ? numMessages : [self defaultMinimumNumberOfMessagesRequiredForResponderType:controlResponderType];
 	self.timeoutInteveral = timeout ? timeout : 0.6;
 	self.messagesTimeoutTimer = nil;
 	
@@ -206,13 +204,6 @@
 															   selector:@selector(timeoutTimerFired:)
 															   userInfo:nil
 																repeats:NO];
-	
-	if ([self.receivedMessages count] > self.numMessagesRequired) { // Don't try to finish unless we've received several messages (eg. from a knob) already
-		MIKMIDIMappingItem *mappingItem = [self mappingItemForCommandIdentifier:self.commandIdentifierBeingLearned
-																	  inControl:self.controlBeingLearned
-														   fromReceivedMessages:self.receivedMessages];
-		if (mappingItem) [self finishMappingItem:mappingItem error:nil];
-	}
 }
 
 #pragma mark Messages to Mapping Item
