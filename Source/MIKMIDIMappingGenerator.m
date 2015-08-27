@@ -109,15 +109,6 @@
 	self.currentMappingCompletionBlock = completionBlock;
 	
 	self.existingMappingItems = [self.mapping mappingItemsForCommandIdentifier:commandID responder:control];
-	// Determine if existing mapping items for this control should be removed.
-	BOOL shouldRemoveExisting = YES;
-	if ([self.existingMappingItems count] &&
-		[self.delegate respondsToSelector:@selector(mappingGenerator:shouldRemoveExistingMappingItems:forResponderBeingMapped:)]) {
-		shouldRemoveExisting = [self.delegate mappingGenerator:self
-							  shouldRemoveExistingMappingItems:self.existingMappingItems
-									   forResponderBeingMapped:self.controlBeingLearned];
-	}
-	if (shouldRemoveExisting && [self.existingMappingItems count]) [self.mapping removeMappingItems:self.existingMappingItems];
 	
 	MIKMIDIResponderType controlResponderType = MIKMIDIResponderTypeAll;
 	if ([control respondsToSelector:@selector(MIDIResponderTypeForCommandIdentifier:)]) {
@@ -145,9 +136,7 @@
 - (void)cancelCurrentCommandLearning;
 {
 	if (!self.commandIdentifierBeingLearned) return;
-	
-	if ([self.existingMappingItems count]) [self.mapping addMappingItems:self.existingMappingItems];
-	
+		
 	NSDictionary *userInfo = [self.existingMappingItems count] ? @{@"PreviouslyExistingMappings" : self.existingMappingItems} : nil;
 	NSError *error = [NSError MIKMIDIErrorWithCode:NSUserCancelledError userInfo:userInfo];
 	[self finishMappingItem:nil error:error];
@@ -465,6 +454,19 @@ FINALIZE_RESULT_AND_RETURN:
 	NSArray *receivedMessages = [self.receivedMessages copy];
 	[self.receivedMessages removeAllObjects];
 	self.messagesTimeoutTimer = nil;
+
+	// Determine if existing mapping items for this control should be removed.
+	BOOL shouldRemoveExisting = mappingItemOrNil != nil;
+	if (mappingItemOrNil &&
+		[self.existingMappingItems count] &&
+		[self.delegate respondsToSelector:@selector(mappingGenerator:shouldRemoveExistingMappingItems:forResponderBeingMapped:)]) {
+		shouldRemoveExisting = [self.delegate mappingGenerator:self
+							  shouldRemoveExistingMappingItems:self.existingMappingItems
+									   forResponderBeingMapped:self.controlBeingLearned];
+	}
+	if (shouldRemoveExisting && [self.existingMappingItems count]) [self.mapping removeMappingItems:self.existingMappingItems];
+	self.existingMappingItems = nil;
+
 	
 	if (mappingItemOrNil) [self.mapping addMappingItemsObject:mappingItemOrNil];
 	if (completionBlock) completionBlock(mappingItemOrNil, receivedMessages, errorOrNil);
