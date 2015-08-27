@@ -101,6 +101,17 @@
  */
 - (instancetype)initWithFileAtURL:(NSURL *)url;
 
+/**
+ *	Creates and initializes an MIKMIDIMapping object that is the same as the passed in bundled mapping
+ *	but with isBundledMapping set to NO.
+ *
+ *	@param bundledMapping The bundled mapping you would like to make a user mapping copy of.
+ *
+ *	@return An initialized MIKMIDIMapping instance that is the same as the passed in mapping but
+ *	with isBundledMapping set to NO.
+ */
++ (instancetype)userMappingFromBundledMapping:(MIKMIDIMapping *)bundledMapping;
+
 #if !TARGET_OS_IPHONE
 /**
  *  Returns an NSXMLDocument representation of the receiver.

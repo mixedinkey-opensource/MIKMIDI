@@ -300,7 +300,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)addUserMappingsObject:(MIKMIDIMapping *)mapping
 {
-	mapping.bundledMapping = NO;
+	if (mapping.isBundledMapping) mapping = [MIKMIDIMapping userMappingFromBundledMapping:mapping];
 	[self.internalUserMappings addObject:mapping];
 	
 	[self saveMappingsToDisk];

@@ -114,6 +114,13 @@
 	return result;
 }
 
++ (instancetype)userMappingFromBundledMapping:(MIKMIDIMapping *)bundledMapping
+{
+	MIKMIDIMapping *userMapping = [bundledMapping copy];
+	userMapping.bundledMapping = NO;
+	return userMapping;
+}
+
 #if !TARGET_OS_IPHONE
 
 - (NSXMLDocument *)XMLRepresentation
