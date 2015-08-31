@@ -24,4 +24,20 @@
  */
 - (NSString *)fileNameForMapping:(MIKMIDIMapping *)mapping;
 
+/**
+ *	When deleting user mappings, this method is called as a way to provide any additional
+ *	file names that the mapping may have had in past versions of -fileNameForMapping:
+ *
+ *	If you have changed the naming scheme that -fileNameForMapping: uses in any user-reaching
+ *	code, you will probably want to implement this method as well, so users will be able to
+ *	properly delete mappings with the old naming scheme.
+ *
+ *	Just as with -fileNameForMapping:, the file names should *not* include the file extension.
+ *
+ *	@param mapping The mapping to return legacy file names for.
+ *
+ *	@return An array of legacy file names, or nil.
+ */
+- (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping;
+
 @end
