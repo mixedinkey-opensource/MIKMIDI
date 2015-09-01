@@ -88,6 +88,22 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 - (void)cancelCurrentCommandLearning;
 
 /**
+ *  Temporarily suspends mapping without discarding state. Unlike -cancelCurrentCommandLearning, or -endMapping,
+ *  mapping can be resumed exactly where it left off by calling -resumeMapping. Incoming MIDI is simply
+ *  ignored while mapping is suspended.
+ *
+ *  Note that if mapping is not currently in progress, this method has no effect.
+ */
+- (void)suspendMapping;
+
+/**
+ *  Resumes mapping after it was previously suspended using -suspendMapping.
+ *
+ *  Note that if mapping was not previously in progress and currently suspended, this has no effect.
+ */
+- (void)resumeMapping;
+
+/**
  *  Stops mapping generation, disconnecting from the device.
  */
 - (void)endMapping;

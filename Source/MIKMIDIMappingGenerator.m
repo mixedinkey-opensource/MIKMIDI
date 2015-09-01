@@ -33,6 +33,8 @@
 @property (nonatomic, strong) id connectionToken;
 @property (nonatomic, strong) NSMutableArray *blockBasedObservers;
 
+@property (nonatomic, getter=isMappingSuspended) BOOL mappingSuspended;
+
 @end
 
 @implementation MIKMIDIMappingGenerator
@@ -134,22 +136,38 @@
 - (void)cancelCurrentCommandLearning;
 {
 	if (!self.commandIdentifierBeingLearned) return;
-		
+	
+	self.mappingSuspended = NO;
+	
 	NSDictionary *userInfo = [self.existingMappingItems count] ? @{@"PreviouslyExistingMappings" : self.existingMappingItems} : nil;
 	NSError *error = [NSError MIKMIDIErrorWithCode:NSUserCancelledError userInfo:userInfo];
 	[self finishMappingItem:nil error:error];
+}
+
+- (void)suspendMapping
+{
+	if (!self.commandIdentifierBeingLearned) return;
+	self.mappingSuspended = YES;
+}
+
+- (void)resumeMapping
+{
+	self.mappingSuspended = NO;
 }
 
 - (void)endMapping;
 {
 	[self disconnectFromDevice];
 	self.device = nil;
+	self.mappingSuspended = NO;
 }
 
 #pragma mark - Private
 
 - (void)handleMIDICommand:(MIKMIDIChannelVoiceCommand *)command
 {
+	if (self.isMappingSuspended) return; // Ignore input while mapping is suspended
+	
 	if ([self.receivedMessages count]) {
 		// If we get a message from a different controller number, channel,
 		// or command type (not counting note on vs note off), restart the mapping
