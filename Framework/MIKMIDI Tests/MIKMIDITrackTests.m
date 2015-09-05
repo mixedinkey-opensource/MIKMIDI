@@ -21,6 +21,9 @@
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @implementation MIKMIDITrackTests
 
 - (void)setUp
@@ -890,3 +893,5 @@
 
 @end
 
+
+#pragma clang diagnostic pop
