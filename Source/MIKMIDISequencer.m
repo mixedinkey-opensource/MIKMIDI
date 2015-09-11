@@ -150,7 +150,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp
 {
-	MIDITimeStamp midiTimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001];
+	MIDITimeStamp midiTimeStamp = MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(0.001);
 	[self startPlaybackAtTimeStamp:timeStamp MIDITimeStamp:midiTimeStamp];
 }
 
@@ -218,7 +218,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 		MIKMIDIClock *clock = self.clock;
 		[self recordAllPendingNoteEventsWithOffTimeStamp:[clock musicTimeStampForMIDITimeStamp:stopTimeStamp]];
-		MusicTimeStamp allPendingNotesOffTimeStamp = MAX(self.latestScheduledMIDITimeStamp + 1, MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.001]);
+		MusicTimeStamp allPendingNotesOffTimeStamp = MAX(self.latestScheduledMIDITimeStamp + 1, MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(0.001));
 		[self sendAllPendingNoteOffsWithMIDITimeStamp:allPendingNotesOffTimeStamp];
 		self.pendingRecordedNoteEvents = nil;
 		self.looping = NO;
@@ -239,7 +239,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + [MIKMIDIClock midiTimeStampsPerTimeInterval:0.1];
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(0.1);
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 

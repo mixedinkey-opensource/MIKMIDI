@@ -111,7 +111,7 @@
 				self.historicalClockMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 			} else {
 				// Remove clocks old enough to not be needed anymore
-				MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - [MIKMIDIClock midiTimeStampsPerTimeInterval:kDurationToKeepHistoricalClocks];
+				MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - MIKMIDIClockMIDITimeStampsPerTimeInterval(kDurationToKeepHistoricalClocks);
 				NSUInteger count = historicalClockMIDITimeStamps.count;
 				NSMutableArray *timeStampsToRemove = [NSMutableArray array];
 				NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
@@ -143,7 +143,7 @@
 		}
 
 		// Update new tempo and timing information
-		Float64 secondsPerMIDITimeStamp = [[self class] secondsPerMIDITimeStamp];
+		Float64 secondsPerMIDITimeStamp = MIKMIDIClockSecondsPerMIDITimeStamp();
 		Float64 secondsPerMusicTimeStamp = 60.0 / tempo;
 		Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
@@ -280,6 +280,16 @@
 
 + (Float64)secondsPerMIDITimeStamp
 {
+	return MIKMIDIClockSecondsPerMIDITimeStamp();
+}
+
++ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
+{
+	return MIKMIDIClockMIDITimeStampsPerTimeInterval(timeInterval);
+}
+
+Float64 MIKMIDIClockSecondsPerMIDITimeStamp()
+{
 	static Float64 secondsPerMIDITimeStamp;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -288,12 +298,14 @@
 		secondsPerMIDITimeStamp = (timeBaseInfoData.numer / timeBaseInfoData.denom) / 1.0e9;
 	});
 	return secondsPerMIDITimeStamp;
+
 }
 
-+ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
+
+Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
 {
 	static Float64 midiTimeStampsPerSecond = 0;
-	if (!midiTimeStampsPerSecond) midiTimeStampsPerSecond = (1.0 / [self secondsPerMIDITimeStamp]);
+	if (!midiTimeStampsPerSecond) midiTimeStampsPerSecond = (1.0 / MIKMIDIClockSecondsPerMIDITimeStamp());
 	return midiTimeStampsPerSecond * timeInterval;
 }
 

@@ -15,8 +15,10 @@
 
 @interface MIKMIDISynthesizer ()
 {
-	NSMutableDictionary *_scheduledCommandsByTimeStamp;
-	NSMutableIndexSet *_scheduledCommandTimeStamps;
+	CFMutableDictionaryRef _scheduledCommandsByTimeStamp;
+	CFMutableSetRef _scheduledCommandTimeStampsSet;
+	CFMutableArrayRef _scheduledCommandTimeStampsArray;
+
 	dispatch_queue_t _scheduledCommandQueue;
 }
 @end
@@ -43,6 +45,21 @@
 {
 	self.instrumentUnit = NULL;
 	self.graph = NULL;
+
+	if (_scheduledCommandsByTimeStamp) {
+		CFRelease(_scheduledCommandsByTimeStamp);
+		_scheduledCommandsByTimeStamp = NULL;
+	}
+
+	if (_scheduledCommandTimeStampsSet) {
+		CFRelease(_scheduledCommandTimeStampsSet);
+		_scheduledCommandTimeStampsSet = NULL;
+	}
+
+	if (_scheduledCommandTimeStampsArray) {
+		CFRelease(_scheduledCommandTimeStampsArray);
+		_scheduledCommandTimeStampsArray = NULL;
+	}
 }
 
 #pragma mark - Public
@@ -352,28 +369,32 @@
 
 	for (MIKMIDICommand *command in commands) {
 		dispatch_sync(queue, ^{
-			NSMutableDictionary *commandsByTimeStamp = _scheduledCommandsByTimeStamp;
-			if (!commandsByTimeStamp) {
-				commandsByTimeStamp = [NSMutableDictionary dictionaryWithCapacity:commands.count];
-				_scheduledCommandsByTimeStamp = commandsByTimeStamp;
+			NSUInteger count = commands.count;
+			if (!_scheduledCommandsByTimeStamp) {
+				_scheduledCommandsByTimeStamp = CFDictionaryCreateMutable(NULL, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 			}
-
-			NSMutableIndexSet *commandTimeStamps = _scheduledCommandTimeStamps;
-			if (!commandTimeStamps) {
-				commandTimeStamps = [NSMutableIndexSet indexSet];
-				_scheduledCommandTimeStamps = commandTimeStamps;
+			if (!_scheduledCommandTimeStampsSet) {
+				_scheduledCommandTimeStampsSet = CFSetCreateMutable(NULL, count, &kCFTypeSetCallBacks);
+			}
+			if (!_scheduledCommandTimeStampsArray) {
+				_scheduledCommandTimeStampsArray = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
 			}
 
 			MIDITimeStamp timeStamp = command.midiTimestamp;
-			NSNumber *timeStampNumber = @(timeStamp);
-			NSMutableArray *commandsAtTimeStamp = commandsByTimeStamp[timeStampNumber];
+			void *timeStampNumber = (__bridge void*)@(timeStamp);
+			CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(_scheduledCommandsByTimeStamp, timeStampNumber);
 			if (!commandsAtTimeStamp) {
-				commandsAtTimeStamp = [NSMutableArray array];
-				commandsByTimeStamp[timeStampNumber] = commandsAtTimeStamp;
-				[commandTimeStamps addIndex:timeStamp];
+				commandsAtTimeStamp = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+				CFDictionarySetValue(_scheduledCommandsByTimeStamp, timeStampNumber, (void *)commandsAtTimeStamp);
+				CFRelease(commandsAtTimeStamp);
+
+				if (!CFSetContainsValue(_scheduledCommandTimeStampsSet, timeStampNumber)) {
+					CFSetAddValue(_scheduledCommandTimeStampsSet, timeStampNumber);
+					CFArrayAppendValue(_scheduledCommandTimeStampsArray, timeStampNumber);
+				}
 			}
 
-			[commandsAtTimeStamp addObject:command];
+			CFArrayAppendValue(commandsAtTimeStamp, (__bridge void *)command);
 		});
 	}
 }
@@ -410,39 +431,46 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 		MIDITimeStamp midiTimeStampsUntilNextCallback = lastMIDITimeStampsUntilNextCallback;
 
 		if (lastTimeUntilNextCallback != timeUntilNextCallback) {
-			midiTimeStampsUntilNextCallback = [MIKMIDIClock midiTimeStampsPerTimeInterval:timeUntilNextCallback];
+			midiTimeStampsUntilNextCallback = MIKMIDIClockMIDITimeStampsPerTimeInterval(timeUntilNextCallback);
 			lastTimeUntilNextCallback = timeUntilNextCallback;
 			lastMIDITimeStampsUntilNextCallback = midiTimeStampsUntilNextCallback;
 		}
 
 		MIDITimeStamp toTimeStamp = inTimeStamp->mHostTime + midiTimeStampsUntilNextCallback;
+		CFMutableArrayRef commandsToSend = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);;
 
-		__block NSMutableArray *commandsToSend;
 		dispatch_sync(queue, ^{
-			NSMutableDictionary *commandsByTimeStamp = synth->_scheduledCommandsByTimeStamp;
-			if (!commandsByTimeStamp.count) return;
+			CFMutableDictionaryRef commandsByTimeStamp = synth->_scheduledCommandsByTimeStamp;
+			if (!commandsByTimeStamp || !CFDictionaryGetCount(commandsByTimeStamp)) return;
 
-			NSMutableIndexSet *commandTimeStamps = synth->_scheduledCommandTimeStamps;
-			commandsToSend = [NSMutableArray array];
 
-			NSRange range = NSMakeRange(0, toTimeStamp);
-			[commandTimeStamps enumerateRangesInRange:range options:0 usingBlock:^(NSRange range, BOOL *stop) {
-				MIDITimeStamp rangeStart = range.location;
-				MIDITimeStamp rangeEnd = rangeStart + range.length;
+			CFMutableSetRef commandTimeStampsSet = synth->_scheduledCommandTimeStampsSet;
+			CFMutableArrayRef commandTimeStampsArray = synth->_scheduledCommandTimeStampsArray;
+			if (!commandTimeStampsSet || !commandTimeStampsArray) return;
 
-				for (MIDITimeStamp timeStamp = rangeStart; timeStamp < rangeEnd; timeStamp++) {
-					NSNumber *timeStampNumber = @(timeStamp);
-					[commandsToSend addObjectsFromArray:commandsByTimeStamp[timeStampNumber]];
-					[commandsByTimeStamp removeObjectForKey:timeStampNumber];
-				}
-			}];
-			[commandTimeStamps removeIndexesInRange:range];
+			CFArrayRef commandTimeStampsArrayCopy = CFArrayCreateCopy(NULL, commandTimeStampsArray);
+			CFIndex count = CFArrayGetCount(commandTimeStampsArrayCopy);
+			for (CFIndex i = 0; i < count; i++) {
+				NSNumber *timeStampNumber = (__bridge NSNumber *)CFArrayGetValueAtIndex(commandTimeStampsArrayCopy, i);
+				MIDITimeStamp timeStamp = timeStampNumber.unsignedIntegerValue;
+				if (timeStamp >= toTimeStamp) break;
+
+				CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(commandsByTimeStamp, (__bridge void*)timeStampNumber);
+				CFArrayAppendArray(commandsToSend, commandsAtTimeStamp, CFRangeMake(0, CFArrayGetCount(commandsAtTimeStamp)));
+
+				CFDictionaryRemoveValue(commandsByTimeStamp, (__bridge void *)timeStampNumber);
+				CFSetRemoveValue(commandTimeStampsSet, (__bridge void*)timeStampNumber);
+				CFArrayRemoveValueAtIndex(commandTimeStampsArray, 0);
+			}
+			CFRelease(commandTimeStampsArrayCopy);
 		});
 
-		static NSTimeInterval secondsPerMIDITimeStamp = 0;
-		if (!secondsPerMIDITimeStamp) secondsPerMIDITimeStamp = [MIKMIDIClock secondsPerMIDITimeStamp];
+		NSTimeInterval secondsPerMIDITimeStamp = MIKMIDIClockSecondsPerMIDITimeStamp();
 
-		for (MIKMIDICommand *command in commandsToSend) {
+		CFIndex commandCount = CFArrayGetCount(commandsToSend);
+		for (CFIndex i = 0; i < commandCount; i++) {
+			MIKMIDICommand *command = (__bridge MIKMIDICommand *)CFArrayGetValueAtIndex(commandsToSend, i);
+
 			MIDITimeStamp sendTimeStamp = command.midiTimestamp;
 			if (sendTimeStamp < inTimeStamp->mHostTime) sendTimeStamp = inTimeStamp->mHostTime;
 			MIDITimeStamp timeStampOffset = sendTimeStamp - inTimeStamp->mHostTime;
@@ -454,6 +482,8 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 				return err;
 			}
 		}
+
+		CFRelease(commandsToSend);
 	}
 	return noErr;
 }

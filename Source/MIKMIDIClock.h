@@ -9,6 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+/**
+ *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
+ *
+ *  @param timeInterval The number of seconds to convert into number of MIDITimeStamps.
+ *
+ *  @return The number of MIDITimeStamps that would occur in the specified time interval.
+ */
+Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval);
+
+/**
+ *  Returns the number of seconds per each MIDITimeStamp.
+ *
+ *  @return Then number of seconds per each MIDITimeStamp.
+ */
+Float64 MIKMIDIClockSecondsPerMIDITimeStamp();
+
 
 /**
  *  MIKMIDIClock provides the number of seconds per MIDITimeStamp, as well as the
@@ -18,22 +34,6 @@
  *  and MusicTimeStamp.
  */
 @interface MIKMIDIClock : NSObject
-
-/**
- *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
- *
- *  @param timeInterval The number of seconds to convert into number of MIDITimeStamps.
- *
- *  @return The number of MIDITimeStamps that would occur in the specified time interval.
- */
-+ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval;
-
-/**
- *  Returns the number of seconds per each MIDITimeStamp.
- *
- *  @return Then number of seconds per each MIDITimeStamp.
- */
-+ (Float64)secondsPerMIDITimeStamp;
 
 /**
  *  Creates and initializes a new instance of MIKMIDIClock.
@@ -192,6 +192,27 @@
  *  @see -midiTimeStampForMusicTimeStamp:
  */
 - (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp DEPRECATED_ATTRIBUTE;
+
+/**
+ *	@deprecated This method is deprecated. Use MIKMIDIClockMIDITimeStampsPerTimeInterval() instead.
+ *
+ *  Returns the number of seconds per each MIDITimeStamp.
+ *
+ *  @return Then number of seconds per each MIDITimeStamp.
+ */
++ (Float64)secondsPerMIDITimeStamp DEPRECATED_ATTRIBUTE;
+
+/**
+ *	@deprecated This method is deprecated. Use MIKMIDIClockSecondsPerMIDITimeStamp() instead.
+ *
+ *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
+ *
+ *  @param timeInterval The number of seconds to convert into number of MIDITimeStamps.
+ *
+ *  @return The number of MIDITimeStamps that would occur in the specified time interval.
+ */
++ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval DEPRECATED_ATTRIBUTE;
+
 
 @end
 
