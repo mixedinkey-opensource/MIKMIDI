@@ -27,21 +27,22 @@
 
 #pragma mark -
 @interface MIKMIDIClock ()
+{
+	Float64 _currentTempo;
+	MIDITimeStamp _timeStampZero;
+	MIDITimeStamp _lastSyncedMIDITimeStamp;
+	MusicTimeStamp _lastSyncedMusicTimeStamp;
 
-@property (nonatomic) Float64 currentTempo;
-@property (nonatomic) MIDITimeStamp timeStampZero;
-@property (nonatomic) MIDITimeStamp lastSyncedMIDITimeStamp;
-@property (nonatomic) MusicTimeStamp lastSyncedMusicTimeStamp;
+	Float64 _musicTimeStampsPerMIDITimeStamp;
+	Float64 _midiTimeStampsPerMusicTimeStamp;
 
-@property (nonatomic) Float64 musicTimeStampsPerMIDITimeStamp;
-@property (nonatomic) Float64 midiTimeStampsPerMusicTimeStamp;
+	NSMutableDictionary *_historicalClocks;
+	NSMutableOrderedSet *_historicalClockMIDITimeStamps;
 
-@property (nonatomic, strong) NSMutableDictionary *historicalClocks;
-@property (nonatomic, strong) NSMutableOrderedSet *historicalClockMIDITimeStamps;
+	dispatch_queue_t _clockQueue;
+}
 
 @property (nonatomic, getter=isReady) BOOL ready;
-
-@property (nonatomic) dispatch_queue_t clockQueue;
 
 @end
 
@@ -74,7 +75,7 @@
 			}
 #endif
 
-			self.clockQueue = dispatch_queue_create(queueLabel.UTF8String, attr);
+			_clockQueue = dispatch_queue_create(queueLabel.UTF8String, attr);
 		}
 	}
 	return self;
@@ -82,11 +83,11 @@
 
 #pragma mark - Queue
 
-- (void)dispatchToClockQueue:(void (^)())block
+static void dispatchToClockQueue(MIKMIDIClock *self, void(^block)())
 {
 	if (!block) return;
 
-	dispatch_queue_t queue = self.clockQueue;
+	dispatch_queue_t queue = self->_clockQueue;
 	if (queue) {
 		dispatch_sync(queue, block);
 	} else {
@@ -98,17 +99,18 @@
 
 - (void)syncMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withMIDITimeStamp:(MIDITimeStamp)midiTimeStamp tempo:(Float64)tempo
 {
-	[self dispatchToClockQueue:^{
-		if (self.lastSyncedMIDITimeStamp) {
+	[self willChangeValueForKey:@"ready"];
+	dispatchToClockQueue(self, ^{
+		if (_lastSyncedMIDITimeStamp) {
 			// Add a clock to the historical clocks
-			NSMutableDictionary *historicalClocks = self.historicalClocks;
+			NSMutableDictionary *historicalClocks = _historicalClocks;
 			NSNumber *midiTimeStampNumber = @(midiTimeStamp);
-			NSMutableOrderedSet *historicalClockMIDITimeStamps = self.historicalClockMIDITimeStamps;
+			NSMutableOrderedSet *historicalClockMIDITimeStamps = _historicalClockMIDITimeStamps;
 
 			if (!historicalClocks) {
 				historicalClocks = [NSMutableDictionary dictionary];
-				self.historicalClocks = historicalClocks;
-				self.historicalClockMIDITimeStamps = [NSMutableOrderedSet orderedSet];
+				_historicalClocks = historicalClocks;
+				_historicalClockMIDITimeStamps = [NSMutableOrderedSet orderedSet];
 			} else {
 				// Remove clocks old enough to not be needed anymore
 				MIDITimeStamp oldTimeStamp = MIKMIDIGetCurrentTimeStamp() - MIKMIDIClockMIDITimeStampsPerTimeInterval(kDurationToKeepHistoricalClocks);
@@ -133,11 +135,11 @@
 
 			// Add clock to history
 			MIKMIDIClock *historicalClock = [[MIKMIDIClock alloc] initWithQueue:NO];
-			historicalClock.currentTempo = self.currentTempo;
-			historicalClock.timeStampZero = self.timeStampZero;
-			historicalClock.lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
-			historicalClock.musicTimeStampsPerMIDITimeStamp = self.musicTimeStampsPerMIDITimeStamp;
-			historicalClock.midiTimeStampsPerMusicTimeStamp = self.midiTimeStampsPerMusicTimeStamp;
+			historicalClock->_currentTempo = _currentTempo;
+			historicalClock->_timeStampZero = _timeStampZero;
+			historicalClock->_lastSyncedMIDITimeStamp = _lastSyncedMIDITimeStamp;
+			historicalClock->_musicTimeStampsPerMIDITimeStamp = _musicTimeStampsPerMIDITimeStamp;
+			historicalClock->_midiTimeStampsPerMusicTimeStamp = _midiTimeStampsPerMusicTimeStamp;
 			historicalClocks[midiTimeStampNumber] = historicalClock;
 			[historicalClockMIDITimeStamps addObject:midiTimeStampNumber];
 		}
@@ -147,119 +149,147 @@
 		Float64 secondsPerMusicTimeStamp = 60.0 / tempo;
 		Float64 midiTimeStampsPerMusicTimeStamp = secondsPerMusicTimeStamp / secondsPerMIDITimeStamp;
 
-		self.currentTempo = tempo;
-		self.lastSyncedMIDITimeStamp = midiTimeStamp;
-		self.lastSyncedMusicTimeStamp = musicTimeStamp;
-		self.timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
-		self.midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
-		self.musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
-		self.ready = YES;
-	}];
+		_currentTempo = tempo;
+		_lastSyncedMIDITimeStamp = midiTimeStamp;
+		_lastSyncedMusicTimeStamp = musicTimeStamp;
+		_timeStampZero = midiTimeStamp - (musicTimeStamp * midiTimeStampsPerMusicTimeStamp);
+		_midiTimeStampsPerMusicTimeStamp = midiTimeStampsPerMusicTimeStamp;
+		_musicTimeStampsPerMIDITimeStamp = secondsPerMIDITimeStamp / secondsPerMusicTimeStamp;
+		_ready = YES;
+	});
+	[self didChangeValueForKey:@"ready"];
 }
 
 - (void)unsyncMusicTimeStampsAndTemposFromMIDITimeStamps
 {
-	[self dispatchToClockQueue:^{
-		self.ready = NO;
-		self.currentTempo = 0;
-		self.historicalClocks = nil;
-		self.historicalClockMIDITimeStamps = nil;
-	}];
+	[self willChangeValueForKey:@"ready"];
+	dispatchToClockQueue(self, ^{
+		_ready = NO;
+		_currentTempo = 0;
+		_historicalClocks = nil;
+		_historicalClockMIDITimeStamps = nil;
+	});
+	[self didChangeValueForKey:@"ready"];
 }
 
-- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+static MusicTimeStamp musicTimeStampForMIDITimeStamp(MIKMIDIClock *self, MIDITimeStamp midiTimeStamp)
 {
 	__block MusicTimeStamp musicTimeStamp = 0;
 
-	[self dispatchToClockQueue:^{
-		if (!self.isReady) return;
+	dispatchToClockQueue(self, ^{
+		if (!self->_ready) return;
 
-		MIDITimeStamp lastSyncedMIDITimeStamp = self.lastSyncedMIDITimeStamp;
+		MIDITimeStamp lastSyncedMIDITimeStamp = self->_lastSyncedMIDITimeStamp;
 		if (midiTimeStamp >= lastSyncedMIDITimeStamp) {
-			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:self];
+			musicTimeStamp = musicTimeStampForMIDITimeStampWithHistoricalClock(midiTimeStamp, self);
 		} else {
-			musicTimeStamp = [self musicTimeStampForMIDITimeStamp:midiTimeStamp withClock:[self clockForMIDITimeStamp:midiTimeStamp]];
+			musicTimeStamp = musicTimeStampForMIDITimeStampWithHistoricalClock(midiTimeStamp, clockForMIDITimeStamp(self, midiTimeStamp));
 		}
-	}];
+	});
 
 	return musicTimeStamp;
 }
 
-- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp withClock:(MIKMIDIClock *)clock
+- (MusicTimeStamp)musicTimeStampForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
-	if (midiTimeStamp == clock.lastSyncedMIDITimeStamp) return clock.lastSyncedMusicTimeStamp;
-	MIDITimeStamp timeStampZero = clock.timeStampZero;
-	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock.musicTimeStampsPerMIDITimeStamp) : -((timeStampZero - midiTimeStamp) * clock.musicTimeStampsPerMIDITimeStamp);
+	return musicTimeStampForMIDITimeStamp(self, midiTimeStamp);
 }
 
-- (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+static MusicTimeStamp musicTimeStampForMIDITimeStampWithHistoricalClock(MIDITimeStamp midiTimeStamp, MIKMIDIClock *clock)
+{
+	if (midiTimeStamp == clock->_lastSyncedMIDITimeStamp) return clock->_lastSyncedMusicTimeStamp;
+	MIDITimeStamp timeStampZero = clock->_timeStampZero;
+	return (midiTimeStamp >= timeStampZero) ? ((midiTimeStamp - timeStampZero) * clock->_musicTimeStampsPerMIDITimeStamp) : -((timeStampZero - midiTimeStamp) * clock->_musicTimeStampsPerMIDITimeStamp);
+}
+
+static MIDITimeStamp midiTimeStampForMusicTimeStamp(MIKMIDIClock *self, MusicTimeStamp musicTimeStamp)
 {
 	__block MIDITimeStamp midiTimeStamp = 0;
 
-	[self dispatchToClockQueue:^{
-		if (!self.isReady) return;
-		if (musicTimeStamp == self.lastSyncedMusicTimeStamp) { midiTimeStamp = self.lastSyncedMIDITimeStamp; return; }
+	dispatchToClockQueue(self, ^{
+		if (!self->_ready) return;
+		if (musicTimeStamp == self->_lastSyncedMusicTimeStamp) { midiTimeStamp = self->_lastSyncedMIDITimeStamp; return; }
 
-		midiTimeStamp = round(musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp) + self.timeStampZero;
+		midiTimeStamp = round(musicTimeStamp * self->_midiTimeStampsPerMusicTimeStamp) + self->_timeStampZero;
 
-		if (midiTimeStamp < self.lastSyncedMIDITimeStamp) {
-			NSDictionary *historicalClocks = self.historicalClocks;
-			for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+		if (midiTimeStamp < self->_lastSyncedMIDITimeStamp) {
+			NSDictionary *historicalClocks = self->_historicalClocks;
+			for (NSNumber *historicalClockTimeStamp in [[self->_historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
 				MIKMIDIClock *clock = historicalClocks[historicalClockTimeStamp];
-				MIDITimeStamp historicalMIDITimeStamp = round(musicTimeStamp * clock.midiTimeStampsPerMusicTimeStamp) + clock.timeStampZero;
-				if (historicalMIDITimeStamp >= clock.lastSyncedMIDITimeStamp) {
+				MIDITimeStamp historicalMIDITimeStamp = round(musicTimeStamp * clock->_midiTimeStampsPerMusicTimeStamp) + clock->_timeStampZero;
+				if (historicalMIDITimeStamp >= clock->_lastSyncedMIDITimeStamp) {
 					midiTimeStamp = historicalMIDITimeStamp;
 					break;
 				}
 			}
 		}
-	}];
+	});
 
 	return midiTimeStamp;
 }
 
-- (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+- (MIDITimeStamp)midiTimeStampForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	return midiTimeStampForMusicTimeStamp(self, musicTimeStamp);
+}
+
+static MIDITimeStamp midiTimeStampsPerMusicTimeStamp(MIKMIDIClock *self, MusicTimeStamp musicTimeStamp)
 {
 	__block MIDITimeStamp midiTimeStamps = 0;
 
-	[self dispatchToClockQueue:^{
-		if (self.isReady) midiTimeStamps = musicTimeStamp * self.midiTimeStampsPerMusicTimeStamp;
-	}];
+	dispatchToClockQueue(self, ^{
+		if (self->_ready) midiTimeStamps = musicTimeStamp * self->_midiTimeStampsPerMusicTimeStamp;
+	});
 
 	return midiTimeStamps;
 }
 
+- (MIDITimeStamp)midiTimeStampsPerMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	return midiTimeStampsPerMusicTimeStamp(self, musicTimeStamp);
+}
+
 #pragma mark - Tempo
 
-- (Float64)tempoAtMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+static Float64 tempoAtMIDITimeStamp(MIKMIDIClock *self, MIDITimeStamp midiTimeStamp)
 {
 	__block Float64 tempo = 0;
 
-	[self dispatchToClockQueue:^{
-		if (self.isReady) {
-			if (midiTimeStamp >= self.lastSyncedMIDITimeStamp) {
-				tempo = self.currentTempo;
+	dispatchToClockQueue(self, ^{
+		if (self->_ready) {
+			if (midiTimeStamp >= self->_lastSyncedMIDITimeStamp) {
+				tempo = self->_currentTempo;
 			} else {
-				tempo = [[self clockForMIDITimeStamp:midiTimeStamp] currentTempo];
+				tempo = [clockForMIDITimeStamp(self, midiTimeStamp) currentTempo];
 			}
 		}
-	}];
+	});
 
 	return tempo;
 }
 
+- (Float64)tempoAtMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+{
+	return tempoAtMIDITimeStamp(self, midiTimeStamp);
+}
+
+Float64 tempoAtMusicTimeStamp(MIKMIDIClock *self, MusicTimeStamp musicTimeStamp)
+{
+	return tempoAtMIDITimeStamp(self, midiTimeStampForMusicTimeStamp(self, musicTimeStamp));
+}
+
 - (Float64)tempoAtMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
 {
-	return [self tempoAtMIDITimeStamp:[self midiTimeStampForMusicTimeStamp:musicTimeStamp]];
+	return tempoAtMusicTimeStamp(self, musicTimeStamp);
 }
 
 #pragma mark - Historical Clocks
 
-- (MIKMIDIClock *)clockForMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
+static MIKMIDIClock *clockForMIDITimeStamp(MIKMIDIClock *self, MIDITimeStamp midiTimeStamp)
 {
 	MIKMIDIClock *clock = self;
-	NSDictionary *historicalClocks = self.historicalClocks;
-	for (NSNumber *historicalClockTimeStamp in [[self.historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
+	NSDictionary *historicalClocks = self->_historicalClocks;
+	for (NSNumber *historicalClockTimeStamp in [[self->_historicalClockMIDITimeStamps reverseObjectEnumerator] allObjects]) {
 		if ([historicalClockTimeStamp unsignedLongLongValue] > midiTimeStamp) {
 			clock = historicalClocks[historicalClockTimeStamp];
 		} else {
@@ -276,17 +306,7 @@
 	return (MIKMIDIClock *)[MIKMIDISyncedClockProxy syncedClockWithClock:self];
 }
 
-#pragma mark - Class Methods
-
-+ (Float64)secondsPerMIDITimeStamp
-{
-	return MIKMIDIClockSecondsPerMIDITimeStamp();
-}
-
-+ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
-{
-	return MIKMIDIClockMIDITimeStampsPerTimeInterval(timeInterval);
-}
+#pragma mark - Functions
 
 Float64 MIKMIDIClockSecondsPerMIDITimeStamp()
 {
@@ -301,7 +321,6 @@ Float64 MIKMIDIClockSecondsPerMIDITimeStamp()
 
 }
 
-
 Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
 {
 	static Float64 midiTimeStampsPerSecond = 0;
@@ -314,6 +333,16 @@ Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
 - (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
 {
 	[self syncMusicTimeStamp:musicTimeStamp withMIDITimeStamp:midiTimeStamp tempo:tempo];
+}
+
++ (Float64)secondsPerMIDITimeStamp
+{
+	return MIKMIDIClockSecondsPerMIDITimeStamp();
+}
+
++ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
+{
+	return MIKMIDIClockMIDITimeStampsPerTimeInterval(timeInterval);
 }
 
 @end
@@ -332,21 +361,55 @@ Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
 	SEL selector = invocation.selector;
-	if (selector == @selector(syncMusicTimeStamp:withMIDITimeStamp:tempo:)) return;
-	if (selector == @selector(unsyncMusicTimeStampsAndTemposFromMIDITimeStamps)) return;
-	if (selector == @selector(setMusicTimeStamp:withTempo:atMIDITimeStamp:)) return;	// deprecated
 
-	if (selector == @selector(syncedClock)) {
+	// Optimizations
+	if (selector == @selector(midiTimeStampForMusicTimeStamp:)) {
+		MusicTimeStamp musicTimeStamp;
+		[invocation getArgument:&musicTimeStamp atIndex:2];
+
+		MIDITimeStamp midiTimeStamp = midiTimeStampForMusicTimeStamp(_masterClock, musicTimeStamp);
+		return [invocation setReturnValue:&midiTimeStamp];
+	} else if (selector == @selector(musicTimeStampForMIDITimeStamp:)) {
+		MIDITimeStamp midiTimeStamp;
+		[invocation getArgument:&midiTimeStamp atIndex:2];
+
+		MusicTimeStamp musicTimeStamp = musicTimeStampForMIDITimeStamp(_masterClock, midiTimeStamp);
+		return [invocation setReturnValue:&musicTimeStamp];
+	} else if (selector == @selector(tempoAtMIDITimeStamp:)) {
+		MIDITimeStamp midiTimeStamp;
+		[invocation getArgument:&midiTimeStamp atIndex:2];
+
+		Float64 tempo = tempoAtMIDITimeStamp(_masterClock, midiTimeStamp);
+		return [invocation setReturnValue:&tempo];
+	} else if (selector == @selector(tempoAtMusicTimeStamp:)) {
+		MusicTimeStamp musicTimeStamp;
+		[invocation getArgument:&musicTimeStamp atIndex:2];
+
+		Float64 tempo = tempoAtMusicTimeStamp(_masterClock, musicTimeStamp);
+		return [invocation setReturnValue:&tempo];
+	} else if (selector == @selector(midiTimeStampsPerMusicTimeStamp:)) {
+		MusicTimeStamp musicTimeStamp;
+		[invocation getArgument:&musicTimeStamp atIndex:2];
+
+		MIDITimeStamp midiTimeStamps = midiTimeStampsPerMusicTimeStamp(_masterClock, musicTimeStamp);
+		return [invocation setReturnValue:&midiTimeStamps];
+	} else if (selector == @selector(syncedClock)) {
 		MIKMIDISyncedClockProxy *syncedClock = self;
 		return [invocation setReturnValue:&syncedClock];
 	}
 
+	// Ignored selectors
+	if (selector == @selector(syncMusicTimeStamp:withMIDITimeStamp:tempo:)) return;
+	if (selector == @selector(unsyncMusicTimeStampsAndTemposFromMIDITimeStamps)) return;
+	if (selector == @selector(setMusicTimeStamp:withTempo:atMIDITimeStamp:)) return;	// deprecated
+
+	// Pass through remaining selectors
 	[invocation invokeWithTarget:self.masterClock];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
 {
-	return [self.masterClock methodSignatureForSelector:sel];
+	return [_masterClock methodSignatureForSelector:sel];
 }
 
 @end
