@@ -108,7 +108,7 @@
 	if ([self.internalData length] < 2) [self.internalData increaseLengthBy:2-[self.internalData length]];
 	
 	UInt8 *data = (UInt8 *)[self.internalData mutableBytes];
-	data[0] &= 0x0F | (commandType & 0xF0); // Need to avoid changing channel
+    data[0] = (0xF0 & commandType) | (data[0] & 0x0F);
 }
 
 @end
