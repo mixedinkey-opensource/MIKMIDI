@@ -184,14 +184,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	dispatch_sync(queue, ^{
 		self.pendingNoteOffs = [NSMutableDictionary dictionary];
-		self.latestScheduledMIDITimeStamp = midiTimeStamp - 1;
+		self.latestScheduledMIDITimeStamp = midiTimeStamp;
 		dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.processingQueue);
 		if (!timer) return NSLog(@"Unable to create processing timer for %@.", [self class]);
 		self.processingTimer = timer;
 
 		dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC, 0.05 * NSEC_PER_SEC);
 		dispatch_source_set_event_handler(timer, ^{
-			[self processSequenceStartingFromMIDITimeStamp:self.latestScheduledMIDITimeStamp + 1];
+			[self processSequenceStartingFromMIDITimeStamp:self.latestScheduledMIDITimeStamp];
 		});
 
 		dispatch_resume(timer);
