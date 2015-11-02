@@ -212,7 +212,9 @@
 /**
  *  The length of the MIDI track.
  *
- *  This property can be observed using Key Value Observing.
+ *  This property can be observed using Key Value Observing. 
+ *
+ *	@note This property will automatically get updated whenever the tracks events are changed.
  */
 @property (nonatomic) MusicTimeStamp length;
 

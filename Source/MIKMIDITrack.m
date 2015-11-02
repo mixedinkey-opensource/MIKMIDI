@@ -655,29 +655,29 @@
 
 + (NSSet *)keyPathsForValuesAffectingLength
 {
-	return [NSSet setWithObjects:@"events", nil];
+	return [NSSet setWithObjects:@"sortedEventsCache", nil];
 }
 
 - (MusicTimeStamp)length
 {
-	__block MusicTimeStamp length = 0;
+	if (_length == -1) {
+		MusicTimeStamp lastStamp = 0;
 
-	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		UInt32 lengthLength = sizeof(length);
-		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &length, &lengthLength);
-		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-	}];
+		for (MIKMIDIEvent *event in self.events) {
+			MusicTimeStamp endStamp = [event respondsToSelector:@selector(endTimeStamp)] ? [(MIKMIDINoteEvent *)event endTimeStamp] : event.timeStamp;
+			if (endStamp > lastStamp) lastStamp = endStamp;
+		}
 
-	return length;
+		_length = lastStamp;
+	}
+
+	return _length;
 }
 
-- (void)setLength:(MusicTimeStamp)length
+- (void)setSortedEventsCache:(NSArray *)sortedEventsCache
 {
-	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		MusicTimeStamp newLength = length;
-		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_TrackLength, &newLength, sizeof(length));
-		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-	}];
+	_sortedEventsCache = sortedEventsCache;
+	_length = -1;
 }
 
 - (SInt16)timeResolution
