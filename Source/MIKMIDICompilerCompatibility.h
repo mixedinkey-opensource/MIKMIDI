@@ -23,7 +23,9 @@
 #ifndef MIKArrayOf
 #if __has_feature(objc_generics)
 #define MIKArrayOf(TYPE) NSArray<TYPE>
+#define MIKArrayOfKindOf(TYPE) NSArray<__kindof TYPE>
 #else
 #define MIKArrayOf(TYPE) NSArray
+#define MIKArrayOfKindOf(TYPE) NSArray
 #endif
 #endif // #ifndef MIKArrayOf
