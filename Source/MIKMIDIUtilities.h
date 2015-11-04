@@ -11,6 +11,15 @@
 #import "MIKMIDIMappableResponder.h"
 #import "MIKMIDICommand.h"
 
+// Keep older versions of the compiler happy
+#ifndef NS_ASSUME_NONNULL_BEGIN
+#define NS_ASSUME_NONNULL_BEGIN
+#define NS_ASSUME_NONNULL_END
+#define nullable
+#define nonnullable
+#define __nullable
+#endif
+
 #ifndef MIKArrayOf
 #if __has_feature(objc_generics)
 #define MIKArrayOf(TYPE) NSArray<TYPE>
