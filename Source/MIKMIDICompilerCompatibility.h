@@ -22,10 +22,18 @@
 
 #ifndef MIKArrayOf
 #if __has_feature(objc_generics)
+
 #define MIKArrayOf(TYPE) NSArray<TYPE>
 #define MIKArrayOfKindOf(TYPE) NSArray<__kindof TYPE>
+
+#define MIKMapTableOf(KEYTYPE, OBJTYPE) NSMapTable<KEYTYPE, OBJTYPE>
+
 #else
+
 #define MIKArrayOf(TYPE) NSArray
 #define MIKArrayOfKindOf(TYPE) NSArray
+
+#define MIKMapTableOf(KEYTYPE, OBJTYPE) NSMapTable
+
 #endif
 #endif // #ifndef MIKArrayOf

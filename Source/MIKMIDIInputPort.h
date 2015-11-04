@@ -24,15 +24,12 @@ typedef void(^MIKMIDIEventHandlerBlock)(MIKMIDISourceEndpoint *source, MIKArrayO
  */
 @interface MIKMIDIInputPort : MIKMIDIPort
 
-- (BOOL)connectToSource:(MIKMIDISourceEndpoint *)source error:(NSError **)error;
-- (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source;
+- (id)connectToSource:(MIKMIDISourceEndpoint *)source
+				error:(NSError **)error
+		 eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (void)disconnectConnectionForToken:(id)token;
 
 @property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIEndpoint *) *connectedSources;
-
-@property (nonatomic, strong, readonly) NSSet *eventHandlers;
-- (id)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler; // Returns a token
-- (void)removeEventHandlerForToken:(id)token;
-- (void)removeAllEventHandlers;
 
 @property (nonatomic) BOOL coalesces14BitControlChangeCommands; // Default is YES
 
