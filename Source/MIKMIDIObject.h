@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "MIKMIDIUtilities.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

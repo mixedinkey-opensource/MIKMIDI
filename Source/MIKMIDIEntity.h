@@ -7,7 +7,7 @@
 //
 
 #import "MIKMIDIObject.h"
-#import "MIKMIDIUtilities.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIDevice;
 @class MIKMIDIEndpoint;

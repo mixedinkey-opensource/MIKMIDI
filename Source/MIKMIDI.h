@@ -92,3 +92,4 @@
 // Utilities
 #import "MIKMIDIUtilities.h"
 #import "MIKMIDIErrors.h"
+#import "MIKMIDICompilerCompatibility.h"
