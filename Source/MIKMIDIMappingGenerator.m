@@ -566,10 +566,7 @@ FINALIZE_RESULT_AND_RETURN:
 
 - (void)disconnectFromDevice
 {
-	NSArray *sources = [self.device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	if (![sources count]) return;
-	MIKMIDISourceEndpoint *source = [sources objectAtIndex:0];
-	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:source forConnectionToken:self.connectionToken];
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.connectionToken];
 }
 
 #pragma mark - Properties

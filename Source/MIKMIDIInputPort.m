@@ -19,10 +19,19 @@
 #error MIKMIDIInputPort.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIInputPort.m in the Build Phases for this target
 #endif
 
+@interface MIKMIDIConnectionTokenAndEventHandler : NSObject
+
+- (instancetype)initWithConnectionToken:(NSString *)token eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+
+@property (nonatomic, strong, readonly) NSString *connectionToken;
+@property (nonatomic, strong, readonly) MIKMIDIEventHandlerBlock eventHandler;
+
+@end
+
 @interface MIKMIDIInputPort ()
 
 @property (nonatomic, strong) NSMutableArray *internalSources;
-@property (nonatomic, strong, readwrite) NSMutableDictionary *eventHandlersByToken;
+@property (nonatomic, strong, readwrite) MIKMapTableOf(MIKMIDIEndpoint *, NSMutableArray *) *handlerTokenPairsByEndpoint;
 
 @property (nonatomic, strong) NSMutableArray *bufferedMSBCommands;
 @property (nonatomic) dispatch_queue_t bufferedCommandQueue;
@@ -30,9 +39,6 @@
 @end
 
 @implementation MIKMIDIInputPort
-{
-	NSMutableSet *_eventHandlers;
-}
 
 - (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name
 {
@@ -47,7 +53,7 @@
 											 &port);
 		if (error != noErr) { self = nil; return nil; }
 		self.portRef = port; // MIKMIDIPort will take care of disposing of the port when needed
-		_eventHandlersByToken = [[NSMutableDictionary alloc] init];
+		_handlerTokenPairsByEndpoint = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		_internalSources = [[NSMutableArray alloc] init];
 		_coalesces14BitControlChangeCommands = YES;
 		
@@ -66,6 +72,38 @@
 }
 
 #pragma mark - Public
+
+- (id)connectToSource:(MIKMIDISourceEndpoint *)source
+				error:(NSError **)error
+		 eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+{
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	if (![self.connectedSources containsObject:source] &&
+		![self connectToSource:source error:error]) {
+		return nil;
+	}
+
+	NSString *uuidString = [self createNewConnectionToken];
+	[self addConnectionToken:uuidString andEventHandler:eventHandler forSource:source];
+	return uuidString;
+}
+
+- (void)disconnectConnectionForToken:(id)token
+{
+	MIKMIDISourceEndpoint *source = [self sourceEndpointForConnectionToken:token];
+	if (!source) return; // Already disconnected?
+	
+	[self removeEventHandlerForConnectionToken:token source:source];
+	
+	NSArray *handlerPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
+	if (![handlerPairs count]) {
+		[self disconnectFromSource:source];
+	}
+}
+
+#pragma mark - Private
+
+#pragma mark Connection / Disconnection
 
 - (BOOL)connectToSource:(MIKMIDISourceEndpoint *)source error:(NSError **)error;
 {
@@ -88,39 +126,61 @@
 	[self removeInternalSourcesObject:source];
 }
 
-- (id)addEventHandler:(MIKMIDIEventHandlerBlock)eventHandler; // Returns a token
+#pragma mark Event Handler Management
+
+- (NSString *)createNewConnectionToken
 {
-	CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-	NSString *uuidString = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuid));
-	CFRelease(uuid);
-	while ([self.eventHandlersByToken valueForKey:uuidString]) {
-		// Very unlikely, but just to be safe
-		uuid = CFUUIDCreate(kCFAllocatorDefault);
-		uuidString = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuid));
-		CFRelease(uuid);
-	}
-	
-	[self willChangeValueForKey:@"eventHandlers"];
-	self.eventHandlersByToken[uuidString] = [eventHandler copy];
-	[self didChangeValueForKey:@"eventHandlers"];
+	NSString *uuidString = nil;
+	do { // Very unlikely, but just to be safe
+		uuidString = [[NSUUID UUID] UUIDString];
+		MIKMIDIConnectionTokenAndEventHandler *existingPair = nil;
+		for (MIKMIDIConnectionTokenAndEventHandler *pair in self.handlerTokenPairsByEndpoint.objectEnumerator) {
+			if ([pair.connectionToken isEqualToString:uuidString]) {
+				existingPair = pair;
+				break;
+			}
+		}
+		if (!existingPair) break;
+	} while (1);
 	return uuidString;
 }
 
-- (void)removeEventHandlerForToken:(id)token;
+- (void)addConnectionToken:(NSString *)connectionToken andEventHandler:(MIKMIDIEventHandlerBlock)eventHandler forSource:(MIKMIDISourceEndpoint *)source
 {
-	[self willChangeValueForKey:@"eventHandlers"];
-	[self.eventHandlersByToken removeObjectForKey:token];
-	[self didChangeValueForKey:@"eventHandlers"];
+	MIKMIDIConnectionTokenAndEventHandler *tokenHandlerPair =
+	[[MIKMIDIConnectionTokenAndEventHandler alloc] initWithConnectionToken:connectionToken eventHandler:eventHandler];
+	NSMutableArray *tokenPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
+	if (!tokenPairs) {
+		tokenPairs = [NSMutableArray array];
+		[self.handlerTokenPairsByEndpoint setObject:tokenPairs forKey:source];
+	}
+	[tokenPairs addObject:tokenHandlerPair];
 }
 
-- (void)removeAllEventHandlers;
+- (void)removeEventHandlerForConnectionToken:(NSString *)connectionToken source:(MIKMIDISourceEndpoint *)source
 {
-	[self willChangeValueForKey:@"eventHandlers"];
-	[self.eventHandlersByToken removeAllObjects];
-	[self didChangeValueForKey:@"eventHandlers"];
+	NSMutableArray *handlerPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
+	for (MIKMIDIConnectionTokenAndEventHandler *pair in [handlerPairs copy]) {
+		if ([pair.connectionToken isEqual:connectionToken]) {
+			[handlerPairs removeObject:pair];
+		}
+	}
 }
 
-#pragma mark - Private
+- (MIKMIDISourceEndpoint *)sourceEndpointForConnectionToken:(NSString *)token
+{
+	for (MIKMIDISourceEndpoint *source in self.handlerTokenPairsByEndpoint.objectEnumerator) {
+		NSArray *handlerPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
+		for (MIKMIDIConnectionTokenAndEventHandler *handlerPair in handlerPairs) {
+			if ([handlerPair.connectionToken isEqual:token]) {
+				return source;
+			}
+		}
+	}
+	return nil;
+}
+
+#pragma mark Coaelescing
 
 - (BOOL)commandIsPossibleMSBOf14BitCommand:(MIKMIDICommand *)command
 {
@@ -164,11 +224,14 @@
 	return [coalescedCommands copy];
 }
 
+#pragma mark Command Handling
+
 - (void)sendCommands:(NSArray *)commands toEventHandlersFromSource:(MIKMIDISourceEndpoint *)source
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		for (MIKMIDIEventHandlerBlock handler in self.eventHandlers) {
-			handler(source, commands);
+		NSArray *handlerPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
+		for (MIKMIDIConnectionTokenAndEventHandler *handlerTokenPair in handlerPairs) {
+			handlerTokenPair.eventHandler(source, commands);
 		}
 	});
 }
@@ -225,16 +288,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 
 #pragma mark - Properties
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
-{
-	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-	
-	if ([key isEqualToString:@"connectedSources"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalSources"];
-	}
-	
-	return keyPaths;
-}
++ (NSSet *)keyPathsForValuesAffectingConnectedSources { return [NSSet setWithObjects:@"internalSources", nil]; }
 
 - (NSArray *)connectedSources { return [self.internalSources copy]; }
 
@@ -248,11 +302,6 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	[self.internalSources removeObject:source];
 }
 
-- (NSSet *)eventHandlers
-{
-	return [NSSet setWithArray:[self.eventHandlersByToken allValues]];
-}
-
 @synthesize bufferedCommandQueue = _bufferedCommandQueue;
 
 - (void)setCommandsBufferQueue:(dispatch_queue_t)commandsBufferQueue
@@ -260,6 +309,22 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	MIKMIDI_GCD_RETAIN(commandsBufferQueue);
 	MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 	_bufferedCommandQueue = commandsBufferQueue;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDIConnectionTokenAndEventHandler
+
+- (instancetype)initWithConnectionToken:(NSString *)token eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+{
+	self = [super init];
+	if (self) {
+		_connectionToken = [token copy];
+		_eventHandler = [eventHandler copy];
+	}
+	return self;
 }
 
 @end
