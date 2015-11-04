@@ -9,6 +9,8 @@
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIObject_SubclassMethods.h"
 #import "MIKMIDIEntity.h"
+#import "MIKMIDISourceEndpoint.h"
+#import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
@@ -123,7 +125,7 @@
 {
 	if (self.isVirtual) {
 		MIKMIDIEntity *entity = [self.entities firstObject];
-		MIKMIDIObject *endpoint = [entity.sources count] ? [entity.sources firstObject] : [entity.destinations firstObject];
+		MIKMIDIEndpoint	*endpoint = [entity.sources count] ? [entity.sources firstObject] : [entity.destinations firstObject];
 		return endpoint.objectRef;
 	}
 	return [super objectRef];

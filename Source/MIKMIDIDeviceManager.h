@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "MIKMIDIInputPort.h"
+#import "MIKMIDIUtilities.h"
 
+@class MIKMIDIDevice;
 @class MIKMIDISourceEndpoint;
 @class MIKMIDIClientSourceEndpoint;
 @class MIKMIDIDestinationEndpoint;
@@ -130,7 +132,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIDeviceWasAddedNotification
  *  @see MIKMIDIDeviceWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *availableDevices;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDIDevice *) *availableDevices;
 
 /**
  *  An NSArray containing MIKMIDISourceEndpoint instances representing virtual MIDI sources (inputs) on the system.
@@ -142,7 +144,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIVirtualEndpointWasAddedNotification
  *  @see MIKMIDIVirtualEndpointWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *virtualSources;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *virtualSources;
 
 /**
  *  An NSArray containing MIKMIDIDestinationEndpoint instances representing virtual
@@ -155,12 +157,12 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIVirtualEndpointWasAddedNotification
  *  @see MIKMIDIVirtualEndpointWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *virtualDestinations; // Array of MIKMIDIDestinationEndpoints
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDIDestinationEndpoint *) *virtualDestinations;
 
 
 /**
  *  An NSArray of MIKMIDISourceEndpoint instances that are connected to at least one event handler.
  */
-@property (nonatomic, readonly) NSArray *connectedInputSources; // Array of MIKMIDISourceEndpoints
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *connectedInputSources;
 
 @end

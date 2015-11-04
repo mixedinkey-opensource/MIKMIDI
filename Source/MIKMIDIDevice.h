@@ -7,6 +7,10 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDIUtilities.h"
+
+@class MIKMIDIEntity;
+@class MIKMIDIEndpoint;
 
 /**
  *  MIKMIDIDevice represents a MIDI device such as a DJ controller, MIDI piano keyboard, etc.
@@ -84,7 +88,7 @@
  *
  *  @return An initialized MIKMIDIDevice instance.
  */
-+ (instancetype)deviceWithVirtualEndpoints:(NSArray *)endpoints;
++ (instancetype)deviceWithVirtualEndpoints:(MIKArrayOf(MIKMIDIEndpoint *) *)endpoints;
 
 /**
  *  Creates and initializes a "virtual" MIKMIDIDevice instance from one or more virtual endpoints.
@@ -104,7 +108,7 @@
  *
  *  @return An initialized MIKMIDIDevice instance.
  */
-- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+- (instancetype)initWithVirtualEndpoints:(MIKArrayOf(MIKMIDIEndpoint *) *)endpoints;
 
 /**
  *  The manufacturer of the MIDI device.
@@ -121,6 +125,6 @@
  *  receiver. Entities contain logically related source and destination endpoints. Often
  *  a device will only have one entity.
  */
-@property (nonatomic, strong, readonly) NSArray *entities;
+@property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIEntity *) *entities;
 
 @end
