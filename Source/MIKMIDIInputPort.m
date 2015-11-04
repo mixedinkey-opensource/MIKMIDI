@@ -82,7 +82,7 @@
 		![self connectToSource:source error:error]) {
 		return nil;
 	}
-
+	
 	NSString *uuidString = [self createNewConnectionToken];
 	[self addConnectionToken:uuidString andEventHandler:eventHandler forSource:source];
 	return uuidString;
@@ -134,10 +134,12 @@
 	do { // Very unlikely, but just to be safe
 		uuidString = [[NSUUID UUID] UUIDString];
 		MIKMIDIConnectionTokenAndEventHandler *existingPair = nil;
-		for (MIKMIDIConnectionTokenAndEventHandler *pair in self.handlerTokenPairsByEndpoint.objectEnumerator) {
-			if ([pair.connectionToken isEqualToString:uuidString]) {
-				existingPair = pair;
-				break;
+		for (NSArray *handlerPairs in self.handlerTokenPairsByEndpoint.objectEnumerator) {
+			for (MIKMIDIConnectionTokenAndEventHandler *pair in handlerPairs) {
+				if ([pair.connectionToken isEqualToString:uuidString]) {
+					existingPair = pair;
+					break;
+				}
 			}
 		}
 		if (!existingPair) break;
