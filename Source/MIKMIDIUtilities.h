@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "MIKMIDIMapping.h"
+#import "MIKMIDIMappableResponder.h"
+#import "MIKMIDICommand.h"
 
 NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error);
 BOOL MIKSetStringPropertyOnMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSString *string, NSError *__autoreleasing*error);
@@ -55,4 +56,5 @@ NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
  *  @see MIKMIDINoteLetterForMIDINoteNumber()
  */
 NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber);
+
 

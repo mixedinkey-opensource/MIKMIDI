@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import "MIKMIDIInputPort.h"
+#import "MIKMIDICompilerCompatibility.h"
 
+@class MIKMIDIDevice;
 @class MIKMIDISourceEndpoint;
 @class MIKMIDIClientSourceEndpoint;
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDICommand;
+
+NS_ASSUME_NONNULL_BEGIN
 
 // Notifications
 /**
@@ -81,17 +85,16 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return A connection token to be used to disconnect the input, or nil if an error occurred. The connection token is opaque.
  */
-- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (nullable id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
 
 /**
  *  Disconnects a previously connected MIDI input/source endpoint. The connectionToken argument
  *  must be a token previously returned by -connectInput:error:eventHandler:. Only the
  *  event handler block passed into the call that returned the token will be disconnected.
  *
- *  @param endpoint        The MIKMIDISourceEndpoint instance from which to disconnect.
  *  @param connectionToken The connection token returned by -connectInput:error:eventHandler: when the input was connected.
  */
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken;
+- (void)disconnectConnectionforToken:(id)connectionToken;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint. 
@@ -103,7 +106,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
-- (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
 
 
 /**
@@ -116,7 +119,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
-- (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
 
 
 
@@ -130,7 +133,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIDeviceWasAddedNotification
  *  @see MIKMIDIDeviceWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *availableDevices;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDIDevice *) *availableDevices;
 
 /**
  *  An NSArray containing MIKMIDISourceEndpoint instances representing virtual MIDI sources (inputs) on the system.
@@ -142,7 +145,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIVirtualEndpointWasAddedNotification
  *  @see MIKMIDIVirtualEndpointWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *virtualSources;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *virtualSources;
 
 /**
  *  An NSArray containing MIKMIDIDestinationEndpoint instances representing virtual
@@ -155,12 +158,30 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @see MIKMIDIVirtualEndpointWasAddedNotification
  *  @see MIKMIDIVirtualEndpointWasRemovedNotification
  */
-@property (nonatomic, readonly) NSArray *virtualDestinations; // Array of MIKMIDIDestinationEndpoints
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDIDestinationEndpoint *) *virtualDestinations;
 
 
 /**
  *  An NSArray of MIKMIDISourceEndpoint instances that are connected to at least one event handler.
  */
-@property (nonatomic, readonly) NSArray *connectedInputSources; // Array of MIKMIDISourceEndpoints
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *connectedInputSources;
 
 @end
+
+@interface MIKMIDIDeviceManager (Deprecated)
+
+/**
+ *  @deprecated Use disconnectConnectionforToken: instead. This method now simply calls through to that one.
+ *
+ *  Disconnects a previously connected MIDI input/source endpoint. The connectionToken argument
+ *  must be a token previously returned by -connectInput:error:eventHandler:. Only the
+ *  event handler block passed into the call that returned the token will be disconnected.
+ *
+ *  @param endpoint        This argument is ignored.
+ *  @param connectionToken The connection token returned by -connectInput:error:eventHandler: when the input was connected.
+ */
+- (void)disconnectInput:(nullable MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken DEPRECATED_ATTRIBUTE;
+
+@end
+
+NS_ASSUME_NONNULL_END

@@ -31,6 +31,9 @@
  */
 @interface MIKMutableMIDIMetaKeySignatureEvent : MIKMIDIMetaKeySignatureEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
+@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, strong, readwrite) NSData *metaData;
 @property (nonatomic, readwrite) UInt8 key;
 @property (nonatomic, readwrite) UInt8 scale;
 

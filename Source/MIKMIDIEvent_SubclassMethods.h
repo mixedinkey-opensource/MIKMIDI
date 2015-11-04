@@ -23,15 +23,15 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
- *  Subclasses of MIKMIDIEvent must override this method, and return YES for any
- *  MIKMIDIEventType values they support. MIKMIDIEvent uses this method to determine which
- *  subclass to use to represent a particular MIDI event type.
+ *  Subclasses of MIKMIDIEvent must override this method, and return the MIKMIDIEventType
+ *  values they support. MIKMIDIEvent uses this method to determine which
+ *  subclass to use to represent a particular MIDI Event type.
  *
- *  @param type An MIKMIDIEventType value.
+ *  Note that the older +supportsMIDIEventType: by default simply calls through to this method.
  *
- *  @return YES if the subclass supports type, NO otherwise.
+ *  @return An NSArray of NSNumber instances containing MIKMIDIEventType values.
  */
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type;
++ (NSArray *)supportedMIDIEventTypes;
 
 /**
  *  The immutable counterpart class of the receiver.
@@ -59,6 +59,19 @@
 + (BOOL)isMutable;
 
 /**
+ *  Subclasses of MIKMIDIEvent can override this to provide initial "blank" data including any
+ *  necessary fixed bytes for their class. For example, MIKMIDIChannelEvent subclasses return
+ *  data with the first nibble set to the appropriate status/subtype for their class.
+ *
+ *  Overriding this method can also be used to ensure that the internal data for an empty event
+ *  meets the required minimum length.
+ *
+ *  @return An NSData instance containing properly-sized blank/empty state data required by the receiver.
+ *  Must NOT be nil (empty data is OK).
+ */
++ (NSData *)initialData;
+
+/**
  *  This is the property used internally by MIKMIDIEvent to store the raw data for
  *  a MIDI packet. It is essentially the mutable backing store for MIKMIDIEvent's
  *  data property. Subclasses may set it. When mutating it, subclasses should manually
@@ -68,7 +81,7 @@
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 
-@property (nonatomic, readwrite) MusicEventType eventType;
+@property (nonatomic, readwrite) MIKMIDIEventType eventType;
 
 @property (nonatomic, strong, readwrite) NSData *metaData;
 
@@ -82,5 +95,18 @@
  */
 
 - (NSString *)additionalEventDescription;
+
+// Deprecated
+
+/**
+ *  @deprecated This method has been replaced by +supportedMIDIEventTypes
+ *  and by default simply calls through to that method. Subclasses
+ *  no longer need implement this.
+ *
+ *  @param type An MIKMIDIEventType value.
+ *
+ *  @return YES if the subclass supports type, NO otherwise.
+ */
++ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type DEPRECATED_ATTRIBUTE;
 
 @end

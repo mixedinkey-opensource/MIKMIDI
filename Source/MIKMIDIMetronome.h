@@ -9,6 +9,10 @@
 #import "MIKMIDIEndpointSynthesizer.h"
 
 
+/**
+ *	This class is only a subclass of MIKMIDIEndpointSynthesizer so it continues to function with MIKMIDIPlayer while
+ *	it still exists. Once MIKMIDIPlayer is removed from the code base, expect this to become a subclass of MIKMIDISynthesizer.
+ */
 @interface MIKMIDIMetronome : MIKMIDIEndpointSynthesizer
 
 @property (nonatomic) MIDINoteMessage tickMessage;
@@ -16,10 +20,12 @@
 
 @end
 
+
 @interface MIKMIDIMetronome (Private)
 
 /**
- *  This should not be called directly. Consider it private to MIKMIDI.
+ *  This should not be called directly, but may be overridden by subclasses to setup the metronome instrument
+ *	in a custom manner.
  */
 - (BOOL)setupMetronome;
 

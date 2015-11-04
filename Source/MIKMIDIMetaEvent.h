@@ -28,7 +28,7 @@
 /**
  *  The metadata for the event.
  */
-@property (nonatomic, readonly) NSData *metaData;
+@property (nonatomic, strong, readonly) NSData *metaData;
 
 @end
 
@@ -38,7 +38,8 @@
  */
 @interface MIKMutableMIDIMetaEvent : MIKMIDIMetaEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 metadataType;
-@property (nonatomic, readwrite) NSData *metaData;
+@property (nonatomic, strong, readwrite) NSData *metaData;
 
 @end

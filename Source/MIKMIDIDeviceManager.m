@@ -47,7 +47,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (void)addInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination;
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination;
 
-@property (nonatomic, strong) NSMutableSet *internalConnectedInputPorts;
+@property (nonatomic, strong) MIKMIDIInputPort *inputPort;
 @property (nonatomic, strong) MIKMIDIOutputPort *outputPort;
 
 @end
@@ -72,7 +72,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[self createClient];
         [self retrieveAvailableDevices];
 		[self retrieveVirtualEndpoints];
-		self.internalConnectedInputPorts = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -91,33 +90,18 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 - (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
-	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
-	if (!port) {
-		port = [[MIKMIDIInputPort alloc] initWithClient:self.client name:endpoint.name];
-		if (![port connectToSource:endpoint error:error]) return nil;
-	}
-	
-	[self addInternalConnectedInputPortsObject:port];
-	return [port addEventHandler:eventHandler];
+	return [self.inputPort connectToSource:endpoint error:error eventHandler:eventHandler];
 }
 
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
+- (void)disconnectConnectionforToken:(id)connectionToken
 {
-	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
-	if (!port) return; // Not connected
-	
-	[port removeEventHandlerForToken:connectionToken];
-	if (![[port eventHandlers] count]) {
-		[port disconnectFromSource:endpoint];
-		[self removeInternalConnectedInputPortsObject:port];
-	}
+	[self.inputPort disconnectConnectionForToken:connectionToken];
 }
 
 - (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
 {
 	return [self.outputPort sendCommands:commands toDestination:endpoint error:error];
 }
-
 
 - (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error
 {
@@ -171,15 +155,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[destinations addObject:destination];
 	}
 	self.internalVirtualDestinations = destinations;
-}
-
-- (MIKMIDIInputPort *)inputPortConnectedToEndpoint:(MIKMIDIEndpoint *)endpoint
-{
-	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
-		if (![port isKindOfClass:[MIKMIDIInputPort class]]) continue;
-		if ([port.connectedSources containsObject:endpoint]) return port;
-	}
-	return nil;
 }
 
 #pragma mark - Callbacks
@@ -368,10 +343,6 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 		keyPaths = [keyPaths setByAddingObject:@"internalVirtualDestinations"];
 	}
 	
-	if ([key isEqualToString:@"connectedInputSources"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalConnectedInputPorts"];
-	}
-	
 	return keyPaths;
 }
 
@@ -411,33 +382,43 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 	[self.internalVirtualDestinations removeObject:destination];
 }
 
++ (NSSet *)keyPathsForValuesAffectingConnectedInputSources
+{
+	return [NSSet setWithObjects:@"connectedSources", nil];
+}
+
 - (NSArray *)connectedInputSources
 {
-	NSMutableSet *result = [NSMutableSet set];
-	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
-		NSArray *connectedSources = port.connectedSources;
-		if (![connectedSources count]) continue;
-		[result addObjectsFromArray:connectedSources];
+	NSArray *result = self.inputPort.connectedSources;
+	if (!result) result = @[];
+	return result;
+}
+
+- (MIKMIDIInputPort *)inputPort
+{
+	if (!_inputPort) {
+		_inputPort = [[MIKMIDIInputPort alloc] initWithClient:self.client name:@"InputPort"];
 	}
-	return [result allObjects];
-}
-
-- (void)addInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port
-{
-	[_internalConnectedInputPorts addObject:port];
-}
-
-- (void)removeInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port
-{
-	[_internalConnectedInputPorts removeObject:port];
+	return _inputPort;
 }
 
 - (MIKMIDIOutputPort *)outputPort
 {
 	if (!_outputPort) {
-		self.outputPort = [[MIKMIDIOutputPort alloc] initWithClient:self.client name:@"OutputPort"];
+		_outputPort = [[MIKMIDIOutputPort alloc] initWithClient:self.client name:@"OutputPort"];
 	}
 	return _outputPort;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDIDeviceManager (Deprecated)
+
+- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
+{
+	[self disconnectConnectionforToken:connectionToken];
 }
 
 @end

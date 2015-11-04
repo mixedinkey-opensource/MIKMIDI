@@ -11,20 +11,35 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaTrackSequenceNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaTrackSequenceNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaTrackSequenceNameEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaTrackSequenceNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaTrackSequenceName; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaTrackSequenceName)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTrackSequenceNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
 
++ (NSSet *)keyPathsForValuesAffectingName
+{
+	return [NSSet setWithObjects:@"string", nil];
+}
+
+- (NSString *)name { return self.string; }
+
 @end
 
 @implementation MIKMutableMIDIMetaTrackSequenceNameEvent
+
+- (void)setName:(NSString *)name { self.string = name; }
+
+@dynamic name;
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
+@dynamic string;
 
 + (BOOL)isMutable { return YES; }
 

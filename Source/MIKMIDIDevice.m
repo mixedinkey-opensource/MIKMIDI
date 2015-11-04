@@ -9,6 +9,8 @@
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIObject_SubclassMethods.h"
 #import "MIKMIDIEntity.h"
+#import "MIKMIDISourceEndpoint.h"
+#import "MIKMIDIDestinationEndpoint.h"
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
@@ -70,6 +72,12 @@
 	return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (![super isEqual:object]) return NO;
+	return [self.entities isEqualToArray:[(MIKMIDIDevice *)object entities]];
+}
+
 #pragma mark - Public
 
 - (NSString *)description
@@ -117,7 +125,7 @@
 {
 	if (self.isVirtual) {
 		MIKMIDIEntity *entity = [self.entities firstObject];
-		MIKMIDIObject *endpoint = [entity.sources count] ? [entity.sources firstObject] : [entity.destinations firstObject];
+		MIKMIDIEndpoint	*endpoint = [entity.sources count] ? [entity.sources firstObject] : [entity.destinations firstObject];
 		return endpoint.objectRef;
 	}
 	return [super objectRef];

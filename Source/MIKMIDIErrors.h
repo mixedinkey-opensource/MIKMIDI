@@ -22,6 +22,10 @@ typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	 */
 	MIKMIDIUnknownErrorCode = 1,
 	/**
+	 *	Invalid argument error.
+	 */
+	MIKMIDIInvalidArgumentError,
+	/**
 	 *  An error occurred because the connection to a device was lost.
 	 */
 	MIKMIDIDeviceConnectionLostErrorCode,
@@ -37,6 +41,20 @@ typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	 *  The mapping file did not have the correct file extension (".midimap").
 	 */
 	MIKMIDIMappingIncorrectFileExtensionErrorCode,
+	
+	/**
+	 *  An error ocurred during an operation on event(s) in an MIKMIDITrack
+	 *  because the event(s) could not be found in the track.
+	 */
+	MIKMIDITrackEventNotFoundErrorCode,
+	
+	/**
+	 *  An error occurred selecting an instrument on MIKMIDISynthesizer,
+	 *  because the synthesizer's underlying audio unit does not support
+	 *  instrument selection, or MIKMIDI doesn't know how to select its
+	 *  instruments.
+	 */
+	MIKMIDISynthesizerDoesNotSupportInstrumentSelectionError,
 };
 
 /**
