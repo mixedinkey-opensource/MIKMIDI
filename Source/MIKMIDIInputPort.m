@@ -194,20 +194,6 @@
 	return controlChange.controllerNumber < 32;
 }
 
-- (BOOL)command:(MIKMIDICommand *)lsbCommand isPossibleLSBOfMSBCommand:(MIKMIDICommand *)msbCommand;
-{
-	if (lsbCommand.commandType != MIKMIDICommandTypeControlChange) return NO;
-	if (msbCommand.commandType != MIKMIDICommandTypeControlChange) return NO;
-	
-	MIKMIDIControlChangeCommand *lsbControlChange = (MIKMIDIControlChangeCommand *)lsbCommand;
-	MIKMIDIControlChangeCommand *msbControlChange = (MIKMIDIControlChangeCommand *)msbCommand;
-	
-	if (msbControlChange.controllerNumber > 31) return NO;
-	if (lsbControlChange.controllerNumber < 32 || lsbControlChange.controllerNumber > 63) return NO;
-	
-	return (lsbControlChange.controllerNumber - msbControlChange.controllerNumber) == 32;
-}
-
 - (NSArray *)commandsByCoalescingCommands:(NSArray *)commands
 {
 	NSMutableArray *coalescedCommands = [commands mutableCopy];
