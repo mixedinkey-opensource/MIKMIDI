@@ -16,6 +16,8 @@
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDICommand;
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Notifications
 /**
  *  Posted whenever a device is added (connected) to the system.
@@ -83,7 +85,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return A connection token to be used to disconnect the input, or nil if an error occurred. The connection token is opaque.
  */
-- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (nullable id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
 
 /**
  *  Disconnects a previously connected MIDI input/source endpoint. The connectionToken argument
@@ -105,7 +107,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
-- (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;
 
 
 /**
@@ -118,7 +120,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
-- (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
 
 
 
@@ -166,3 +168,5 @@ extern NSString * const MIKMIDIEndpointKey;
 @property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *connectedInputSources;
 
 @end
+
+NS_ASSUME_NONNULL_END
