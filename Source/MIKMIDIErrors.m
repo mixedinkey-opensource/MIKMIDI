@@ -14,10 +14,24 @@
 
 NSString * const MIKMIDIErrorDomain = @"MIKMIDIErrorDomain";
 
+NSString *MIKMIDIDefaultLocalizedErrorDescriptionForErrorCode(MIKMIDIErrorCode code)
+{
+	NSDictionary *descriptions =
+	@{@(MIKMIDIDeviceHasNoSourcesErrorCode) : NSLocalizedString(@"MIDI Device has no sources.", @"MIDI Device has no sources."),
+	  @(MIKMIDIUnknownErrorCode) : NSLocalizedString(@"An unknown MIDI error occurred.", @"An unknown MIDI error occurred.")};
+	return descriptions[@(code)] ?: NSLocalizedString(@"A MIDI error occurred.", @"Generic error description");
+}
+
 @implementation NSError (MIKMIDI)
 
 + (instancetype)MIKMIDIErrorWithCode:(MIKMIDIErrorCode)code userInfo:(NSDictionary *)userInfo;
 {
+	if (!userInfo) userInfo = @{};
+	if (!userInfo[NSLocalizedDescriptionKey]) {
+		NSMutableDictionary *scratch = [userInfo mutableCopy];
+		scratch[NSLocalizedDescriptionKey] = MIKMIDIDefaultLocalizedErrorDescriptionForErrorCode(code);
+		userInfo = scratch;
+	}
 	return [NSError errorWithDomain:MIKMIDIErrorDomain code:code userInfo:userInfo];
 }
 

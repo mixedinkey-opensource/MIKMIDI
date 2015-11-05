@@ -118,7 +118,7 @@
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	if (!instrument) {
-		*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDIInvalidArgumentError userInfo:nil];
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIInvalidArgumentError userInfo:nil];
 		return NO;
 	}
 	return [self sendBankSelectAndProgramChangeForInstrumentID:instrument.instrumentID error:error];

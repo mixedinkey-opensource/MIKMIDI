@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDIUtilities.h"
+#import "MIKMIDIErrors.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIUtilities.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIUtilities.m in the Build Phases for this target
@@ -77,7 +78,7 @@ MIDIObjectType MIKMIDIObjectTypeOfObject(MIDIObjectRef object, NSError *__autore
 	}
 
 	if (resultObject != object) {
-		*error = [NSError errorWithDomain:@"MIKMIDIErrorDomain" code:-1 userInfo:nil];
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIUnknownErrorCode userInfo:nil];
 		return -2;
 	}
 
