@@ -354,64 +354,74 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 #pragma mark - Properties
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
-{
-	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-	
-	if ([key isEqualToString:@"availableDevices"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalDevices"];
-	}
-	
-	if ([key isEqualToString:@"virtualSources"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalVirtualSources"];
-	}
-	
-	if ([key isEqualToString:@"virtualDestinations"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalVirtualDestinations"];
-	}
-	
-	return keyPaths;
-}
++ (BOOL)automaticallyNotifiesObserversOfAvailableDevices { return NO; }
 
 - (NSArray *)availableDevices { return [self.internalDevices copy]; }
 
 - (void)addInternalDevicesObject:(MIKMIDIDevice *)device;
 {
-	[self.internalDevices addObject:device];
+	NSUInteger index = self.internalDevices.count;
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
+	[self.internalDevices insertObject:device atIndex:index];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
 }
 
 - (void)removeInternalDevicesObject:(MIKMIDIDevice *)device;
 {
-	[self.internalDevices removeObject:device];
+	NSUInteger index = [self.internalDevices indexOfObject:device];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
+	[self.internalDevices removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
 }
+
++ (BOOL)automaticallyNotifiesObserversOfInternalVirtualSources { return NO; }
 
 - (NSArray *)virtualSources { return [self.internalVirtualSources copy]; }
 
 - (void)addInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
 {
-	[self.internalVirtualSources addObject:source];
+	NSUInteger index = [self.internalVirtualSources indexOfObject:source];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+	[self.internalVirtualSources removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
 }
 
 - (void)removeInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
 {
-	[self.internalVirtualSources removeObject:source];
+	NSUInteger index = [self.internalVirtualSources indexOfObject:source];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+	[self.internalVirtualSources removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
 }
+
++ (BOOL)automaticallyNotifiesObserversOfVirtualSources { return NO; }
 
 - (NSArray *)virtualDestinations { return [self.internalVirtualDestinations copy]; }
 
 - (void)addInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations addObject:destination];
+	NSUInteger index = [self.internalVirtualDestinations indexOfObject:destination];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+	[self.internalVirtualDestinations removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
 }
 
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations removeObject:destination];
+	NSUInteger index = [self.internalVirtualDestinations indexOfObject:destination];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+	[self.internalVirtualDestinations removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
 }
 
 + (NSSet *)keyPathsForValuesAffectingConnectedInputSources
 {
-	return [NSSet setWithObjects:@"connectedSources", nil];
+	return [NSSet setWithObjects:@"inputPort.connectedSources", nil];
 }
 
 - (NSArray *)connectedInputSources
