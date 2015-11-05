@@ -286,7 +286,7 @@
 		[iterator moveToNextEvent];
     }
 
-	*error = [NSError errorWithDomain:MIKMIDIErrorDomain code:MIKMIDITrackEventNotFoundErrorCode userInfo:nil];
+	*error = [NSError MIKMIDIErrorWithCode:MIKMIDITrackEventNotFoundErrorCode userInfo:nil];
 	return success;
 }
 
