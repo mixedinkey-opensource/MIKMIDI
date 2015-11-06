@@ -87,45 +87,14 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 
 - (BOOL)connectToDevice:(MIKMIDIDevice *)device error:(NSError **)error
 {
-	if ([self isConnectedToDevice:device]) return YES;
-	error = error ?: &(NSError *__autoreleasing){ nil };
-	
-	id token = [self.deviceManager connectDevice:device error:error eventHandler:self.internalEventHandler];
-	if (!token) return NO;
-	
-	[self.connectionTokensByDevice setObject:token forKey:device];
-	[self willChangeValueForKey:@"connectedDevices"
-				withSetMutation:NSKeyValueUnionSetMutation
-				   usingObjects:[NSSet setWithObject:device]];
-	[self.internalConnectedDevices addObject:device];
-	[self didChangeValueForKey:@"connectedDevices"
-				withSetMutation:NSKeyValueUnionSetMutation
-				   usingObjects:[NSSet setWithObject:device]];
-	
-	
+	BOOL result = [self internalConnectToDevice:device error:error];
 	if (self.automaticallySavesConfiguration) [self saveConfiguration];
-	
-	return YES;
+	return result;
 }
 
 - (void)disconnectFromDevice:(MIKMIDIDevice *)device
 {
-	if (![self isConnectedToDevice:device]) return;
-	
-	id token = [self.connectionTokensByDevice objectForKey:device];
-	if (!token) return;
-	
-	[self.deviceManager disconnectConnectionforToken:token];
-	
-	[self.connectionTokensByDevice removeObjectForKey:device];
-	[self willChangeValueForKey:@"connectedDevices"
-				withSetMutation:NSKeyValueMinusSetMutation
-				   usingObjects:[NSSet setWithObject:device]];
-	[self.internalConnectedDevices removeObject:device];
-	[self didChangeValueForKey:@"connectedDevices"
-			   withSetMutation:NSKeyValueMinusSetMutation
-				  usingObjects:[NSSet setWithObject:device]];
-	
+	[self internalDisconnectFromDevice:device];
 	if (self.automaticallySavesConfiguration) [self saveConfiguration];
 }
 
@@ -181,7 +150,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	for (MIKMIDIDevice *device in self.availableDevices) {
 		if ([self deviceIsConnectedInSavedConfiguration:device]) {
 			NSError *error = nil;
-			if (![self connectToDevice:device error:&error]) {
+			if (![self internalConnectToDevice:device error:&error]) {
 				NSLog(@"Unable to connect to MIDI device %@: %@", device, error);
 				return;
 			}
@@ -190,13 +159,6 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 }
 
 #pragma mark - Private
-
-- (void)scanAndConnectToInitialAvailableDevices
-{
-	for (MIKMIDIDevice *device in self.availableDevices) {
-		[self connectToNewlyAddedDeviceIfAppropriate:device];
-	}
-}
 
 - (void)updateAvailableDevices
 {
@@ -261,6 +223,56 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	return [[self.availableDevices filteredArrayUsingPredicate:predicate] firstObject];
 }
 
+#pragma mark - Connection / Disconnection
+
+- (BOOL)internalConnectToDevice:(MIKMIDIDevice *)device error:(NSError **)error
+{
+	if ([self isConnectedToDevice:device]) return YES;
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	
+	id token = [self.deviceManager connectDevice:device error:error eventHandler:self.internalEventHandler];
+	if (!token) return NO;
+	
+	[self.connectionTokensByDevice setObject:token forKey:device];
+	[self willChangeValueForKey:@"connectedDevices"
+				withSetMutation:NSKeyValueUnionSetMutation
+				   usingObjects:[NSSet setWithObject:device]];
+	[self.internalConnectedDevices addObject:device];
+	[self didChangeValueForKey:@"connectedDevices"
+			   withSetMutation:NSKeyValueUnionSetMutation
+				  usingObjects:[NSSet setWithObject:device]];
+	
+	return YES;
+}
+
+- (void)internalDisconnectFromDevice:(MIKMIDIDevice *)device
+{
+	if (![self isConnectedToDevice:device]) return;
+	
+	id token = [self.connectionTokensByDevice objectForKey:device];
+	if (!token) return;
+	
+	[self.deviceManager disconnectConnectionforToken:token];
+	
+	[self.connectionTokensByDevice removeObjectForKey:device];
+	[self willChangeValueForKey:@"connectedDevices"
+				withSetMutation:NSKeyValueMinusSetMutation
+				   usingObjects:[NSSet setWithObject:device]];
+	[self.internalConnectedDevices removeObject:device];
+	[self didChangeValueForKey:@"connectedDevices"
+			   withSetMutation:NSKeyValueMinusSetMutation
+				  usingObjects:[NSSet setWithObject:device]];
+	
+	if (self.automaticallySavesConfiguration) [self saveConfiguration];
+}
+
+- (void)scanAndConnectToInitialAvailableDevices
+{
+	for (MIKMIDIDevice *device in self.availableDevices) {
+		[self connectToNewlyAddedDeviceIfAppropriate:device];
+	}
+}
+
 - (void)connectToNewlyAddedDeviceIfAppropriate:(MIKMIDIDevice *)device
 {
 	if (!device) return;
@@ -289,7 +301,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	
 	if (shouldConnect) {
 		NSError *error = nil;
-		if (![self connectToDevice:device error:&error]) {
+		if (![self internalConnectToDevice:device error:&error]) {
 			NSLog(@"Unable to connect to MIDI device %@: %@", device, error);
 			return;
 		}
@@ -367,7 +379,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 - (void)deviceWasUnplugged:(NSNotification *)notification
 {
 	MIKMIDIDevice *unpluggedDevice = [notification userInfo][MIKMIDIDeviceKey];
-	[self disconnectFromDevice:unpluggedDevice];
+	[self internalDisconnectFromDevice:unpluggedDevice];
 }
 
 - (void)endpointWasPluggedIn:(NSNotification *)notification
@@ -381,7 +393,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 {
 	MIKMIDIEndpoint *unpluggedEndpoint = [notification userInfo][MIKMIDIEndpointKey];
 	MIKMIDIDevice *unpluggedDevice = [self deviceContainingEndpoint:unpluggedEndpoint];
-	if (unpluggedDevice) [self disconnectFromDevice:unpluggedDevice];
+	if (unpluggedDevice) [self internalDisconnectFromDevice:unpluggedDevice];
 }
 
 #pragma mark - KVO
