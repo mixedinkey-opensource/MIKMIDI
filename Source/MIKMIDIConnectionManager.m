@@ -358,7 +358,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 - (MIKMIDIDevice *)deviceContainingEndpoint:(MIKMIDIEndpoint *)endpoint
 {
 	if (!endpoint) return nil;
-	NSMutableSet *devices = [self.availableDevices mutableCopy];
+	NSMutableSet *devices = [NSMutableSet setWithArray:self.availableDevices];
 	[devices unionSet:self.connectedDevices];
 	for (MIKMIDIDevice *device in devices) {
 		NSMutableSet *deviceEndpoints = [NSMutableSet setWithArray:[device.entities valueForKeyPath:@"@distinctUnionOfArrays.sources"]];
