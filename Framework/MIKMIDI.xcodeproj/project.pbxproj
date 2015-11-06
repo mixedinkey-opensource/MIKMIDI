@@ -58,6 +58,10 @@
 		83FB360E1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */; };
 		9D07CAC71BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D07CAC61BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D07CAC81BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D07CAC61BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D07CB221BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D07CB201BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D07CB231BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D07CB201BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D07CB241BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D07CB211BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m */; };
+		9D07CB251BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D07CB211BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m */; };
 		9D0895EE1B0D29F200A5872E /* MIKMIDIMappingItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895EF1B0D29F200A5872E /* MIKMIDIMappingItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895F01B0D29F200A5872E /* MIKMIDIMappingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */; };
@@ -351,6 +355,8 @@
 		83C850C81B7AA452001D71B0 /* MIKMIDIMappingManager_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingManager_SubclassMethods.h; sourceTree = "<group>"; };
 		83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDISequence+MIKMIDIPrivate.h"; sourceTree = "<group>"; };
 		9D07CAC61BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDICompilerCompatibility.h; sourceTree = "<group>"; };
+		9D07CB201BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIConnectionManager.h; sourceTree = "<group>"; };
+		9D07CB211BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIConnectionManager.m; sourceTree = "<group>"; };
 		9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingItem.h; sourceTree = "<group>"; };
 		9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMappingItem.m; sourceTree = "<group>"; };
 		9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappableResponder.h; sourceTree = "<group>"; };
@@ -749,6 +755,8 @@
 			children = (
 				9D74EF3C17A713A100BEE89F /* MIKMIDIDeviceManager.h */,
 				9D74EF3D17A713A100BEE89F /* MIKMIDIDeviceManager.m */,
+				9D07CB201BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h */,
+				9D07CB211BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m */,
 				9D74EF5017A713A100BEE89F /* MIKMIDIObject.h */,
 				9D74EF5117A713A100BEE89F /* MIKMIDIObject.m */,
 				9D74EF5217A713A100BEE89F /* MIKMIDIObject_SubclassMethods.h */,
@@ -902,6 +910,7 @@
 				9D74EF8317A713A100BEE89F /* MIKMIDIObject.h in Headers */,
 				9D07CAC71BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h in Headers */,
 				9D74EF8617A713A100BEE89F /* MIKMIDIOutputPort.h in Headers */,
+				9D07CB221BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */,
 				9D74EF8817A713A100BEE89F /* MIKMIDIPort.h in Headers */,
 				9D74EF8B17A713A100BEE89F /* MIKMIDIResponder.h in Headers */,
 				9D74EF8C17A713A100BEE89F /* MIKMIDISourceEndpoint.h in Headers */,
@@ -959,6 +968,7 @@
 				9D0895EF1B0D29F200A5872E /* MIKMIDIMappingItem.h in Headers */,
 				9DAF8B701A7B00A700F46528 /* MIKMIDIMetaCuePointEvent.h in Headers */,
 				9DAF8B671A7B008A00F46528 /* MIKMIDIProgramChangeCommand.h in Headers */,
+				9D07CB231BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */,
 				9DED4E231AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h in Headers */,
 				9DED4E371AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h in Headers */,
 				9DB366F71A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h in Headers */,
@@ -1196,6 +1206,7 @@
 				9DED4E381AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.m in Sources */,
 				9D74EF8F17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m in Sources */,
 				9D74EF9117A713A100BEE89F /* MIKMIDISystemMessageCommand.m in Sources */,
+				9D07CB241BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m in Sources */,
 				839D935419C3A2F5007589C3 /* MIKMIDIMetaEvent.m in Sources */,
 				9D7027D31ACC9D7A009AFAED /* MIKMIDIMacDebugQuickLookSupport.m in Sources */,
 				9D74EF9317A713A100BEE89F /* MIKMIDIUtilities.m in Sources */,
@@ -1264,6 +1275,7 @@
 				9DAF8B4C1A7AFF7500F46528 /* MIKMIDISequencer.m in Sources */,
 				9DB366F31A964C55001D1CF3 /* MIKMIDISynthesizer.m in Sources */,
 				9DAF8B4D1A7AFF7500F46528 /* MIKMIDIUtilities.m in Sources */,
+				9D07CB251BEC13E400C4ABB0 /* MIKMIDIConnectionManager.m in Sources */,
 				9DAF8B4E1A7AFF7500F46528 /* MIKMIDICommandThrottler.m in Sources */,
 				9DAF8B4F1A7AFF7500F46528 /* MIKMIDIClock.m in Sources */,
 				9DAF8B501A7AFF7500F46528 /* MIKMIDIPrivateUtilities.m in Sources */,

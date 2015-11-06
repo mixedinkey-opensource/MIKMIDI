@@ -78,6 +78,12 @@
 	return [self.entities isEqualToArray:[(MIKMIDIDevice *)object entities]];
 }
 
+- (NSUInteger)hash
+{
+	if (!self.isVirtual) return (NSUInteger)self.uniqueID;
+	return [self.entities hash];
+}
+
 #pragma mark - Public
 
 - (NSString *)description
