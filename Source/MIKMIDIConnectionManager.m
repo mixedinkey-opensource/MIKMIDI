@@ -92,6 +92,14 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	if (!token) return NO;
 	
 	[self.connectionTokensByDevice setObject:token forKey:device];
+	[self willChangeValueForKey:@"connectedDevices"
+				withSetMutation:NSKeyValueUnionSetMutation
+				   usingObjects:[NSSet setWithObject:device]];
+	[self.internalConnectedDevices addObject:device];
+	[self didChangeValueForKey:@"connectedDevices"
+				withSetMutation:NSKeyValueUnionSetMutation
+				   usingObjects:[NSSet setWithObject:device]];
+	
 	
 	if (self.automaticallySavesConfiguration) [self saveConfiguration];
 	
@@ -106,6 +114,15 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	if (!token) return;
 	
 	[self.deviceManager disconnectConnectionforToken:token];
+	
+	[self.connectionTokensByDevice removeObjectForKey:device];
+	[self willChangeValueForKey:@"connectedDevices"
+				withSetMutation:NSKeyValueMinusSetMutation
+				   usingObjects:[NSSet setWithObject:device]];
+	[self.internalConnectedDevices removeObject:device];
+	[self didChangeValueForKey:@"connectedDevices"
+			   withSetMutation:NSKeyValueMinusSetMutation
+				  usingObjects:[NSSet setWithObject:device]];
 	
 	if (self.automaticallySavesConfiguration) [self saveConfiguration];
 }
@@ -400,6 +417,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	}
 }
 
++ (BOOL)automaticallyNotifiesObserversOfConnectedDevices { return NO; }
 - (MIKSetOf(MIKMIDIDevice *) *)connectedDevices
 {
 	return [self.internalConnectedDevices copy];
