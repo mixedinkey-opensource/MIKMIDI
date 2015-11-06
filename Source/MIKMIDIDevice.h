@@ -12,6 +12,8 @@
 @class MIKMIDIEntity;
 @class MIKMIDIEndpoint;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  MIKMIDIDevice represents a MIDI device such as a DJ controller, MIDI piano keyboard, etc.
  *
@@ -42,7 +44,7 @@
  *  Connecting to a Device
  *  ----------------------
  *
- *  To connect a device and start receiving MIDI messages from it, you must first get the source endpoints 
+ *  To connect a device and start receiving MIDI messages from it, you must first get the source endpoints
  *  you want to connect to. Often there will be only one. You can retrieve all of a devices source endpoints
  *  using the following:
  *
@@ -50,7 +52,7 @@
  *      MIKMIDISourceEndpoint = [source firstObject]; // Or whichever source you want, but often there's only one.
  *
  *  Next, connect to that source using MIKMIDIDeviceManager:
- *  
+ *
  *  	MIKMIDIDeviceManager *manager = [MIKMIDIDeviceManager sharedDeviceManager];
  *  	NSError *error = nil;
  *  	BOOL success = [manager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
@@ -113,12 +115,12 @@
 /**
  *  The manufacturer of the MIDI device.
  */
-@property (nonatomic, strong, readonly) NSString *manufacturer;
+@property (nonatomic, strong, readonly, nullable) NSString *manufacturer;
 
 /**
  *  The model number of the MIDI device.
  */
-@property (nonatomic, strong, readonly) NSString *model;
+@property (nonatomic, strong, readonly, nullable) NSString *model;
 
 /**
  *  An NSArray containing instances of MIKMIDIEntity, representing the entities of the
@@ -128,3 +130,5 @@
 @property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIEntity *) *entities;
 
 @end
+
+NS_ASSUME_NONNULL_END
