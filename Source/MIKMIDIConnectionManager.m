@@ -42,6 +42,8 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 		_name = [name copy];
 		_delegate = delegate;
 		_eventHandler = eventHandler;
+		
+		_automaticallySavesConfiguration = YES;
 		_includesVirtualDevices = YES;
 		
 		_internalConnectedDevices = [[NSMutableSet alloc] init];
@@ -141,14 +143,14 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	NSMutableDictionary *configuration = [NSMutableDictionary dictionaryWithDictionary:[self savedConfiguration]];
 	
 	// Save connected device names
-	NSMutableArray *connectedDeviceNames = configuration[MIKMIDIConnectionManagerConnectedDevicesKey];
+	NSMutableArray *connectedDeviceNames = [configuration[MIKMIDIConnectionManagerConnectedDevicesKey] mutableCopy];
 	if (!connectedDeviceNames) {
 		connectedDeviceNames = [NSMutableArray array];
 		configuration[MIKMIDIConnectionManagerConnectedDevicesKey] = connectedDeviceNames;
 	}
 	
 	// And explicitly unconnected device names
-	NSMutableArray *unconnectedDeviceNames = configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey];
+	NSMutableArray *unconnectedDeviceNames = [configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey] mutableCopy];
 	if (!unconnectedDeviceNames) {
 		unconnectedDeviceNames = [NSMutableArray array];
 		configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey] = unconnectedDeviceNames;
@@ -160,13 +162,16 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 		NSString *name = device.name;
 		if (![name length]) continue;
 		if ([self isConnectedToDevice:device]) {
-			[connectedDeviceNames addObject:name];
+			if (![connectedDeviceNames containsObject:name]) { [connectedDeviceNames addObject:name]; }
 			[unconnectedDeviceNames removeObject:name];
 		} else {
 			[connectedDeviceNames removeObject:name];
-			[unconnectedDeviceNames addObject:name];
+			if (![unconnectedDeviceNames containsObject:name]) { [unconnectedDeviceNames addObject:name]; }
 		}
 	}
+	
+	configuration[MIKMIDIConnectionManagerConnectedDevicesKey] = connectedDeviceNames;
+	configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey] = unconnectedDeviceNames;
 	
 	[userDefaults setObject:configuration forKey:[self userDefaultsConfigurationKey]];
 }
