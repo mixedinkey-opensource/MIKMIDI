@@ -179,7 +179,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 - (void)updateAvailableDevices
 {
 	NSArray *regularDevices = self.deviceManager.availableDevices;
-	NSMutableSet *result = [NSMutableSet setWithArray:regularDevices];
+	NSMutableArray *result = [NSMutableArray arrayWithArray:regularDevices];
 	
 	if (self.includesVirtualDevices) {
 		NSMutableSet *endpointsInDevices = [NSMutableSet set];
