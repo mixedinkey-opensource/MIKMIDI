@@ -171,7 +171,7 @@
 
 - (MIKMIDISourceEndpoint *)sourceEndpointForConnectionToken:(NSString *)token
 {
-	for (MIKMIDISourceEndpoint *source in self.handlerTokenPairsByEndpoint.objectEnumerator) {
+	for (MIKMIDISourceEndpoint *source in self.handlerTokenPairsByEndpoint) {
 		NSArray *handlerPairs = [self.handlerTokenPairsByEndpoint objectForKey:source];
 		for (MIKMIDIConnectionTokenAndEventHandler *handlerPair in handlerPairs) {
 			if ([handlerPair.connectionToken isEqual:token]) {
