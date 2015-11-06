@@ -7,15 +7,13 @@
 //
 
 #import "MIKMIDIPort.h"
+#import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIEndpoint;
-@class MIKMIDISourceEndpoint;
 @class MIKMIDICommand;
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef void(^MIKMIDIEventHandlerBlock)(MIKMIDISourceEndpoint *source, MIKArrayOf(MIKMIDICommand *) *commands); // commands in an array of MIKMIDICommands
 
 /**
  *  MIKMIDIInputPort is an Objective-C wrapper for CoreMIDI's MIDIPort class, and is only for source ports.
