@@ -13,6 +13,7 @@
 void *MIKMIDIConnectionManagerKVOContext = &MIKMIDIConnectionManagerKVOContext;
 
 NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnectionManagerConnectedDevicesKey";
+NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnectionManagerUnconnectedDevicesKey";
 
 @interface MIKMIDIConnectionManager ()
 
@@ -34,11 +35,15 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 	return nil;
 }
 
-- (instancetype)initWithName:(NSString *)name
+- (instancetype)initWithName:(NSString *)name delegate:(id<MIKMIDIConnectionManagerDelegate>)delegate eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
 	self = [super init];
 	if (self) {
 		_name = [name copy];
+		_delegate = delegate;
+		_eventHandler = eventHandler;
+		_includesVirtualDevices = YES;
+		
 		_internalConnectedDevices = [[NSMutableSet alloc] init];
 		
 		__weak typeof(self) weakSelf = self;
@@ -48,7 +53,7 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 		
 		_connectionTokensByDevice = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		
-		NSKeyValueObservingOptions options = NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
+		NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
 		[self.deviceManager addObserver:self forKeyPath:@"availableDevices" options:options context:MIKMIDIConnectionManagerKVOContext];
 		[self.deviceManager addObserver:self forKeyPath:@"virtualSources" options:options context:MIKMIDIConnectionManagerKVOContext];
 		[self.deviceManager addObserver:self forKeyPath:@"virtualDestinations" options:options context:MIKMIDIConnectionManagerKVOContext];
@@ -58,6 +63,9 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 		[nc addObserver:self selector:@selector(deviceWasUnplugged:) name:MIKMIDIDeviceWasRemovedNotification object:nil];
 		[nc addObserver:self selector:@selector(endpointWasPluggedIn:) name:MIKMIDIVirtualEndpointWasAddedNotification object:nil];
 		[nc addObserver:self selector:@selector(endpointWasUnplugged:) name:MIKMIDIVirtualEndpointWasRemovedNotification object:nil];
+		
+		[self updateAvailableDevices];
+		[self scanAndConnectToInitialAvailableDevices];
 	}
 	return self;
 }
@@ -122,6 +130,13 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 		configuration[MIKMIDIConnectionManagerConnectedDevicesKey] = connectedDeviceNames;
 	}
 	
+	// And explicitly unconnected device names
+	NSMutableArray *unconnectedDeviceNames = configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey];
+	if (!unconnectedDeviceNames) {
+		unconnectedDeviceNames = [NSMutableArray array];
+		configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey] = unconnectedDeviceNames;
+	}
+	
 	// For devices that were connected in saved configuration but are now unavailable, leave them
 	// connected in the configuration so they'll reconnect automatically.
 	for (MIKMIDIDevice *device in self.availableDevices) {
@@ -129,8 +144,10 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 		if (![name length]) continue;
 		if ([self isConnectedToDevice:device]) {
 			[connectedDeviceNames addObject:name];
+			[unconnectedDeviceNames removeObject:name];
 		} else {
 			[connectedDeviceNames removeObject:name];
+			[unconnectedDeviceNames addObject:name];
 		}
 	}
 	
@@ -151,6 +168,13 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 }
 
 #pragma mark - Private
+
+- (void)scanAndConnectToInitialAvailableDevices
+{
+	for (MIKMIDIDevice *device in self.availableDevices) {
+		[self connectToNewlyAddedDeviceIfAppropriate:device];
+	}
+}
 
 - (void)updateAvailableDevices
 {
@@ -219,10 +243,26 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 {
 	if (!device) return;
 	
-	BOOL shouldConnect = [self deviceIsConnectedInSavedConfiguration:device];
-	
+	MIKMIDIAutoConnectBehavior behavior = MIKMIDIAutoConnectBehaviorConnectIfPreviouslyConnectedOrNew;
+
 	if ([self.delegate respondsToSelector:@selector(connectionManager:shouldConnectToNewlyAddedDevice:)]) {
-		shouldConnect = [self.delegate connectionManager:self shouldConnectToNewlyAddedDevice:device];
+		behavior = [self.delegate connectionManager:self shouldConnectToNewlyAddedDevice:device];
+	}
+	
+	BOOL shouldConnect = NO;
+	switch (behavior) {
+		case MIKMIDIAutoConnectBehaviorDoNotConnect:
+			shouldConnect = NO;
+			break;
+		case MIKMIDIAutoConnectBehaviorConnect:
+			shouldConnect = YES;
+			break;
+		case MIKMIDIAutoConnectBehaviorConnectOnlyIfPreviouslyConnected:
+			shouldConnect = [self deviceIsConnectedInSavedConfiguration:device];
+			break;
+		case MIKMIDIAutoConnectBehaviorConnectIfPreviouslyConnectedOrNew:
+			shouldConnect = ![self deviceIsUnconnectedInSavedConfiguration:device];
+			break;
 	}
 	
 	if (shouldConnect) {
@@ -257,6 +297,16 @@ NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnecti
 	NSDictionary *configuration = [self savedConfiguration];
 	NSArray *connectedDeviceNames = configuration[MIKMIDIConnectionManagerConnectedDevicesKey];
 	return [connectedDeviceNames containsObject:deviceName];
+}
+
+- (BOOL)deviceIsUnconnectedInSavedConfiguration:(MIKMIDIDevice *)device
+{
+	NSString *deviceName = device.name;
+	if (![deviceName length]) return NO;
+	
+	NSDictionary *configuration = [self savedConfiguration];
+	NSArray *unconnectedDeviceNames = configuration[MIKMIDIConnectionManagerUnconnectedDevicesKey];
+	return [unconnectedDeviceNames containsObject:deviceName];
 }
 
 #pragma mark Virtual Endpoints

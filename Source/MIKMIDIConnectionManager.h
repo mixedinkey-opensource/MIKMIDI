@@ -39,11 +39,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  store and load the connection manager's configuration using NSUserDefaults. The passed in name
  *  should be unique across your application, and the same from launch to launch.
  *
- *  @param name The name to give the connection manager.
+ *  @param name			The name to give the connection manager.
+ *	@param delegate		The delegate of the connection manager
+ *  @param eventHandler An MIKMIDIEventHandlerBlock to be called with incoming MIDI messages from any connected device.
  *
  *  @return An initialized MIKMIDIConnectionManager instance.
  */
-- (instancetype)initWithName:(NSString *)name NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithName:(NSString *)name
+					delegate:(nullable id<MIKMIDIConnectionManagerDelegate>)delegate
+				eventHandler:(nullable MIKMIDIEventHandlerBlock)eventHandler NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Connect to the specified device. When MIDI messages are received, the connection manager's event handler
@@ -113,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  A delegate, used to customize MIKMIDIConnectionManager behavior.
  */
-@property (nonatomic, weak) id<MIKMIDIConnectionManagerDelegate>delegate;
+@property (nonatomic, weak, nullable) id<MIKMIDIConnectionManagerDelegate>delegate;
 
 /**
  *  Controls whether the receiver's availableDevices property includes virtual devices (i.e. devices made
@@ -151,6 +155,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+
+/**
+ *  Specifies behavior for connecting to a newly connected device. See 
+ *  -connectionManager:shouldConnectToNewlyAddedDevice:
+ */
+typedef NS_ENUM(NSInteger, MIKMIDIAutoConnectBehavior) {
+	
+	/** Do not connect to the newly added device */
+	MIKMIDIAutoConnectBehaviorDoNotConnect,
+	
+	/** Connect to the newly added device */
+	MIKMIDIAutoConnectBehaviorConnect,
+	
+	/** Connect to the newly added device only if it was previously connected (ie. in the saved configuration data) */
+	MIKMIDIAutoConnectBehaviorConnectOnlyIfPreviouslyConnected,
+	
+	/** Connect to the newly added device if it was previously connected, or is unknown in the configuration data.*/
+	MIKMIDIAutoConnectBehaviorConnectIfPreviouslyConnectedOrNew,
+};
+
 /**
  *  Protocol containing method(s) to be implemented by delegates of MIKMIDIConnectionManager.
  */
@@ -160,16 +184,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A connection manager's delegate can implement this method to determine whether or not to automatically connect
- *  to a newly added MIDI device. 
+ *  to a newly added MIDI device. See MIKMIDIAutoConnectBehavior for possible return values.
  *
- *	If this method is not implemented or returns NO, the device will be connected to if the most
+ *	If this method is not implemented, the default behavior is MIKMIDIAutoConnectBehaviorConnectIfPreviouslyConnectedOrNew.
  *
  *  @param manager An instance of MIKMIDIConnectionManager.
  *  @param device  The newly added MIDI device.
  *
- *  @return YES to connect to device, NO to leave it unconnected.
+ *  @return One of the values defined in MIKMIDIAutoConnectBehavior.
  */
-- (BOOL)connectionManager:(MIKMIDIConnectionManager *)manager shouldConnectToNewlyAddedDevice:(MIKMIDIDevice *)device;
+- (MIKMIDIAutoConnectBehavior)connectionManager:(MIKMIDIConnectionManager *)manager shouldConnectToNewlyAddedDevice:(MIKMIDIDevice *)device;
 
 @end
 
