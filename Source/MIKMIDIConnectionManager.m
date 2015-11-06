@@ -434,6 +434,23 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	}
 }
 
+- (void)setAvailableDevices:(NSArray *)availableDevices
+{
+	if (availableDevices != _availableDevices) {
+		
+		// Disconnect from newly unavailable devices.
+		// This will include "partial" virtual devices that are now complete
+		// by virtue of having been notified of other sources for them.
+		for (MIKMIDIDevice *device in self.connectedDevices) {
+			if (![availableDevices containsObject:device]) {
+				[self internalDisconnectFromDevice:device];
+			}
+		}
+		
+		_availableDevices = availableDevices;
+	}
+}
+
 + (BOOL)automaticallyNotifiesObserversOfConnectedDevices { return NO; }
 - (MIKSetOf(MIKMIDIDevice *) *)connectedDevices
 {
