@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)parserWithXMLData:(NSData *)xmlData;
 - (instancetype)initWithXMLData:(NSData *)xmlData;
 
-@property (nonatomic, strong, readonly) NSArray *mappings;
+@property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIMapping *) *mappings;
 
 @end
 

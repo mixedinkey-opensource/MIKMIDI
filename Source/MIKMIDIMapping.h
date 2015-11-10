@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing MIKMIDIMappingItems for responder, or an empty set if none are found.
  */
-- (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
 
 /**
  *  The mapping items that map controls to a specific command identifier supported by a MIDI responder.
@@ -161,7 +161,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
  *  @see -mappingItemsForCommandIdentifier:responderWithIdentifier:
  */
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
 
 /**
  *  The mapping items that map controls to a specific command identifier supported by a MIDI responder with a given
@@ -175,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
  *  @see -mappingItemsForCommandIdentifier:responder:
  */
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID;
 
 /**
  *  The mapping items for a particular MIDI command (corresponding to a physical control).
@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing MIKMIDIMappingItems for command, or an empty set if none are found.
  */
-- (NSSet *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 
 /**
  *  The name of the MIDI mapping. Currently only used to determine the (default) file name when saving a mapping to disk.
@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  All mapping items this mapping contains.
  */
-@property (nonatomic, readonly) NSSet *mappingItems;
+@property (nonatomic, readonly) MIKSetOf(MIKMIDIMappingItem *) *mappingItems;
 
 /**
  *  Add a single mapping item to the receiver.
@@ -227,7 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param mappingItems An NSSet containing mappings to be added.
  */
-- (void)addMappingItems:(NSSet *)mappingItems;
+- (void)addMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems;
 
 /**
  *  Remove a mapping item from the receiver.
@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param mappingItems An NSSet containing mappings to be removed.
  */
-- (void)removeMappingItems:(NSSet *)mappingItems;
+- (void)removeMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems;
 
 @end
 

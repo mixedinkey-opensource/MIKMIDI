@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Instruments returned by this property can be selected using
  *  -selectInstrument:
  */
-@property (nonatomic, readonly) NSArray *availableInstruments;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISynthesizerInstrument *) *availableInstruments;
 
 /**
  * Changes the instrument/voice used by the synthesizer.
@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param messages An NSArray of MIKMIDICommand (subclass) instances.
  */
-- (void)handleMIDIMessages:(NSArray *)messages;
+- (void)handleMIDIMessages:(MIKArrayOf(MIKMIDICommand *) *)messages;
 
 // Properties
 

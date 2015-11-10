@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing objects that conform to the MIKMIDIResponder protocol.
  */
-- (NSSet *)allMIDIResponders;
+- (MIKSetOf(id<MIKMIDIResponder>) *)allMIDIResponders;
 
 // Properties
 

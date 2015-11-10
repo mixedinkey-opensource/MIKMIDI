@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSArray of NSNumber instances containing MIKMIDIEventType values.
  */
-+ (NSArray *)supportedMIDIEventTypes;
++ (MIKArrayOf(NSNumber *) *)supportedMIDIEventTypes;
 
 /**
  *  The immutable counterpart class of the receiver.

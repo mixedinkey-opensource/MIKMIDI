@@ -26,12 +26,22 @@
 #define MIKArrayOf(TYPE) NSArray<TYPE>
 #define MIKArrayOfKindOf(TYPE) NSArray<__kindof TYPE>
 
+#define MIKMutableArrayOf(TYPE) NSMutableArray<TYPE>
+
+#define MIKSetOf(TYPE) NSSet<TYPE>
+#define MIKMutableSetOf(TYPE) NSMutableSet<TYPE>
+
 #define MIKMapTableOf(KEYTYPE, OBJTYPE) NSMapTable<KEYTYPE, OBJTYPE>
 
 #else
 
 #define MIKArrayOf(TYPE) NSArray
 #define MIKArrayOfKindOf(TYPE) NSArray
+
+#define MIKMutableArrayOf(TYPE) NSMutableArray
+
+#define MIKSetOf(TYPE) NSSet
+#define MIKMutableSetOf(TYPE) NSMutableSet
 
 #define MIKMapTableOf(KEYTYPE, OBJTYPE) NSMapTable
 

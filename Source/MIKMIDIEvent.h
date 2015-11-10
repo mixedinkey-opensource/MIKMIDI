@@ -215,7 +215,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDICommand (MIKMIDIEventToCommands)
 
-+ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
++ (MIKArrayOf(MIKMIDICommand *) *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
 
 @end
 

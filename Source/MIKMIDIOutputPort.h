@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MIKMIDIOutputPort : MIKMIDIPort
 
-- (BOOL)sendCommands:(NSArray *)commands toDestination:(MIKMIDIDestinationEndpoint *)destination error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toDestination:(MIKMIDIDestinationEndpoint *)destination error:(NSError **)error;
 
 @end
 

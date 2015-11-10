@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSArray containing NSString identifers for all MIDI mappable commands supported by the receiver.
  */
-- (NSArray *)commandIdentifiers;
+- (MIKArrayOf(NSString *) *)commandIdentifiers;
 
 /**
  *  The MIDI responder types the receiver will allow to be mapped to the command specified by commandID.

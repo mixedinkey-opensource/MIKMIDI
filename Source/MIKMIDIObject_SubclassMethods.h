@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSArray containing NSNumber representations of MIDIObjectType values.
  */
-+ (NSArray *)representedMIDIObjectTypes;
++ (MIKArrayOf(NSNumber *) *)representedMIDIObjectTypes;
 
 /**
  *  Whether the receiver can be initialized with the passed in objectRef,

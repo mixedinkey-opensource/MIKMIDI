@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @see +commandForCommandType:
  */
-+ (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)packet;
++ (MIKArrayOf(MIKMIDICommand *) *)commandsWithMIDIPacket:(MIDIPacket *)packet;
 
 
 /**
@@ -234,6 +234,6 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES if creating the packet list was successful, NO if an error occurred.
  */
-BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList * _Nonnull * _Nonnull outPacketList, NSArray *commands);
+BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList * _Nonnull * _Nonnull outPacketList, MIKArrayOf(MIKMIDICommand *) *commands);
 
 NS_ASSUME_NONNULL_END

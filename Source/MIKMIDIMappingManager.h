@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)mappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)mappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of bundled mappings for the controller
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)bundledMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)bundledMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of user-supplied mappings for the controller
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)userMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)userMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtaining a mapping file with a given mapping name.
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An array of MIKMIDIMapping instances, or an empty array if no mapping could be found.
  */
-- (NSArray *)mappingsWithName:(NSString *)mappingName;
+- (MIKArrayOf(MIKMIDIMapping *) *)mappingsWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
 /**
@@ -114,12 +114,12 @@ NS_ASSUME_NONNULL_BEGIN
  *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
  *  with the application.
  */
-@property (nonatomic, strong, readonly) NSSet *bundledMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *bundledMappings;
 
 /**
  *  MIDI mappings loaded from the user mappings folder on disk, as well as added at runtime.
  */
-@property (nonatomic, strong, readonly) NSSet *userMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *userMappings;
 
 /**
  *  Add a new user mapping. The mapping will automatically be saved to a file in the
@@ -143,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  The value of this property is the same as the union of -bundledMappings and -userMappings
  *
  */
-@property (nonatomic, strong, readonly) NSSet *mappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *mappings;
 
 @end
 

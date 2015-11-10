@@ -25,6 +25,8 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 @class MIKMIDITrack;
 @class MIKMIDISequencer;
 @class MIKMIDIDestinationEndpoint;
+@class MIKMIDIMetaTimeSignatureEvent;
+@class MIKMIDITempoEvent;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -182,7 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An array of MIKMIDIMetaTimeSignatureEvent.
  */
-- (NSArray *)timeSignatureEvents;
+- (MIKArrayOf(MIKMIDIMetaTimeSignatureEvent *) *)timeSignatureEvents;
 
 /**
  *  Returns an array of MIKMIDITempoEvent from the tempo track.
@@ -192,7 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An array of MIKMIDITempoEvent.
  */
-- (NSArray *)tempoEvents;
+- (MIKArrayOf(MIKMIDITempoEvent *) *)tempoEvents;
 
 /**
  *  Removes any existing tempo events and inserts a tempo event with the desired bpm at the beginning of the tempo track.
@@ -287,7 +289,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  This property can be observed using Key Value Observing.
  */
-@property (nonatomic, readonly) NSArray *tracks;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDITrack *) *tracks;
 
 /**
  *  The underlying MusicSequence that backs the instance of MIKMIDISequence.

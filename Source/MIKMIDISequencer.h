@@ -126,7 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
  *	MIDI sequence before they get sent to their destination endpoint.
  *
  */
-- (NSArray *)modifiedMIDICommandsFromCommandsToBeScheduled:(NSArray *)commandsToBeScheduled forCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler;
+- (MIKArrayOf(MIKMIDICommand *) *)modifiedMIDICommandsFromCommandsToBeScheduled:(MIKArrayOf(MIKMIDICommand *) *)commandsToBeScheduled forCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler;
 
 /**
  *	Sets the loopStartTimeStamp and loopEndTimeStamp properties.
@@ -389,7 +389,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see recording
  *
  */
-@property (nonatomic, copy, nullable) NSSet *recordEnabledTracks;
+@property (nonatomic, copy, nullable) MIKSetOf(MIKMIDITrack *) *recordEnabledTracks;
 
 /**
  *  An MIKMIDIClock that is synced with the sequencer's internal clock.

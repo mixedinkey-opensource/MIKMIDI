@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "MIKMIDICompilerCompatibility.h"
 
+@class MIKMIDICommand;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -19,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol MIKMIDICommandScheduler <NSObject>
 
-- (void)scheduleMIDICommands:(NSArray *)commands;
+- (void)scheduleMIDICommands:(MIKArrayOf(MIKMIDICommand *) *)commands;
 
 @end
 

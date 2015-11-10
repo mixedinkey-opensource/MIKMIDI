@@ -14,6 +14,7 @@
 @class MIKMIDIDevice;
 @class MIKMIDIMapping;
 @class MIKMIDIMappingItem;
+@class MIKMIDICommand;
 
 @protocol MIKMIDIMappingGeneratorDelegate;
 
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param messages    The messages used to generate the mapping. May not include all messages received during mapping.
  *  @param error       If mapping failed, an NSError explaing the failure, nil if mapping succeeded.
  */
-typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSArray *messages, NSError *_Nullable error);
+typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, MIKArrayOf(MIKMIDICommand *) *messages, NSError *_Nullable error);
 
 /**
  *  MIKMIDIMappingGenerator is used to map incoming commands from a MIDI device to MIDI responders in an application.
@@ -203,7 +204,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  *  @return The behavior to use when mapping the newResponder. See MIKMIDIMappingGeneratorRemapBehavior for a list of possible values.
  */
 - (MIKMIDIMappingGeneratorRemapBehavior)mappingGenerator:(MIKMIDIMappingGenerator *)generator
-			  behaviorForRemappingControlMappedWithItems:(NSSet *)mappingItems
+			  behaviorForRemappingControlMappedWithItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems
 										  toNewResponder:(id<MIKMIDIMappableResponder>)newResponder
 									   commandIdentifier:(NSString *)commandIdentifier;
 
@@ -220,7 +221,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  *  @return YES to remove the existing mapping items. NO to keep the existing mapping items in addition to the new mapping item being generated.
  */
 - (BOOL)mappingGenerator:(MIKMIDIMappingGenerator *)generator
-shouldRemoveExistingMappingItems:(NSSet *)mappingItems
+shouldRemoveExistingMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems
  forResponderBeingMapped:(id<MIKMIDIMappableResponder>)responder;
 
 /**

@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *	@return An array of legacy file names, or nil.
  */
-- (nullable NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping;
+- (nullable MIKArrayOf(NSString *) *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping;
 
 @end
 

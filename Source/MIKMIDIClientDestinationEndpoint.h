@@ -10,10 +10,11 @@
 #import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIClientDestinationEndpoint;
+@class MIKMIDICommand;
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestinationEndpoint *destination, NSArray *commands);
+typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestinationEndpoint *destination, MIKArrayOf(MIKMIDICommand *) *commands);
 
 /**
  *	MIKMIDIClientDestinationEndpoint represents a virtual endpoint created by your application to receive MIDI

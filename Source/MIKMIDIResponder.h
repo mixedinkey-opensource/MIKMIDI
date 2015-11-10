@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSArray containing the receivers subresponders. Each object in the array must also conform to MIKMIDIResponder.
  */
-- (nullable NSArray *)subresponders; // Nullable for historical reasons.
+- (nullable MIKArrayOf(id<MIKMIDIResponder>) *)subresponders; // Nullable for historical reasons.
 
 @end
 

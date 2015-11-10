@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An NSArray containing MIKMIDISynthesizerInstrument instances.
  */
-+ (NSArray *)availableInstruments DEPRECATED_ATTRIBUTE;
++ (MIKArrayOf(MIKMIDISynthesizerInstrument *) *)availableInstruments DEPRECATED_ATTRIBUTE;
 
 /**
  *	@deprecated Use +instrumentWithID:inInstrumentUnit: instead.

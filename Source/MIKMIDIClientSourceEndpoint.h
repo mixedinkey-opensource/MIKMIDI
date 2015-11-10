@@ -8,6 +8,8 @@
 #import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDICompilerCompatibility.h"
 
+@class MIKMIDICommand;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -41,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
-- (BOOL)sendCommands:(NSArray *)commands error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands error:(NSError **)error;
 
 @end
 
