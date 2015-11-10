@@ -7,8 +7,11 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIEntity;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Base class for MIDI endpoint objects. Not used directly, rather, in use, instances will always be
@@ -19,7 +22,7 @@
 /**
  *  The entity that contains the receiver. Will be nil for non-wrapped virtual endpoints.
  */
-@property (nonatomic, weak, readonly) MIKMIDIEntity *entity;
+@property (nonatomic, weak, readonly, nullable) MIKMIDIEntity *entity;
 
 /**
  *  Whether or not the endpoint is private or hidden. See kMIDIPropertyPrivate in MIDIServices.h.
@@ -27,3 +30,5 @@
 @property (nonatomic, readonly) BOOL isPrivate;
 
 @end
+
+NS_ASSUME_NONNULL_END

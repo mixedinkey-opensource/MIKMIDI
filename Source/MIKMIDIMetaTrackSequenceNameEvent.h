@@ -7,13 +7,16 @@
 //
 
 #import "MIKMIDIMetaTextEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A meta event containing a track name.
  */
 @interface MIKMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTextEvent
 
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly, nullable) NSString *name;
 
 @end
 
@@ -22,11 +25,13 @@
  */
 @interface MIKMutableMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTrackSequenceNameEvent
 
-@property (nonatomic, copy, readwrite) NSString *name;
+@property (nonatomic, copy, readwrite, nullable) NSString *name;
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 metadataType;
-@property (nonatomic, strong, readwrite) NSData *metaData;
+@property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 @property (nonatomic, copy, readwrite) NSString *string;
 
 @end
+
+NS_ASSUME_NONNULL_END

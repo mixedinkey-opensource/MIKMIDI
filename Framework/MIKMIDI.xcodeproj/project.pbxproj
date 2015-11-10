@@ -255,6 +255,8 @@
 		9DB366F71A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB366F41A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DB366F81A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */; };
 		9DB366F91A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */; };
+		9DB8CD421BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; };
+		9DB8CD431BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; };
 		9DBEBD581AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD591AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD5A1AAA21C400E59734 /* MIKMIDIEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -446,6 +448,7 @@
 		9DB366EF1A964C55001D1CF3 /* MIKMIDISynthesizer.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISynthesizer.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; wrapsLines = 1; };
 		9DB366F41A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISynthesizerInstrument.h; sourceTree = "<group>"; };
 		9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISynthesizerInstrument.m; sourceTree = "<group>"; };
+		9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMetaEvent_SubclassMethods.h; sourceTree = "<group>"; };
 		9DBEBD5C1AAA27D100E59734 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = SOURCE_ROOT; };
 		9DBEBD651AAA303700E59734 /* MIKMIDIChannelPressureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelPressureEvent.h; sourceTree = "<group>"; };
 		9DBEBD661AAA303700E59734 /* MIKMIDIChannelPressureEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelPressureEvent.m; sourceTree = "<group>"; };
@@ -700,6 +703,7 @@
 			isa = PBXGroup;
 			children = (
 				839D933B19C3A2F5007589C3 /* MIKMIDIMetaEvent.h */,
+				9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */,
 				839D933C19C3A2F5007589C3 /* MIKMIDIMetaEvent.m */,
 				839D933719C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.h */,
 				839D933819C3A2F5007589C3 /* MIKMIDIMetaCopyrightEvent.m */,
@@ -861,6 +865,7 @@
 				9D74EF7117A713A100BEE89F /* MIKMIDIEndpoint.h in Headers */,
 				83FB360E1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h in Headers */,
 				9D74EF7317A713A100BEE89F /* MIKMIDIEntity.h in Headers */,
+				9DB8CD421BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */,
 				9D74EF7517A713A100BEE89F /* MIKMIDIErrors.h in Headers */,
 				9D74EF7717A713A100BEE89F /* MIKMIDIInputPort.h in Headers */,
 				9D74EF7917A713A100BEE89F /* MIKMIDIMapping.h in Headers */,
@@ -948,6 +953,7 @@
 				9DAF8B631A7B008A00F46528 /* MIKMIDINoteOnCommand.h in Headers */,
 				9D84951D1AA7678700C52475 /* MIKMIDIProgramChangeEvent.h in Headers */,
 				9DAF8B5E1A7B007300F46528 /* MIKMIDIDestinationEndpoint.h in Headers */,
+				9DB8CD431BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */,
 				9D3781561AA407A7007A61BE /* MIKMIDIResponder.h in Headers */,
 				9DAF8B7B1A7B00A700F46528 /* MIKMIDIPlayer.h in Headers */,
 				9DAF8B781A7B00A700F46528 /* MIKMIDIMetaTimeSignatureEvent.h in Headers */,

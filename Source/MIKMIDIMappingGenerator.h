@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "MIKMIDIPrivate.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 #import "MIKMIDIMapping.h"
 
@@ -17,6 +17,8 @@
 
 @protocol MIKMIDIMappingGeneratorDelegate;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  Completion block for mapping generation method.
  *
@@ -24,7 +26,7 @@
  *  @param messages    The messages used to generate the mapping. May not include all messages received during mapping.
  *  @param error       If mapping failed, an NSError explaing the failure, nil if mapping succeeded.
  */
-typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSArray *messages, NSError *error);
+typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSArray *messages, NSError *_Nullable error);
 
 /**
  *  MIKMIDIMappingGenerator is used to map incoming commands from a MIDI device to MIDI responders in an application.
@@ -124,9 +126,9 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 @property (nonatomic, MIKMIDIMappingGeneratorWeakProperty) id<MIKMIDIMappingGeneratorDelegate> delegate;
 
 /**
- *  The device for which a mapping is being generated. Must not be nil.
+ *  The device for which a mapping is being generated. Must not be nil for mapping to work.
  */
-@property (nonatomic, strong) MIKMIDIDevice *device;
+@property (nonatomic, strong, nullable) MIKMIDIDevice *device;
 
 /**
  *  The mapping being generated. Assign before mapping starts to modify existing mapping.
@@ -234,3 +236,5 @@ shouldRemoveExistingMappingItems:(NSSet *)mappingItems
 			  commandByProcessingIncomingCommand:(MIKMIDIChannelVoiceCommand *)command;
 
 @end
+
+NS_ASSUME_NONNULL_END

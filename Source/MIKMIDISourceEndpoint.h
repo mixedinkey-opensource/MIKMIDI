@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIEndpoint.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDISourceEndpoint represents a source (input) MIDI endpoint.
@@ -26,3 +29,5 @@
 @interface MIKMIDISourceEndpoint : MIKMIDIEndpoint
 
 @end
+
+NS_ASSUME_NONNULL_END

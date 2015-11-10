@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIChannelVoiceCommand;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDICommandThrottler is a simple utility class useful for throttling e.g. jog wheel/turntable controls, 
  *  which otherwise send many messages per revolution.
  */
-
 @interface MIKMIDICommandThrottler : NSObject
 
 /**
@@ -35,3 +37,5 @@
 - (void)resetThrottlingCountForCommand:(MIKMIDIChannelVoiceCommand *)command;
 
 @end
+
+NS_ASSUME_NONNULL_END

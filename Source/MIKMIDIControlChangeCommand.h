@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI control change message.
@@ -33,7 +36,7 @@
  *  @return A new, single MIKMIDIControlChangeCommand instance containing 14-bit value data, and whose 
  *  fourteenBitCommand property is set to YES.
  */
-+ (instancetype)commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)msbCommand andLSBCommand:(MIKMIDIControlChangeCommand *)lsbCommand;
++ (nullable instancetype)commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)msbCommand andLSBCommand:(MIKMIDIControlChangeCommand *)lsbCommand;
 
 /**
  *  The MIDI control number for the command.
@@ -101,6 +104,8 @@
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, copy, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite, null_resettable) NSData *data;
 
 @end
+
+NS_ASSUME_NONNULL_END

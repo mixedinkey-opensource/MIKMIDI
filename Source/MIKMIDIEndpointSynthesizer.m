@@ -93,12 +93,10 @@
 
 - (void)dealloc
 {
-	if (_endpoint) {
-		if ([_endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
-			[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.connectionToken];
-		}
-		// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
+	if ([_endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
+		[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.connectionToken];
 	}
+	// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
 }
 
 #pragma mark - Private

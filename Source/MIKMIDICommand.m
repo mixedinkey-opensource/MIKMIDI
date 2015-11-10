@@ -298,7 +298,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
-	self.internalData = [data mutableCopy];
+	self.internalData = data ? [data mutableCopy] : [NSMutableData data];
 }
 
 @end

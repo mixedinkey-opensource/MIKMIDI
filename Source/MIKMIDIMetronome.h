@@ -7,7 +7,9 @@
 //
 
 #import "MIKMIDIEndpointSynthesizer.h"
+#import "MIKMIDICompilerCompatibility.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *	This class is only a subclass of MIKMIDIEndpointSynthesizer so it continues to function with MIKMIDIPlayer while
@@ -30,3 +32,5 @@
 - (BOOL)setupMetronome;
 
 @end
+
+NS_ASSUME_NONNULL_END

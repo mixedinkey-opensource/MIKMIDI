@@ -40,7 +40,7 @@
 
 @implementation MIKMIDIInputPort
 
-- (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name
+- (instancetype)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name
 {
 	self = [super initWithClient:clientRef name:name];
 	if (self) {

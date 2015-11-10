@@ -174,7 +174,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 {
 	NSArray *tracks = self.internalTracks;
 	self.internalTracks = nil; // Unregister for KVO
-    self.callBackBlock = nil;
+	[self setCallBackBlock:^(MIKMIDITrack *t, MusicTimeStamp ts, const MusicEventUserData *ud, MusicTimeStamp ts2, MusicTimeStamp ts3) {}];
 
 	for (MIKMIDITrack *track in tracks) {
 		OSStatus err = MusicSequenceDisposeTrack(_musicSequence, track.musicTrack);
@@ -208,7 +208,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
 		MusicTrack musicTrack;
 		OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
-		if (err) return NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		if (err) { NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__); };
 
 		track = [MIKMIDITrack trackWithSequence:self musicTrack:musicTrack];
 		[self insertObject:track inInternalTracksAtIndex:[self.internalTracks count]];
@@ -434,7 +434,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 		tracks = self.internalTracks;
 	}];
 
-	return tracks;
+	return tracks ?: @[];
 }
 
 + (NSSet *)keyPathsForValuesAffectingLength

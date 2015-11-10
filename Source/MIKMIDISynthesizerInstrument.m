@@ -19,7 +19,7 @@
 {
 	self = [super init];
 	if (self) {
-		_name = name;
+		_name = name ?: @"No instrument name";
 		_instrumentID = instrumentID;
 	}
 	return self;
@@ -108,12 +108,12 @@
 		availableInstruments = [result copy];
 	});
 	
-	return availableInstruments;
+	return availableInstruments ?: @[];
 }
 
 + (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID
 {
-	return [self instrumentWithID:instrumentID name:nil];
+	return [self instrumentWithID:instrumentID name:@"Unspecified Name"];
 }
 
 @end

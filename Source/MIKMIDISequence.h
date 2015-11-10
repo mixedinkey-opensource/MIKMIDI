@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-
+#import "MIKMIDICompilerCompatibility.h"
 
 typedef struct {
 	UInt8 numerator;
@@ -26,6 +26,8 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 @class MIKMIDISequencer;
 @class MIKMIDIDestinationEndpoint;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  Instances of MIKMIDISequence contain a collection of MIDI tracks. MIKMIDISequences may be thought
  *  of as MIDI "songs". They can be loaded from and saved to MIDI files. They can also be played
@@ -41,7 +43,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence, or nil if an error occured.
  */
-+ (instancetype)sequence;
++ (nullable instancetype)sequence;
 
 /**
  *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
@@ -52,7 +54,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
  */
-+ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
++ (nullable instancetype)sequenceWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
  *  Creates and initilazes a new instance of MIKMIDISequence from a MIDI file.
@@ -66,7 +68,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
  */
-+ (instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
++ (nullable instancetype)sequenceWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
@@ -77,7 +79,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
  */
-- (instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
+- (nullable instancetype)initWithFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
 /**
  *  Initilazes a new instance of MIKMIDISequence from a MIDI file.
@@ -91,7 +93,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the loaded file's MIDI sequence, or nil if an error occured.
  */
-- (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+- (nullable instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
@@ -102,7 +104,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-+ (instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
++ (nullable instancetype)sequenceWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
@@ -116,7 +118,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-+ (instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
++ (nullable instancetype)sequenceWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
@@ -127,7 +129,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-- (instancetype)initWithData:(NSData *)data error:(NSError **)error;
+- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error;
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
@@ -141,7 +143,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-- (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
+- (nullable instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error;
 
 /**
  *  Writes the MIDI sequence in Standard MIDI File format to a file at the specified URL.
@@ -157,9 +159,9 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 #pragma mark - Track Management
 
 /**
- *  Creates and adds a new MIDI track to the sequence.
+ *  Creates and adds a new MIDI track to the sequence. May return nil if an error occurs.
  */
-- (MIKMIDITrack *)addTrack;
+- (nullable MIKMIDITrack *)addTrack;
 
 /**
  *  Removes the specified MIDI track from the sequence.
@@ -271,7 +273,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 /**
  *	The sequencer this sequence is assigned to for playback.
  */
-@property (nonatomic, readonly) MIKMIDISequencer *sequencer;
+@property (nonatomic, readonly, nullable) MIKMIDISequencer *sequencer;
 
 /**
  *  The tempo track for the sequence. Even in a new, empty sequence,
@@ -311,7 +313,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 /**
  *  The MIDI data that composes the sequence. This data is equivalent to an NSData representation of a standard MIDI file.
  */
-@property (nonatomic, readonly) NSData *dataValue;
+@property (nonatomic, readonly, nullable) NSData *dataValue;
 
 /**
  *  A block to be called for each user event added to any music track owned by the sequence.
@@ -332,7 +334,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
  */
-+ (instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
++ (nullable instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated This method is deprecated. Use -initWithData:error: instead.
@@ -343,7 +345,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
  */
-- (instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
+- (nullable instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
 
 /**
  *	@deprecated This method is deprecated. Use -[MIKMIDISequencer 
@@ -353,7 +355,7 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
  *
  *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.
  */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
+- (void)setDestinationEndpoint:(nullable MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
  *	@deprecated This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
@@ -393,5 +395,6 @@ NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 d
 
 @end
 
-
 FOUNDATION_EXPORT const MusicTimeStamp MIKMIDISequenceLongestTrackLength;
+
+NS_ASSUME_NONNULL_END

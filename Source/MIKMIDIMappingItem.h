@@ -9,8 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "MIKMIDIMappableResponder.h"
 #import "MIKMIDICommand.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIMapping;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIMappingItem contains information about a mapping between a physical MIDI control,
@@ -38,11 +41,11 @@
  *  Returns an NSString instance containing an XML representation of the receiver.
  *  The XML document returned by this method can be written to disk.
  *
- *  @return An NSString containing an XML representation of the receiver.
+ *  @return An NSString containing an XML representation of the receiver, or nil if an error occurred.
  *
  *  @see -writeToFileAtURL:error:
  */
-- (NSString *)XMLStringRepresentation;
+- (nullable NSString *)XMLStringRepresentation;
 
 // Properties
 
@@ -92,12 +95,14 @@
 /**
  *  Optional additional key value pairs, which will be saved as attributes in this item's XML representation. Keys and values must be NSStrings.
  */
-@property (nonatomic, copy) NSDictionary *additionalAttributes;
+@property (nonatomic, copy, nullable) NSDictionary *additionalAttributes;
 
 /**
  *  The MIDI Mapping the receiver belongs to. May be nil if the mappping item hasn't been added to a mapping yet,
  *  or its mapping has been deallocated.
  */
-@property (nonatomic, weak, readonly) MIKMIDIMapping *mapping;
+@property (nonatomic, weak, readonly, nullable) MIKMIDIMapping *mapping;
 
 @end
+
+NS_ASSUME_NONNULL_END

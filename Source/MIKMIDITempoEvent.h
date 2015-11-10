@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /** 
  *  A MIDI tempo event.
@@ -22,7 +25,7 @@
  *
  *  @return A new instance of MIKMIDITempoEvent, or nil if an error occured.
  */
-+ (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
++ (nullable instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 
 /**
  *  The beats per minute of the tempo event.
@@ -37,7 +40,9 @@
 @interface MIKMutableMIDITempoEvent : MIKMIDITempoEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) Float64 bpm;
 
 @end
+
+NS_ASSUME_NONNULL_END

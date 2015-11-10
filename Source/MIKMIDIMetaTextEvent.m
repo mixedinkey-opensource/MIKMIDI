@@ -7,7 +7,7 @@
 //
 
 #import "MIKMIDIMetaTextEvent.h"
-#import "MIKMIDIEvent_SubclassMethods.h"
+#import "MIKMIDIMetaEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)

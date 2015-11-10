@@ -137,7 +137,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)dealloc
 {
-	self.sequence = nil;	// remove KVO
+	[_sequence removeObserver:self forKeyPath:@"tracks"];
 	self.processingTimer = NULL;
 }
 
@@ -552,6 +552,10 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)setCommandScheduler:(id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track
 {
+	if (!commandScheduler) {
+		[self.tracksToDestinationsMap removeObjectForKey:track];
+		return;
+	}
 	[self.tracksToDestinationsMap setObject:commandScheduler forKey:track];
 	[self.tracksToDefaultSynthsMap removeObjectForKey:track];
 }

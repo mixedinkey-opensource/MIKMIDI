@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 /**
  *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
@@ -25,6 +26,7 @@ Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval);
  */
 Float64 MIKMIDIClockSecondsPerMIDITimeStamp();
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIClock provides the number of seconds per MIDITimeStamp, as well as the
@@ -213,6 +215,6 @@ Float64 MIKMIDIClockSecondsPerMIDITimeStamp();
  */
 + (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval DEPRECATED_ATTRIBUTE;
 
-
 @end
 
+NS_ASSUME_NONNULL_END

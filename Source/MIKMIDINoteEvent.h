@@ -7,8 +7,11 @@
 //
 
 #import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIClock;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI note event.
@@ -26,11 +29,11 @@
  *
  *  @return An initialized MIKMIDINoteEvent instance, or nil if an error occurred.
  */
-+ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
-								  note:(UInt8)note
-							  velocity:(UInt8)velocity
-							  duration:(Float32)duration
-							   channel:(UInt8)channel;
++ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+										   note:(UInt8)note
+									   velocity:(UInt8)velocity
+									   duration:(Float32)duration
+										channel:(UInt8)channel;
 
 /**
  *  Convenience method for creating a new MIKMIDINoteEvent from a CoreMIDI MIDINoteMessage struct.
@@ -40,7 +43,7 @@
  *
  *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
  */
-+ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
++ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
 
 // Properties
 
@@ -99,7 +102,7 @@
 @interface MIKMutableMIDINoteEvent : MIKMIDINoteEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) UInt8 note;
 @property (nonatomic, readwrite) UInt8 velocity;
 @property (nonatomic, readwrite) UInt8 channel;
@@ -108,10 +111,14 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
+
 #pragma mark -
 
 #import <MIKMIDI/MIKMIDINoteOnCommand.h>
 #import <MIKMIDI/MIKMIDINoteOffCommand.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDICommand (MIKMIDINoteEventToCommands)
 
@@ -120,3 +127,5 @@
 + (MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock;
 
 @end
+
+NS_ASSUME_NONNULL_END

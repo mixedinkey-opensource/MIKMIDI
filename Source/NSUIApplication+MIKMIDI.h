@@ -24,6 +24,8 @@
 
 #endif
 
+#import "MIKMIDICompilerCompatibility.h"
+
 /**
  *  Define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS as a non-zero value to (re)enable searching
  *  the view hierarchy for MIDI responders. This is disabled by default because it's slow.
@@ -35,6 +37,8 @@
 @protocol MIKMIDIResponder;
 
 @class MIKMIDICommand;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDI implements a category on NSApplication (on OS X) or UIApplication (on iOS)
@@ -108,7 +112,7 @@
  *  @return An object that conforms to MIKMIDIResponder, or nil if no registered responder for the passed in identifier
  *  could be found.
  */
-- (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
+- (nullable id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
 
 /**
  *  Returns all MIDI responders that have been registered with the application.
@@ -135,3 +139,5 @@
 @property (nonatomic) BOOL shouldCacheMIKMIDISubresponders;
 
 @end
+
+NS_ASSUME_NONNULL_END

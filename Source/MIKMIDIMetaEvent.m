@@ -73,7 +73,7 @@
     metaEvent->dataLength = (UInt32)[metaData length];
     NSMutableData *newMetaData = [[self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)] mutableCopy];
     [newMetaData appendData:metaData];
-    self.internalData = newMetaData;
+	self.internalData = newMetaData ?: [NSMutableData data];
 }
 
 @end

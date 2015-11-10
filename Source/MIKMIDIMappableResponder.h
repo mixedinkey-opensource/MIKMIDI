@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MIKMIDIResponder.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 /**
  *  Bit-mask constants used to specify MIDI responder types for mapping.
@@ -82,6 +83,8 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 	MIKMIDIResponderTypeAll = NSUIntegerMax,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  This protocol defines methods that that must be implemented by MIDI responder objects to be mapped
  *  using MIKMIDIMappingGenerator, and to whom MIDI messages will selectively be routed using a MIDI mapping
@@ -142,3 +145,5 @@ typedef NS_OPTIONS(NSUInteger, MIKMIDIResponderType){
 - (BOOL)illuminationStateForCommandIdentifier:(NSString *)commandID;
 
 @end
+
+NS_ASSUME_NONNULL_END

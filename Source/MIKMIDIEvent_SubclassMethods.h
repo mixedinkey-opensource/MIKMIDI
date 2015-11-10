@@ -6,6 +6,10 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDIEvent ()
 
@@ -77,14 +81,11 @@
  *  data property. Subclasses may set it. When mutating it, subclasses should manually
  *  call -will/didChangeValueForKey for the internalData key path.
  */
-@property (nonatomic, strong, readwrite) NSMutableData *internalData;
+@property (nonatomic, strong /* mutableCopy*/, readwrite) NSMutableData *internalData;
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 
 @property (nonatomic, readwrite) MIKMIDIEventType eventType;
-
-@property (nonatomic, strong, readwrite) NSData *metaData;
-
 
 /**
  *  Additional description string to be appended to basic description provided by
@@ -110,3 +111,5 @@
 + (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

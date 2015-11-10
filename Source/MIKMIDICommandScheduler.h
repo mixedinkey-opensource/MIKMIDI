@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *	Objects that conform to this protocol can be used as a destination for MIDI commands to
@@ -20,3 +22,5 @@
 - (void)scheduleMIDICommands:(NSArray *)commands;
 
 @end
+
+NS_ASSUME_NONNULL_END

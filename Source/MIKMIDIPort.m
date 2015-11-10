@@ -16,7 +16,7 @@
 
 @implementation MIKMIDIPort
 
-- (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name
+- (instancetype)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name
 {
 	self = [super init];
 	if (self) {

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDITrack;
@@ -34,6 +35,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 	MIKMIDISequencerClickTrackStatusAlwaysEnabled
 };
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDISequencer can be used to play and record to an MIKMIDISequence.
@@ -205,10 +207,10 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @note If track is not contained by the receiver's sequence, this method does nothing.
  *
  *  @param commandScheduler	An object that conforms to MIKMIDICommandScheduler with which events
- *	in track should be scheduled during playback.
+ *	in track should be scheduled during playback. Pass nil to remove an existing command scheduler
  *  @param track	An MIKMIDITrack instance.
  */
-- (void)setCommandScheduler:(id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track;
+- (void)setCommandScheduler:(nullable id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track;
 
 /**
  *  Returns the command scheduler for a track in the sequencer's sequence.
@@ -228,7 +230,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see -builtinSynthesizerForTrack:
  *	@see createSynthsIfNeeded
  */
-- (id<MIKMIDICommandScheduler>)commandSchedulerForTrack:(MIKMIDITrack *)track;
+- (nullable id<MIKMIDICommandScheduler>)commandSchedulerForTrack:(MIKMIDITrack *)track;
 
 /**
  *  Returns synthesizer the receiver will use to synthesize MIDI during playback
@@ -243,14 +245,14 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *
  *  @return An MIKMIDISynthesizer instance, or nil if a builtin synthesizer for track doesn't exist.
  */
-- (MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
+- (nullable MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
 #pragma mark - Properties
 
 /**
  *  The sequence to playback and record to.
  */
-@property (strong, nonatomic) MIKMIDISequence *sequence;
+@property (nonatomic, strong) MIKMIDISequence *sequence;
 
 /**
  *	Whether or not the sequencer is currently playing. This can be observed with KVO.
@@ -371,7 +373,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 /**
  *  The metronome to send click track events to.
  */
-@property (strong, nonatomic) MIKMIDIMetronome *metronome;
+@property (nonatomic, strong, nullable) MIKMIDIMetronome *metronome;
 
 /**
  *  When the click track should be heard.
@@ -387,20 +389,20 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see recording
  *
  */
-@property (copy, nonatomic) NSSet *recordEnabledTracks;
+@property (nonatomic, copy, nullable) NSSet *recordEnabledTracks;
 
 /**
  *  An MIKMIDIClock that is synced with the sequencer's internal clock.
  *
  *  @  @see -[MIKMIDIClock syncedClock]
  */
-@property (readonly, nonatomic) MIKMIDIClock *syncedClock;
+@property (nonatomic, readonly) MIKMIDIClock *syncedClock;
 
 
 /**
  *  The latest MIDITimeStamp the sequencer has looked ahead to to schedule MIDI events.
  */
-@property (readonly, nonatomic) MIDITimeStamp latestScheduledMIDITimeStamp;
+@property (nonatomic, readonly) MIDITimeStamp latestScheduledMIDITimeStamp;
 
 #pragma mark - Deprecated
 
@@ -438,7 +440,7 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see -builtinSynthesizerForTrack:
  *	@see createSynthsAndEndpointsIfNeeded
  */
-- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
+- (nullable MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
 
 @end
 
@@ -453,3 +455,5 @@ FOUNDATION_EXPORT NSString * const MIKMIDISequencerWillLoopNotification;
  *	sequence regardless of sequence length.
  */
 FOUNDATION_EXPORT const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp;
+
+NS_ASSUME_NONNULL_END

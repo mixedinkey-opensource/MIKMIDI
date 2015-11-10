@@ -226,7 +226,12 @@ static MIKMIDIMappingManager *sharedManager = nil;
 			if (![[file pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) continue;
 			
 			// process the mapping file
-			MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+			NSError *error = nil;
+			MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file error:&error];
+			if (!mapping) {
+				NSLog(@"Error loading MIDI mapping from %@: %@", file, error);
+				continue;
+			}
 			if (mapping) [mappings addObject:mapping];
 		}
 	} else {
@@ -243,7 +248,12 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	NSBundle *bundle = [NSBundle mainBundle];
 	NSArray *bundledMappingFileURLs = [bundle URLsForResourcesWithExtension:kMIKMIDIMappingFileExtension subdirectory:nil];
 	for (NSURL *file in bundledMappingFileURLs) {
-		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+		NSError *error = nil;
+		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file error:&error];
+		if (!mapping) {
+			NSLog(@"Error loading MIDI mapping from %@: %@", file, error);
+			continue;
+		}
 		mapping.bundledMapping = YES;
 		if (mapping) [mappings addObject:mapping];
 	}

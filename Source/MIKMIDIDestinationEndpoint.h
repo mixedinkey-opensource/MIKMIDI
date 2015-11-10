@@ -8,6 +8,9 @@
 
 #import "MIKMIDIEndpoint.h"
 #import "MIKMIDICommandScheduler.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIDestinationEndpoint represents a source (input) MIDI endpoint.
@@ -36,3 +39,5 @@
 - (void)unscheduleAllPendingEvents;
 
 @end
+
+NS_ASSUME_NONNULL_END

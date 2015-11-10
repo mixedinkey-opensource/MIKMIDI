@@ -10,6 +10,9 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDISynthesizerInstrument.h"
 #import "MIKMIDICommandScheduler.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDISynthesizer provides a simple way to synthesize MIDI messages to
@@ -35,7 +38,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)init;
+- (nullable instancetype)init;
 
 /**
  *  Initializes an MIKMIDISynthesizer instance which uses an audio unit matching
@@ -46,7 +49,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription NS_DESIGNATED_INITIALIZER;
 
 /**
  *  This synthesizer's available instruments. An array of 
@@ -128,7 +131,7 @@
  *
  *  @see -setupAUGraph
  */
-@property (nonatomic, readonly) AudioUnit instrumentUnit;
+@property (nonatomic, readonly, nullable) AudioUnit instrumentUnit;
 
 /**
  *  The AUGraph for the instrument.
@@ -138,7 +141,7 @@
  *
  *  @see -setupAUGraph
  */
-@property (nonatomic) AUGraph graph;
+@property (nonatomic, nullable) AUGraph graph;
 
 // Deprecated
 
@@ -148,3 +151,5 @@
 @property (nonatomic) AudioUnit instrument DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

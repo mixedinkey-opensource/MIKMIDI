@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDIEvent;
 @class MIKMIDINoteEvent;
 @class MIKMIDIDestinationEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Instances of MIKMIDITrack contain sequences of MIDI events. Commonly,
@@ -153,7 +156,7 @@
 /**
  *  The MIDI sequence the track belongs to.
  */
-@property (weak, nonatomic, readonly) MIKMIDISequence *sequence;
+@property (weak, nonatomic, readonly, nullable) MIKMIDISequence *sequence;
 
 /**
  *  The underlying MusicTrack that backs the instance of MIKMIDITrack.
@@ -274,7 +277,7 @@
  *  
  *	The destination endpoint for the MIDI events of the track during playback.
  */
-@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
+@property (nonatomic, strong, readwrite, nullable) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -addEvent: instead.
@@ -319,3 +322,5 @@
 - (BOOL)clearAllEvents DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

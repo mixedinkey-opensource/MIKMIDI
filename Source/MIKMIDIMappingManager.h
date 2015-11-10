@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 #define kMIKMIDIMappingFileExtension @"midimap"
 
 @class MIKMIDIMapping;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIMappingManager provides a centralized way to manage an application's
@@ -91,7 +94,7 @@
  *
  *  @return An MIKMIDIMapping instance for the imported file, or nil if there was an error.
  */
-- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
+- (nullable MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 
 /**
  *  Saves user mappings to disk. These mappings are currently saved to a folder at <AppSupport>/<ApplicationBundleID>/MIDI Mappings.
@@ -155,6 +158,8 @@
  *
  *  @deprecated Deprecated. Use -mappingsWithName: instead.
  */
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
+- (nullable MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -23,7 +23,7 @@
 
 @interface MIKMIDITrack ()
 
-@property (weak, nonatomic) MIKMIDISequence *sequence;
+@property (weak, nonatomic, nullable) MIKMIDISequence *sequence;
 @property (nonatomic, strong) NSMutableSet *internalEvents;
 @property (nonatomic, strong) NSArray *sortedEventsCache;
 
@@ -321,12 +321,12 @@
 		events = mutableEvents;
 	}];
 
-	return events;
+	return events ?: @[];
 }
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-	return [self eventsOfClass:Nil fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+	return [self eventsOfClass:[MIKMIDIEvent class] fromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
 }
 
 - (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
@@ -538,7 +538,7 @@
 		events = self.sortedEventsCache;
 	}];
 
-	return events;
+	return events ?: @[];
 }
 
 - (void)setEvents:(NSArray *)events

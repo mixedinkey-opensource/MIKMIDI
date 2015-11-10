@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDITrack.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDITrack ()
 
@@ -19,7 +22,7 @@
  *  @note You should not call this method. It is for internal MIKMIDI use only.
  *  To add a new track to a MIDI sequence use -[MIKMIDISequence addTrack].
  */
-+ (instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
++ (nullable instancetype)trackWithSequence:(MIKMIDISequence *)sequence musicTrack:(MusicTrack)musicTrack;
 
 /**
  *  Sets a temporary length and loopInfo for the track.
@@ -39,3 +42,5 @@
 - (void)restoreLengthAndLoopInfo;
 
 @end
+
+NS_ASSUME_NONNULL_END

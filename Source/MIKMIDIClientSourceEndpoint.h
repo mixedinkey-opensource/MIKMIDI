@@ -6,6 +6,9 @@
 //
 
 #import "MIKMIDISourceEndpoint.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *	MIKMIDIClientSourceEndpoint represents a virtual endpoint created by your application to send MIDI
@@ -27,7 +30,7 @@
  *
  *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
  */
-- (instancetype)initWithName:(NSString*)name;
+- (nullable instancetype)initWithName:(NSString *)name;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint.
@@ -41,3 +44,5 @@
 - (BOOL)sendCommands:(NSArray *)commands error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

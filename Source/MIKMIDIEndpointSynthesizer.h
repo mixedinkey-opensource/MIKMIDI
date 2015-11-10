@@ -7,11 +7,14 @@
 //
 
 #import "MIKMIDISynthesizer.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIEndpoint;
 @class MIKMIDISourceEndpoint;
 @class MIKMIDIClientDestinationEndpoint;
 @class MIKMIDISynthesizerInstrument;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIEndpointSynthesizer is a subclass of MIKMIDISynthesizer that
@@ -33,7 +36,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-+ (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source;
++ (nullable instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source;
 
 /**
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
@@ -44,7 +47,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-+ (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
++ (nullable instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
@@ -54,7 +57,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source;
+- (nullable instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
@@ -65,7 +68,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
+- (nullable instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
@@ -75,7 +78,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-+ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
++ (nullable instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
 
 /**
  *  Creates and initializes an MIKMIDIEndpointSynthesizer instance.
@@ -86,7 +89,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-+ (instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
++ (nullable instancetype)synthesizerWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance using Apple's DLS synth as the
@@ -96,7 +99,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
+- (nullable instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination;
 
 /**
  *  Initializes an MIKMIDIEndpointSynthesizer instance.
@@ -107,7 +110,7 @@
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
+- (nullable instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription;
 
 // Properties
 
@@ -117,7 +120,8 @@
  *  events coming from an external MIDI keyboard, or it may be an MIKMIDIClientDestinationEndpoint,
  *  e.g. to synthesize MIDI events coming from an another application on the system.
  */
-@property (nonatomic, strong, readonly) MIKMIDIEndpoint *endpoint;
+@property (nonatomic, strong, readonly, nullable) MIKMIDIEndpoint *endpoint;
 
 @end
 
+NS_ASSUME_NONNULL_END

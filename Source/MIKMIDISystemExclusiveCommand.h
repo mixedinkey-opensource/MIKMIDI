@@ -7,12 +7,15 @@
 //
 
 #import "MIKMIDISystemMessageCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 #define kMIKMIDISysexNonRealtimeManufacturerID 0x7E
 #define kMIKMIDISysexRealtimeManufacturerID 0x7F
 
 #define kMIKMIDISysexChannelDisregard 0x7F
 #define kMIKMIDISysexEndDelimiter 0xF7
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI System Exclusive (SysEx) message. System exclusive messages are
@@ -84,6 +87,8 @@
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, copy, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite, null_resettable) NSData *data;
 
 @end
+
+NS_ASSUME_NONNULL_END
