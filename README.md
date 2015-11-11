@@ -3,9 +3,9 @@ This README file is meant to give a broad overview of MIKMIDI. More complete doc
 MIKMIDI
 -------
 
-MIKMIDI is an easy-to-use Objective-C MIDI library created by Andrew Madsen and developed by the team at [Mixed In Key](http://www.mixedinkey.com/). It's a Cocoa-like set of Objective-C classes useful for programmers writing Objective-C or Swift OS X or iOS apps that use MIDI. It includes the ability to communicate with external MIDI devices, to read and write MIDI files, to record and play back MIDI, etc. MIKMIDI is used to provide MIDI functionality in the OS X version of our DJ app, [Flow](http://flowdjsoftware.com), as well as in our flagship app [Mixed In Key](http://www.mixedinkey.com/).
+MIKMIDI is an easy-to-use Objective-C MIDI library created by Andrew Madsen and developed by him and Chris Flesner of [Mixed In Key](http://www.mixedinkey.com/). It's useful for programmers writing Objective-C or Swift OS X or iOS apps that use MIDI. It includes the ability to communicate with external MIDI devices, to read and write MIDI files, to record and play back MIDI, etc. MIKMIDI is used to provide MIDI functionality in the OS X version of our DJ app, [Flow](http://flowdjsoftware.com), as well as in our flagship app [Mixed In Key](http://www.mixedinkey.com/).
 
-MIKMIDI can be used in projects targeting Mac OS X 10.7 and later, and iOS 6 and later.
+MIKMIDI can be used in projects targeting Mac OS X 10.7 and later, and iOS 6 and later. The example code in this readme is in Objective-C. However, MIKMIDI can also easily be used from Swift code.
 
 MIKMIDI is released under an MIT license, meaning you're free to use it in both closed and open source projects. However, even in a closed source project, you must include a publicly-accessible copy of MIKMIDI's copyright notice, which you can find in the LICENSE file.
 
@@ -19,23 +19,6 @@ MIKMIDI is provided as a source library for both OS X and iOS. Additionally, for
 MIKMIDI relies on CoreMIDI.framework, as well as on libxml2 (on iOS). Make sure Objective-C module support is turned on in your target/project's build settings (see [here](http://stackoverflow.com/a/18947634/344733)). 
 
 On OS X, you can also use MIKMIDI.framework instead of including the MIKMIDI source in your project. To do so, open MIKMIDI.xcodeproj in the 'Framework' folder, build then copy the resultant MIKMIDI.framework into your project. In your project's settings, select your application's target, then click on the "Build Phases" tab. Expand the "Link Binary With Libraries" section, then click the "+" button in the lower left corner to add a new Framework. In the list that appears, find and select MIKMIDI.framework.
-
-Important Note: MIKMIDI relies on Automatic Reference Counting (ARC). If you'd like to use its source in a non-ARC project, you'll need to open the "Compile Sources" build phase for the target(s) you're using it in, and add the -fobjc-arc flag to the "Compiler Flags" column for all MIKMIDI implementation (.m) files. MIKMIDI will generate a compiler error if ARC is not enabled.
-
-### Install as Embedded Framework on iOS 8
-
-- Add MIKMIDI as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the following command:
-
-```bash
-$ git submodule add https://github.com/mixedinkey-opensource/MIKMIDI.git
-```
-
-- Open the `MIKMIDI/Framework` folder, and drag `MIKMIDI.xcodeproj` into the file navigator of your app project.
-- In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
-- Ensure that the deployment target of MIKMIDI.framework matches that of the application target.
-- In the tab bar at the top of that window, open the "Build Phases" panel.
-- Expand the "Target Dependencies" group, and add `MIKMIDI.framework`.
-- Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `MIKMIDI.framework`.
 
 MIKMIDI Overview
 ----------------
@@ -77,6 +60,15 @@ MIKMIDI's device support architecture is based on the underlying CoreMIDI archit
 
 `MIKMIDIDeviceManager` is used to sign up to receive messages from MIDI endpoints as well as to send them. To receive messages from a `MIKMIDISourceEndpoint`, you must connect the endpoint and supply an event handler block to be called anytime messages are received. This is done using the `-connectInput:error:eventHandler:` method. When you no longer want to receive messages, you must call the `-disconnectInput:` method. To send MIDI messages to an `MIKMIDIDestinationEndpoint`, call `-[MIKMIDIDeviceManager sendCommands:toEndpoint:error:]` passing an `NSArray` of `MIKMIDICommand` instances. For example:
 
+```objective-c
+NSDate *date = [NSDate date];
+MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:127 channel:0 timestamp:date];
+MIKMIDINoteOffCommand *noteOff = [MIKMIDINoteOffCommand noteOffCommandWithNote:60 velocity:0 channel:0 timestamp:[date dateByAddingTimeInterval:0.5]];
+
+MIKMIDIDeviceManager *dm = [MIKMIDIDeviceManager sharedDeviceManager];
+[dm sendCommands:@[noteOn, noteOff] toEndpoint:destinationEndpoint error:&error];
+```
+
 If you've used CoreMIDI before, you may be familiar with `MIDIClientRef` and `MIDIPortRef`. These are used internally by MIKMIDI, but the "public" API for MIKMIDI does not expose them -- or their Objective-C counterparts -- directly. Rather, `MIKMIDIDeviceManager` itself allows sending and receiving messages to/from `MIKMIDIEndpoint`s.
 
 MIDI Messages
@@ -107,9 +99,20 @@ MIKMIDI includes features to make it easy to read and write MIDI files. This sup
 MIDI Synthesis
 --------------
 
-MIDI synthesis is the process by which MIDI events/messages are turned into audio that you can hear. This is accomplished using `MIKMIDIEndpointSynthesizer`. 
+MIDI synthesis is the process by which MIDI events/messages are turned into audio that you can hear. This is accomplished using `MIKMIDISynthesizer`. Also included is a subclass of `MIKMIDISynthesizer`, `MIKMIDIEndpointSynthesizer` which can very easily be hooked up to a MIDI enpoint to synthesize incoming MIDI messages:
+
+```objective-c
+MIKMIDISourceEndpoint *endpoint = midiDevice.entities.firstObject.sources.firstObject;
+MIKMIDISynthesizer *synth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:midiDevice.endpoint];
+```
 
 MIDI Sequencing
 ---------------
 
-`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback.
+`MIKMIDISequencer` can be used to play and record to an `MIKMIDISequence`. It includes a number of high level features useful when implementing MIDI recording and playback. However, at the very simplest, MIKMIDISequencer can be used to load a MIDI file and play it like so:
+
+```objective-c
+MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:midiFileURL error:&error];
+MIKMIDISequencer *sequencer = [MIKMIDISequencer sequencerWithSequence:sequence];
+[sequencer startPlayback];
+```
