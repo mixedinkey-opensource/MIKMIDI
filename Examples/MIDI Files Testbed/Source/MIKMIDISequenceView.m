@@ -15,17 +15,19 @@ void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 
 @property (nonatomic) BOOL dragInProgress;
 
+@property (nonatomic, strong, readonly) NSArray *noteColors;
+
 @end
 
 @implementation MIKMIDISequenceView
 
 - (instancetype)initWithFrame:(NSRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self registerForDraggedTypes:@[NSFilenamesPboardType]];
-    }
-    return self;
+	self = [super initWithFrame:frame];
+	if (self) {
+		[self registerForDraggedTypes:@[NSFilenamesPboardType]];
+	}
+	return self;
 }
 
 - (void)dealloc
@@ -53,20 +55,18 @@ void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 	CGFloat ppt = [self pixelsPerTick];
 	CGFloat noteHeight = [self pixelsPerNote];
 	NSInteger index=0;
-	for (MIKMIDITrack *track in self.sequence.tracks) {
+	NSArray *tracks = self.sequence.tracks;
+	for (MIKMIDITrack *track in tracks) {
 		
 		for (MIKMIDINoteEvent *note in [track notes]) {
-			NSColor *noteColor = [self.sequence.tracks count] < 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
-			
-			[[NSColor blackColor] setStroke];
-			[noteColor setFill];
-			
 			CGFloat yPosition = NSMinY([self bounds]) + note.note * [self pixelsPerNote];
 			NSRect noteRect = NSMakeRect(NSMinX([self bounds]) + note.timeStamp * ppt, yPosition, note.duration * ppt, noteHeight);
-			
-			NSBezierPath *path = [NSBezierPath bezierPathWithRect:noteRect];
-			[path fill];
-			[path stroke];
+
+			[[NSColor blackColor] set];
+			NSRectFill(noteRect);
+			NSColor *noteColor = [tracks count] < 2 ? [self colorForNote:note] : [self colorForTrackAtIndex:index];
+			[noteColor set];
+			NSRectFill(NSInsetRect(noteRect, 1.0, 1.0));
 		}
 		index++;
 	}
@@ -118,17 +118,14 @@ void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 
 - (NSColor *)colorForNote:(MIKMIDINoteEvent *)note
 {
-	NSArray	*colors = @[[NSColor redColor], [NSColor orangeColor], [NSColor yellowColor], [NSColor greenColor], [NSColor blueColor], [NSColor purpleColor]];
-	NSGradient *gradient = [[NSGradient alloc] initWithColors:colors];
-	CGFloat notePosition = (CGFloat)(note.note % 12) / 12.0;
-	return [gradient interpolatedColorAtLocation:notePosition];
+	NSInteger notePosition = (note.note % 12);
+	return self.noteColors[notePosition];
 }
 
 - (NSColor *)colorForTrackAtIndex:(NSInteger)index
 {
-	NSArray	*colors = @[[NSColor redColor], [NSColor orangeColor], [NSColor yellowColor], [NSColor greenColor], [NSColor blueColor], [NSColor purpleColor]];
-	NSGradient *gradient = [[NSGradient alloc] initWithColors:colors];
-	return [gradient interpolatedColorAtLocation:index / (float)[self.sequence.tracks count]];
+	NSInteger indexIntoColors = index % 12;
+	return self.noteColors[indexIntoColors];
 }
 
 - (CGFloat)pixelsPerTick
@@ -206,6 +203,26 @@ void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 		_dragInProgress = dragInProgress;
 		[self setNeedsDisplay:YES];
 	}
+}
+
+@synthesize noteColors = _noteColors;
+- (NSArray *)noteColors
+{
+	if (!_noteColors) {
+		_noteColors = @[[NSColor colorWithCalibratedRed:1.0 green:0.0 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:1.0 green:0.227 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:1.0 green:0.454 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:1.0 green:0.681 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:1.0 green:0.909 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.727 green:1.0 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.272 green:1.0 blue:0.0 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.0 green:0.818 blue:0.181 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.0 green:0.363 blue:0.636 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.045 green:0.0 blue:0.954 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.272 green:0.0 blue:0.727 alpha:1.0],
+						[NSColor colorWithCalibratedRed:0.5 green:0.0 blue:0.5 alpha:1.0]];
+	}
+	return _noteColors;
 }
 
 @end
