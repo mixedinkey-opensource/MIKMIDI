@@ -68,6 +68,7 @@
 		9D0895F11B0D29F200A5872E /* MIKMIDIMappingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */; };
 		9D0895F31B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895F41B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D198C171BF2D0FA00839CD7 /* MIKMIDIMappingManager_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C850C81B7AA452001D71B0 /* MIKMIDIMappingManager_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D2ED25F1AFBD062000325CC /* MIKMIDIResponderChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */; };
 		9D3781561AA407A7007A61BE /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D4DF13F1AAB57430065F004 /* MIKMIDI_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D4DF13E1AAB57430065F004 /* MIKMIDI_Tests.m */; };
@@ -1004,6 +1005,7 @@
 				9DEF1CA91AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */,
 				9DAF8B6E1A7B00A700F46528 /* MIKMIDIEventIterator.h in Headers */,
 				9DB366F11A964C55001D1CF3 /* MIKMIDISynthesizer.h in Headers */,
+				9D198C171BF2D0FA00839CD7 /* MIKMIDIMappingManager_SubclassMethods.h in Headers */,
 				9DAF8B571A7B007300F46528 /* MIKMIDIEntity.h in Headers */,
 				9DAF8B621A7B008A00F46528 /* MIKMIDIControlChangeCommand.h in Headers */,
 				9D07CAC81BEA70E200C4ABB0 /* MIKMIDICompilerCompatibility.h in Headers */,
