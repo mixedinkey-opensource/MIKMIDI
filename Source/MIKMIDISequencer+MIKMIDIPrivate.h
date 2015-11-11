@@ -7,10 +7,14 @@
 //
 
 #import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDICompilerCompatibility.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDISequencer (MIKMIDIPrivate)
 
 - (void)dispatchSyncToProcessingQueueAsNeeded:(void (^)())block;
 
 @end
+
+NS_ASSUME_NONNULL_END

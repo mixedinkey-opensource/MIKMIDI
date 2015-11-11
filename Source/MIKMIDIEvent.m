@@ -253,13 +253,20 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 - (void)setData:(NSData *)data
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	self.internalData = [data mutableCopy];
+	self.internalData = data ? [data mutableCopy] : [NSMutableData data];
 }
 
 - (void)setTimeStamp:(MusicTimeStamp)timeStamp
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	_timeStamp = timeStamp;
+}
+
+- (void)setInternalData:(NSMutableData *)internalData
+{
+	if (internalData != _internalData) {
+		_internalData = internalData ? [internalData mutableCopy] : [NSMutableData data];
+	}
 }
 
 @end

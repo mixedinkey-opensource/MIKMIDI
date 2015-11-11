@@ -11,8 +11,11 @@
 #import "MIKMIDITrack_Protected.h"
 #import "MIKMIDISequence.h"
 #import "MIKMIDIMetronome.h"
+#import "MIKMIDIEvent.h"
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDIClientDestinationEndpoint.h"
+#import "MIKMIDITempoEvent.h"
+#import "MIKMIDIMetaTimeSignatureEvent.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIPlayer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIPlayer.m in the Build Phases for this target

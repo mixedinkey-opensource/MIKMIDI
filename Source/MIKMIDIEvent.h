@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 /**
  *  Types of MIDI events. These values are used to determine which subclass to
@@ -89,6 +90,8 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
     MIKMIDIMetaEventTypeSequencerSpecificEvent  = 0x7F
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  In MIKMIDI, MIDI events are objects. Specifically, they are instances of MIKMIDIEvent or one of its
  *  subclasses. MIKMIDIEvent's subclasses each represent a specific type of MIDI event, for example,
@@ -155,7 +158,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
  *
  *  @see +mikEventTypeForMusicEventType:
  */
-+ (instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(NSData *)data;
++ (nullable instancetype)midiEventWithTimeStamp:(MusicTimeStamp)timeStamp eventType:(MusicEventType)eventType data:(nullable NSData *)data;
 
 /**
  *  Initializes a new MIKMIDIEvent subclass instance. This method may return an instance of a different class than the
@@ -168,7 +171,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
  *  @return For supported command types, an initialized MIKMIDIEvent subclass. Otherwise, an instance of
  *	MIKMIDICommand itself. nil if there is an error.
  */
-- (instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(NSData *)data NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(nullable NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /**
  *  The MIDI event type.
@@ -196,9 +199,11 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 
 @property (nonatomic, readonly) MIKMIDIEventType eventType;
 @property (nonatomic) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
 
@@ -206,8 +211,12 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
 
 @class MIKMIDIClock;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MIKMIDICommand (MIKMIDIEventToCommands)
 
-+ (NSArray *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
++ (MIKArrayOf(MIKMIDICommand *) *)commandsFromMIDIEvent:(MIKMIDIEvent *)event clock:(MIKMIDIClock *)clock;
 
 @end
+
+NS_ASSUME_NONNULL_END

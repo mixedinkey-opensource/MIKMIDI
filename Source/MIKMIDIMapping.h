@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 #import "MIKMIDICommand.h"
 #import "MIKMIDIResponder.h"
@@ -15,6 +16,8 @@
 
 @class MIKMIDIChannelVoiceCommand;
 @class MIKMIDIMappingItem;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Overview
@@ -79,27 +82,12 @@
 /**
  *  Initializes and returns an MIKMIDIMapping object created from the XML file at url.
  *
- *  @note This method is currently only available on OS X. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2
- *
  *  @param url   An NSURL for the file to be read.
  *  @param error If an error occurs, upon returns contains an NSError object that describes the problem. If you are not interested in possible errors, you may pass in NULL.
  *
  *  @return An initialized MIKMIDIMapping instance, or nil if an error occurred.
  */
-- (instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
-
-/**
- *  Initializes and returns an MIKMIDIMapping object created from the XML file at url.
- *
- *  @note This method is currently only available on OS X. See https://github.com/mixedinkey-opensource/MIKMIDI/issues/2
- *
- *  @param url   An NSURL for the file to be read.
- *
- *  @return An initialized MIKMIDIMapping instance, or nil if an error occurred.
- *
- *  @see -initWithFileAtURL:error:
- */
-- (instancetype)initWithFileAtURL:(NSURL *)url;
+- (nullable instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
 
 /**
  *	Creates and initializes an MIKMIDIMapping object that is the same as the passed in bundled mapping
@@ -132,11 +120,11 @@
  *  Returns an NSString instance containing an XML representation of the receiver.
  *  The XML document returned by this method can be written to disk.
  *
- *  @return An NSString containing an XML representation of the receiver.
+ *  @return An NSString containing an XML representation of the receiver, or nil if an error occurred.
  *
  *  @see -writeToFileAtURL:error:
  */
-- (NSString *)XMLStringRepresentation;
+- (nullable NSString *)XMLStringRepresentation;
 
 /**
  *  Writes the receiver as an XML file to the specified URL.
@@ -160,7 +148,7 @@
  *
  *  @return An NSSet containing MIKMIDIMappingItems for responder, or an empty set if none are found.
  */
-- (NSSet *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForMIDIResponder:(id<MIKMIDIMappableResponder>)responder;
 
 /**
  *  The mapping items that map controls to a specific command identifier supported by a MIDI responder.
@@ -173,7 +161,7 @@
  *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
  *  @see -mappingItemsForCommandIdentifier:responderWithIdentifier:
  */
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForCommandIdentifier:(NSString *)commandID responder:(id<MIKMIDIMappableResponder>)responder;
 
 /**
  *  The mapping items that map controls to a specific command identifier supported by a MIDI responder with a given
@@ -187,7 +175,7 @@
  *  @see -[<MIKMIDIMappableResponder> commandIdentifiers]
  *  @see -mappingItemsForCommandIdentifier:responder:
  */
-- (NSSet *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForCommandIdentifier:(NSString *)commandID responderWithIdentifier:(NSString *)responderID;
 
 /**
  *  The mapping items for a particular MIDI command (corresponding to a physical control).
@@ -198,7 +186,7 @@
  *
  *  @return An NSSet containing MIKMIDIMappingItems for command, or an empty set if none are found.
  */
-- (NSSet *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
+- (MIKSetOf(MIKMIDIMappingItem *) *)mappingItemsForMIDICommand:(MIKMIDIChannelVoiceCommand *)command;
 
 /**
  *  The name of the MIDI mapping. Currently only used to determine the (default) file name when saving a mapping to disk.
@@ -220,12 +208,12 @@
 /**
  *  Optional additional key value pairs, which will be saved as attributes in this mapping's XML representation. Keys and values must be NSStrings.
  */
-@property (nonatomic, copy) NSDictionary *additionalAttributes;
+@property (nonatomic, copy, nullable) NSDictionary *additionalAttributes;
 
 /**
  *  All mapping items this mapping contains.
  */
-@property (nonatomic, readonly) NSSet *mappingItems;
+@property (nonatomic, readonly) MIKSetOf(MIKMIDIMappingItem *) *mappingItems;
 
 /**
  *  Add a single mapping item to the receiver.
@@ -239,7 +227,7 @@
  *
  *  @param mappingItems An NSSet containing mappings to be added.
  */
-- (void)addMappingItems:(NSSet *)mappingItems;
+- (void)addMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems;
 
 /**
  *  Remove a mapping item from the receiver.
@@ -253,6 +241,26 @@
  *
  *  @param mappingItems An NSSet containing mappings to be removed.
  */
-- (void)removeMappingItems:(NSSet *)mappingItems;
+- (void)removeMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems;
 
 @end
+
+#pragma mark - 
+
+@interface MIKMIDIMapping (Deprecated)
+
+/**
+ *  @deprecated Use -initWithFileAtURL:error: instead.
+ *  Initializes and returns an MIKMIDIMapping object created from the XML file at url.
+ *
+ *  @param url   An NSURL for the file to be read.
+ *
+ *  @return An initialized MIKMIDIMapping instance, or nil if an error occurred.
+ *
+ *  @see -initWithFileAtURL:error:
+ */
+- (nullable instancetype)initWithFileAtURL:(NSURL *)url DEPRECATED_ATTRIBUTE;
+
+@end
+
+NS_ASSUME_NONNULL_END

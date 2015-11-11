@@ -98,7 +98,7 @@
 			OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
 			if (err) {
 				NSLog(@"AudioUnitGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-				return nil;
+				return @[];
 			}
 			
 			NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];

@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIMetaTextEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A meta event containing an instrument name.
@@ -23,6 +26,8 @@
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 metadataType;
-@property (nonatomic, strong, readwrite) NSData *metaData;
+@property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 
 @end
+
+NS_ASSUME_NONNULL_END

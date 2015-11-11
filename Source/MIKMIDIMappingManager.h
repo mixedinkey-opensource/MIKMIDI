@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 #define kMIKMIDIMappingFileExtension @"midimap"
 
 @class MIKMIDIMapping;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIMappingManager provides a centralized way to manage an application's
@@ -41,7 +44,7 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)mappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)mappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of bundled mappings for the controller
@@ -51,7 +54,7 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)bundledMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)bundledMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of user-supplied mappings for the controller
@@ -61,7 +64,7 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)userMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)userMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtaining a mapping file with a given mapping name.
@@ -70,7 +73,7 @@
  *
  *  @return An array of MIKMIDIMapping instances, or an empty array if no mapping could be found.
  */
-- (NSArray *)mappingsWithName:(NSString *)mappingName;
+- (MIKArrayOf(MIKMIDIMapping *) *)mappingsWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
 /**
@@ -91,7 +94,7 @@
  *
  *  @return An MIKMIDIMapping instance for the imported file, or nil if there was an error.
  */
-- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
+- (nullable MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 
 /**
  *  Saves user mappings to disk. These mappings are currently saved to a folder at <AppSupport>/<ApplicationBundleID>/MIDI Mappings.
@@ -111,12 +114,12 @@
  *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
  *  with the application.
  */
-@property (nonatomic, strong, readonly) NSSet *bundledMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *bundledMappings;
 
 /**
  *  MIDI mappings loaded from the user mappings folder on disk, as well as added at runtime.
  */
-@property (nonatomic, strong, readonly) NSSet *userMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *userMappings;
 
 /**
  *  Add a new user mapping. The mapping will automatically be saved to a file in the
@@ -140,7 +143,7 @@
  *  The value of this property is the same as the union of -bundledMappings and -userMappings
  *
  */
-@property (nonatomic, strong, readonly) NSSet *mappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *mappings;
 
 @end
 
@@ -155,6 +158,8 @@
  *
  *  @deprecated Deprecated. Use -mappingsWithName: instead.
  */
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
+- (nullable MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

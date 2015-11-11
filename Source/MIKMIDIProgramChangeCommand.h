@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI program change message.
@@ -35,3 +38,5 @@
 @property (nonatomic, readwrite) NSUInteger programNumber;
 
 @end
+
+NS_ASSUME_NONNULL_END

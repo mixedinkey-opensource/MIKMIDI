@@ -38,7 +38,7 @@
  *
  *  @return An NSArray of NSNumber instances containing MIKMIDICommandType values.
  */
-+ (NSArray *)supportedMIDICommandTypes;
++ (MIKArrayOf(NSNumber *) *)supportedMIDICommandTypes;
 
 /**
  *  The immutable counterpart class of the receiver.

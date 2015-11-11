@@ -8,9 +8,11 @@
 
 
 #import "MIKMIDIMappingManager.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIMapping;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDIMappingManager ()
 
@@ -38,6 +40,8 @@
  *
  *	@return An array of legacy file names, or nil.
  */
-- (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping;
+- (nullable MIKArrayOf(NSString *) *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping;
 
 @end
+
+NS_ASSUME_NONNULL_END

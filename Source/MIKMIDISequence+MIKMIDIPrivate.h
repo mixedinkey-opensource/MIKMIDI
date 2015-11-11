@@ -7,12 +7,16 @@
 //
 
 #import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequencer;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDISequence (MIKMIDIPrivate)
 
-@property (weak, nonatomic) MIKMIDISequencer *sequencer;
+@property (weak, nonatomic, nullable) MIKMIDISequencer *sequencer;
 
 @end
+
+NS_ASSUME_NONNULL_END

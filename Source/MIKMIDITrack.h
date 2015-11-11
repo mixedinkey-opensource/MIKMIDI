@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDIEvent;
 @class MIKMIDINoteEvent;
 @class MIKMIDIDestinationEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Instances of MIKMIDITrack contain sequences of MIDI events. Commonly,
@@ -35,7 +38,7 @@
  *
  *  @param events An NSArray containing the events to be added.
  */
-- (void)addEvents:(NSArray *)events;
+- (void)addEvents:(MIKArrayOf(MIKMIDIEvent *) *)events;
 
 /**
  *  Removes the specified MIDI event from the receiver.
@@ -49,7 +52,7 @@
  *
  *  @param events An NSArray containing the events to be removed.
  */
-- (void)removeEvents:(NSArray *)events;
+- (void)removeEvents:(MIKArrayOf(MIKMIDIEvent *) *)events;
 
 /**
  *  Removes all MIDI events from the receiver.
@@ -65,7 +68,7 @@
  *
  *  @return An array of MIKMIDIEvent.
  */
-- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOf(MIKMIDIEvent *) *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 /**
  *  Gets all of the MIDI events of a specific class in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
@@ -77,7 +80,7 @@
  *
  *  @return An array of specified class of MIDI events.
  */
-- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOf(MIKMIDIEvent *) *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 /**
  *  Gets all of the MIDI notes in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
@@ -86,11 +89,11 @@
  *  @param endTimeStamp The ending time stamp for the range to get MIDI notes for. Use kMusicTimeStamp_EndOfTrack to get events up to the
  *  end of the track.
  *
- *  @return An array of MIKMIDINoteEvent.
+ *  @return An array of MIKMIDINoteEvent instances.
  *
  *  @discussion Calling this method is equivalent to calling eventsOfClass:fromTimeStamp:toTimeStamp: with [MIKMIDINoteEvent class].
  */
-- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOf(MIKMIDINoteEvent *) *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 #pragma mark - Event Manipulation
 
@@ -153,7 +156,7 @@
 /**
  *  The MIDI sequence the track belongs to.
  */
-@property (weak, nonatomic, readonly) MIKMIDISequence *sequence;
+@property (weak, nonatomic, readonly, nullable) MIKMIDISequence *sequence;
 
 /**
  *  The underlying MusicTrack that backs the instance of MIKMIDITrack.
@@ -165,14 +168,14 @@
  *
  *  This property can be observed using Key Value Observing.
  */
-@property (nonatomic, copy) NSArray *events;
+@property (nonatomic, copy) MIKArrayOf(MIKMIDIEvent *) *events;
 
 /**
  *  An array of MIKMIDINoteEvent containing all of the MIDI note events for the track, sorted by timestamp.
  *
  *  This property can be observed using Key Value Observing.
  */
-@property (nonatomic, readonly) NSArray *notes;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDINoteEvent *) *notes;
 
 /**
  *  The receiver's index in its containing sequence, or -1 if the track isn't in a sequence.
@@ -274,7 +277,7 @@
  *  
  *	The destination endpoint for the MIDI events of the track during playback.
  */
-@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
+@property (nonatomic, strong, readwrite, nullable) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -addEvent: instead.
@@ -296,7 +299,7 @@
  *
  *  @return Whether or not inserting the MIDI events was succesful.
  */
-- (BOOL)insertMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+- (BOOL)insertMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -removeEvent: instead.
@@ -307,7 +310,7 @@
  *
  *  @return Whether or not removing the MIDI events was succesful.
  */
-- (BOOL)removeMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+- (BOOL)removeMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -removeAllEvents instead.
@@ -319,3 +322,5 @@
 - (BOOL)clearAllEvents DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -45,11 +45,6 @@
 
 @implementation MIKMIDIMapping
 
-- (instancetype)initWithFileAtURL:(NSURL *)url
-{
-	return [self initWithFileAtURL:url error:NULL];
-}
-
 - (instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
@@ -94,7 +89,7 @@
 {
     self = [super init];
     if (self) {
-        self.internalMappingItems = [NSMutableSet set];
+        _internalMappingItems = [NSMutableSet set];
     }
     return self;
 }
@@ -463,6 +458,17 @@ CLEANUP_AND_EXIT:
 {
 	if (![_name length]) return self.controllerName;
 	return _name;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDIMapping (Deprecated)
+
+- (instancetype)initWithFileAtURL:(NSURL *)url
+{
+	return [self initWithFileAtURL:url error:NULL];
 }
 
 @end

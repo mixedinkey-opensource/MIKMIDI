@@ -7,10 +7,14 @@
 //
 
 #import "MIKMIDIDestinationEndpoint.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIClientDestinationEndpoint;
+@class MIKMIDICommand;
 
-typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestinationEndpoint *destination, NSArray *commands);
+NS_ASSUME_NONNULL_BEGIN
+
+typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestinationEndpoint *destination, MIKArrayOf(MIKMIDICommand *) *commands);
 
 /**
  *	MIKMIDIClientDestinationEndpoint represents a virtual endpoint created by your application to receive MIDI
@@ -37,11 +41,13 @@ typedef void(^MIKMIDIClientDestinationEndpointEventHandler)(MIKMIDIClientDestina
  *
  *  @return An instance of MIKMIDIClientDestinationEndpoint, or nil if an error occurs.
  */
-- (instancetype)initWithName:(NSString *)name receivedMessagesHandler:(MIKMIDIClientDestinationEndpointEventHandler)handler;
+- (nullable instancetype)initWithName:(NSString *)name receivedMessagesHandler:(nullable MIKMIDIClientDestinationEndpointEventHandler)handler;
 
 /**
  *  A block to be called when the receiver receives new incoming MIDI messages.
  */
-@property (nonatomic, strong) MIKMIDIClientDestinationEndpointEventHandler receivedMessagesHandler;
+@property (nonatomic, strong, nullable) MIKMIDIClientDestinationEndpointEventHandler receivedMessagesHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

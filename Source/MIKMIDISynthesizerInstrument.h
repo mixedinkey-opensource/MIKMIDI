@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDISynthesizerInstrument is used to represent
@@ -22,7 +25,7 @@
  *
  *  @return A MIKMIDISynthesizerInstrument instance with the matching instrument ID, or nil if no instrument was found.
  */
-+ (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID name:(NSString *)name;
++ (nullable instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID name:(NSString *)name;
 
 /**
  *  The human readable name of the receiver. e.g. "Piano 1".
@@ -49,7 +52,7 @@
  *
  *  @return An NSArray containing MIKMIDISynthesizerInstrument instances.
  */
-+ (NSArray *)availableInstruments DEPRECATED_ATTRIBUTE;
++ (MIKArrayOf(MIKMIDISynthesizerInstrument *) *)availableInstruments DEPRECATED_ATTRIBUTE;
 
 /**
  *	@deprecated Use +instrumentWithID:inInstrumentUnit: instead.
@@ -60,6 +63,8 @@
  *
  *  @return A MIKMIDISynthesizerInstrument with the matching instrument ID, or nil if no instrument was found.
  */
-+ (instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID DEPRECATED_ATTRIBUTE;
++ (nullable instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

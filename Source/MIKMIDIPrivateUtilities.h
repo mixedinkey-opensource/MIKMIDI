@@ -7,8 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIChannelVoiceCommand;
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSUInteger MIKMIDIControlNumberFromCommand(MIKMIDIChannelVoiceCommand *command);
 float MIKMIDIControlValueFromChannelVoiceCommand(MIKMIDIChannelVoiceCommand *command);
+
+NS_ASSUME_NONNULL_END

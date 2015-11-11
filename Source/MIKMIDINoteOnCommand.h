@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI note on message.
@@ -26,7 +29,7 @@
 + (instancetype)noteOnCommandWithNote:(NSUInteger)note
 							 velocity:(NSUInteger)velocity
 							  channel:(UInt8)channel
-							timestamp:(NSDate *)timestamp;
+							timestamp:(nullable NSDate *)timestamp;
 
 /**
  *  The note number for the message. In the range 0-127.
@@ -54,3 +57,5 @@
 @property (nonatomic, readwrite) NSUInteger velocity;
 
 @end
+
+NS_ASSUME_NONNULL_END

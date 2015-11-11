@@ -7,9 +7,12 @@
 //
 
 #import "MIKMIDIPort.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDICommand;
 @class MIKMIDIDestinationEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIOutputPort is an Objective-C wrapper for CoreMIDI's MIDIPort class, and is only for destination ports.
@@ -18,6 +21,8 @@
  */
 @interface MIKMIDIOutputPort : MIKMIDIPort
 
-- (BOOL)sendCommands:(NSArray *)commands toDestination:(MIKMIDIDestinationEndpoint *)destination error:(NSError **)error;
+- (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toDestination:(MIKMIDIDestinationEndpoint *)destination error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
