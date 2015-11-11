@@ -150,7 +150,9 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 - (void)loadConfiguration
 {
 	for (MIKMIDIDevice *device in self.availableDevices) {
-		if ([self deviceIsConnectedInSavedConfiguration:device]) {
+		if ([self deviceIsUnconnectedInSavedConfiguration:device]) {
+			[self internalDisconnectFromDevice:device];
+		} else if ([self deviceIsConnectedInSavedConfiguration:device]) {
 			NSError *error = nil;
 			if (![self internalConnectToDevice:device error:&error]) {
 				NSLog(@"Unable to connect to MIDI device %@: %@", device, error);
