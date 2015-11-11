@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A MIKMIDISynthesizerInstrument instance with the matching instrument ID, or nil if no instrument was found.
  */
-+ (nullable instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID name:(NSString *)name;
++ (nullable instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID name:(nullable NSString *)name;
 
 /**
  *  The human readable name of the receiver. e.g. "Piano 1".
