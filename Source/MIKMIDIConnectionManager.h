@@ -11,13 +11,14 @@
 #import "MIKMIDISourceEndpoint.h"
 
 @class MIKMIDIDevice;
+@class MIKMIDINoteOnCommand;
 
 @protocol MIKMIDIConnectionManagerDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- *  MIKMIDIConnectionManager can be used to manage a set of connected devices. It can be configured to automatically 
+ *  MIKMIDIConnectionManager can be used to manage a set of connected devices. It can be configured to automatically
  *  connect to devices as they are added, and disconnect from them as they are removed. It also supports saving
  *  the list of connected to NSUserDefaults and restoring them upon relaunch.
  *
@@ -62,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)connectToDevice:(MIKMIDIDevice *)device error:(NSError **)error;
 
 /**
- *  Disconnect from a connected device. No further messages from the specified device will be processed. 
+ *  Disconnect from a connected device. No further messages from the specified device will be processed.
  *
  *  Note that you don't need to call this method when a previously-connected device was removed from the system.
  *  Disconnection in that situation is handled automatically.
@@ -96,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Load and reconnect to the devices previously saved to disk by a call to -saveConfiguration. For
  *  this to work, the receiver's name must be the same as it was upon the previous call to -saveConfiguration.
  *
- *  @note: This method will only connect to new devices. It will not disconnect from devices not found in the 
+ *  @note: This method will only connect to new devices. It will not disconnect from devices not found in the
  *  saved configuration.
  */
 - (void)loadConfiguration;
@@ -108,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  An MIKMIDIEventHandlerBlock to be called with incoming MIDI messages from any connected device.
- * 
+ *
  *  If you need to determine which device sent the passed in messages, call source.entity.device on the
  *  passed in MIKMIDISourceEndpoint argument.
  */
@@ -157,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- *  Specifies behavior for connecting to a newly connected device. See 
+ *  Specifies behavior for connecting to a newly connected device. See
  *  -connectionManager:shouldConnectToNewlyAddedDevice:
  */
 typedef NS_ENUM(NSInteger, MIKMIDIAutoConnectBehavior) {
@@ -194,6 +195,22 @@ typedef NS_ENUM(NSInteger, MIKMIDIAutoConnectBehavior) {
  *  @return One of the values defined in MIKMIDIAutoConnectBehavior.
  */
 - (MIKMIDIAutoConnectBehavior)connectionManager:(MIKMIDIConnectionManager *)manager shouldConnectToNewlyAddedDevice:(MIKMIDIDevice *)device;
+
+/**
+ *  A connection manager's delegate can implement this method to be notified when a connected device is disconnected,
+ *  either because -disconnectFromDevice: was called, or because the device was unplugged.
+ *
+ *	If a MIDI device is disconnected between sending a note on message and sending the corresponding note off command,
+ *  this can cause a "stuck note" because the note off command will now never be delivered. e.g. a MIDI piano keyboard
+ *  that is disconnected with a key held down. This method includes an array of these unterminated note on commands (if any)
+ *  so that the receiver can appropriately deal with this situation. For example, corresponding note off commands could
+ *  be generated and sent through whatever processing chain is processing incoming MIDI commands to terminate stuck notes.
+ *
+ *  @param manager  An instance of MIKMIDIConnectionManager.
+ *  @param device   The MIKMIDIDevice that was disconnected.
+ *  @param commands An array of note on messages for which corresponding note off messages have not yet been received.
+ */
+- (void)connectionManager:(MIKMIDIConnectionManager *)manager deviceWasDisconnected:(MIKMIDIDevice *)device withUnterminatedNoteOnCommands:(MIKArrayOf(MIKMIDINoteOnCommand *) *)commands;
 
 @end
 

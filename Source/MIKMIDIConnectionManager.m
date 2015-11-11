@@ -9,19 +9,25 @@
 #import "MIKMIDIConnectionManager.h"
 #import "MIKMIDIDeviceManager.h"
 #import "MIKMIDIDevice.h"
+#import "MIKMIDIEntity.h"
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
 
 void *MIKMIDIConnectionManagerKVOContext = &MIKMIDIConnectionManagerKVOContext;
 
 NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnectionManagerConnectedDevicesKey";
 NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnectionManagerUnconnectedDevicesKey";
 
+BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *noteOff, MIKMIDINoteOnCommand *noteOn);
+
 @interface MIKMIDIConnectionManager ()
 
 @property (nonatomic, strong, readwrite) MIKArrayOf(MIKMIDIDevice *) *availableDevices;
 
 @property (nonatomic, strong, readonly) MIKMutableSetOf(MIKMIDIDevice *) *internalConnectedDevices;
-@property (nonatomic, strong, readonly) MIKMIDIEventHandlerBlock internalEventHandler;
 @property (nonatomic, strong, readonly) MIKMapTableOf(MIKMIDIDevice *, id) *connectionTokensByDevice;
+
+@property (nonatomic, strong) MIKMapTableOf(MIKMIDIDevice *, NSMutableArray *) *pendingNoteOnsByDevice;
 
 @property (nonatomic, readonly) MIKMIDIDeviceManager *deviceManager;
 
@@ -48,12 +54,8 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 		
 		_internalConnectedDevices = [[NSMutableSet alloc] init];
 		
-		__weak typeof(self) weakSelf = self;
-		_internalEventHandler = ^(MIKMIDISourceEndpoint *endpoint, NSArray *commands) {
-			weakSelf.eventHandler(endpoint, commands);
-		};
-		
 		_connectionTokensByDevice = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
+		_pendingNoteOnsByDevice = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		
 		NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
 		[self.deviceManager addObserver:self forKeyPath:@"availableDevices" options:options context:MIKMIDIConnectionManagerKVOContext];
@@ -223,14 +225,19 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	return [[self.availableDevices filteredArrayUsingPredicate:predicate] firstObject];
 }
 
-#pragma mark - Connection / Disconnection
+#pragma mark Connection / Disconnection
 
 - (BOOL)internalConnectToDevice:(MIKMIDIDevice *)device error:(NSError **)error
 {
 	if ([self isConnectedToDevice:device]) return YES;
 	error = error ?: &(NSError *__autoreleasing){ nil };
 	
-	id token = [self.deviceManager connectDevice:device error:error eventHandler:self.internalEventHandler];
+	__weak typeof(self) weakSelf = self;
+	id token = [self.deviceManager connectDevice:device error:error eventHandler:^(MIKMIDISourceEndpoint *endpoint, NSArray *commands) {
+		[weakSelf recordPendingNoteOnCommands:commands fromDevice:device];
+		[weakSelf removePendingNoteOnCommandsTerminatedByNoteOffCommands:commands fromDevice:device];
+		weakSelf.eventHandler(endpoint, commands);
+	}];
 	if (!token) return NO;
 	
 	[self.connectionTokensByDevice setObject:token forKey:device];
@@ -263,6 +270,11 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 			   withSetMutation:NSKeyValueMinusSetMutation
 				  usingObjects:[NSSet setWithObject:device]];
 	
+	if ([self.delegate respondsToSelector:@selector(connectionManager:deviceWasDisconnected:withUnterminatedNoteOnCommands:)]) {
+		NSArray *pendingNoteOns = [self pendingNoteOnCommandsForDevice:device];
+		[self.delegate connectionManager:self deviceWasDisconnected:device withUnterminatedNoteOnCommands:pendingNoteOns];
+	}
+	
 	if (self.automaticallySavesConfiguration) [self saveConfiguration];
 }
 
@@ -278,7 +290,7 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 	if (!device) return;
 	
 	MIKMIDIAutoConnectBehavior behavior = MIKMIDIAutoConnectBehaviorConnectIfPreviouslyConnectedOrNew;
-
+	
 	if ([self.delegate respondsToSelector:@selector(connectionManager:shouldConnectToNewlyAddedDevice:)]) {
 		behavior = [self.delegate connectionManager:self shouldConnectToNewlyAddedDevice:device];
 	}
@@ -366,6 +378,53 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 		if ([deviceEndpoints containsObject:endpoint]) return device;
 	}
 	return nil;
+}
+
+#pragma mark Pending Note Ons
+
+- (NSMutableArray *)pendingNoteOnCommandsForDevice:(MIKMIDIDevice *)device
+{
+	NSMutableArray *result = [self.pendingNoteOnsByDevice objectForKey:device];
+	if (!result) {
+		result = [NSMutableArray array];
+		[self.pendingNoteOnsByDevice setObject:result forKey:device];
+	}
+	return result;
+}
+
+- (void)recordPendingNoteOnCommands:(MIKArrayOf(MIKMIDICommand *) *)commands fromDevice:(MIKMIDIDevice *)device
+{
+	commands = [commands filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *b) {
+		return [obj isKindOfClass:[MIKMIDINoteOnCommand class]];
+	}]];
+	if (![commands count]) return;
+	
+	NSMutableArray *pendingNoteOns = [self pendingNoteOnCommandsForDevice:device];
+	[pendingNoteOns addObjectsFromArray:commands];
+}
+
+- (void)removePendingNoteOnCommandsTerminatedByNoteOffCommands:(MIKArrayOf(MIKMIDICommand *) *)commands fromDevice:(MIKMIDIDevice *)device
+{
+	commands = [commands filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *b) {
+		if ([obj isKindOfClass:[MIKMIDINoteOnCommand class]] &&
+			[(MIKMIDINoteOnCommand *)obj velocity] == 0) {
+			return YES;
+		}
+		return [obj isKindOfClass:[MIKMIDINoteOffCommand class]];
+	}]];
+	if (![commands count]) return;
+	
+	NSMutableArray *pendingNoteOns = [self pendingNoteOnCommandsForDevice:device];
+	if (![pendingNoteOns count]) return;
+	
+	for (MIKMIDINoteOffCommand *noteOff in commands) {
+		for (MIKMIDINoteOnCommand *noteOn in pendingNoteOns) {
+			if (MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(noteOff, noteOn)) {
+				[pendingNoteOns removeObject:noteOn];
+				continue;
+			}
+		}
+	}
 }
 
 #pragma mark - Notifications
@@ -458,3 +517,12 @@ NSString * const MIKMIDIConnectionManagerUnconnectedDevicesKey = @"MIKMIDIConnec
 }
 
 @end
+
+BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *noteOff, MIKMIDINoteOnCommand *noteOn)
+{
+	if (noteOff.channel != noteOn.channel) return NO;
+	if (noteOff.note != noteOn.note) return NO;
+	if ([noteOff.timestamp compare:noteOn.timestamp] != NSOrderedAscending) return NO;
+	
+	return YES;
+}
