@@ -126,9 +126,7 @@
 {
 	if (!self.deviceConnectionToken) return;
 	
-	MIKMIDISourceEndpoint *source = [[[self.device.entities firstObject] sources] firstObject];
-	if (!source) return;
-	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:source forConnectionToken:self.deviceConnectionToken];
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.deviceConnectionToken];
 	self.deviceConnectionToken = nil;
 }
 

@@ -236,7 +236,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = MIK;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Mixed In Key";
 			};
 			buildConfigurationList = 9DB2A5EE192D184D0047A3EB /* Build configuration list for PBXProject "MIDI Files Testbed" */;
@@ -385,6 +385,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -445,6 +446,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MIDI Files Testbed-Prefix.pch";
 				INFOPLIST_FILE = "Resources/MIDI Files Testbed-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -458,6 +460,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MIDI Files Testbed-Prefix.pch";
 				INFOPLIST_FILE = "Resources/MIDI Files Testbed-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
