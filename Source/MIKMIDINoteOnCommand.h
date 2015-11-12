@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSUInteger note;
 
 /**
- *  Velocity of the note off message. In the range 0-127.
+ *  Velocity of the note on message. In the range 0-127.
  */
 @property (nonatomic, readonly) NSUInteger velocity;
 
@@ -48,13 +48,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MIKMutableMIDINoteOnCommand : MIKMIDINoteOnCommand
 
+@property (nonatomic, readwrite) NSUInteger note;
+@property (nonatomic, readwrite) NSUInteger velocity;
+
 @property (nonatomic, strong, readwrite) NSDate *timestamp;
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) NSUInteger value;
-
-@property (nonatomic, readwrite) NSUInteger note;
-@property (nonatomic, readwrite) NSUInteger velocity;
 
 @end
 
