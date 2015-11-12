@@ -42,4 +42,27 @@
 	XCTAssertEqual(mutableCommand.pressure, 27, @"Setting the pressure on a MIKMutableMIDIPolyphonicKeyPressureCommand instance failed.");
 }
 
+- (void)testChannelPressureCommand
+{
+	Class immutableClass = [MIKMIDIChannelPressureCommand class];
+	Class mutableClass = [MIKMutableMIDIChannelPressureCommand class];
+	
+	MIKMIDIChannelPressureCommand *command = [[immutableClass alloc] init];
+	XCTAssert([command isMemberOfClass:[immutableClass class]], @"[[MIKMIDIChannelPressureCommand alloc] init] did not return an MIKMIDIChannelPressureCommand instance.");
+	XCTAssert([[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeChannelPressure] isMemberOfClass:[immutableClass class]], @"[MIKMIDICommand commandForCommandType:MIKMIDICommandTypePolyphonicKeyPressure] did not return an MIKMIDIChannelPressureCommand instance.");
+	XCTAssert([[command copy] isMemberOfClass:[immutableClass class]], @"[MIKMIDIChannelPressureCommand copy] did not return an MIKMIDIChannelPressureCommand instance.");
+	XCTAssertEqual(command.commandType, MIKMIDICommandTypeChannelPressure, @"[[MIKMIDIChannelPressureCommand alloc] init] produced a command instance with the wrong command type.");
+	
+	MIKMutableMIDIChannelPressureCommand *mutableCommand = [command mutableCopy];
+	XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"-[MIKMIDIChannelPressureCommand mutableCopy] did not return an mutableClass instance.");
+	XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDIChannelPressureCommand instance.");
+	
+	XCTAssertThrows([(MIKMutableMIDIChannelPressureCommand *)command setPressure:64], @"-[MIKMIDIChannelPressureCommand setPressure:] was allowed on immutable instance.");
+	
+	XCTAssertNoThrow([mutableCommand setPressure:64], @"-[MIKMIDIChannelPressureCommand setNote:] was not allowed on mutable instance.");
+	
+	mutableCommand.pressure = 27;
+	XCTAssertEqual(mutableCommand.pressure, 27, @"Setting the pressure on a MIKMutableMIDIChannelPressureCommand instance failed.");
+}
+
 @end

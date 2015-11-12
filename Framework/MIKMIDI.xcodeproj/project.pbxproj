@@ -68,6 +68,10 @@
 		9D1D9C221BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */; };
 		9D1D9C231BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */; };
 		9D1D9C251BF542BB001377F7 /* MIKMIDICommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */; };
+		9D1D9C281BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D1D9C291BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D1D9C2A1BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */; };
+		9D1D9C2B1BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */; };
 		9D2ED25F1AFBD062000325CC /* MIKMIDIResponderChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */; };
 		9D3781561AA407A7007A61BE /* MIKMIDIResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF5817A713A100BEE89F /* MIKMIDIResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D4DF13F1AAB57430065F004 /* MIKMIDI_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D4DF13E1AAB57430065F004 /* MIKMIDI_Tests.m */; };
@@ -362,6 +366,8 @@
 		9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPolyphonicKeyPressureCommand.h; sourceTree = "<group>"; };
 		9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPolyphonicKeyPressureCommand.m; sourceTree = "<group>"; };
 		9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDICommandTests.m; sourceTree = "<group>"; };
+		9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelPressureCommand.h; sourceTree = "<group>"; };
+		9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelPressureCommand.m; sourceTree = "<group>"; };
 		9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIResponderChainTests.m; sourceTree = "<group>"; };
 		9D4DF13A1AAB57430065F004 /* MIKMIDI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MIKMIDI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D4DF13D1AAB57430065F004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -815,6 +821,8 @@
 				9D74EF3117A713A100BEE89F /* MIKMIDIChannelVoiceCommand.h */,
 				9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */,
 				9D74EF3217A713A100BEE89F /* MIKMIDIChannelVoiceCommand.m */,
+				9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */,
+				9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */,
 				9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */,
 				9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */,
 				9DED4E341AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h */,
@@ -921,6 +929,7 @@
 				9DBEBD671AAA303700E59734 /* MIKMIDIChannelPressureEvent.h in Headers */,
 				833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */,
 				8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */,
+				9D1D9C281BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h in Headers */,
 				9DB366F01A964C55001D1CF3 /* MIKMIDISynthesizer.h in Headers */,
 				833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */,
 				9D76DCEC1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h in Headers */,
@@ -987,6 +996,7 @@
 				9DAF8B7C1A7B00A700F46528 /* MIKMIDITempoEvent.h in Headers */,
 				9DAF8B541A7B007300F46528 /* MIKMIDIDeviceManager.h in Headers */,
 				9DAF8B7E1A7B00B100F46528 /* MIKMIDIMetronome.h in Headers */,
+				9D1D9C291BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h in Headers */,
 				9DAF8B831A7B00BB00F46528 /* MIKMIDIPrivateUtilities.h in Headers */,
 				9DAF8B591A7B007300F46528 /* MIKMIDIInputPort.h in Headers */,
 				9D9FBCCC1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */,
@@ -1212,6 +1222,7 @@
 				9DB366F21A964C55001D1CF3 /* MIKMIDISynthesizer.m in Sources */,
 				9DED4E381AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.m in Sources */,
 				9D74EF8F17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m in Sources */,
+				9D1D9C2A1BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m in Sources */,
 				9D74EF9117A713A100BEE89F /* MIKMIDISystemMessageCommand.m in Sources */,
 				839D935419C3A2F5007589C3 /* MIKMIDIMetaEvent.m in Sources */,
 				9D7027D31ACC9D7A009AFAED /* MIKMIDIMacDebugQuickLookSupport.m in Sources */,
@@ -1281,6 +1292,7 @@
 				9DAF8B4B1A7AFF7500F46528 /* MIKMIDIMetronome.m in Sources */,
 				9DAF8B4C1A7AFF7500F46528 /* MIKMIDISequencer.m in Sources */,
 				9DB366F31A964C55001D1CF3 /* MIKMIDISynthesizer.m in Sources */,
+				9D1D9C2B1BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m in Sources */,
 				9DAF8B4D1A7AFF7500F46528 /* MIKMIDIUtilities.m in Sources */,
 				9DAF8B4E1A7AFF7500F46528 /* MIKMIDICommandThrottler.m in Sources */,
 				9DAF8B4F1A7AFF7500F46528 /* MIKMIDIClock.m in Sources */,
