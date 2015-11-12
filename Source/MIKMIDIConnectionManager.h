@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  store and load the connection manager's configuration using NSUserDefaults. The passed in name
  *  should be unique across your application, and the same from launch to launch.
  *
- *  @param name			The name to give the connection manager.
+ *  @param name			The name to give the connection manager. Must not be nil or empty.
  *	@param delegate		The delegate of the connection manager
  *  @param eventHandler An MIKMIDIEventHandlerBlock to be called with incoming MIDI messages from any connected device.
  *
