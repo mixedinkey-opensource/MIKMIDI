@@ -15,7 +15,6 @@
 #import "MIKMIDIMappingManager.h"
 #import "MIKMIDIMapping.h"
 #import "MIKMIDIErrors.h"
-#import "MIKMIDIMappingManager_SubclassMethods.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIMappingManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
@@ -289,8 +288,21 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	return [[self userMappingsFolder] URLByAppendingPathComponent:filename];
 }
 
-- (NSString *)fileNameForMapping:(MIKMIDIMapping *)mapping { return mapping.name; }
-- (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping { return nil; }
+- (NSString *)fileNameForMapping:(MIKMIDIMapping *)mapping
+{
+	NSString *result = nil;
+	if ([self.delegate respondsToSelector:@selector(mappingManager:fileNameForMapping:)]) {
+		result = [self.delegate mappingManager:self fileNameForMapping:mapping];
+	}
+	return [result length] ? result : mapping.name;
+}
+
+- (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping
+{
+	if (![self.delegate respondsToSelector:@selector(mappingManager:legacyFileNamesForUserMapping:)]) return nil;
+	
+	return [self.delegate mappingManager:self legacyFileNamesForUserMapping:mapping];
+}
 
 #pragma mark - Properties
 
