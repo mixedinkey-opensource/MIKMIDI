@@ -27,8 +27,7 @@
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
 + (NSArray *)supportedMIDICommandTypes
 {
-	return  @[@(MIKMIDICommandTypePolyphonicKeyPressure),
-			  @(MIKMIDICommandTypeChannelPressure)];
+	return  @[@(MIKMIDICommandTypeChannelPressure)];
 }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }

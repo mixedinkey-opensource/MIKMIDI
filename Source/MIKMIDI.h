@@ -37,6 +37,7 @@
 #import "MIKMIDIPitchBendChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
+#import "MIKMIDIPolyphonicKeyPressureCommand.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
 
