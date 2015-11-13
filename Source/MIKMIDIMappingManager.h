@@ -118,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @see MIKMIDIMappingManagerDelegate
  */
-@property (nonatomic, weak) id<MIKMIDIMappingManagerDelegate> delegate;
+@property (nonatomic, MIKTargetSafeWeak) id<MIKMIDIMappingManagerDelegate> delegate;
 
 /**
  *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
