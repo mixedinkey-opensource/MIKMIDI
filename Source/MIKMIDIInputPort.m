@@ -132,7 +132,9 @@
 {
 	NSString *uuidString = nil;
 	do { // Very unlikely, but just to be safe
-		uuidString = [[NSUUID UUID] UUIDString];
+		CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+		uuidString = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuid));
+		CFRelease(uuid);
 		MIKMIDIConnectionTokenAndEventHandler *existingPair = nil;
 		for (NSArray *handlerPairs in self.handlerTokenPairsByEndpoint.objectEnumerator) {
 			for (MIKMIDIConnectionTokenAndEventHandler *pair in handlerPairs) {
