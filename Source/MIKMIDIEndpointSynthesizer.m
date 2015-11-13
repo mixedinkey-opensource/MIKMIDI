@@ -94,7 +94,7 @@
 - (void)dealloc
 {
 	if ([_endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
-		[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.connectionToken];
+		[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionForToken:self.connectionToken];
 	}
 	// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
 }

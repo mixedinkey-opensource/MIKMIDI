@@ -93,7 +93,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	return [self.inputPort connectToSource:endpoint error:error eventHandler:eventHandler];
 }
 
-- (void)disconnectConnectionforToken:(id)connectionToken
+- (void)disconnectConnectionForToken:(id)connectionToken
 {
 	[self.inputPort disconnectConnectionForToken:connectionToken];
 }
@@ -428,7 +428,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
 {
-	[self disconnectConnectionforToken:connectionToken];
+	[self disconnectConnectionForToken:connectionToken];
 }
 
 @end

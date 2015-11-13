@@ -94,7 +94,7 @@ extern NSString * const MIKMIDIEndpointKey;
  *
  *  @param connectionToken The connection token returned by -connectInput:error:eventHandler: when the input was connected.
  */
-- (void)disconnectConnectionforToken:(id)connectionToken;
+- (void)disconnectConnectionForToken:(id)connectionToken;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint. 
