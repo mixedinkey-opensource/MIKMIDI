@@ -421,7 +421,7 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 		UInt32 sizeOfLPCMASBD = sizeof(LPCMASBD);
 		OSStatus err = AudioUnitGetProperty(instrumentUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &LPCMASBD, &sizeOfLPCMASBD);
 		if (err) {
-			NSLog(@"Unable to get stream description for instrument unit %p: %i", instrumentUnit, err);
+			NSLog(@"Unable to get stream description for instrument unit %p: %@", instrumentUnit, @(err));
 			return err;
 		}
 
@@ -478,7 +478,7 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 
 			OSStatus err = MusicDeviceMIDIEvent(instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, sampleOffset);
 			if (err) {
-				NSLog(@"Unable to schedule MIDI command %@ for instrument unit %p: %i", command, instrumentUnit, err);
+				NSLog(@"Unable to schedule MIDI command %@ for instrument unit %p: %@", command, instrumentUnit, @(err));
 				return err;
 			}
 		}
@@ -512,14 +512,14 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 		OSStatus err;
 		if (_instrumentUnit) {
 			err = AudioUnitRemoveRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
-			if (err) NSLog(@"Unable to remove render notify from instrument unit %p: %i", _instrumentUnit, err);
+			if (err) NSLog(@"Unable to remove render notify from instrument unit %p: %@", _instrumentUnit, @(err));
 		}
 
 		_instrumentUnit = instrumentUnit;
 
 		if (_instrumentUnit) {
 			err = AudioUnitAddRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
-			if (err) NSLog(@"Unable to add render notify to instrument unit %p: %i", _instrumentUnit, err);
+			if (err) NSLog(@"Unable to add render notify to instrument unit %p: %@", _instrumentUnit, @(err));
 		}
 	}
 }
