@@ -13,6 +13,8 @@
 
 @class MIKMIDIMapping;
 
+@protocol MIKMIDIMappingManagerDelegate;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -111,6 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
 // Properties
 
 /**
+ *  The delegate of the MIKMIDIMappingManager. Can be used to customize mapping file naming, etc.
+ *  See the MIKMIDIMappingManagerDelegate protocol for details.
+ *
+ *  @see MIKMIDIMappingManagerDelegate
+ */
+@property (nonatomic, MIKTargetSafeWeak) id<MIKMIDIMappingManagerDelegate> delegate;
+
+/**
  *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
  *  with the application.
  */
@@ -159,6 +169,40 @@ NS_ASSUME_NONNULL_BEGIN
  *  @deprecated Deprecated. Use -mappingsWithName: instead.
  */
 - (nullable MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
+
+@end
+
+@protocol MIKMIDIMappingManagerDelegate <NSObject>
+
+/**
+ *  Used to determine the file name for a user mapping. This file name does *not* include the
+ *	file extension, which will be added by the caller.
+ *
+ *  If this method is not implemented, or returns nil, the mapping's name itself will be used.
+ *
+ *  @param manager The MIKMIDIMappingManager asking for the name.
+ *  @param mapping The mapping a file name is needed for.
+ *
+ *  @return A file name for the mapping.
+ */
+- (nullable NSString *)mappingManager:(MIKMIDIMappingManager *)manager fileNameForMapping:(MIKMIDIMapping *)mapping;
+
+/**
+ *	When deleting user mappings, this method is called as a way to provide any additional
+ *	file names that the mapping may have had in past versions of -fileNameForMapping:
+ *
+ *	If you have changed the naming scheme that -fileNameForMapping: uses in any user-reaching
+ *	code, you will probably want to implement this method as well, so users will be able to
+ *	properly delete mappings with the old naming scheme.
+ *
+ *	Just as with -fileNameForMapping:, the file names should *not* include the file extension.
+ *
+ *  @param manager The MIKMIDIMappingManager asking for legacy names.
+ *	@param mapping The mapping to return legacy file names for.
+ *
+ *	@return An array of legacy file names, or nil.
+ */
+- (nullable MIKArrayOf(NSString *) *)mappingManager:(MIKMIDIMappingManager *)manager legacyFileNamesForUserMapping:(MIKMIDIMapping *)mapping;
 
 @end
 

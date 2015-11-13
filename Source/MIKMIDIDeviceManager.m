@@ -118,7 +118,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	return @[result];
 }
 
-- (void)disconnectConnectionforToken:(id)connectionToken
+- (void)disconnectConnectionForToken:(id)connectionToken
 {
 	for (id token in (NSArray *)connectionToken) {
 		[self.inputPort disconnectConnectionForToken:token];
@@ -455,7 +455,7 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
 {
-	[self disconnectConnectionforToken:connectionToken];
+	[self disconnectConnectionForToken:connectionToken];
 }
 
 @end

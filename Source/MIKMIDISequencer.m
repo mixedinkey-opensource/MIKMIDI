@@ -406,7 +406,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	NSMutableDictionary *noteOffs = self.pendingNoteOffs;
 	if (!noteOffs.count) return;
 
-	NSMapTable *noteOffDestinationsToCommands = [NSMapTable strongToStrongObjectsMapTable];
+	NSMapTable *noteOffDestinationsToCommands = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 	MIKMIDIClock *clock = self.clock;
 
 	for (NSNumber *musicTimeStampNumber in noteOffs) {

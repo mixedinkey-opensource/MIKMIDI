@@ -207,7 +207,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @note If track is not contained by the receiver's sequence, this method does nothing.
  *
  *  @param commandScheduler	An object that conforms to MIKMIDICommandScheduler with which events
- *	in track should be scheduled during playback. Pass nil to remove an existing command scheduler
+ *	in track should be scheduled during playback. MIKMIDIDestinationEndpoint and MIKMIDISynthesizer both conform to MIKMIDICommandScheduler, so they can be used here. Pass nil to remove an existing command scheduler.
  *  @param track	An MIKMIDITrack instance.
  */
 - (void)setCommandScheduler:(nullable id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track;

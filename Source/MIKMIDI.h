@@ -33,11 +33,13 @@
 // MIDI Commands/Messages
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIChannelPressureCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIProgramChangeCommand.h"
 #import "MIKMIDIPitchBendChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
+#import "MIKMIDIPolyphonicKeyPressureCommand.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
 

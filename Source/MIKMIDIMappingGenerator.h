@@ -113,18 +113,12 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
 
 // Properties
 
-#if !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
-#define MIKMIDIMappingGeneratorWeakProperty weak
-#else
-#define MIKMIDIMappingGeneratorWeakProperty unsafe_unretained
-#endif
-
 /**
  * The delegate for the mapping generator. Can be used to customize certain mapping behavior. Optional.
  *
  * The delegate must implement the MIKMIDIMappingGeneratorDelegate protocol.
  */
-@property (nonatomic, MIKMIDIMappingGeneratorWeakProperty) id<MIKMIDIMappingGeneratorDelegate> delegate;
+@property (nonatomic, MIKTargetSafeWeak) id<MIKMIDIMappingGeneratorDelegate> delegate;
 
 /**
  *  The device for which a mapping is being generated. Must not be nil for mapping to work.

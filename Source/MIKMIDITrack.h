@@ -233,6 +233,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Deprecated
 
 /**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `-[MIKMIDISequencer isLooping]` instead.
+ *
  *  Whether the track is set to loop.
  *
  *  This property can be observed using Key Value Observing.
@@ -240,6 +242,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL doesLoop DEPRECATED_ATTRIBUTE;
 
 /**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
+ *
  *	The number of times to play the designated portion of the music track. By default, a music track plays once.
  *
  *  This property can be observed using Key Value Observing.
@@ -247,6 +251,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) SInt32 numberOfLoops DEPRECATED_ATTRIBUTE;
 
 /**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer.
+ *  Use `-[MIKMIDISequencer setLoopStartTimeStamp:endTimeStamp:]`, and associated properties instead.
+ *
  *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
  *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
  *
@@ -255,6 +262,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) MusicTimeStamp loopDuration DEPRECATED_ATTRIBUTE;
 
 /**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
+ *
  *  The loop info for the track.
  *
  *  This property can be observed using Key Value Observing.
@@ -262,13 +271,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) MusicTrackLoopInfo loopInfo DEPRECATED_ATTRIBUTE;
 
 /**
+ *	@deprecated This method is deprecated. Use -trackNumber instead.
+ *
  *  Gets the track's track number in it's owning MIDI sequence.
  *
  *  @param trackNumber On output, the track number of the track.
  *
  *  @return Whether or not getting the track number was succesful.
- *
- *	@deprecated This method is deprecated. Use -trackNumber instead.
  */
 - (BOOL)getTrackNumber:(UInt32 *)trackNumber DEPRECATED_ATTRIBUTE;
 

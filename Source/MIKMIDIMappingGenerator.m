@@ -563,7 +563,7 @@ FINALIZE_RESULT_AND_RETURN:
 
 - (void)disconnectFromDevice
 {
-	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.connectionToken];
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionForToken:self.connectionToken];
 }
 
 #pragma mark - Properties
