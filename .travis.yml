@@ -7,13 +7,13 @@ xcode_scheme:
     - MIKMIDI
     - MIKMIDI-iOS
 xcode_sdk:
-    macosx
-    iphonesimulator
+    - macosx
+    - iphonesimulator
 
 matrix:
     exclude:
         - xcode_scheme: MIKMIDI
-            xcode_sdk: iphonesimulator
+          xcode_sdk: iphonesimulator
         - xcode_scheme: MIKMIDI-iOS
-            xcode_sdk: macosx
+          xcode_sdk: macosx
         
