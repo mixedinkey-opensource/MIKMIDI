@@ -102,7 +102,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	for (MIKMIDISourceEndpoint *source in sources) {
 		id token = [self.inputPort connectToSource:source error:error eventHandler:eventHandler];
 		if (!token) {
-			for (id token in tokens) { [self disconnectConnectionforToken:token]; }
+			for (id token in tokens) { [self disconnectConnectionForToken:token]; }
 			return nil;
 		}
 		[tokens addObject:token];

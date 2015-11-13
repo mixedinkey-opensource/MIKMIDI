@@ -261,7 +261,7 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 	id token = [self.connectionTokensByDevice objectForKey:device];
 	if (!token) return;
 	
-	[self.deviceManager disconnectConnectionforToken:token];
+	[self.deviceManager disconnectConnectionForToken:token];
 	
 	[self.connectionTokensByDevice removeObjectForKey:device];
 	[self willChangeValueForKey:@"connectedDevices"
