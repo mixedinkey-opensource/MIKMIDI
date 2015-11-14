@@ -2,6 +2,7 @@
 All notable changes to MIKMIDI are documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
 ##[Unreleased]
+This section is for recent changes not yet included in an official release.
 
 ##[1.5.0] - 2015-11-14
 ###ADDED
