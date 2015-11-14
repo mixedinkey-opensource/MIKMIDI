@@ -41,7 +41,7 @@ or other command scheduling objects (`-(setC|c)ommandScheduler:forTrack:`)
 - Other minor bug fixes (#71, #83)
 
 ###DEPRECATED
-This release deprecates a number of existing MIKMIDI APIs. These APIs remain available, and functional (from Objective-C apps), but developers should switch to the use of their replacements as soon as possible.  
+This release deprecates a number of existing MIKMIDI APIs. These APIs remain available, and functional, but developers should switch to the use of their replacements as soon as possible.  
 
 - `-[MIKMIDITrack getTrackNumber:]`. Use `trackNumber` @property on `MIKMIDITrack` instead.
 - `-[MIKMIDISequence getTempo:atTimeStamp:]`. Use `-tempoAtTimeStamp:` instead.
