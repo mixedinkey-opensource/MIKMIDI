@@ -74,6 +74,11 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 	return self;
 }
 
+- (instancetype)initWithName:(NSString *)name
+{
+	return [self initWithName:name delegate:nil eventHandler:nil];
+}
+
 - (void)dealloc
 {
 	[self.deviceManager removeObserver:self forKeyPath:@"availableDevices" context:MIKMIDIConnectionManagerKVOContext];

@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MIKMIDIConnectionManager : NSObject
 
 /**
- *  This method will throw an exception if called. Use -initWithName: instead.
+ *  This method will throw an exception if called. Use -initWithName:delegate:eventHandler: instead.
  *
  *  @return nil
  */
@@ -49,6 +49,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithName:(NSString *)name
 					delegate:(nullable id<MIKMIDIConnectionManagerDelegate>)delegate
 				eventHandler:(nullable MIKMIDIEventHandlerBlock)eventHandler NS_DESIGNATED_INITIALIZER;
+
+/**
+ *  Initializes an instance of MIKMIDIConnectionManager. The passed in name is used to independently
+ *  store and load the connection manager's configuration using NSUserDefaults. The passed in name
+ *  should be unique across your application, and the same from launch to launch. This is the same
+ *  as calling -initWithName:delegate:eventHandler: with a nil delegate and eventHandler.
+ *
+ *  @param name			The name to give the connection manager. Must not be nil or empty.
+ *
+ *  @return An initialized MIKMIDIConnectionManager instance.
+ */
+- (instancetype)initWithName:(NSString *)name;
 
 /**
  *  Connect to the specified device. When MIDI messages are received, the connection manager's event handler
