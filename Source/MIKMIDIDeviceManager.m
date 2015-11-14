@@ -14,6 +14,7 @@
 #import "MIKMIDIInputPort.h"
 #import "MIKMIDIOutputPort.h"
 #import "MIKMIDIClientSourceEndpoint.h"
+#import "MIKMIDIErrors.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIDeviceManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDeviceManager.m in the Build Phases for this target
@@ -88,14 +89,40 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 #pragma mark - Public
 
+- (nullable id)connectDevice:(MIKMIDIDevice *)device error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+{
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	NSMutableArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+	if (![sources count]) {
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceHasNoSourcesErrorCode userInfo:nil];
+		return nil;
+	}
+	
+	NSMutableArray *tokens = [NSMutableArray array];
+	for (MIKMIDISourceEndpoint *source in sources) {
+		id token = [self.inputPort connectToSource:source error:error eventHandler:eventHandler];
+		if (!token) {
+			for (id token in tokens) { [self disconnectConnectionForToken:token]; }
+			return nil;
+		}
+		[tokens addObject:token];
+	}
+	
+	return tokens;
+}
+
 - (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
-	return [self.inputPort connectToSource:endpoint error:error eventHandler:eventHandler];
+	id result = [self.inputPort connectToSource:endpoint error:error eventHandler:eventHandler];
+	if (!result) return nil;
+	return @[result];
 }
 
 - (void)disconnectConnectionForToken:(id)connectionToken
 {
-	[self.inputPort disconnectConnectionForToken:connectionToken];
+	for (id token in (NSArray *)connectionToken) {
+		[self.inputPort disconnectConnectionForToken:token];
+	}
 }
 
 - (BOOL)sendCommands:(NSArray *)commands toEndpoint:(MIKMIDIDestinationEndpoint *)endpoint error:(NSError **)error;

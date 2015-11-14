@@ -9,7 +9,18 @@
 #import "MIKMIDIEndpoint.h"
 #import "MIKMIDICompilerCompatibility.h"
 
+@class MIKMIDISourceEndpoint;
+@class MIKMIDICommand;
+
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ *  Block used by various MIKMIDI APIs that deliver incoming MIDI messages.
+ *
+ *  @param source	The source endpoint from which MIDI messagse were received.
+ *  @param commands	An NSArray containing received MIKMIDICommand instances.
+ */
+typedef void(^MIKMIDIEventHandlerBlock)(MIKMIDISourceEndpoint *source, MIKArrayOf(MIKMIDICommand *) *commands); // commands in an array of MIKMIDICommands
 
 /**
  *  MIKMIDISourceEndpoint represents a source (input) MIDI endpoint.

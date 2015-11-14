@@ -19,6 +19,7 @@
 // MIDI Device support
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIDeviceManager.h"
+#import "MIKMIDIConnectionManager.h"
 
 #import "MIKMIDIEntity.h"
 
