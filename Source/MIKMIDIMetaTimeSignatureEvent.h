@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIMetaEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A meta event containing time signature information.
@@ -40,6 +43,8 @@
  */
 @interface MIKMutableMIDIMetaTimeSignatureEvent : MIKMIDIMetaTimeSignatureEvent
 
+@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
 @property (nonatomic, readwrite) UInt8 numerator;
 @property (nonatomic, readwrite) UInt8 denominator;
@@ -47,3 +52,5 @@
 @property (nonatomic, readwrite) UInt8 thirtySecondsPerQuarterNote;
 
 @end
+
+NS_ASSUME_NONNULL_END

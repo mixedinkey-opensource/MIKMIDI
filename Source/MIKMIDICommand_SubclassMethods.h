@@ -30,26 +30,15 @@
 + (void)registerSubclass:(Class)subclass;
 
 /**
- *  This method has been replaced by +supportedMIDICommandTypes
- *  and by default simply calls through to that method. Subclasses
- *  no longer need implement this.
- *
- *  @param type An MIKMIDICommandType value.
- *
- *  @return YES if the subclass supports type, NO otherwise.
- */
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type DEPRECATED_ATTRIBUTE;
-
-/**
  *  Subclasses of MIKMIDICommand must override this method, and return the MIKMIDICommandType
  *  values they support. MIKMIDICommand uses this method to determine which
  *  subclass to use to represent a particular MIDI command type.
  *
  *  Note that the older +supportsMIDICommandType: by default simply calls through to this method.
  *
- *  @return An NSArray containing NSNumber instances containing MIKMIDICommandType values.
+ *  @return An NSArray of NSNumber instances containing MIKMIDICommandType values.
  */
-+ (NSArray *)supportedMIDICommandTypes;
++ (MIKArrayOf(NSNumber *) *)supportedMIDICommandTypes;
 
 /**
  *  The immutable counterpart class of the receiver.
@@ -108,5 +97,18 @@
  *  @return A string to be appended to MIKMIDICommand's basic description.
  */
 - (NSString *)additionalCommandDescription;
+
+// Deprecated
+
+/**
+ *  @deprecated This method has been replaced by +supportedMIDICommandTypes
+ *  and by default simply calls through to that method. Subclasses
+ *  no longer need implement this.
+ *
+ *  @param type An MIKMIDICommandType value.
+ *
+ *  @return YES if the subclass supports type, NO otherwise.
+ */
++ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type DEPRECATED_ATTRIBUTE;
 
 @end

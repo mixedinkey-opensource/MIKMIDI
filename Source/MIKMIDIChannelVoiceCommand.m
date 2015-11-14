@@ -25,13 +25,7 @@
 @implementation MIKMIDIChannelVoiceCommand
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
-+ (NSArray *)supportedMIDICommandTypes
-{
-	return  @[@(MIKMIDICommandTypePolyphonicKeyPressure),
-			  @(MIKMIDICommandTypeProgramChange),
-			  @(MIKMIDICommandTypeChannelPressure),
-			  @(MIKMIDICommandTypePitchWheelChange)];
-}
++ (NSArray *)supportedMIDICommandTypes { return  @[]; }
 
 + (Class)immutableCounterpartClass; { return [MIKMIDIChannelVoiceCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIChannelVoiceCommand class]; }

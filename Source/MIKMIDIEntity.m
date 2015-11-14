@@ -85,6 +85,13 @@
 	return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (![super isEqual:object]) return NO;
+	return [self.sources isEqualToArray:[(MIKMIDIEntity *)object sources]] &&
+	[self.destinations isEqualToArray:[(MIKMIDIEntity *)object destinations]];
+}
+
 - (NSString *)description
 {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"%@:\r        Sources: {\r", [super description]];

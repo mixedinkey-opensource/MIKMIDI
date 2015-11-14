@@ -11,13 +11,13 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaInstrumentNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaInstrumentNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaInstrumentNameEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaInstrumentNameEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaInstrumentName; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaInstrumentName)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaInstrumentNameEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaInstrumentNameEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -25,6 +25,10 @@
 @end
 
 @implementation MIKMutableMIDIMetaInstrumentNameEvent
+
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
 
 + (BOOL)isMutable { return YES; }
 

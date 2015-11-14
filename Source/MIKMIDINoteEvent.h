@@ -7,11 +7,45 @@
 //
 
 #import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+@class MIKMIDIClock;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI note event.
  */
 @interface MIKMIDINoteEvent : MIKMIDIEvent
+
+/**
+ *  Convenience method for creating a new MIKMIDINoteEvent.
+ *
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param note      The note number for the event, from 0 to 127. 60 is middle C.
+ *  @param velocity  A number from 0-127 specifying the velocity of the note.
+ *  @param duration  The duration of the event in MusicTimeStamp units.
+ *  @param channel   The channel on which the MIDI event should be sent.
+ *
+ *  @return An initialized MIKMIDINoteEvent instance, or nil if an error occurred.
+ */
++ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+										   note:(UInt8)note
+									   velocity:(UInt8)velocity
+									   duration:(Float32)duration
+										channel:(UInt8)channel;
+
+/**
+ *  Convenience method for creating a new MIKMIDINoteEvent from a CoreMIDI MIDINoteMessage struct.
+ *
+ *  @param timeStamp A MusicTimeStamp value indicating the timestamp for the event.
+ *  @param message A MIDINoteMessage struct containing properties for the event.
+ *
+ *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
+ */
++ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
+
+// Properties
 
 /**
  *  The MIDI note number for the event.
@@ -24,12 +58,17 @@
 @property (nonatomic, readonly) UInt8 velocity;
 
 /**
+ *  The channel for the MIDI event.
+ */
+@property (nonatomic, readonly) UInt8 channel;
+
+/**
  *  The release velocity of the event. Use 0 if you don’t want to specify a particular value.
  */
 @property (nonatomic, readonly) UInt8 releaseVelocity;
 
 /**
- *  The duration of the event.
+ *  The duration of the event in MusicTimeStamp units.
  */
 @property (nonatomic, readonly) Float32 duration;
 
@@ -53,27 +92,40 @@
  */
 @property (nonatomic, readonly) NSString *noteLetterAndOctave;
 
-/**
- *  Convenience method for creating a new MIKMIDINoteEvent.
- *
- *  @param timeStamp The MusicTimeStamp for the event.
- *
- *  @param message The MIDINoteMessage for the event.
- *
- *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
- */
-+ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
-
 @end
+
+#pragma mark -
 
 /**
  *  The mutable counterpart of MIKMIDINoteEvent
  */
 @interface MIKMutableMIDINoteEvent : MIKMIDINoteEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) UInt8 note;
 @property (nonatomic, readwrite) UInt8 velocity;
+@property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 releaseVelocity;
 @property (nonatomic, readwrite) Float32 duration;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+#pragma mark -
+
+#import <MIKMIDI/MIKMIDINoteOnCommand.h>
+#import <MIKMIDI/MIKMIDINoteOffCommand.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface MIKMIDICommand (MIKMIDINoteEventToCommands)
+
++ (MIKArrayOf(MIKMIDICommand *) *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
++ (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
++ (MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
+
+@end
+
+NS_ASSUME_NONNULL_END

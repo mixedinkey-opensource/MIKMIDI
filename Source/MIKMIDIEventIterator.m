@@ -11,7 +11,7 @@
 #import "MIKMIDIEvent.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIEventIterator.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIEventIterator.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIEventIterator.m in the Build Phases for this target
 #endif
 
 @interface MIKMIDIEventIterator ()
@@ -62,21 +62,45 @@
 {
     OSStatus err = MusicEventIteratorSeek(self.iterator, timeStamp);
     if (err) NSLog(@"MusicEventIteratorSeek() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return !err;
+    return err == noErr;
 }
 
 - (BOOL)moveToNextEvent
 {
     OSStatus err = MusicEventIteratorNextEvent(self.iterator);
     if (err) NSLog(@"MusicEventIteratorNextEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return !err;
+    return err == noErr;
 }
 
 - (BOOL)moveToPreviousEvent
 {
     OSStatus err = MusicEventIteratorPreviousEvent(self.iterator);
     if (err) NSLog(@"MusicEventIteratorPreviousEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return !err;
+    return err == noErr;
+}
+
+- (BOOL)deleteCurrentEventWithError:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = MusicEventIteratorDeleteEvent(self.iterator);
+	if (err) {
+		NSLog(@"MusicEventIteratorDeleteEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
+}
+
+- (BOOL)moveCurrentEventTo:(MusicTimeStamp)timestamp error:(NSError **)error
+{
+	error = error ? error : &(NSError *__autoreleasing){ nil };
+	OSStatus err = MusicEventIteratorSetEventTime(self.iterator, timestamp);
+	if (err) {
+		NSLog(@"MusicEventIteratorSetEventTime() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	return YES;
 }
 
 #pragma mark - Current Event
@@ -101,26 +125,26 @@
 
 - (BOOL)hasPreviousEvent
 {
-    Boolean hasPreviousEvent = FALSE;
+    Boolean hasPreviousEvent = false;
     OSStatus err = MusicEventIteratorHasPreviousEvent(self.iterator, &hasPreviousEvent);
     if (err) NSLog(@"MusicEventIteratorHasPreviousEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return hasPreviousEvent ? YES : NO;
+    return hasPreviousEvent;
 }
 
 - (BOOL)hasCurrentEvent
 {
-    Boolean hasCurrentEvent = FALSE;
+    Boolean hasCurrentEvent = false;
     OSStatus err = MusicEventIteratorHasCurrentEvent(self.iterator, &hasCurrentEvent);
     if (err) NSLog(@"MusicEventIteratorHasCurrentEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return hasCurrentEvent ? YES : NO;
+    return hasCurrentEvent;
 }
 
 - (BOOL)hasNextEvent
 {
-    Boolean hasNextEvent = FALSE;
+    Boolean hasNextEvent = false;
     OSStatus err = MusicEventIteratorHasNextEvent(self.iterator, &hasNextEvent);
     if (err) NSLog(@"MusicEventIteratorHasNextEvent() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return hasNextEvent ? YES : NO;
+    return hasNextEvent;
 }
 
 @end

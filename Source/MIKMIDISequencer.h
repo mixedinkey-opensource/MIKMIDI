@@ -8,12 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDITrack;
 @class MIKMIDIMetronome;
 @class MIKMIDICommand;
 @class MIKMIDIDestinationEndpoint;
+@class MIKMIDISynthesizer;
+@class MIKMIDIClock;
+@protocol MIKMIDICommandScheduler;
 
 /**
  *  Types of click track statuses, that determine when the click track will be audible.
@@ -31,14 +35,14 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 	MIKMIDISequencerClickTrackStatusAlwaysEnabled
 };
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDISequencer can be used to play and record to an MIKMIDISequence.
  *
- *  @note MIKMIDISequencer currently only supports the playback and recording
- *  of MIDI note events. If you need to playback other events from a MIKMIDISequence, 
- *  use MIKMIDIPlayer for now, keeping in mind that once MIKMIDISequencer is 
- *  fully functional, MIKMIDIPlayer will be deprecated.
+ *  @note Recording and using the click track may not yet be fully functional, and should
+ *	be considered experimental in the meantime. Please submit issues and/or pull requests
+ *	when you find areas that don't work as expected.
  */
 @interface MIKMIDISequencer : NSObject
 
@@ -91,7 +95,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  such as an audio track, or another MIKMIDISequencer instance.
  *
  *  @param timeStamp The position in the sequence to begin playback from.
- *
  *  @param midiTimeStamp The MIDITimeStamp to begin playback at.
  */
 - (void)startPlaybackAtTimeStamp:(MusicTimeStamp)timeStamp MIDITimeStamp:(MIDITimeStamp)midiTimeStamp;
@@ -102,6 +105,45 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see currentTimeStamp
  */
 - (void)resumePlayback;
+
+/**
+ *  Stops all playback and recording.
+ */
+- (void)stop;
+
+/**
+ *	Allows subclasses to modify the MIDI commands that are about to be
+ *	scheduled with a command scheduler.
+ *
+ *	@param commandsToBeScheduled An array of MIKMIDICommands that are about
+ *	to be scheduled.
+ *
+ *	@param scheduler The command scheduler the commands will be scheduled with
+ *	after they are modified.
+ *
+ *	@note You should not call this method directly. It is made public solely to
+ *	give subclasses a chance to alter or override any MIDI commands parsed from the
+ *	MIDI sequence before they get sent to their destination endpoint.
+ *
+ */
+- (MIKArrayOf(MIKMIDICommand *) *)modifiedMIDICommandsFromCommandsToBeScheduled:(MIKArrayOf(MIKMIDICommand *) *)commandsToBeScheduled forCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler;
+
+/**
+ *	Sets the loopStartTimeStamp and loopEndTimeStamp properties.
+ *
+ *	@param loopStartTimeStamp The MusicTimeStamp to begin looping at.
+ *
+ *	@param loopEndTimeStamp The MusicTimeStamp to end looping at. To have
+ *	the loop end at the end of the sequence, regardless of sequence length, 
+ *	pass in MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *
+ *	@see loopStartTimeStamp
+ *	@see loopEndTimeStamp
+ *	@see loop
+ *	@see looping
+ */
+- (void)setLoopStartTimeStamp:(MusicTimeStamp)loopStartTimeStamp endTimeStamp:(MusicTimeStamp)loopEndTimeStamp;
+
 
 #pragma mark - Recording
 
@@ -144,11 +186,6 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 - (void)resumeRecording;
 
 /**
- *  Stops all playback and recording.
- */
-- (void)stop;
-
-/**
  *  Records a MIDI command to the record enabled tracks.
  *
  *  @param command The MIDI command to record to the record enabled tracks.
@@ -163,34 +200,59 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 #pragma mark - Configuration
 
 /**
- *  Sets the destination endpoint for a track in the sequencer's sequence.
- *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
- *  so that playback "just works".
+ *  Sets the command scheduler for a track in the sequencer's sequence.
+ *  Calling this method is optional. By default, the sequencer will setup internal synthesizers
+ *	so that playback "just works".
  *
  *  @note If track is not contained by the receiver's sequence, this method does nothing.
  *
- *  @param endpoint The MIKMIDIDestinationEndpoint instance to which events in track should be sent during playback.
- *  @param track    An MIKMIDITrack instance.
+ *  @param commandScheduler	An object that conforms to MIKMIDICommandScheduler with which events
+ *	in track should be scheduled during playback. MIKMIDIDestinationEndpoint and MIKMIDISynthesizer both conform to MIKMIDICommandScheduler, so they can be used here. Pass nil to remove an existing command scheduler.
+ *  @param track	An MIKMIDITrack instance.
  */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track;
+- (void)setCommandScheduler:(nullable id<MIKMIDICommandScheduler>)commandScheduler forTrack:(MIKMIDITrack *)track;
 
 /**
- *  Returns the destination endpoint for a track in the sequencer's sequence.
+ *  Returns the command scheduler for a track in the sequencer's sequence.
+ *
+ *  MIKMIDISequencer will automatically create its own default synthesizers connected 
+ *	for any tracks not configured manually. This means that even if you haven't called
+ *	-setCommandScheduler:forTrack:, you can use this method to retrieve
+ *  the default command scheduler for a given track.
  *
  *  @note If track is not contained by the receiver's sequence, this method returns nil.
  *
  *  @param track An MIKMIDITrack instance.
  *
- *  @return The destination endpoint associated with track, or nil if one can't be found.
+ *  @return The command scheduler associated with track, or nil if one can't be found.
+ *
+ *  @see -setCommandScheduler:forTrack:
+ *  @see -builtinSynthesizerForTrack:
+ *	@see createSynthsIfNeeded
  */
-- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track;
+- (nullable id<MIKMIDICommandScheduler>)commandSchedulerForTrack:(MIKMIDITrack *)track;
+
+/**
+ *  Returns synthesizer the receiver will use to synthesize MIDI during playback
+ *  for any tracks whose MIDI has not been routed to a custom scheduler using
+ *  -setCommandScheduler:forTrack:. For tracks where a custom scheduler has
+ *  been set, this method returns nil.
+ *
+ *  The caller is free to reconfigure the synthesizer(s) returned by this method,
+ *  e.g. to load a custom soundfont file or select a different instrument.
+ *
+ *  @param track The track for which the builtin synthesizer is desired.
+ *
+ *  @return An MIKMIDISynthesizer instance, or nil if a builtin synthesizer for track doesn't exist.
+ */
+- (nullable MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
 #pragma mark - Properties
 
 /**
  *  The sequence to playback and record to.
  */
-@property (strong, nonatomic) MIKMIDISequence *sequence;
+@property (nonatomic, strong) MIKMIDISequence *sequence;
 
 /**
  *	Whether or not the sequencer is currently playing. This can be observed with KVO.
@@ -212,9 +274,25 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
 
 /**
+ *  The tempo the sequencer should play its sequence at. When set to 0, the sequence will be played using 
+ *  the tempo events from the sequence's tempo track. Default is 0.
+ */
+@property (nonatomic) Float64 tempo;
+
+/**
+ *  The length the that the sequencer should consider its sequence to be. When set to 0, the sequencer
+ *  will use sequence.length instead.
+ *
+ *  This can be handy if you want to alter the duration of playback to be shorter or longer
+ *  than the sequence's length without affecting the sequence itself.
+ */
+@property (nonatomic) MusicTimeStamp overriddenSequenceLength;
+
+/**
  *  The current playback position in the sequence.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
+
 
 /**
  *  The amount of time (in beats) to pre-roll the sequence before recording.
@@ -245,27 +323,57 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  @see loop
  *  @see loopStartTimeStamp
  *  @see loopEndTimeStamp
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  *  @see currentTimeStamp
  */
 @property (readonly, nonatomic, getter=isLooping) BOOL looping;
 
 /**
  *  The loop's beginning time stamp during looped playback.
+ *
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  */
-@property (nonatomic) MusicTimeStamp loopStartTimeStamp;
+@property (readonly, nonatomic) MusicTimeStamp loopStartTimeStamp;
 
 /**
- *  The loop's ending time stamp during looped playback.
+ *  The loop's ending time stamp during looped playback, or MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
  *
- *  @note To have the loop end at the end of the sequence, regardless of
- *  sequence length, set this value to less than 0. The default is -1.
+ *	@note When this is set to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp
+ *	the loopEndTimeStamp will be treated as if it is set to the length of the
+ *	sequence. The default is MIKMIDISequencerEndOfSequenceLoopEndTimeStamp.
+ *
+  *	@see effectiveLoopEndTimeStamp
+ *	@see -setLoopStartTimeStamp:loopEndTimeStamp:
  */
-@property (nonatomic) MusicTimeStamp loopEndTimeStamp;
+@property (readonly, nonatomic) MusicTimeStamp loopEndTimeStamp;
+
+/**
+ *	The loop's ending time stamp during looped playback.
+ *
+ *	@note When loopEndTimeStamp is set to MIKMIDISequencerEndOfSequenceLoopEndTimeStamp,
+ *	this will return the same length as the sequence.length. Otherwise loopEndTimeStamp
+ *	will be returned.
+ */
+@property (readonly, nonatomic) MusicTimeStamp effectiveLoopEndTimeStamp;
+
+
+/**
+ *	Whether or not the sequencer should create synthesizers and endpoints
+ *	for MIDI tracks that are not assigned an endpoint.
+ *
+ *	When this property is YES, -commandSchedulerForTrack: will create a 
+ *	synthesizer for any track that has MIDI commands scheduled for it
+ *	and doesn't already have an assigned scheduler. The default for this property
+ *	is YES.
+ *
+ *	@see -commandSchedulerForTrack:
+ */
+@property (nonatomic, getter=shouldCreateSynthsIfNeeded) BOOL createSynthsIfNeeded;
 
 /**
  *  The metronome to send click track events to.
  */
-@property (strong, nonatomic) MIKMIDIMetronome *metronome;
+@property (nonatomic, strong, nullable) MIKMIDIMetronome *metronome;
 
 /**
  *  When the click track should be heard.
@@ -279,7 +387,73 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
  *  Each incoming event is added to every track in this set.
  *
  *  @see recording
+ *
  */
-@property (copy, nonatomic) NSSet *recordEnabledTracks;
+@property (nonatomic, copy, nullable) MIKSetOf(MIKMIDITrack *) *recordEnabledTracks;
+
+/**
+ *  An MIKMIDIClock that is synced with the sequencer's internal clock.
+ *
+ *  @  @see -[MIKMIDIClock syncedClock]
+ */
+@property (nonatomic, readonly) MIKMIDIClock *syncedClock;
+
+
+/**
+ *  The latest MIDITimeStamp the sequencer has looked ahead to to schedule MIDI events.
+ */
+@property (nonatomic, readonly) MIDITimeStamp latestScheduledMIDITimeStamp;
+
+#pragma mark - Deprecated
+
+/**
+ *	@deprecated Use -setCommandScheduler:forTrack: instead.
+ *
+ *  Sets the destination endpoint for a track in the sequencer's sequence.
+ *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
+ *  connected to synthesizers so that playback "just works".
+ *
+ *  @note If track is not contained by the receiver's sequence, this method does nothing.
+ *
+ *  @param endpoint The MIKMIDIDestinationEndpoint instance to which events in track should be sent during playback.
+ *  @param track    An MIKMIDITrack instance.
+ */
+- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
+
+/**
+ *	@deprecated Use -commandSchedulerForTrack: instead.
+ *
+ *  Returns the destination endpoint for a track in the sequencer's sequence.
+ *
+ *  MIKMIDISequencer will automatically create its own default endpoints connected to
+ *  MIKMIDISynthesizers for any tracks not configured manually. This means that even if you
+ *  haven't called -setDestinationEndpoint:forTrack:, you can use this method to retrieve
+ *  the default endpoint for a given track.
+ *
+ *  @note If track is not contained by the receiver's sequence, this method returns nil.
+ *
+ *  @param track An MIKMIDITrack instance.
+ *
+ *  @return The destination endpoint associated with track, or nil if one can't be found.
+ *
+ *  @see -setDestinationEndpoint:forTrack:
+ *  @see -builtinSynthesizerForTrack:
+ *	@see createSynthsAndEndpointsIfNeeded
+ */
+- (nullable MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
 
 @end
+
+
+/**
+ *  Sent out shortly before playback loops.
+ */
+FOUNDATION_EXPORT NSString * const MIKMIDISequencerWillLoopNotification;
+
+/**
+ *	Set loopEndTimeStamp to this to have the loop end at the end of the
+ *	sequence regardless of sequence length.
+ */
+FOUNDATION_EXPORT const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp;
+
+NS_ASSUME_NONNULL_END

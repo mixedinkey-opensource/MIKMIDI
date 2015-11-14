@@ -7,11 +7,29 @@
 //
 
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI note off message.
  */
 @interface MIKMIDINoteOffCommand : MIKMIDIChannelVoiceCommand
+
+/**
+ *  Convenience method for creating a note off command.
+ *
+ *  @param note      The note number for the command. Must be between 0 and 127.
+ *  @param velocity  The velocity for the command. Must be between 0 and 127.
+ *  @param channel   The channel for the command. Must be between 0 and 15.
+ *  @param timestamp The timestamp for the command. Pass nil to use the current date/time.
+ *
+ *  @return An initialized MIKMIDINoteOffCommand instance.
+ */
++ (instancetype)noteOffCommandWithNote:(NSUInteger)note
+							  velocity:(NSUInteger)velocity
+							   channel:(UInt8)channel
+							 timestamp:(nullable NSDate *)timestamp;
 
 /**
  *  The note number for the message. In the range 0-127.
@@ -39,3 +57,5 @@
 @property (nonatomic, readwrite) NSUInteger velocity;
 
 @end
+
+NS_ASSUME_NONNULL_END

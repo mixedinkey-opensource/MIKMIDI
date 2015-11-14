@@ -14,6 +14,7 @@
 #import "MIKMIDIInputPort.h"
 #import "MIKMIDIOutputPort.h"
 #import "MIKMIDIClientSourceEndpoint.h"
+#import "MIKMIDIErrors.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIDeviceManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDeviceManager.m in the Build Phases for this target
@@ -47,7 +48,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (void)addInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination;
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination;
 
-@property (nonatomic, strong) NSMutableSet *internalConnectedInputPorts;
+@property (nonatomic, strong) MIKMIDIInputPort *inputPort;
 @property (nonatomic, strong) MIKMIDIOutputPort *outputPort;
 
 @end
@@ -72,7 +73,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[self createClient];
         [self retrieveAvailableDevices];
 		[self retrieveVirtualEndpoints];
-		self.internalConnectedInputPorts = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -89,27 +89,39 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 #pragma mark - Public
 
-- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
+- (nullable id)connectDevice:(MIKMIDIDevice *)device error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
-	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
-	if (!port) {
-		port = [[MIKMIDIInputPort alloc] initWithClient:self.client name:endpoint.name];
-		if (![port connectToSource:endpoint error:error]) return nil;
+	error = error ?: &(NSError *__autoreleasing){ nil };
+	NSMutableArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+	if (![sources count]) {
+		*error = [NSError MIKMIDIErrorWithCode:MIKMIDIDeviceHasNoSourcesErrorCode userInfo:nil];
+		return nil;
 	}
 	
-	[self addInternalConnectedInputPortsObject:port];
-	return [port addEventHandler:eventHandler];
+	NSMutableArray *tokens = [NSMutableArray array];
+	for (MIKMIDISourceEndpoint *source in sources) {
+		id token = [self.inputPort connectToSource:source error:error eventHandler:eventHandler];
+		if (!token) {
+			for (id token in tokens) { [self disconnectConnectionForToken:token]; }
+			return nil;
+		}
+		[tokens addObject:token];
+	}
+	
+	return tokens;
 }
 
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
+- (id)connectInput:(MIKMIDISourceEndpoint *)endpoint error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
 {
-	MIKMIDIInputPort *port = [self inputPortConnectedToEndpoint:endpoint];
-	if (!port) return; // Not connected
-	
-	[port removeEventHandlerForToken:connectionToken];
-	if (![[port eventHandlers] count]) {
-		[port disconnectFromSource:endpoint];
-		[self removeInternalConnectedInputPortsObject:port];
+	id result = [self.inputPort connectToSource:endpoint error:error eventHandler:eventHandler];
+	if (!result) return nil;
+	return @[result];
+}
+
+- (void)disconnectConnectionForToken:(id)connectionToken
+{
+	for (id token in (NSArray *)connectionToken) {
+		[self.inputPort disconnectConnectionForToken:token];
 	}
 }
 
@@ -117,7 +129,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 {
 	return [self.outputPort sendCommands:commands toDestination:endpoint error:error];
 }
-
 
 - (BOOL)sendCommands:(NSArray *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error
 {
@@ -171,15 +182,6 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[destinations addObject:destination];
 	}
 	self.internalVirtualDestinations = destinations;
-}
-
-- (MIKMIDIInputPort *)inputPortConnectedToEndpoint:(MIKMIDIEndpoint *)endpoint
-{
-	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
-		if (![port isKindOfClass:[MIKMIDIInputPort class]]) continue;
-		if ([port.connectedSources containsObject:endpoint]) return port;
-	}
-	return nil;
 }
 
 #pragma mark - Callbacks
@@ -352,92 +354,108 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 #pragma mark - Properties
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
-{
-	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-	
-	if ([key isEqualToString:@"availableDevices"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalDevices"];
-	}
-	
-	if ([key isEqualToString:@"virtualSources"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalVirtualSources"];
-	}
-	
-	if ([key isEqualToString:@"virtualDestinations"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalVirtualDestinations"];
-	}
-	
-	if ([key isEqualToString:@"connectedInputSources"]) {
-		keyPaths = [keyPaths setByAddingObject:@"internalConnectedInputPorts"];
-	}
-	
-	return keyPaths;
-}
++ (BOOL)automaticallyNotifiesObserversOfAvailableDevices { return NO; }
 
 - (NSArray *)availableDevices { return [self.internalDevices copy]; }
 
 - (void)addInternalDevicesObject:(MIKMIDIDevice *)device;
 {
-	[self.internalDevices addObject:device];
+	NSUInteger index = self.internalDevices.count;
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
+	[self.internalDevices insertObject:device atIndex:index];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
 }
 
 - (void)removeInternalDevicesObject:(MIKMIDIDevice *)device;
 {
-	[self.internalDevices removeObject:device];
+	NSUInteger index = [self.internalDevices indexOfObject:device];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
+	[self.internalDevices removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"availableDevices"];
 }
+
++ (BOOL)automaticallyNotifiesObserversOfInternalVirtualSources { return NO; }
 
 - (NSArray *)virtualSources { return [self.internalVirtualSources copy]; }
 
 - (void)addInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
 {
-	[self.internalVirtualSources addObject:source];
+	NSUInteger index = [self.internalVirtualSources indexOfObject:source];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+	[self.internalVirtualSources removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
 }
 
 - (void)removeInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
 {
-	[self.internalVirtualSources removeObject:source];
+	NSUInteger index = [self.internalVirtualSources indexOfObject:source];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+	[self.internalVirtualSources removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
 }
+
++ (BOOL)automaticallyNotifiesObserversOfVirtualSources { return NO; }
 
 - (NSArray *)virtualDestinations { return [self.internalVirtualDestinations copy]; }
 
 - (void)addInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations addObject:destination];
+	NSUInteger index = [self.internalVirtualDestinations indexOfObject:destination];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+	[self.internalVirtualDestinations removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
 }
 
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	[self.internalVirtualDestinations removeObject:destination];
+	NSUInteger index = [self.internalVirtualDestinations indexOfObject:destination];
+	if (index == NSNotFound) return;
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+	[self.internalVirtualDestinations removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingConnectedInputSources
+{
+	return [NSSet setWithObjects:@"inputPort.connectedSources", nil];
 }
 
 - (NSArray *)connectedInputSources
 {
-	NSMutableSet *result = [NSMutableSet set];
-	for (MIKMIDIInputPort *port in self.internalConnectedInputPorts) {
-		NSArray *connectedSources = port.connectedSources;
-		if (![connectedSources count]) continue;
-		[result addObjectsFromArray:connectedSources];
+	NSArray *result = self.inputPort.connectedSources;
+	if (!result) result = @[];
+	return result;
+}
+
+- (MIKMIDIInputPort *)inputPort
+{
+	if (!_inputPort) {
+		_inputPort = [[MIKMIDIInputPort alloc] initWithClient:self.client name:@"InputPort"];
 	}
-	return [result allObjects];
-}
-
-- (void)addInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port
-{
-	[_internalConnectedInputPorts addObject:port];
-}
-
-- (void)removeInternalConnectedInputPortsObject:(MIKMIDIInputPort *)port
-{
-	[_internalConnectedInputPorts removeObject:port];
+	return _inputPort;
 }
 
 - (MIKMIDIOutputPort *)outputPort
 {
 	if (!_outputPort) {
-		self.outputPort = [[MIKMIDIOutputPort alloc] initWithClient:self.client name:@"OutputPort"];
+		_outputPort = [[MIKMIDIOutputPort alloc] initWithClient:self.client name:@"OutputPort"];
 	}
 	return _outputPort;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDIDeviceManager (Deprecated)
+
+- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
+{
+	[self disconnectConnectionForToken:connectionToken];
 }
 
 @end

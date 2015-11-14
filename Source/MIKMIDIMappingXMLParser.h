@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIMapping;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A parser for XML MIDI mapping files. Only used on iOS. On OS X, NSXMLDocument is used
@@ -19,6 +22,8 @@
 + (instancetype)parserWithXMLData:(NSData *)xmlData;
 - (instancetype)initWithXMLData:(NSData *)xmlData;
 
-@property (nonatomic, strong, readonly) NSArray *mappings;
+@property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIMapping *) *mappings;
 
 @end
+
+NS_ASSUME_NONNULL_END

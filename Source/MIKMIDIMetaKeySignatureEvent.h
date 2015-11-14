@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIMetaEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A meta event containing key signature information.
@@ -31,7 +34,12 @@
  */
 @interface MIKMutableMIDIMetaKeySignatureEvent : MIKMIDIMetaKeySignatureEvent
 
+@property (nonatomic, readwrite) MusicTimeStamp timeStamp;
+@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 @property (nonatomic, readwrite) UInt8 key;
 @property (nonatomic, readwrite) UInt8 scale;
 
 @end
+
+NS_ASSUME_NONNULL_END

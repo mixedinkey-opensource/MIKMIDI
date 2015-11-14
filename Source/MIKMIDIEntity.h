@@ -7,8 +7,14 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIDevice;
+@class MIKMIDIEndpoint;
+@class MIKMIDISourceEndpoint;
+@class MIKMIDIDestinationEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIEntity represents a logical grouping of endpoints within a MIDI device. It essentially
@@ -30,7 +36,7 @@
  *
  *  @see +[MIKMIDIDevice deviceWithVirtualEndpoints:]
  */
-+ (instancetype)entityWithVirtualEndpoints:(NSArray *)endpoints;
++ (nullable instancetype)entityWithVirtualEndpoints:(MIKArrayOf(MIKMIDIEndpoint *) *)endpoints;
 
 /**
  *  Creates and initializes a "virtual" MIKMIDIEntity instance from one or more virtual endpoints.
@@ -43,24 +49,26 @@
  *
  *  @see -[MIKMIDIDevice initWithVirtualEndpoints:]
  */
-- (instancetype)initWithVirtualEndpoints:(NSArray *)endpoints;
+- (nullable instancetype)initWithVirtualEndpoints:(MIKArrayOf(MIKMIDIEndpoint *) *)endpoints;
 
 /**
  *  The device that contains the receiver. May be nil if the receiver is a virtual entity not contained
  *  by a virtual device.
  */
-@property (nonatomic, weak, readonly) MIKMIDIDevice *device;
+@property (nonatomic, weak, readonly, nullable) MIKMIDIDevice *device;
 
 /**
  *  The source (input) endpoints contained by the receiver. 
  *  An array of MIKMIDISourceEndpoint instances.
  */
-@property (nonatomic, readonly) NSArray *sources;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDISourceEndpoint *) *sources;
 
 /**
  *  The destination (output) endpoints contained by the receiver. 
  *  An array of MIKMIDIDestinationEndpoint instances.
  */
-@property (nonatomic, readonly) NSArray *destinations;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDIDestinationEndpoint *) *destinations;
 
 @end
+
+NS_ASSUME_NONNULL_END

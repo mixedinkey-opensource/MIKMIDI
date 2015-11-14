@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDITrack;
 @class MIKMIDIEvent;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIEventIterator is an Objective-C wrapper for CoreMIDI's MusicEventIterator. It is not intended for use by clients/users of
@@ -21,13 +24,17 @@
 @property (nonatomic, readonly) BOOL hasPreviousEvent;
 @property (nonatomic, readonly) BOOL hasCurrentEvent;
 @property (nonatomic, readonly) BOOL hasNextEvent;
-@property (nonatomic, readonly) MIKMIDIEvent *currentEvent;
+@property (nonatomic, readonly, nullable) MIKMIDIEvent *currentEvent;
 
-- (instancetype)initWithTrack:(MIKMIDITrack *)track;
-+ (instancetype)iteratorForTrack:(MIKMIDITrack *)track;
+- (nullable instancetype)initWithTrack:(MIKMIDITrack *)track;
++ (nullable instancetype)iteratorForTrack:(MIKMIDITrack *)track;
 
 - (BOOL)seek:(MusicTimeStamp)timeStamp;
 - (BOOL)moveToNextEvent;
 - (BOOL)moveToPreviousEvent;
+- (BOOL)deleteCurrentEventWithError:(NSError **)error;
+- (BOOL)moveCurrentEventTo:(MusicTimeStamp)timestamp error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

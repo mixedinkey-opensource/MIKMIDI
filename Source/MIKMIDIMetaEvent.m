@@ -11,16 +11,17 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMeta; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMeta)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(MIDIMetaEvent){0} length:sizeof(MIDIMetaEvent)]; }
 
 - (NSString *)additionalEventDescription
 {
@@ -43,7 +44,7 @@
 - (void)setMetadataType:(UInt8)metadataType
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-    
+	
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->metaEventType = metadataType;
 }
@@ -61,8 +62,7 @@
 
 - (NSData *)metaData
 {
-    MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
-    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, metaEvent->dataLength)];
+    return [self.internalData subdataWithRange:NSMakeRange(MIKMIDIEventMetadataStartOffset, self.metadataLength)];
 }
 
 - (void)setMetaData:(NSData *)metaData
@@ -71,9 +71,9 @@
     
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     metaEvent->dataLength = (UInt32)[metaData length];
-    NSMutableData *newMetaData = [self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)].mutableCopy;
+    NSMutableData *newMetaData = [[self.internalData subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)] mutableCopy];
     [newMetaData appendData:metaData];
-    self.internalData = newMetaData;
+	self.internalData = newMetaData ?: [NSMutableData data];
 }
 
 @end
@@ -81,6 +81,7 @@
 
 @implementation MIKMutableMIDIMetaEvent
 
+@dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
 

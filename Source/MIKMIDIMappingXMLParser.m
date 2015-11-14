@@ -8,6 +8,7 @@
 
 #import "MIKMIDIMappingXMLParser.h"
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingItem.h"
 #import "MIKMIDIUtilities.h"
 
 @interface NSString (MIKMIDIMappingXMLParserUtilities)
@@ -41,7 +42,9 @@
 
 - (instancetype)initWithXMLData:(NSData *)xmlData
 {
-	if (![xmlData length]) return nil;
+	if (![xmlData length]) {
+		[NSException raise:NSInvalidArgumentException format:@"Argument passed to -[%@ %@] must have a non-zero length.", NSStringFromClass([self class]), NSStringFromSelector(_cmd)];
+	}
 	
 	self = [super init];
 	if (self) {
@@ -159,7 +162,7 @@
 - (NSArray *)mappings
 {
 	if (!self.hasParsed) [self parse];
-	return _mappings;
+	return _mappings ?: @[];
 }
 
 @end

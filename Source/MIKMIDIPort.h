@@ -8,8 +8,11 @@
 
 #import "MIKMIDIObject.h"
 #import <CoreMIDI/CoreMIDI.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIPort is an Objective-C wrapper for CoreMIDI's MIDIPort class. It is not intended for use by clients/users of
@@ -17,8 +20,10 @@
  */
 @interface MIKMIDIPort : NSObject
 
-- (id)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name;
+- (nullable instancetype)initWithClient:(MIDIClientRef)clientRef name:(NSString *)name;
 
 @property (nonatomic, readonly) MIDIPortRef portRef;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -35,6 +35,8 @@
 
 - (BOOL)shouldPassCommand:(MIKMIDIChannelVoiceCommand *)command forThrottlingFactor:(NSUInteger)factor
 {
+	if (factor <= 1) return YES;
+	
 	// Increment current count
 	id key = [self throttleCounterKeyForCommand:command];
 	NSNumber *count = self.throttleCounters[key];

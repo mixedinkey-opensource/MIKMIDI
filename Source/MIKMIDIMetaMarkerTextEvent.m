@@ -11,13 +11,13 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaMarkerTextEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaMarkerTextEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaMarkerTextEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaMarkerTextEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeMetaMarkerText; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeMetaMarkerText)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaMarkerTextEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaMarkerTextEvent class]; }
 + (BOOL)isMutable { return NO; }
@@ -25,6 +25,10 @@
 @end
 
 @implementation MIKMutableMIDIMetaMarkerTextEvent
+
+@dynamic timeStamp;
+@dynamic metadataType;
+@dynamic metaData;
 
 + (BOOL)isMutable { return YES; }
 

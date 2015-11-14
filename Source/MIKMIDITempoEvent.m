@@ -11,16 +11,17 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDITempoEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDITempoEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDITempoEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDITempoEvent
 
 + (void)load { [MIKMIDIEvent registerSubclass:self]; }
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return type == MIKMIDIEventTypeExtendedTempo; }
++ (NSArray *)supportedMIDIEventTypes { return @[@(MIKMIDIEventTypeExtendedTempo)]; }
 + (Class)immutableCounterpartClass { return [MIKMIDITempoEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDITempoEvent class]; }
 + (BOOL)isMutable { return NO; }
++ (NSData *)initialData { return [NSData dataWithBytes:&(ExtendedTempoEvent){0} length:sizeof(ExtendedTempoEvent)]; }
 
 + (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 {
@@ -62,5 +63,7 @@
 + (BOOL)isMutable { return YES; }
 
 @dynamic bpm;
+@dynamic timeStamp;
+@dynamic data;
 
 @end
