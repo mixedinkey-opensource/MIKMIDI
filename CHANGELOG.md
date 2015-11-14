@@ -2,6 +2,8 @@
 All notable changes to MIKMIDI are documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
 ##[Unreleased]
+
+##[1.5.0] - 2015-11-14
 ###ADDED
 - `MIKMIDISynthesizer` for general-purpose MIDI synthesis. `MIKMIDIEndpointSynthesizer` is now a subclass of `MIKMIDISynthesizer`.
 - `MIKMIDISequencer` now has API for routing tracks to MIDI endpoints, synthesizers, 
