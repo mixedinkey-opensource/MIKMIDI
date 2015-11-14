@@ -13,6 +13,12 @@
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIApplication.h>
+#else
+#import <AppKit/NSApplication.h>
+#endif
+
 void *MIKMIDIConnectionManagerKVOContext = &MIKMIDIConnectionManagerKVOContext;
 
 NSString * const MIKMIDIConnectionManagerConnectedDevicesKey = @"MIKMIDIConnectionManagerConnectedDevicesKey";
@@ -67,6 +73,13 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 		[nc addObserver:self selector:@selector(deviceWasUnplugged:) name:MIKMIDIDeviceWasRemovedNotification object:nil];
 		[nc addObserver:self selector:@selector(endpointWasPluggedIn:) name:MIKMIDIVirtualEndpointWasAddedNotification object:nil];
 		[nc addObserver:self selector:@selector(endpointWasUnplugged:) name:MIKMIDIVirtualEndpointWasRemovedNotification object:nil];
+		
+#if TARGET_OS_IPHONE
+		[nc addObserver:self selector:@selector(saveConfigurationOnApplicationLifecycleEvent:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+		[nc addObserver:self selector:@selector(saveConfigurationOnApplicationLifecycleEvent:) name:UIApplicationWillTerminateNotification object:nil];
+#else
+		[nc addObserver:self selector:@selector(saveConfigurationOnApplicationLifecycleEvent:) name:NSApplicationWillTerminateNotification object:nil];
+#endif
 		
 		[self updateAvailableDevices];
 		[self scanAndConnectToInitialAvailableDevices];
@@ -460,6 +473,13 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 	MIKMIDIEndpoint *unpluggedEndpoint = [notification userInfo][MIKMIDIEndpointKey];
 	MIKMIDIDevice *unpluggedDevice = [self deviceContainingEndpoint:unpluggedEndpoint];
 	if (unpluggedDevice) [self internalDisconnectFromDevice:unpluggedDevice];
+}
+
+- (void)saveConfigurationOnApplicationLifecycleEvent:(NSNotification *)notification
+{
+	if (self.automaticallySavesConfiguration) {
+		[self saveConfiguration];
+	}
 }
 
 #pragma mark - KVO
