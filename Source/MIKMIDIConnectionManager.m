@@ -438,7 +438,7 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 	if (![pendingNoteOns count]) return;
 	
 	for (MIKMIDINoteOffCommand *noteOff in commands) {
-		for (MIKMIDINoteOnCommand *noteOn in pendingNoteOns) {
+		for (MIKMIDINoteOnCommand *noteOn in [pendingNoteOns copy]) {
 			if (MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(noteOff, noteOn)) {
 				[pendingNoteOns removeObject:noteOn];
 				continue;
