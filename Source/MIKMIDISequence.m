@@ -406,7 +406,9 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
 	if (!track) return;
 	
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"tracks"];
 	[self.internalTracks insertObject:track atIndex:index];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"tracks"];
 	[track addObserver:self forKeyPath:@"length" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
 	[track addObserver:self forKeyPath:@"offset" options:NSKeyValueObservingOptionInitial context:MIKMIDISequenceKVOContext];
 }
@@ -415,16 +417,15 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 {
 	if (index >= [self.internalTracks count]) return;
 	MIKMIDITrack *track = self.internalTracks[index];
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"tracks"];
 	[self.internalTracks removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"tracks"];
 	[track removeObserver:self forKeyPath:@"length"];
 	[track removeObserver:self forKeyPath:@"offset"];
 	[self updateLengthDefinedByTracks];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingTracks
-{
-	return [NSSet setWithObjects:@"internalTracks", nil];
-}
++ (BOOL)automaticallyNotifiesObserversOfTracks { return NO; }
 
 - (NSArray *)tracks
 {
