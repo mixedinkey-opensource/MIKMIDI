@@ -35,6 +35,15 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 #define MIKMIDIGetCurrentTimeStamp()	(mach_absolute_time())
 
 /**
+ *  Returns whether a given MIDI note number corresponds to a "black key" on a piano.
+ *
+ *  @param noteNumber The MIDI note number for the note. Between 0 and 127.
+ *
+ *  @return YES if the passed in note number is a flat / sharp note, NO otherwise.
+ */
+BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber);
+
+/**
  *  Returns the note letter of the passed in MIDI note number as a string.
  *  Notes that correspond to a "black key" on the piano will always be presented as sharp.
  *

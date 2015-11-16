@@ -152,6 +152,16 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 
 #pragma mark - Note Utilities
 
+BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber)
+{
+	NSUInteger scaledNoteNumber = noteNumber % 12;
+	NSUInteger blackKeys[] = {1, 3, 6, 8, 10};
+	for (NSUInteger i=0; i < sizeof(blackKeys) / sizeof(NSUInteger); i++) {
+		if (blackKeys[i] == scaledNoteNumber) { return YES; }
+	}
+	return NO;
+}
+
 NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber)
 {
 	NSArray *letters = @[@"C", @"C#", @"D", @"D#", @"E", @"F", @"F#", @"G", @"G#", @"A", @"A#", @"B"];
