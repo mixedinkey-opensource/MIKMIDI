@@ -107,7 +107,7 @@ static void dispatchToClockQueue(MIKMIDIClock *self, void(^block)())
 {
 	[self willChangeValueForKey:@"ready"];
 	dispatchToClockQueue(self, ^{
-		if (_lastSyncedMIDITimeStamp) {
+		if (_lastSyncedMIDITimeStamp != 0) {
 			// Add a clock to the historical clocks
 			NSNumber *midiTimeStampNumber = @(midiTimeStamp);
 
@@ -192,6 +192,7 @@ static void dispatchToClockQueue(MIKMIDIClock *self, void(^block)())
 	dispatchToClockQueue(self, ^{
 		_ready = NO;
 		_currentTempo = 0;
+		_lastSyncedMIDITimeStamp = 0;
 		releaseHistoricalClocks(self);
 	});
 	[self didChangeValueForKey:@"ready"];
