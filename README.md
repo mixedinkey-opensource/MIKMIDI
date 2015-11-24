@@ -31,7 +31,7 @@ To understand MIKMIDI, it's helpful to break it down into its major subsystems:
 
 - Device support -- includes support for device discovery, connection/disconnection, and sending/receiving MIDI messages.
 - Commands -- includes a number of Objective-C classes that various represent MIDI message types as received from and sent to MIDI devices and endpoints.
-- Mapping -- support for generating, saving, loading, and mapping files that associate physical MIDI controls with corresponding application features.
+- Mapping -- support for generating, saving, loading, and using files that associate physical MIDI controls with corresponding application features.
 - Files -- support for reading and writing MIDI files.
 - Synthesis -- support for turning MIDI into audio, e.g. playback of MIDI files and incoming MIDI keyboard input.
 - Sequencing -- Recording and playback of MIDI.
@@ -103,7 +103,7 @@ MIDI synthesis is the process by which MIDI events/messages are turned into audi
 
 ```objective-c
 MIKMIDISourceEndpoint *endpoint = midiDevice.entities.firstObject.sources.firstObject;
-MIKMIDISynthesizer *synth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:midiDevice.endpoint];
+MIKMIDISynthesizer *synth = [[MIKMIDIEndpointSynthesizer alloc] initWithMIDISource:endpoint];
 ```
 
 MIDI Sequencing
