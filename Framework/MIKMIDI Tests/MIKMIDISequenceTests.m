@@ -17,6 +17,8 @@
 
 @end
 
+static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
+
 @implementation MIKMIDISequenceTests
 
 - (void)setUp
@@ -25,16 +27,16 @@
 	
 	self.receivedNotificationKeyPaths = [NSMutableSet set];
 	self.sequence = [MIKMIDISequence sequence];
-	[self.sequence addObserver:self forKeyPath:@"tracks" options:0 context:NULL];
-	[self.sequence addObserver:self forKeyPath:@"durationInSeconds" options:0 context:NULL];
-	[self.sequence addObserver:self forKeyPath:@"length" options:0 context:NULL];
+	[self.sequence addObserver:self forKeyPath:@"tracks" options:0 context:MIKMIDISequenceTestsKVOContext];
+	[self.sequence addObserver:self forKeyPath:@"durationInSeconds" options:0 context:MIKMIDISequenceTestsKVOContext];
+	[self.sequence addObserver:self forKeyPath:@"length" options:0 context:MIKMIDISequenceTestsKVOContext];
 }
 
 - (void)tearDown
 {
-	[self.sequence removeObserver:self forKeyPath:@"tracks"];
-	[self.sequence removeObserver:self forKeyPath:@"durationInSeconds"];
-	[self.sequence removeObserver:self forKeyPath:@"length"];
+	[self.sequence removeObserver:self forKeyPath:@"tracks" context:MIKMIDISequenceTestsKVOContext];
+	[self.sequence removeObserver:self forKeyPath:@"durationInSeconds" context:MIKMIDISequenceTestsKVOContext];
+	[self.sequence removeObserver:self forKeyPath:@"length" context:MIKMIDISequenceTestsKVOContext];
 	
 	self.sequence = nil;
 	
@@ -71,9 +73,18 @@
 {
 	XCTAssertNotNil(self.sequence);
 	
+	[self keyValueObservingExpectationForObject:self.sequence keyPath:@"tracks" handler:^BOOL(MIKMIDISequence *sequence, NSDictionary *change) {
+		if ([change[NSKeyValueChangeKindKey] integerValue] != NSKeyValueChangeInsertion) return NO;
+		if ([change[NSKeyValueChangeOldKey] count] != 0) return NO;
+		if ([change[NSKeyValueChangeNewKey] count] != 1) return NO;
+		return YES;
+	}];
 	MIKMIDITrack *firstTrack = [self.sequence addTrack];
 	XCTAssertNotNil(firstTrack, @"Creating an MIKMIDITrack failed.");
-	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"tracks"], @"KVO notification when adding a track not received.");
+	XCTAssertEqual(self.sequence.tracks.count, 1, @"MIKMIDISequence's tracks count was incorrect after adding a track.");
+	[self waitForExpectationsWithTimeout:0.1 handler:^(NSError *error) {
+		NSLog(@"%@ expectation failed: %@", NSStringFromSelector(_cmd), error);
+	}];
 }
 
 - (void)testKVOForRemovingATrack
@@ -83,10 +94,21 @@
 	MIKMIDITrack *secondTrack = [self.sequence addTrack];
 	XCTAssertNotNil(secondTrack, @"Creating an MIKMIDITrack failed.");
 
-	[self.receivedNotificationKeyPaths removeAllObjects];
+	[self keyValueObservingExpectationForObject:self.sequence keyPath:@"tracks" handler:^BOOL(MIKMIDISequence *sequence, NSDictionary *change) {
+		if ([change[NSKeyValueChangeKindKey] integerValue] != NSKeyValueChangeRemoval) return NO;
+		NSArray *oldTracks = change[NSKeyValueChangeOldKey];
+		NSArray *newTracks = change[NSKeyValueChangeNewKey];
+		if ([oldTracks count] != 1) return NO;
+		if ([newTracks count] != 0) return NO;
+		if (oldTracks.firstObject != firstTrack) return NO;
+		return YES;
+	}];
 	[self.sequence removeTrack:firstTrack];
-	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"tracks"], @"KVO notification when removing a track not received.");
-	XCTAssertEqualObjects(self.sequence.tracks, @[secondTrack], @"Removing a track failed.");
+	XCTAssertEqual(self.sequence.tracks.count, 1, @"Removing a track from MIKMIDISequence failed");
+	
+	[self waitForExpectationsWithTimeout:0.1 handler:^(NSError *error) {
+		NSLog(@"%@ expectation failed: %@", NSStringFromSelector(_cmd), error);
+	}];
 }
 
 - (void)testLength
@@ -126,6 +148,10 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+	if (context != MIKMIDISequenceTestsKVOContext) {
+		return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+	
 	if (object == self.sequence) {
 		[self.receivedNotificationKeyPaths addObject:keyPath];
 	}
