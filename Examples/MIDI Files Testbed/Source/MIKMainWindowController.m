@@ -126,7 +126,7 @@
 {
 	if (!self.deviceConnectionToken) return;
 	
-	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionforToken:self.deviceConnectionToken];
+	[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionForToken:self.deviceConnectionToken];
 	self.deviceConnectionToken = nil;
 }
 
