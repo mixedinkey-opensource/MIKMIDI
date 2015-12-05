@@ -35,6 +35,8 @@
 	[super windowDidLoad];
 	
 	self.sequencer = [MIKMIDISequencer sequencer];
+	self.sequencer.preRoll = 0;
+	self.sequencer.clickTrackStatus = MIKMIDISequencerClickTrackStatusDisabled;
 	
 	NSPredicate *nonBluetoothNetworkPredicate = [NSPredicate predicateWithBlock:^BOOL(MIKMIDIDevice *device, NSDictionary *b) {
 		return ![device.name isEqualToString:@"Bluetooth"] && ![device.name isEqualToString:@"Network"];
