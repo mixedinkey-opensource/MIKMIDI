@@ -11,6 +11,7 @@
 #import "MIKMIDIMappableResponder.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDICompilerCompatibility.h"
+#include <mach/mach_time.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
