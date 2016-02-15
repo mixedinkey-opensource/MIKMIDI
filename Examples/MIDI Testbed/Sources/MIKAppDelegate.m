@@ -11,10 +11,10 @@
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 
-@interface MIKAppDelegate ()
+@interface MIKAppDelegate () <MIKMIDIConnectionManagerDelegate>
 
+@property (nonatomic, strong) MIKMIDIConnectionManager *connectionManager;
 @property (nonatomic, strong) MIKMIDIDeviceManager *midiDeviceManager;
-@property (nonatomic, strong) NSMapTable *connectionTokensForSources;
 
 @end
 
@@ -24,66 +24,13 @@
 {
     self = [super init];
     if (self) {
-        self.connectionTokensForSources = [NSMapTable strongToStrongObjectsMapTable];
+		_connectionManager = [[MIKMIDIConnectionManager alloc] initWithName:@"com.mixedinkey.MIDITestbed.ConnectionManager" delegate:self eventHandler:^(MIKMIDISourceEndpoint *source, NSArray<MIKMIDICommand *> *commands) {
+			for (MIKMIDIChannelVoiceCommand *command in commands) { [self handleMIDICommand:command]; }
+		}];
+		_connectionManager.automaticallySavesConfiguration = NO;
+		_midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
     }
     return self;
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-	self.midiDeviceManager = [MIKMIDIDeviceManager sharedDeviceManager];
-	[self.midiDeviceManager addObserver:self forKeyPath:@"availableDevices" options:NSKeyValueObservingOptionInitial context:NULL];
-	[self.midiDeviceManager addObserver:self forKeyPath:@"virtualSources" options:NSKeyValueObservingOptionInitial context:NULL];
-	[self.midiDeviceManager addObserver:self forKeyPath:@"virtualDestinations" options:NSKeyValueObservingOptionInitial context:NULL];
-}
-
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-	[self.midiDeviceManager removeObserver:self forKeyPath:@"availableDevices"];
-	[self.midiDeviceManager removeObserver:self forKeyPath:@"virtualSources"];
-	[self.midiDeviceManager removeObserver:self forKeyPath:@"virtualDestinations"];
-}
-
-#pragma mark - Connections
-
-- (void)connectToSource:(MIKMIDISourceEndpoint *)source
-{
-	NSError *error = nil;
-	id connectionToken = [self.midiDeviceManager connectInput:source error:&error eventHandler:^(MIKMIDISourceEndpoint *source, NSArray *commands) {
-		for (MIKMIDIChannelVoiceCommand *command in commands) { [self handleMIDICommand:command]; }
-	}];
-	if (!connectionToken) {
-		NSLog(@"Unable to connect to input: %@", error);
-		return;
-	}
-	[self.connectionTokensForSources setObject:connectionToken forKey:source];
-}
-
-- (void)disconnectFromSource:(MIKMIDISourceEndpoint *)source
-{
-	if (!source) return;
-	id token = [self.connectionTokensForSources objectForKey:source];
-	if (!token) return;
-	[self.midiDeviceManager disconnectConnectionForToken:token];
-}
-
-- (void)connectToDevice:(MIKMIDIDevice *)device
-{
-	if (!device) return;
-	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	if (![sources count]) return;
-    for (MIKMIDISourceEndpoint *source in sources) {
-        [self connectToSource:source];
-    }
-}
-
-- (void)disconnectFromDevice:(MIKMIDIDevice *)device
-{
-	if (!device) return;
-	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	for (MIKMIDISourceEndpoint *source in sources) {
-		[self disconnectFromSource:source];
-	}
 }
 
 - (void)handleMIDICommand:(MIKMIDICommand *)command
@@ -93,94 +40,22 @@
     [self.textView scrollToEndOfDocument:self];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-	NSLog(@"%@'s %@ changed to: %@", object, keyPath, [object valueForKeyPath:keyPath]);
-}
-
 #pragma mark - Devices
 
-+ (NSSet *)keyPathsForValuesAffectingAvailableDevices
-{
-	return [NSSet setWithObject:@"midiDeviceManager.availableDevices"];
-}
-
-- (NSArray *)availableDevices
-{
-	NSArray *regularDevices = [self.midiDeviceManager availableDevices];
-	NSMutableArray *result = [regularDevices mutableCopy];
-	
-	NSMutableSet *endpointsInDevices = [NSMutableSet set];
-	for (MIKMIDIDevice *device in regularDevices) {
-		NSSet *sources = [NSSet setWithArray:[device.entities valueForKeyPath:@"@distinctUnionOfArrays.sources"]];
-		NSSet *destinations = [NSSet setWithArray:[device.entities valueForKeyPath:@"@distinctUnionOfArrays.destinations"]];
-		[endpointsInDevices unionSet:sources];
-		[endpointsInDevices unionSet:destinations];
-	}
-	
-	NSMutableSet *devicelessSources = [NSMutableSet setWithArray:self.midiDeviceManager.virtualSources];
-	NSMutableSet *devicelessDestinations = [NSMutableSet setWithArray:self.midiDeviceManager.virtualDestinations];
-	[devicelessSources minusSet:endpointsInDevices];
-	[devicelessDestinations minusSet:endpointsInDevices];
-	
-	// Now we need to try to associate each source with its corresponding destination on the same device
-	NSMapTable *destinationToSourceMap = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
-	NSMapTable *deviceNamesBySource = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
-	NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
-	for (MIKMIDIEndpoint *source in devicelessSources) {
-		NSMutableArray *sourceNameComponents = [[source.name componentsSeparatedByCharactersInSet:whitespace] mutableCopy];
-		[sourceNameComponents removeLastObject];
-		for (MIKMIDIEndpoint *destination in devicelessDestinations) {
-			NSMutableArray *destinationNameComponents = [[destination.name componentsSeparatedByCharactersInSet:whitespace] mutableCopy];
-			[destinationNameComponents removeLastObject];
-			
-			if ([sourceNameComponents isEqualToArray:destinationNameComponents]) {
-				// Source and destination match
-				[destinationToSourceMap setObject:destination forKey:source];
-
-				NSString *deviceName = [sourceNameComponents componentsJoinedByString:@" "];
-				[deviceNamesBySource setObject:deviceName forKey:source];
-				break;
-			}
-		}
-	}
-	
-	for (MIKMIDIEndpoint *source in destinationToSourceMap) {
-		MIKMIDIEndpoint *destination = [destinationToSourceMap objectForKey:source];
-		[devicelessSources removeObject:source];
-		[devicelessDestinations removeObject:destination];
-		
-		MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[source, destination]];
-		device.name = [deviceNamesBySource objectForKey:source];
-	 	if (device) [result addObject:device];
-	}
-	for (MIKMIDIEndpoint *endpoint in devicelessSources) {
-		MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[endpoint]];
-	 	if (device) [result addObject:device];
-	}
-	for (MIKMIDIEndpoint *endpoint in devicelessSources) {
-		MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[endpoint]];
-	 	if (device) [result addObject:device];
-	}
-	
-	return result;
-}
++ (NSSet *)keyPathsForValuesAffectingAvailableDevices { return [NSSet setWithObject:@"connectionManager.availableDevices"]; }
+- (NSArray *)availableDevices { return self.connectionManager.availableDevices; }
 
 - (void)setDevice:(MIKMIDIDevice *)device
 {
 	if (device != _device) {
-		[self disconnectFromDevice:_device];
+		if (_device) [self.connectionManager disconnectFromDevice:_device];
 		_device = device;
-		[self connectToDevice:_device];
-	}
-}
-
-- (void)setSource:(MIKMIDISourceEndpoint *)source
-{
-	if (source != _source) {
-		[self disconnectFromSource:_source];
-		_source = source;
-		[self connectToSource:_source];
+		if (_device) {
+			NSError *error = nil;
+			if (![self.connectionManager connectToDevice:_device error:&error]) {
+				[NSApp presentError:error];
+			}
+		}
 	}
 }
 
