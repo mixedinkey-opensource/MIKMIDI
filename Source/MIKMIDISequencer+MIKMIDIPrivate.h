@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDISequencer.h"
 #import "MIKMIDICompilerCompatibility.h"
 
 NS_ASSUME_NONNULL_BEGIN

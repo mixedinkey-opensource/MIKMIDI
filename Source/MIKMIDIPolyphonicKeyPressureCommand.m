@@ -8,6 +8,7 @@
 
 #import "MIKMIDIPolyphonicKeyPressureCommand.h"
 #import "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
+#import "MIKMIDIUtilities.h"
 
 @interface MIKMIDIPolyphonicKeyPressureCommand ()
 

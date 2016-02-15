@@ -115,8 +115,8 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-#import <MIKMIDI/MIKMIDINoteOnCommand.h>
-#import <MIKMIDI/MIKMIDINoteOffCommand.h>
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

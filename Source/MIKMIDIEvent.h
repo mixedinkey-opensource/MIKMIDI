@@ -207,7 +207,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
 
-#import <MIKMIDI/MIKMIDICommand.h>
+#import "MIKMIDICommand.h"
 
 @class MIKMIDIClock;
 

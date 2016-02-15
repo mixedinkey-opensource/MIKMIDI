@@ -6,7 +6,8 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
+#import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIChannelPressureCommand.h"
 
 /**
  *  A MIDI channel pressure message. This message is most often sent by pressing
