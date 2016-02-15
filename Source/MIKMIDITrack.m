@@ -543,7 +543,17 @@
 
 - (void)setEvents:(NSArray *)events
 {
+	[self clearEventsFromStartingTimeStamp:0 toEndingTimeStamp:self.length];
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
+		for (MIKMIDIEvent *event in events) {
+			NSError *error = nil;
+			if (![self insertMIDIEventInMusicTrack:event error:&error]) {
+				NSLog(@"Error adding %@ to %@: %@", event, self, error);
+				[self reloadAllEventsFromMusicTrack];
+				return;
+			}
+		}
+
 		self.internalEvents = [NSMutableSet setWithArray:events];
 	}];
 }
