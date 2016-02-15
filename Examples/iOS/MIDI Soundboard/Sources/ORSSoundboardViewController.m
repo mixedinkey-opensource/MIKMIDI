@@ -45,10 +45,7 @@
 - (void)disconnectFromDevice:(MIKMIDIDevice *)device
 {
 	if (!device) return;
-	NSArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
-	for (MIKMIDISourceEndpoint *source in sources) {
-		[self.deviceManager disconnectInput:source forConnectionToken:self.connectionToken];
-	}
+	[self.deviceManager disconnectConnectionForToken:self.connectionToken];
 	
 	self.textView.text = @"";
 }
