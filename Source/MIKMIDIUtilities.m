@@ -150,6 +150,28 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 	return result;
 }
 
+MIDIPacket MIKMIDIPacketCreate(MIDITimeStamp timeStamp, UInt16 length, MIKArrayOf(NSNumber *) *data /*max length 256*/)
+{
+	MIDIPacket result = {0};
+	if ([data count] > 256) {
+		[NSException raise:NSInvalidArgumentException format:@"MIKMIDIPacketCreate()'s data argument must contain 256 or fewer values"];
+		return result;
+	}
+	
+	result.timeStamp = timeStamp;
+	result.length = length;
+	for (NSUInteger i=0; i<256; i++) {
+		if (i >= [data count]) {
+			result.data[i] = 0;
+			continue;
+		}
+		
+		result.data[i] = [data[i] charValue];
+	}
+	
+	return result;
+}
+
 #pragma mark - Note Utilities
 
 BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber)
