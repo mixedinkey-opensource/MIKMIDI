@@ -208,6 +208,34 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	[self stopWithDispatchToProcessingQueue:YES];
 }
 
+- (void)stopAllPlayingNotesForCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler
+{
+	[self dispatchSyncToProcessingQueueAsNeeded:^{
+		NSMutableArray *commandsToSendNow = [NSMutableArray array];
+		NSDate *now = [NSDate date];
+
+		for (MIKMIDIPendingNoteOffsForTimeStamp *pendingNoteOffsForTimeStamp in self.pendingNoteOffs.allValues) {
+			NSMutableArray *noteEvents = pendingNoteOffsForTimeStamp.noteEventsWithEndTimeStamp;
+			NSUInteger count = noteEvents.count;
+			NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
+			for (NSUInteger i = 0; i < count; i++) {
+				MIKMIDIEventWithDestination *event = noteEvents[i];
+				if (event.destination == scheduler) {
+					[indexesToRemove addIndex:i];
+
+					MIKMIDINoteEvent *noteEvent = (MIKMIDINoteEvent *)event.event;
+					MIKMIDINoteOffCommand *command = [MIKMIDINoteOffCommand noteOffCommandWithNote:noteEvent.note velocity:0 channel:noteEvent.channel timestamp:now];
+					[commandsToSendNow addObject:command];
+				}
+			}
+
+			[noteEvents removeObjectsAtIndexes:indexesToRemove];
+		}
+
+		[self scheduleCommands:commandsToSendNow withCommandScheduler:scheduler];
+	}];
+}
+
 - (void)stopWithDispatchToProcessingQueue:(BOOL)dispatchToProcessingQueue
 {
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
