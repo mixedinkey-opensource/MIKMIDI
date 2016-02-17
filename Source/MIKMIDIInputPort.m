@@ -14,6 +14,7 @@
 #import "MIKMIDICommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIUtilities.h"
+#import "MIKMIDISystemExclusiveCommand.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIInputPort.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIInputPort.m in the Build Phases for this target
@@ -319,9 +320,10 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
         }
         
 		for (int i=0; i<pktList->numPackets; i++) {
-			if (packet->length == 0) continue;
-			NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
-			if (commands) [receivedCommands addObjectsFromArray:commands];
+            if (packet->length > 0) {                
+                NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
+                if (commands) [receivedCommands addObjectsFromArray:commands];
+            }
 			packet = MIDIPacketNext(packet);
 		}
 		
