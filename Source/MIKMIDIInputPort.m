@@ -36,6 +36,11 @@
 @property (nonatomic, strong) NSMutableArray *bufferedMSBCommands;
 @property (nonatomic) dispatch_queue_t bufferedCommandQueue;
 
+
+@property (nonatomic, strong) NSMutableData *coalescedSystemExclusiveData;
+@property (nonatomic, assign, getter = isCoalescingSystemExclusiveCommand) BOOL coalescingSystemExclusiveCommand;
+@property (nonatomic, assign) BOOL couldRequireSystemExclusiveCoalescing;
+
 @end
 
 @implementation MIKMIDIInputPort
@@ -56,6 +61,11 @@
 		_handlerTokenPairsByEndpoint = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
 		_internalSources = [[NSMutableArray alloc] init];
 		_coalesces14BitControlChangeCommands = YES;
+        
+        // Default, set externally via the device manager as a special case?
+        _couldRequireSystemExclusiveCoalescing = YES;
+        _coalescingSystemExclusiveCommand = NO;
+        _coalescedSystemExclusiveData = [NSMutableData new];
 		
 		_bufferedCommandQueue = dispatch_queue_create("com.mixedinkey.MIKMIDI.MIKMIDIInputPort.bufferedCommandQueue", DISPATCH_QUEUE_SERIAL);
 		dispatch_async(self.bufferedCommandQueue, ^{ self.bufferedMSBCommands = [[NSMutableArray alloc] init]; });
@@ -226,6 +236,66 @@
 	});
 }
 
+#pragma mark - Coalesce System Exclusive (Roland D50)
+
+- (NSString*)hexStrFromData:(Byte*)bytes length:(UInt16)length {
+    NSMutableString* hex = [NSMutableString string];
+    for(int i = 0; i < length; ++i)[hex appendFormat:@"%02X ", bytes[i]];
+    return [hex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
+- (BOOL)shouldCoalesceSystemExclusiveCommand:(MIDIPacket *)packet{
+    
+    if (self.isCoalescingSystemExclusiveCommand) {
+        return self.isCoalescingSystemExclusiveCommand;
+    }
+    
+    if (packet->data[0] == 0xF0 && packet->data[packet->length - 1] != kMIKMIDISysexEndDelimiter){
+        self.coalescingSystemExclusiveCommand = YES;
+    } else {
+        self.coalescingSystemExclusiveCommand = NO;
+    }
+    
+    return self.coalescingSystemExclusiveCommand;
+}
+
+- (void)coalesceSystemExclusiveCommandData:(const MIDIPacketList *)pktList packet:(MIDIPacket *)packet{
+    
+    for (int i=0; i<pktList->numPackets; i++) {
+        
+        NSLog(@"MIKMIDI SYSEX  : Packet [%d] Packet Len [%d] Data [%@] ", i, packet->length, [self hexStrFromData:packet->data length:packet->length]);
+        
+        if (packet->length != 0) {
+            [[self coalescedSystemExclusiveData] appendBytes:packet->data length:packet->length];
+        }
+        
+        // TODO : Check the packet data for commands other than SYSEX and Command, if found bail on coalescing, corrupt SYSEX Recevied?
+        
+        packet = MIDIPacketNext(packet);
+    }
+}
+
+- (BOOL)coalesceSystemExclusiveCommandIsComplete{
+    if (self.coalescedSystemExclusiveData) {
+        uint8_t *bytePtr = (uint8_t *)self.coalescedSystemExclusiveData.bytes;
+        if (bytePtr[self.coalescedSystemExclusiveData.length - 1] == kMIKMIDISysexEndDelimiter) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (MIKMutableMIDISystemExclusiveCommand *)coalesceSystemExclusiveCommand{
+    MIKMutableMIDISystemExclusiveCommand *cmd = [MIKMutableMIDISystemExclusiveCommand new];
+    uint8_t *bytePtr = (uint8_t *)self.coalescedSystemExclusiveData.bytes;
+    cmd.manufacturerID = bytePtr[1];
+    // Remove duped F0 & F7 to provide a valid per MIKMIDI Sys Ex Packet
+    cmd.sysexData = [[self coalescedSystemExclusiveData] subdataWithRange:NSMakeRange(2, self.coalescedSystemExclusiveData.length - 2)];
+    [[self coalescedSystemExclusiveData] setData:[NSData dataWithBytes:NULL length:0]];
+    self.coalescingSystemExclusiveCommand = NO;
+    return cmd;
+}
+
 #pragma mark - Callbacks
 
 // May be called on a background thread!
@@ -237,6 +307,17 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		
 		NSMutableArray *receivedCommands = [NSMutableArray array];
 		MIDIPacket *packet = (MIDIPacket *)pktList->packet;
+        
+        if (self.couldRequireSystemExclusiveCoalescing) {
+            if ([self shouldCoalesceSystemExclusiveCommand:packet]) {
+                [self coalesceSystemExclusiveCommandData:pktList packet:packet];
+                if ([self coalesceSystemExclusiveCommandIsComplete]) {
+                    [self sendCommands:@[[self coalesceSystemExclusiveCommand]] toEventHandlersFromSource:source];
+                }
+                return;
+            }
+        }
+        
 		for (int i=0; i<pktList->numPackets; i++) {
 			if (packet->length == 0) continue;
 			NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
