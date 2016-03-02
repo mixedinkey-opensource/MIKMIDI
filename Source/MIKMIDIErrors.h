@@ -46,6 +46,13 @@ typedef NS_ENUM(NSInteger, MIKMIDIErrorCode) {
 	MIKMIDIMappingIncorrectFileExtensionErrorCode,
 	
 	/**
+	 *  An error ocurred while creating a new track in an MIKMIDISequence.
+	 *  The error's info dictionary may contain an underlying error with 
+	 *  more informationin for its NSUnderlyingErrorKey.
+	 */
+	MIKMIDISequenceAddTrackFailedErrorCode,
+	
+	/**
 	 *  An error ocurred during an operation on event(s) in an MIKMIDITrack
 	 *  because the event(s) could not be found in the track.
 	 */

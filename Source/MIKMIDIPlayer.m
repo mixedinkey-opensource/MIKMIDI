@@ -191,7 +191,7 @@
 	[clickSequence.tempoTrack addEvents:self.sequence.tempoEvents];
 	[clickSequence.tempoTrack addEvents:self.sequence.timeSignatureEvents];
 	self.clickPlayer.sequence = clickSequence;
-	MIKMIDITrack *clickTrack = [clickSequence addTrack];
+	MIKMIDITrack *clickTrack = [clickSequence addTrackWithError:NULL];
 
 	OSStatus err = MusicTrackSetDestMIDIEndpoint(clickTrack.musicTrack, (MIDIEndpointRef)self.metronomeEndpoint.objectRef);
 	if (err) {
