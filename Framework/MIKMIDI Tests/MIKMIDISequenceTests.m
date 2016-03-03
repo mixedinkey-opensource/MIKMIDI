@@ -79,7 +79,7 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
 		if ([change[NSKeyValueChangeNewKey] count] != 1) return NO;
 		return YES;
 	}];
-	MIKMIDITrack *firstTrack = [self.sequence addTrack];
+	MIKMIDITrack *firstTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(firstTrack, @"Creating an MIKMIDITrack failed.");
 	XCTAssertEqual(self.sequence.tracks.count, 1, @"MIKMIDISequence's tracks count was incorrect after adding a track.");
 	[self waitForExpectationsWithTimeout:0.1 handler:^(NSError *error) {
@@ -89,9 +89,9 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
 
 - (void)testKVOForRemovingATrack
 {
-	MIKMIDITrack *firstTrack = [self.sequence addTrack];
+	MIKMIDITrack *firstTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(firstTrack, @"Creating an MIKMIDITrack failed.");
-	MIKMIDITrack *secondTrack = [self.sequence addTrack];
+	MIKMIDITrack *secondTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(secondTrack, @"Creating an MIKMIDITrack failed.");
 
 	[self keyValueObservingExpectationForObject:self.sequence keyPath:@"tracks" handler:^BOOL(MIKMIDISequence *sequence, NSDictionary *change) {
@@ -113,11 +113,11 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
 
 - (void)testLength
 {
-	MIKMIDITrack *firstTrack = [self.sequence addTrack];
+	MIKMIDITrack *firstTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(firstTrack, @"Creating an MIKMIDITrack failed.");
-	MIKMIDITrack *secondTrack = [self.sequence addTrack];
+	MIKMIDITrack *secondTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(secondTrack, @"Creating an MIKMIDITrack failed.");
-	MIKMIDITrack *thirdTrack = [self.sequence addTrack];
+	MIKMIDITrack *thirdTrack = [self.sequence addTrackWithError:NULL];
 	XCTAssertNotNil(thirdTrack, @"Creating an MIKMIDITrack failed.");
 
 	self.sequence.length = MIKMIDISequenceLongestTrackLength;
