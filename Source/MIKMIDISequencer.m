@@ -279,7 +279,9 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	MusicTimeStamp calculatedToMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:toMIDITimeStamp];
 	BOOL isLooping = (self.shouldLoop && calculatedToMusicTimeStamp > loopStartTimeStamp && loopEndTimeStamp > loopStartTimeStamp);
 	if (isLooping != self.isLooping) self.looping = isLooping;
-	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, isLooping ? loopEndTimeStamp : self.sequenceLength);
+	MusicTimeStamp maxToMusicTimeStamp = self.isRecording ? DBL_MAX : self.sequenceLength; // If recording, don't limit max timestamp (Issue #45)
+	maxToMusicTimeStamp = isLooping ? loopEndTimeStamp : maxToMusicTimeStamp;
+	MusicTimeStamp toMusicTimeStamp = MIN(calculatedToMusicTimeStamp, maxToMusicTimeStamp);
 	MIDITimeStamp actualToMIDITimeStamp = [clock midiTimeStampForMusicTimeStamp:toMusicTimeStamp];
 
 	// Get relevant tempo events
