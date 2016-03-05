@@ -631,8 +631,12 @@
     if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 }
 
+@synthesize muted = _muted;
+
 - (BOOL)isMuted
 {
+	if (_muted) return YES;
+	
     Boolean isMuted = FALSE;
     UInt32 isMutedLength = sizeof(isMuted);
     OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &isMuted, &isMutedLength);
@@ -642,6 +646,8 @@
 
 - (void)setMuted:(BOOL)muted
 {
+	_muted = muted;
+	
     Boolean mutedBoolean = muted ? TRUE : FALSE;
     OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &mutedBoolean, sizeof(mutedBoolean));
     if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
