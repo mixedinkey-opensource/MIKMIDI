@@ -616,19 +616,31 @@
 	return (NSInteger)trackNumber;
 }
 
+@synthesize offset = _offset;
+
 - (MusicTimeStamp)offset
 {
-    MusicTimeStamp offset = 0;
-    UInt32 offsetLength = sizeof(offset);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, &offsetLength);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return offset;
+	if (_offset != 0) return _offset;
+	
+	if (self.musicTrack) {
+		MusicTimeStamp offset = 0;
+		UInt32 offsetLength = sizeof(offset);
+		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, &offsetLength);
+		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		return offset;
+	} else {
+		return 0;
+	}
 }
 
 - (void)setOffset:(MusicTimeStamp)offset
 {
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, sizeof(offset));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	_offset = offset;
+	
+	if (self.musicTrack) {
+		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, sizeof(offset));
+		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}
 }
 
 @synthesize muted = _muted;
