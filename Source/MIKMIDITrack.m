@@ -675,7 +675,7 @@
 
 - (BOOL)isSolo
 {
-	if (!_solo) return _solo;
+	if (_solo) return YES;
 	
 	if (self.musicTrack) {
 		Boolean isSolo = FALSE;
