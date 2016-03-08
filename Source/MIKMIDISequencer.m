@@ -326,9 +326,20 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	}
 
 	// Get other events
+	
+	NSMutableArray *nonMutedTracks = [[NSMutableArray alloc] init];
+	NSMutableArray *soloTracks = [[NSMutableArray alloc] init];
 	for (MIKMIDITrack *track in sequence.tracks) {
 		if (track.isMuted) continue;
 		
+		[nonMutedTracks addObject:track];
+		if (track.solo) { [soloTracks addObject:track]; }
+	}
+	
+	// Never play muted tracks. If any non-muted tracks are soloed, only play those. Matches MusicPlayer behavior
+	NSArray *tracksToPlay = soloTracks.count != 0 ? soloTracks : nonMutedTracks;
+	
+	for (MIKMIDITrack *track in tracksToPlay) {
 		NSArray *events = [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
 		id<MIKMIDICommandScheduler> destination = events.count ? [self commandSchedulerForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
 		for (MIKMIDIEvent *event in events) {
