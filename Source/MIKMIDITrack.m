@@ -616,51 +616,87 @@
 	return (NSInteger)trackNumber;
 }
 
+@synthesize offset = _offset;
+
 - (MusicTimeStamp)offset
 {
-    MusicTimeStamp offset = 0;
-    UInt32 offsetLength = sizeof(offset);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, &offsetLength);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return offset;
+	if (_offset != 0) return _offset;
+	
+	if (self.musicTrack) {
+		MusicTimeStamp offset = 0;
+		UInt32 offsetLength = sizeof(offset);
+		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, &offsetLength);
+		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		return offset;
+	} else {
+		return 0;
+	}
 }
 
 - (void)setOffset:(MusicTimeStamp)offset
 {
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, sizeof(offset));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	_offset = offset;
+	
+	if (self.musicTrack) {
+		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_OffsetTime, &offset, sizeof(offset));
+		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}
 }
+
+@synthesize muted = _muted;
 
 - (BOOL)isMuted
 {
-    Boolean isMuted = FALSE;
-    UInt32 isMutedLength = sizeof(isMuted);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &isMuted, &isMutedLength);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return isMuted ? YES : NO;
+	if (_muted) return YES;
+	
+	if (self.musicTrack) {
+		Boolean isMuted = FALSE;
+		UInt32 isMutedLength = sizeof(isMuted);
+		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &isMuted, &isMutedLength);
+		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		return isMuted ? YES : NO;
+	} else {
+		return NO;
+	}
 }
 
 - (void)setMuted:(BOOL)muted
 {
-    Boolean mutedBoolean = muted ? TRUE : FALSE;
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &mutedBoolean, sizeof(mutedBoolean));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	_muted = muted;
+	
+	if (self.musicTrack) {
+		Boolean mutedBoolean = muted ? TRUE : FALSE;
+		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_MuteStatus, &mutedBoolean, sizeof(mutedBoolean));
+		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}
 }
+
+@synthesize solo = _solo;
 
 - (BOOL)isSolo
 {
-    Boolean isSolo = FALSE;
-    UInt32 isSoloLength = sizeof(isSolo);
-    OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &isSolo, &isSoloLength);
-    if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-    return isSolo ? YES : NO;
+	if (_solo) return YES;
+	
+	if (self.musicTrack) {
+		Boolean isSolo = FALSE;
+		UInt32 isSoloLength = sizeof(isSolo);
+		OSStatus err = MusicTrackGetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &isSolo, &isSoloLength);
+		if (err) NSLog(@"MusicTrackGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+		return isSolo ? YES : NO;
+	} else {
+		return NO;
+	}
 }
 
 - (void)setSolo:(BOOL)solo
 {
-    Boolean soloBoolean = solo ? TRUE : FALSE;
-    OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &soloBoolean, sizeof(soloBoolean));
-    if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	_solo = solo;
+	
+	if (self.musicTrack) {
+		Boolean soloBoolean = solo ? TRUE : FALSE;
+		OSStatus err = MusicTrackSetProperty(self.musicTrack, kSequenceTrackProperty_SoloStatus, &soloBoolean, sizeof(soloBoolean));
+		if (err) NSLog(@"MusicTrackSetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+	}
 }
 
 + (NSSet *)keyPathsForValuesAffectingLength
