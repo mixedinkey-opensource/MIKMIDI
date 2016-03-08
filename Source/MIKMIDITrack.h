@@ -185,10 +185,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  A MIDI track’s start time in terms of beat number. By default this value is 0.
  *
- *  This property can be observed using Key Value Observing.
+ *  This can be used to offset playback by MIKMIDISequencer of individual tracks in a sequence.
  *
- *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
- *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp offset;
 
