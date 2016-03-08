@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) Float32 duration;
 
 /**
- *  The time stamp at the end of the notes duration.
+ *  The time stamp at the end of the notes duration. This is simply the event's timeStamp + duration.
  */
 @property (nonatomic, readonly) MusicTimeStamp endTimeStamp;
 

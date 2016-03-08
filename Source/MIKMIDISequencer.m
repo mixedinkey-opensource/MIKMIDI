@@ -340,7 +340,20 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	NSArray *tracksToPlay = soloTracks.count != 0 ? soloTracks : nonMutedTracks;
 	
 	for (MIKMIDITrack *track in tracksToPlay) {
-		NSArray *events = [track eventsFromTimeStamp:MAX(fromMusicTimeStamp - playbackOffset, 0) toTimeStamp:toMusicTimeStamp - playbackOffset];
+		MusicTimeStamp startTimeStamp = MAX(fromMusicTimeStamp - playbackOffset - track.offset, 0);
+		MusicTimeStamp endTimeStamp = toMusicTimeStamp - playbackOffset - track.offset;
+		NSArray *events = [track eventsFromTimeStamp:startTimeStamp toTimeStamp:endTimeStamp];
+		if (track.offset != 0) {
+			// Shift events by offset
+			NSMutableArray *shiftedEvents = [NSMutableArray array];
+			for (MIKMIDIEvent *event in events) {
+				MIKMutableMIDIEvent *shiftedEvent = [event mutableCopy];
+				shiftedEvent.timeStamp += track.offset;
+				[shiftedEvents addObject:shiftedEvent];
+			}
+			events = shiftedEvents;
+		}
+		
 		id<MIKMIDICommandScheduler> destination = events.count ? [self commandSchedulerForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
 		for (MIKMIDIEvent *event in events) {
 			NSNumber *timeStampKey = @(event.timeStamp + playbackOffset);
