@@ -76,6 +76,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 - (instancetype)initWithFileAtURL:(NSURL *)fileURL convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
 {
     NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:error];
+	if (!data) return nil;
 	return [self initWithData:data convertMIDIChannelsToTracks:convertMIDIChannelsToTracks error:error];
 }
 
@@ -96,7 +97,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 - (instancetype)initWithData:(NSData *)data convertMIDIChannelsToTracks:(BOOL)convertMIDIChannelsToTracks error:(NSError **)error
 {
-	error = error ? error : &(NSError *__autoreleasing){ nil };
+	error = error ?: &(NSError *__autoreleasing){ nil };
 	
     MusicSequence sequence;
     OSStatus err = NewMusicSequence(&sequence);
