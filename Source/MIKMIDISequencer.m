@@ -434,7 +434,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 			command = [MIKMIDICommand noteOnCommandFromNoteEvent:noteEvent clock:clock];
 
 			// Add note off to pending note offs
-			MusicTimeStamp endTimeStamp = noteEvent.endTimeStamp;
+			MusicTimeStamp endTimeStamp = noteEvent.endTimeStamp + self.playbackOffset;
 			NSMutableDictionary *pendingNoteOffs = self.pendingNoteOffs;
 			MIKMIDIPendingNoteOffsForTimeStamp *pendingNoteOffsForEndTimeStamp = pendingNoteOffs[@(endTimeStamp)];
 			if (!pendingNoteOffsForEndTimeStamp) {
