@@ -298,6 +298,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The current playback position in the sequence.
+ *
+ *  @note This property is *not* observable using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
 
