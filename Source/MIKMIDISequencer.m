@@ -535,6 +535,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (void)recordMIDICommand:(MIKMIDICommand *)command
 {
 	if (!self.isRecording) return;
+	if (self.currentTimeStamp < 0) return; // In pre-roll
 	
 	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
 	MusicTimeStamp musicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:midiTimeStamp];
