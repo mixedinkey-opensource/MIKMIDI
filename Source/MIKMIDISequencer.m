@@ -567,7 +567,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (void)recordAllPendingNoteEventsWithOffTimeStamp:(MusicTimeStamp)offTimeStamp
 {
 	NSMutableSet *events = [NSMutableSet set];
-
+	
 	NSMutableDictionary *pendingRecordedNoteEvents = self.pendingRecordedNoteEvents;
 	for (NSNumber *noteNumber in pendingRecordedNoteEvents) {
 		for (MIKMutableMIDINoteEvent *event in pendingRecordedNoteEvents[noteNumber]) {
@@ -577,8 +577,12 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		}
 	}
 	self.pendingRecordedNoteEvents = [NSMutableDictionary dictionary];
-
-	if ([events count]) [self.recordEnabledTracks makeObjectsPerformSelector:@selector(addEvents:) withObject:events];
+	
+	if ([events count]) {
+		for (MIKMIDITrack *track in self.recordEnabledTracks) {
+			[track addEvents:[events allObjects]];
+		}
+	}
 }
 
 - (MIKMIDINoteEvent	*)pendingNoteEventWithNoteNumber:(NSNumber *)noteNumber channel:(UInt8)channel releaseVelocity:(UInt8)releaseVelocity offTimeStamp:(MusicTimeStamp)offTimeStamp
