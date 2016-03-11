@@ -33,7 +33,7 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])
 
 // A prettier way to get the mac_absolute_time() when working with MIDITimeStamps.
-#define MIKMIDIGetCurrentTimeStamp()	(mach_absolute_time())
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp();
 
 /**
  *  Returns whether a given MIDI note number corresponds to a "black key" on a piano.
