@@ -212,7 +212,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 		OSStatus err = MusicSequenceNewTrack(self.musicSequence, &musicTrack);
 		if (err) {
 			NSLog(@"MusicSequenceNewTrack() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-			NSError *underlyingError;
+			NSError *underlyingError = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			NSDictionary *userInfo = @{NSUnderlyingErrorKey : underlyingError};
 			*error = [NSError MIKMIDIErrorWithCode:MIKMIDISequenceAddTrackFailedErrorCode userInfo:userInfo];
 			return;
