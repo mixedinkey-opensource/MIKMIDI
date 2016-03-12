@@ -1,0 +1,4 @@
+# TODOS:
+
+[ ] - Load midi file.
+[ ] - 

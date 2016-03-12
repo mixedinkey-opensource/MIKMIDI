@@ -1,0 +1,15 @@
+PODS:
+  - MIKMIDI (1.5.0)
+  - NSLogger (1.5.1):
+    - NSLogger/Standard (= 1.5.1)
+  - NSLogger/Standard (1.5.1)
+
+DEPENDENCIES:
+  - MIKMIDI
+  - NSLogger
+
+SPEC CHECKSUMS:
+  MIKMIDI: d3fb1fdf3459eb9a5d3068536fb30e499266dea6
+  NSLogger: 5ed223a2436df96244e033be750656dacdeec034
+
+COCOAPODS: 0.39.0

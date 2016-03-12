@@ -18,3 +18,5 @@ profile
 
 build
 .DS_Store
+Pods/
+
