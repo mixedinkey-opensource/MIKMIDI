@@ -414,6 +414,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) MIDITimeStamp latestScheduledMIDITimeStamp;
 
+
+/**
+ *	The maximum amount the sequencer will look ahead to schedule MIDI events. (0.05 to 1s).
+ *
+ *	The default of 0.1s should suffice for most uses. You may however, need a longer time
+ *	if your sequencer needs to playback on iOS while the device is locked.
+ */
+@property (nonatomic) NSTimeInterval maximumLookAheadInterval;
+
 #pragma mark - Deprecated
 
 /**

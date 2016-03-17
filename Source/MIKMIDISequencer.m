@@ -115,6 +115,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		_createSynthsIfNeeded = YES;
 		_processingQueueKey = &_processingQueueKey;
 		_processingQueueContext = &_processingQueueContext;
+		_maximumLookAheadInterval = 0.1;
 	}
 	return self;
 }
@@ -275,7 +276,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp
 {
-	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(0.1);
+	MIDITimeStamp toMIDITimeStamp = MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(self.maximumLookAheadInterval);
 	if (toMIDITimeStamp < fromMIDITimeStamp) return;
 	MIKMIDIClock *clock = self.clock;
 
@@ -818,6 +819,11 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 			[self didChangeValueForKey:@"sequence"];
 		}];
 	}
+}
+
+- (void)setMaximumLookAheadInterval:(NSTimeInterval)maximumLookAheadInterval
+{
+	_maximumLookAheadInterval = MIN(MAX(maximumLookAheadInterval, 0.05), 1.0);
 }
 
 #pragma mark - Deprecated
