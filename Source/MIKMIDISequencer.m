@@ -83,6 +83,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 @property (nonatomic, strong) NSMutableDictionary *pendingRecordedNoteEvents;
 
 @property (nonatomic) MusicTimeStamp startingTimeStamp;
+@property (nonatomic) MusicTimeStamp initialStartingTimeStamp;
 
 @property (nonatomic, strong) NSMapTable *tracksToDestinationsMap;
 @property (nonatomic, strong) NSMapTable *tracksToDefaultSynthsMap;
@@ -184,6 +185,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	dispatch_sync(queue, ^{
 		self.startingTimeStamp = timeStamp;
+		self.initialStartingTimeStamp = timeStamp;
 
 		Float64 startingTempo = [self.sequence tempoAtTimeStamp:timeStamp];
 		if (!startingTempo) startingTempo = kDefaultTempo;
@@ -660,7 +662,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	MusicTimeStamp clickTimeStamp = floor(fromTimeStamp);
 	while (clickTimeStamp <= toTimeStamp) {
-		if (clickTrackStatus == MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll && clickTimeStamp >= self.startingTimeStamp + self.preRoll) break;
+		if (clickTrackStatus == MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll && clickTimeStamp >= self.initialStartingTimeStamp + self.preRoll) break;
 
 		MIKMIDIMetaTimeSignatureEvent *event = [timeSignatureEvents firstObject];
 		if (event && event.timeStamp <= clickTimeStamp) {
