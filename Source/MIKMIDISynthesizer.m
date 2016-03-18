@@ -452,7 +452,7 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 			CFIndex count = CFArrayGetCount(commandTimeStampsArrayCopy);
 			for (CFIndex i = 0; i < count; i++) {
 				NSNumber *timeStampNumber = (__bridge NSNumber *)CFArrayGetValueAtIndex(commandTimeStampsArrayCopy, i);
-				MIDITimeStamp timeStamp = timeStampNumber.unsignedIntegerValue;
+				MIDITimeStamp timeStamp = timeStampNumber.unsignedLongLongValue;
 				if (timeStamp >= toTimeStamp) break;
 
 				CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(commandsByTimeStamp, (__bridge void*)timeStampNumber);
