@@ -381,11 +381,10 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)addInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
 {
-	NSUInteger index = [self.internalVirtualSources indexOfObject:source];
-	if (index == NSNotFound) return;
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
-	[self.internalVirtualSources removeObjectAtIndex:index];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+    NSUInteger index = [self.internalVirtualSources count];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
+    [self.internalVirtualSources insertObject:source atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualSources"];
 }
 
 - (void)removeInternalVirtualSourcesObject:(MIKMIDISourceEndpoint *)source
@@ -403,11 +402,10 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 
 - (void)addInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
 {
-	NSUInteger index = [self.internalVirtualDestinations indexOfObject:destination];
-	if (index == NSNotFound) return;
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
-	[self.internalVirtualDestinations removeObjectAtIndex:index];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+    NSUInteger index = [self.internalVirtualDestinations count];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
+    [self.internalVirtualDestinations insertObject:destination atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"virtualDestinations"];
 }
 
 - (void)removeInternalVirtualDestinationsObject:(MIKMIDIDestinationEndpoint *)destination
