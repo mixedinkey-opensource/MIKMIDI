@@ -31,6 +31,23 @@ NS_ASSUME_NONNULL_BEGIN
 							  channel:(UInt8)channel
 							timestamp:(nullable NSDate *)timestamp;
 
+
+/**
+ *  Convenience method for creating a note on command.
+ *
+ *  @param note      The note number for the command. Must be between 0 and 127.
+ *  @param velocity  The velocity for the command. Must be between 0 and 127.
+ *  @param channel   The channel for the command. Must be between 0 and 15.
+ *  @param timestamp The MIDITimestamp for the command.
+ *
+ *  @return An initialized MIKMIDINoteOnCommand instance.
+ */
++ (instancetype)noteOnCommandWithNote:(NSUInteger)note
+							 velocity:(NSUInteger)velocity
+							  channel:(UInt8)channel
+						midiTimeStamp:(MIDITimeStamp)timestamp;
+
+
 /**
  *  The note number for the message. In the range 0-127.
  */

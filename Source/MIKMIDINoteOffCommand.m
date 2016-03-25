@@ -42,6 +42,21 @@
 	return [self isMutable] ? result : [result copy];
 }
 
++ (instancetype)noteOffCommandWithNote:(NSUInteger)note
+							  velocity:(NSUInteger)velocity
+							   channel:(UInt8)channel
+						 midiTimeStamp:(MIDITimeStamp)timestamp
+{
+	MIKMutableMIDINoteOffCommand *result = [[MIKMutableMIDINoteOffCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.midiTimestamp = timestamp;
+
+	return [self isMutable] ? result : [result copy];
+}
+
+
 - (NSString *)additionalCommandDescription
 {
 	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super additionalCommandDescription], (unsigned long)self.note, (unsigned long)self.velocity];
