@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param note      The note number for the command. Must be between 0 and 127.
  *  @param velocity  The velocity for the command. Must be between 0 and 127.
  *  @param channel   The channel for the command. Must be between 0 and 15.
- *  @param midiTimeStamp	The MIDITimeStamp for the command.
+ *  @param timestamp The MIDITimeStamp for the command.
  *
  *  @return An initialized MIKMIDINoteOffCommand instance.
  */
