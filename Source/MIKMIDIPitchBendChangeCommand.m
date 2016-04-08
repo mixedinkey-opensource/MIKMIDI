@@ -46,7 +46,7 @@
 	
 	pitchChange = MIN(pitchChange, 0x3FFF);
 	self.dataByte1 = pitchChange & 0x007F;
-	self.dataByte2 = pitchChange & 0x3F80;
+	self.dataByte2 = (pitchChange & 0x3F80) >> 7;
 }
 
 @end
