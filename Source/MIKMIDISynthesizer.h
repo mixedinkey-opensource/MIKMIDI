@@ -84,6 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error;
 
+- (void)setVolume:(float)vol;
+
 + (AudioComponentDescription)appleSynthComponentDescription;
 
 // methods for property 'componentDescription'
@@ -132,6 +134,8 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see -setupAUGraph
  */
 @property (nonatomic, readonly, nullable) AudioUnit instrumentUnit;
+
+@property (nonatomic, nullable) AudioUnit mixerUnit;
 
 /**
  *  The AUGraph for the instrument.
