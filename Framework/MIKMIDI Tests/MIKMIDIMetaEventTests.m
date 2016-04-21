@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <MIKMIDI/MIKMIDI.h>
 #import <MIKMIDI/MIKMIDIEvent_SubclassMethods.h>
+#import <MIKMIDI/MIKMIDIMetaEvent_SubclassMethods.h>
 
 @interface MIKMIDIMetaEventTests : XCTestCase
 
@@ -39,6 +40,43 @@
 	XCTAssertEqual(timeSignatureEvent.thirtySecondsPerQuarterNote, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected thirtySecondsPerQuarterNote.");
 	XCTAssertEqual(timeSignatureEvent.metadataType, MIKMIDIMetaEventTypeTimeSignature, "MIKMIDIMetaTimeSignatureEvent didn't have expected metadataType.");
 	XCTAssertEqual(timeSignatureEvent.timeStamp, 26, "MIKMIDIMetaTimeSignatureEvent didn't have expected timeStamp.");
+}
+
+- (void)testBareInits
+{
+	NSArray *classNames = @[
+							@"MIKMIDIMetaCuePointEvent",
+							@"MIKMIDIMetaLyricEvent",
+							@"MIKMIDIMetaTrackSequenceNameEvent",
+							@"MIKMIDIMetaTextEvent",
+							@"MIKMIDIMetaTimeSignatureEvent",
+							@"MIKMIDIMetaEvent",
+							@"MIKMIDIMetaMarkerTextEvent",
+							@"MIKMIDIMetaInstrumentNameEvent",
+							@"MIKMIDIMetaCopyrightEvent",
+							@"MIKMIDIMetaKeySignatureEvent",
+							];
+	for (NSString *className in classNames) {
+		Class subclass = NSClassFromString(className);
+		Class mutableSubclass = [subclass mutableCounterpartClass];
+		XCTAssertFalse([subclass isMutable], "%@ should not be mutable.", NSStringFromClass(subclass));
+		XCTAssertTrue([mutableSubclass isMutable], "%@ should be mutable.", NSStringFromClass(mutableSubclass));
+		
+		MIKMIDIMetaEvent *event = [[subclass alloc] init];
+		MIKMutableMIDIMetaEvent *mutableEvent = [[mutableSubclass alloc] init];
+		XCTAssertTrue([event isMemberOfClass:subclass], "-[[%@ alloc] init] did not produce instance of expected class (%@)", NSStringFromClass(subclass), NSStringFromClass([event class]));
+		XCTAssertTrue([mutableEvent isMemberOfClass:mutableSubclass], "-[[%@ alloc] init] did not produce instance of expected class (%@)", NSStringFromClass(mutableSubclass), NSStringFromClass([mutableEvent class]));
+		
+		MIKMIDIEventType eventType = [[[subclass supportedMIDIEventTypes] firstObject] unsignedIntegerValue];
+		XCTAssertEqual(event.eventType, eventType, "-[[%@ alloc] init] did not produce instance with expected event type (%@)", NSStringFromClass(subclass), @(eventType));
+		XCTAssertEqual(mutableEvent.eventType, eventType, "-[[%@ alloc] init] did not produce instance with expected event type (%@)", NSStringFromClass(mutableSubclass), @(eventType));
+
+		// FIXME: See Issue #151
+//		MIKMIDIMetaEventType metadataType = [MIKMIDIMetaEvent metaSubtypeForEventType:eventType];
+//		XCTAssertEqual(event.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(subclass), @(metadataType));
+//		XCTAssertEqual(mutableEvent.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(mutableSubclass), @(metadataType));
+	}
+	
 }
 
 - (void)testMetaTextEventInit
