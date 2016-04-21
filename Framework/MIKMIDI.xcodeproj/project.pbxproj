@@ -267,8 +267,8 @@
 		9DB366F71A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB366F41A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DB366F81A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */; };
 		9DB366F91A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DB366F51A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.m */; };
-		9DB8CD421BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; };
-		9DB8CD431BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; };
+		9DB8CD421BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DB8CD431BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DB8CD401BF266FE00F6388D /* MIKMIDIMetaEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD581AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD591AAA21BE00E59734 /* MIKMIDICommand_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D74EF3517A713A100BEE89F /* MIKMIDICommand_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DBEBD5A1AAA21C400E59734 /* MIKMIDIEvent_SubclassMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 839D932D19C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
