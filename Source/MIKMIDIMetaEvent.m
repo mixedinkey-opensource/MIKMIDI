@@ -23,9 +23,50 @@
 + (BOOL)isMutable { return NO; }
 + (NSData *)initialData { return [NSData dataWithBytes:&(MIDIMetaEvent){0} length:sizeof(MIDIMetaEvent)]; }
 
+- (instancetype)initWithMetaData:(NSData *)metaData metadataType:(MIKMIDIMetaEventType)type timeStamp:(MusicTimeStamp)timeStamp
+{
+	MIKMIDIEventType eventType = [MIKMIDIMetaEvent eventTypeForMetaSubtype:type];
+	if (eventType == MIKMIDIEventTypeNULL) {
+		type = 0;
+		eventType = MIKMIDIEventTypeMeta;
+	}
+	NSMutableData *data = [[[[self class] initialData] subdataWithRange:NSMakeRange(0, MIKMIDIEventMetadataStartOffset)] mutableCopy];
+	[data appendData:metaData];
+	MIDIMetaEvent *metaEvent = (MIDIMetaEvent *)[data mutableBytes];
+	metaEvent->metaEventType = type;
+	metaEvent->dataLength = (UInt32)[metaData length];
+	return [self initWithTimeStamp:timeStamp midiEventType:eventType data:data];
+}
+
 - (NSString *)additionalEventDescription
 {
     return [NSString stringWithFormat:@"Metadata Type: 0x%02x, Length: %u, Data: %@", self.metadataType, (unsigned int)self.metadataLength, self.metaData];
+}
+
+#pragma mark - Public
+
++ (MIKMIDIEventType)eventTypeForMetaSubtype:(MIKMIDIMetaEventType)subtype
+{
+	static NSDictionary *metaTypeToMIDITypeMap = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		metaTypeToMIDITypeMap = @{@(MIKMIDIMetaEventTypeSequenceNumber) : @(MIKMIDIEventTypeMetaSequence),
+								  @(MIKMIDIMetaEventTypeTextEvent) : @(MIKMIDIEventTypeMetaText),
+								  @(MIKMIDIMetaEventTypeCopyrightNotice) : @(MIKMIDIEventTypeMetaCopyright),
+								  @(MIKMIDIMetaEventTypeTrackSequenceName) : @(MIKMIDIEventTypeMetaTrackSequenceName),
+								  @(MIKMIDIMetaEventTypeInstrumentName) : @(MIKMIDIEventTypeMetaInstrumentName),
+								  @(MIKMIDIMetaEventTypeLyricText) : @(MIKMIDIEventTypeMetaLyricText),
+								  @(MIKMIDIMetaEventTypeMarkerText) : @(MIKMIDIEventTypeMetaMarkerText),
+								  @(MIKMIDIMetaEventTypeCuePoint) : @(MIKMIDIEventTypeMetaCuePoint),
+								  @(MIKMIDIMetaEventTypeMIDIChannelPrefix) : @(MIKMIDIEventTypeMetaMIDIChannelPrefix),
+								  @(MIKMIDIMetaEventTypeEndOfTrack) : @(MIKMIDIEventTypeMetaEndOfTrack),
+								  @(MIKMIDIMetaEventTypeTempoSetting) : @(MIKMIDIEventTypeMetaTempoSetting),
+								  @(MIKMIDIMetaEventTypeSMPTEOffset) : @(MIKMIDIEventTypeMetaSMPTEOffset),
+								  @(MIKMIDIMetaEventTypeTimeSignature) : @(MIKMIDIEventTypeMetaTimeSignature),
+								  @(MIKMIDIMetaEventTypeKeySignature) : @(MIKMIDIEventTypeMetaKeySignature),
+								  @(MIKMIDIMetaEventTypeSequencerSpecificEvent) : @(MIKMIDIEventTypeMetaSequenceSpecificEvent),};
+	});
+	return [metaTypeToMIDITypeMap[@(subtype)] unsignedIntegerValue];
 }
 
 #pragma mark - Properties

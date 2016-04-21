@@ -16,7 +16,6 @@
  *
  *  @note These are similar, but do not directly correspond to the values of MusicEventType
  */
-
 typedef NS_ENUM(NSUInteger, MIKMIDIEventType)
 {
     MIKMIDIEventTypeNULL = kMusicEventType_NULL,
@@ -69,25 +68,6 @@ typedef NS_ENUM(NSUInteger, MIKMIDIChannelEventType)
 	MIKMIDIChannelEventTypeProgramChange				= 0xC0,
 	MIKMIDIChannelEventTypeChannelPressure				= 0xD0,
 	MIKMIDIChannelEventTypePitchBendChange				= 0xE0,
-};
-
-typedef NS_ENUM(NSUInteger, MIKMIDIMetaEventTypeType)
-{
-    MIKMIDIMetaEventTypeSequenceNumber          = 0x00,
-    MIKMIDIMetaEventTypeTextEvent               = 0x01,
-    MIKMIDIMetaEventTypeCopyrightNotice         = 0x02,
-    MIKMIDIMetaEventTypeTrackSequenceName       = 0x03,
-    MIKMIDIMetaEventTypeInstrumentName          = 0x04,
-    MIKMIDIMetaEventTypeLyricText               = 0x05,
-    MIKMIDIMetaEventTypeMarkerText              = 0x06,
-    MIKMIDIMetaEventTypeCuePoint                = 0x07,
-    MIKMIDIMetaEventTypeMIDIChannelPrefix       = 0x20,
-    MIKMIDIMetaEventTypeEndOfTrack              = 0x2F,
-    MIKMIDIMetaEventTypeTempoSetting            = 0x51,
-    MIKMIDIMetaEventTypeSMPTEOffset             = 0x54,
-    MIKMIDIMetaEventTypeTimeSignature           = 0x58,
-    MIKMIDIMetaEventTypeKeySignature            = 0x59,
-    MIKMIDIMetaEventTypeSequencerSpecificEvent  = 0x7F
 };
 
 NS_ASSUME_NONNULL_BEGIN
