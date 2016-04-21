@@ -151,6 +151,6 @@
 @dynamic metadataType;
 @dynamic metaData;
 
-+ (BOOL)isMutable { return NO; }
++ (BOOL)isMutable { return YES; }
 
 @end
