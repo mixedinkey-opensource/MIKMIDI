@@ -14,6 +14,11 @@ static const NSUInteger MIKMIDIEventMetadataStartOffset = 8;
 /**
  *  Subtypes of MIKMIDIMetaEvent. You should use the corresponding meta subtypes in MIKMIDIEventType when
  *  initializing an event with -initWithTimeStamp:midiEventType:data: or similar methods.
+ *
+ *  The reason for a separate enum here, even though there is a 1 to 1 correspondence with values in 
+ *  MIKMIDIEventType is that these values are dictated by the MIDI standard, and overlap values defined
+ *  for MusicEventType. Having these separately defined allows us to effectively "flatten" MIKMIDIEventType
+ *  to treat meta event subtypes as first class event types.
  */
 typedef NS_ENUM(UInt8, MIKMIDIMetaEventType)
 {
@@ -31,7 +36,8 @@ typedef NS_ENUM(UInt8, MIKMIDIMetaEventType)
 	MIKMIDIMetaEventTypeSMPTEOffset             = 0x54,
 	MIKMIDIMetaEventTypeTimeSignature           = 0x58,
 	MIKMIDIMetaEventTypeKeySignature            = 0x59,
-	MIKMIDIMetaEventTypeSequencerSpecificEvent  = 0x7F
+	MIKMIDIMetaEventTypeSequencerSpecificEvent  = 0x7F,
+	MIKMIDIMetaEventTypeInvalid					= 0x66,
 };
 
 // For legacy compatibility. Should use MIKMIDIMetaEventType in new code.
@@ -55,6 +61,16 @@ NS_ASSUME_NONNULL_BEGIN
 + (MIKMIDIEventType)eventTypeForMetaSubtype:(MIKMIDIMetaEventType)subtype;
 
 /**
+ *  Can be used to get the meta event subtype MIKMIDIMetaEventType for an MIKMIDIEventType.
+ *  Most users of MIKMIDI should not need to use this.
+ *
+ *  @param eventType An MIKMIDIEventType value.
+ *
+ *  @return The corresponding MIKMIDIMetaEventType value. MIKMIDIMetaEventTypeInvalid if eventType is invalid or unknown.
+ */
++ (MIKMIDIMetaEventType)metaSubtypeForEventType:(MIKMIDIEventType)eventType;
+
+/**
  *  Initializes a new MIKMIDIMetaEvent subclass with the specified data and metadataType.
  *
  *  @param metaData     An NSData containing the metadata for the event.
@@ -69,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  The type of metadata. See MIDIMetaEvent for more information.
  */
-@property (nonatomic, readonly) UInt8 metadataType;
+@property (nonatomic, readonly) MIKMIDIMetaEventType metadataType;
 
 /**
  *  The length of the metadata. See MIDIMetaEvent for more information.
@@ -89,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MIKMutableMIDIMetaEvent : MIKMIDIMetaEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, readwrite) MIKMIDIMetaEventType metadataType;
 @property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 
 @end

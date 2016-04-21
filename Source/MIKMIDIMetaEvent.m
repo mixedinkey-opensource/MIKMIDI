@@ -38,6 +38,13 @@
 	return [self initWithTimeStamp:timeStamp midiEventType:eventType data:data];
 }
 
+- (instancetype)initWithMetaData:(NSData *)metaData timeStamp:(MusicTimeStamp)timeStamp
+{
+	MIKMIDIEventType eventType = [[[[self class] supportedMIDIEventTypes] firstObject] unsignedIntegerValue];
+	MIKMIDIMetaEventType metaType = [MIKMIDIMetaEvent metaSubtypeForEventType:eventType];
+	return [self initWithMetaData:metaData metadataType:metaType timeStamp:timeStamp];
+}
+
 - (NSString *)additionalEventDescription
 {
     return [NSString stringWithFormat:@"Metadata Type: 0x%02x, Length: %u, Data: %@", self.metadataType, (unsigned int)self.metadataLength, self.metaData];
@@ -46,6 +53,24 @@
 #pragma mark - Public
 
 + (MIKMIDIEventType)eventTypeForMetaSubtype:(MIKMIDIMetaEventType)subtype
+{
+	return [[self metaTypeToMIDITypeMap][@(subtype)] unsignedIntegerValue];
+}
+
++ (MIKMIDIMetaEventType)metaSubtypeForEventType:(MIKMIDIEventType)eventType
+{
+	NSDictionary *map = [self metaTypeToMIDITypeMap];
+	for (NSNumber *key in map) {
+		if ([map[key] isEqualToNumber:@(eventType)]) {
+			return [key unsignedIntegerValue];
+		}
+	}
+	return MIKMIDIMetaEventTypeInvalid;
+}
+
+#pragma mark - Private
+
++ (NSDictionary *)metaTypeToMIDITypeMap
 {
 	static NSDictionary *metaTypeToMIDITypeMap = nil;
 	static dispatch_once_t onceToken;
@@ -66,7 +91,7 @@
 								  @(MIKMIDIMetaEventTypeKeySignature) : @(MIKMIDIEventTypeMetaKeySignature),
 								  @(MIKMIDIMetaEventTypeSequencerSpecificEvent) : @(MIKMIDIEventTypeMetaSequenceSpecificEvent),};
 	});
-	return [metaTypeToMIDITypeMap[@(subtype)] unsignedIntegerValue];
+	return metaTypeToMIDITypeMap;
 }
 
 #pragma mark - Properties
@@ -76,7 +101,7 @@
 	return [NSSet setWithObjects:@"metadataType", @"metadata", nil];
 }
 
-- (UInt8)metadataType
+- (MIKMIDIMetaEventType)metadataType
 {
     MIDIMetaEvent *metaEvent = (MIDIMetaEvent*)[self.internalData bytes];
     return metaEvent->metaEventType;

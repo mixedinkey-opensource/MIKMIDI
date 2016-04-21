@@ -22,6 +22,12 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTextEvent class]; }
 + (BOOL)isMutable { return NO; }
 
+- (instancetype)initWithString:(NSString *)string timeStamp:(MusicTimeStamp)timeStamp
+{
+	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+	return [self initWithMetaData:data timeStamp:timeStamp];
+}
+
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
     NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
@@ -49,7 +55,6 @@
 }
 
 @end
-
 
 @implementation MIKMutableMIDIMetaTextEvent
 
