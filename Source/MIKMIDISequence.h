@@ -9,18 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDICompilerCompatibility.h"
-
-typedef struct {
-	UInt8 numerator;
-	UInt8 denominator;
-} MIKMIDITimeSignature; // Deprecated
-
-NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 denominator) {
-	MIKMIDITimeSignature ts;
-	ts.numerator = numerator;
-	ts.denominator = denominator;
-	return ts;
-}
+#import "MIKMIDIMetaTimeSignatureEvent.h"
 
 @class MIKMIDITrack;
 @class MIKMIDISequencer;
