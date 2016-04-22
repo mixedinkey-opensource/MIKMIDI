@@ -103,16 +103,16 @@
 
 - (void)testMetaTimeSignatureEventInit
 {
-	MIKMIDIMetaTimeSignatureEvent *event1 =
+	MIKMIDIMetaTimeSignatureEvent *event =
 	[[MIKMIDIMetaTimeSignatureEvent alloc] initWithNumerator:9 denominator:8 timeStamp:63];
 	
-	XCTAssertTrue([event1 isMemberOfClass:[MIKMIDIMetaTimeSignatureEvent class]], @"MIKMIDIMetaTimeSignatureEvent initializer didn't produce expected subclass (MIKMIDIMetaTimeSignatureEvent)");
-	XCTAssertEqual(event1.numerator, 9, "MIKMIDIMetaTimeSignatureEvent didn't have expected numerator.");
-	XCTAssertEqual(event1.denominator, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected denominator.");
-	XCTAssertEqual(event1.metronomePulse, 24, "MIKMIDIMetaTimeSignatureEvent didn't have expected metronomePulse.");
-	XCTAssertEqual(event1.thirtySecondsPerQuarterNote, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected thirtySecondsPerQuarterNote.");
-	XCTAssertEqual(event1.metadataType, MIKMIDIMetaEventTypeTimeSignature, "MIKMIDIMetaTimeSignatureEvent didn't have expected metadataType.");
-	XCTAssertEqual(event1.timeStamp, 63, "MIKMIDIMetaTimeSignatureEvent didn't have expected timeStamp.");
+	XCTAssertTrue([event isMemberOfClass:[MIKMIDIMetaTimeSignatureEvent class]], @"MIKMIDIMetaTimeSignatureEvent initializer didn't produce expected subclass (MIKMIDIMetaTimeSignatureEvent)");
+	XCTAssertEqual(event.numerator, 9, "MIKMIDIMetaTimeSignatureEvent didn't have expected numerator.");
+	XCTAssertEqual(event.denominator, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected denominator.");
+	XCTAssertEqual(event.metronomePulse, 24, "MIKMIDIMetaTimeSignatureEvent didn't have expected metronomePulse.");
+	XCTAssertEqual(event.thirtySecondsPerQuarterNote, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected thirtySecondsPerQuarterNote.");
+	XCTAssertEqual(event.metadataType, MIKMIDIMetaEventTypeTimeSignature, "MIKMIDIMetaTimeSignatureEvent didn't have expected metadataType.");
+	XCTAssertEqual(event.timeStamp, 63, "MIKMIDIMetaTimeSignatureEvent didn't have expected timeStamp.");
 	
 	MIKMIDIMetaTimeSignatureEvent *event2 =
 	[[MIKMIDIMetaTimeSignatureEvent alloc] initWithTimeSignature:MIKMIDITimeSignatureMake(3, 4) timeStamp:127];
@@ -124,6 +124,18 @@
 	XCTAssertEqual(event2.thirtySecondsPerQuarterNote, 8, "MIKMIDIMetaTimeSignatureEvent didn't have expected thirtySecondsPerQuarterNote.");
 	XCTAssertEqual(event2.metadataType, MIKMIDIMetaEventTypeTimeSignature, "MIKMIDIMetaTimeSignatureEvent didn't have expected metadataType.");
 	XCTAssertEqual(event2.timeStamp, 127, "MIKMIDIMetaTimeSignatureEvent didn't have expected timeStamp.");
+}
+
+- (void)testMetaKeySignatureEventInit
+{
+	MIKMIDIMetaKeySignatureEvent *event =
+	[[MIKMIDIMetaKeySignatureEvent alloc] initWithMusicalKey:MIKMIDIMusicalKeyFMinor timeStamp:127];
+	
+	XCTAssertTrue([event isMemberOfClass:[MIKMIDIMetaKeySignatureEvent class]], @"MIKMIDIMetaKeySignatureEvent initializer didn't produce expected subclass (MIKMIDIMetaKeySignatureEvent)");
+	XCTAssertEqual(event.numberOfFlatsAndSharps, -4, "MIKMIDIMetaKeySignatureEvent didn't have expected numerator.");
+	XCTAssertEqual(event.scale, MIKMIDIMusicalScaleMinor, "MIKMIDIMetaKeySignatureEvent didn't have expected denominator.");
+	XCTAssertEqual(event.metadataType, MIKMIDIMetaEventTypeKeySignature, "MIKMIDIMetaKeySignatureEvent didn't have expected metadataType.");
+	XCTAssertEqual(event.timeStamp, 127, "MIKMIDIMetaKeySignatureEvent didn't have expected timeStamp.");
 }
 
 @end
