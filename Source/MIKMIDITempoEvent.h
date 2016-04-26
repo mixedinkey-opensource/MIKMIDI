@@ -23,9 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param bpm The beats per minute of the tempo event.
  *
- *  @return A new instance of MIKMIDITempoEvent, or nil if an error occured.
+ *  @return A new instance of MIKMIDITempoEvent
  */
-+ (nullable instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
++ (instancetype)tempoEventWithTimeStamp:(MusicTimeStamp)timeStamp tempo:(Float64)bpm;
 
 /**
  *  The beats per minute of the tempo event.
