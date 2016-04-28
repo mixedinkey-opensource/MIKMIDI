@@ -365,6 +365,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		
 		id<MIKMIDICommandScheduler> destination = events.count ? [self commandSchedulerForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
 		for (MIKMIDIEvent *event in events) {
+			if ([event isKindOfClass:[MIKMIDINoteEvent class]] && [(MIKMIDINoteEvent *)event duration] <= 0) continue;
 			NSNumber *timeStampKey = @(event.timeStamp);
 			NSMutableArray *eventsAtTimeStamp = allEventsByTimeStamp[timeStampKey] ? allEventsByTimeStamp[timeStampKey] : [NSMutableArray array];
 			[eventsAtTimeStamp addObject:[MIKMIDIEventWithDestination eventWithDestination:destination event:event]];
