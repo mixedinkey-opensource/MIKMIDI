@@ -224,7 +224,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 {
 	[self dispatchSyncToProcessingQueueAsNeeded:^{
 		NSMutableArray *commandsToSendNow = [NSMutableArray array];
-		NSDate *now = [NSDate date];
+		MIDITimeStamp offTimeStamp = MIKMIDIGetCurrentTimeStamp() + MIKMIDIClockMIDITimeStampsPerTimeInterval(self.maximumLookAheadInterval);
 
 		for (MIKMIDIPendingNoteOffsForTimeStamp *pendingNoteOffsForTimeStamp in self.pendingNoteOffs.allValues) {
 			NSMutableArray *noteEvents = pendingNoteOffsForTimeStamp.noteEventsWithEndTimeStamp;
@@ -236,7 +236,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 					[indexesToRemove addIndex:i];
 
 					MIKMIDINoteEvent *noteEvent = (MIKMIDINoteEvent *)event.event;
-					MIKMIDINoteOffCommand *command = [MIKMIDINoteOffCommand noteOffCommandWithNote:noteEvent.note velocity:0 channel:noteEvent.channel timestamp:now];
+					MIKMIDINoteOffCommand *command = [MIKMIDINoteOffCommand noteOffCommandWithNote:noteEvent.note velocity:0 channel:noteEvent.channel midiTimeStamp:offTimeStamp];
 					[commandsToSendNow addObject:command];
 				}
 			}
@@ -456,7 +456,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	} else if ([event isKindOfClass:[MIKMIDIChannelEvent class]]) {
 		command = [MIKMIDICommand commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:clock];
 	}
-	
+
 	if (command) [self scheduleCommands:@[command] withCommandScheduler:destination];
 }
 
