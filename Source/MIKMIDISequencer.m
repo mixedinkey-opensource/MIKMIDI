@@ -244,7 +244,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 			[noteEvents removeObjectsAtIndexes:indexesToRemove];
 		}
 
-		[self scheduleCommands:commandsToSendNow withCommandScheduler:scheduler];
+		if (commandsToSendNow.count) [self scheduleCommands:commandsToSendNow withCommandScheduler:scheduler];
 	}];
 }
 
