@@ -112,6 +112,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stop;
 
 /**
+ *	Sends any pending note offs for the command scheduler immeidately.
+ *	This can be useful if you are changing the notes in the MIDI track and
+ *	you want the old notes to immediately stop rather than play until their
+ *	original end time stamp.
+ */
+- (void)stopAllPlayingNotesForCommandScheduler:(id<MIKMIDICommandScheduler>)scheduler;
+
+/**
  *	Allows subclasses to modify the MIDI commands that are about to be
  *	scheduled with a command scheduler.
  *
@@ -290,6 +298,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The current playback position in the sequence.
+ *
+ *  @note This property is *not* observable using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp currentTimeStamp;
 
@@ -403,6 +413,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  The latest MIDITimeStamp the sequencer has looked ahead to to schedule MIDI events.
  */
 @property (nonatomic, readonly) MIDITimeStamp latestScheduledMIDITimeStamp;
+
+
+/**
+ *	The maximum amount the sequencer will look ahead to schedule MIDI events. (0.05 to 1s).
+ *
+ *	The default of 0.1s should suffice for most uses. You may however, need a longer time
+ *	if your sequencer needs to playback on iOS while the device is locked.
+ */
+@property (nonatomic) NSTimeInterval maximumLookAheadInterval;
 
 #pragma mark - Deprecated
 

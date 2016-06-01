@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MIKMIDIMetaTextEvent : MIKMIDIMetaEvent
 
+- (instancetype)initWithString:(NSString *)string timeStamp:(MusicTimeStamp)timeStamp;
+
 /**
  *  The text for the event.
  */
@@ -29,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MIKMutableMIDIMetaTextEvent : MIKMIDIMetaTextEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, readwrite) MIKMIDIMetaEventType metadataType;
 @property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 @property (nonatomic, copy, readwrite, nullable) NSString *string;
 

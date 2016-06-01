@@ -185,30 +185,28 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  A MIDI track’s start time in terms of beat number. By default this value is 0.
  *
- *  This property can be observed using Key Value Observing.
+ *  This can be used to offset playback by MIKMIDISequencer of individual tracks in a sequence.
  *
- *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
- *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp offset;
 
 /**
- *  Whether or not the MIDI track is muted.
+ *  Whether or not the MIDI track is muted. Muted tracks are not played by MIKMIDISequencer.
  *
  *  This property can be observed using Key Value Observing.
- *
- *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
- *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
  */
 @property (nonatomic, getter = isMuted) BOOL muted;
 
 /**
  *  Whether or not the MIDI track is soloed.
  *
- *  This property can be observed using Key Value Observing.
+ *  If a track is muted, it is not played by MIKMIDISequencer, and its solo status is ignored.
+ *  If any non-muted tracks in a sequence have this property set to YES, MIKMIDISequencer will only play those,
+ *  and will not play the non-solo tracks. If this is set to NO for all non-muted tracks, then
+ *  all non-muted tracks will be played.
  *
- *	@note This property is not yet used by MIKMIDISequencer (Issue #99). If this property
- *	is required for your playback situation, you should stick with MIKMIDIPlayer in the meantime.
+ *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, getter = isSolo) BOOL solo;
 

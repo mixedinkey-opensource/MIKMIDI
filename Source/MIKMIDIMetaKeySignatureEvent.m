@@ -23,40 +23,89 @@
 + (BOOL)isMutable { return NO; }
 + (NSData *)initialData
 {
-	NSMutableData *superData = [[super initialData] mutableCopy];
-	[superData increaseLengthBy:2]; // Account for key and scale bytes
-	return [superData copy];
+	NSMutableData *result = [NSMutableData dataWithBytes:&(MIDIMetaEvent){0} length:sizeof(MIDIMetaEvent)];
+	MIDIMetaEvent *metaEvent = (MIDIMetaEvent *)[result mutableBytes];
+	metaEvent->dataLength = 2;
+	metaEvent->metaEventType = MIKMIDIMetaEventTypeKeySignature;
+	NSInteger metaDataLength = result.length - MIKMIDIEventMetadataStartOffset;
+	if (metaDataLength < 2) { [result increaseLengthBy:2-metaDataLength]; }
+	UInt8 *metaDataBytes = (UInt8 *)[result mutableBytes] + MIKMIDIEventMetadataStartOffset;
+	metaDataBytes[0] = 0; // C
+	metaDataBytes[1] = 0; // Major
+	return [result copy];
 }
+
+- (instancetype)initWithMusicalKey:(MIKMIDIMusicalKey)musicalKey timeStamp:(MusicTimeStamp)timeStamp
+{
+	NSMutableData *metaData = [[NSMutableData alloc] init];
+	int8_t scale = [self scaleForMusicalKey:musicalKey];
+	UInt8 numberOfFlatsAndSharps = [self numberOfFlatsAndSharpsInMusicalKey:musicalKey];
+	[metaData appendBytes:&(UInt8){numberOfFlatsAndSharps} length:1];
+	[metaData appendBytes:&(int8_t){scale} length:1];
+	return [self initWithMetaData:metaData timeStamp:timeStamp];
+}
+
+#pragma mark - Private
+
+- (MIKMIDIMusicalKey)musicalKeyForNumberOfFlatsAndSharps:(int8_t)flatsSharps scale:(MIKMIDIMusicalScale)scale
+{
+	return flatsSharps + scale * 100;
+}
+
+- (MIKMIDIMusicalScale)scaleForMusicalKey:(MIKMIDIMusicalKey)musicalKey
+{
+	return musicalKey > 7 ? MIKMIDIMusicalScaleMinor : MIKMIDIMusicalScaleMajor;
+}
+
+- (int8_t)numberOfFlatsAndSharpsInMusicalKey:(MIKMIDIMusicalKey)musicalKey
+{
+	MIKMIDIMusicalScale scale = [self scaleForMusicalKey:musicalKey];
+	return musicalKey - scale * 100;
+}
+
+#pragma mark - Properties
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
     NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"key"] || [key isEqualToString:@"scale"]) {
+    if ([key isEqualToString:@"key"] || [key isEqualToString:@"scale"] ||
+		[key isEqualToString:@"musicalKey"] || [key isEqualToString:@"numberOfFlatsAndSharps"]) {
         keyPaths = [keyPaths setByAddingObject:@"metaData"];
     }
     return keyPaths;
 }
 
-- (UInt8)key
+- (MIKMIDIMusicalKey)musicalKey
 {
-    return *(UInt8*)[self.metaData bytes];
+	return [self musicalKeyForNumberOfFlatsAndSharps:self.numberOfFlatsAndSharps scale:self.scale];
 }
 
-- (void)setKey:(NSString *)key
+- (void)setMusicalKey:(MIKMIDIMusicalKey)musicalKey
+{
+	self.scale = [self scaleForMusicalKey:musicalKey];
+	self.numberOfFlatsAndSharps = [self numberOfFlatsAndSharpsInMusicalKey:musicalKey];
+}
+
+- (int8_t)numberOfFlatsAndSharps
+{
+	return *(int8_t*)[self.metaData bytes];
+}
+
+- (void)setNumberOfFlatsAndSharps:(int8_t)numberOfFlatsAndSharps
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = [self.metaData mutableCopy];
-    [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&key length:1];
+    [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&numberOfFlatsAndSharps length:1];
     [self setMetaData:[mutableMetaData copy]];
 }
 
-- (UInt8)scale
+- (MIKMIDIMusicalScale)scale
 {
-    return *((UInt8*)[self.metaData bytes] + 1);
+    return *((MIKMIDIMusicalScale*)[self.metaData bytes] + 1);
 }
 
-- (void)setScale:(UInt8)scale
+- (void)setScale:(MIKMIDIMusicalScale)scale
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
@@ -67,7 +116,7 @@
 
 - (NSString *)additionalEventDescription
 {
-    return [NSString stringWithFormat:@"Metadata Type: 0x%02x, Key: %d, Scale %d", self.metadataType, self.key, self.scale];
+    return [NSString stringWithFormat:@"Metadata Type: 0x%02x, Key: %d, Scale %d", self.metadataType, self.numberOfFlatsAndSharps, self.scale];
 }
 
 @end
@@ -77,9 +126,19 @@
 @dynamic timeStamp;
 @dynamic metadataType;
 @dynamic metaData;
-@dynamic key;
+@dynamic musicalKey;
+@dynamic numberOfFlatsAndSharps;
 @dynamic scale;
 
 + (BOOL)isMutable { return YES; }
+
+@end
+
+#pragma mark -
+
+@implementation MIKMIDIMetaKeySignatureEvent (Deprecated)
+
+- (UInt8)key { return self.numberOfFlatsAndSharps; }
+- (void)setKey:(UInt8)key { self.numberOfFlatsAndSharps = key; }
 
 @end

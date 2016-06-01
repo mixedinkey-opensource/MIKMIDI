@@ -150,6 +150,11 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 	return result;
 }
 
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp()
+{
+	return mach_absolute_time();
+}
+
 MIDIPacket MIKMIDIPacketCreate(MIDITimeStamp timeStamp, UInt16 length, MIKArrayOf(NSNumber *) *data /*max length 256*/)
 {
 	MIDIPacket result = {0};

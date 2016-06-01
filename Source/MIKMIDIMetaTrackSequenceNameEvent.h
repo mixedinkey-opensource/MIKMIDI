@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MIKMIDIMetaTrackSequenceNameEvent : MIKMIDIMetaTextEvent
 
+- (instancetype)initWithName:(NSString *)name timeStamp:(MusicTimeStamp)timeStamp;
+
 @property (nonatomic, readonly, nullable) NSString *name;
 
 @end

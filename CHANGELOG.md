@@ -4,8 +4,44 @@ All notable changes to MIKMIDI are documented in this file. This project adheres
 ##[Unreleased]
 This section is for recent changes not yet included in an official release.
 
+##[1.6.0] - 2016-06-01
+
+### ADDED
+
+- `MIKMIDISequencer` now respects the offset, muted, and solo properties of `MIKMIDITrack`. (#99)
+- Error-returning variant of `-[MIKMIDISequence addTrack:]`, `-addTrackWithError:`. `-addTrack:` is now deprecated. (#134)
+- Added `maximumLookAheadInterval` property to `MIKMIDISequencer` (ac8142b)
+- Fixed issue where click track events would be added to the beginning of a loop when the status was EnabledOnlyInPreRoll. (2535c5b)
+- Convenience initializers for `MIKMIDINoteOn/OffCommand` that take `MIDITimeStamp`s instead of `NSDate`s. (0bf4a00)
+- Custom initializers for several `MIKMIDIMetaEvent` subclasses, greatly simplifing their creation. (#150)
+
+### CHANGED
+
+- Improved support for subclassing `MIKMIDISynthesizer` and customizing MIDI event scheduling (87b38ea)
+
+### FIXED
+
+- Issue where `MIKMIDISequencer` would almost immediately stop recording if its sequence was empty. (#45)
+- `MIKMIDIMetronome` allows loading soundfonts. (a50ccdf)
+- Issue with stuck notes in `MIKMIDISequencer`'s pre-roll. (07a9304)
+- `MIKMIDISequencer` now ignores incoming MIDI in recording mode during the pre-roll. (2312e4d)
+- Potentional crash in `MIKMIDISequencer`. (4c0ce02)
+- `MIKMIDIGetCurrentTimeStamp()` is now available in Swift (658cb63)
+- Scheduling issues in `MIKMIDISynthesizer` (6698fad)
+- Updated MIDI Files Testbed to fix deprecation warnings.
+- Improved MIDI Soundboard example for iOS (#119, d0ada0a, a35ee94)
+- Incorrect length for some `MIKMIDICommand` subclass instances when created with alloc/init. (#125)
+- Incorrect MSB calculation for pitch bend commands. (#147, thanks to akmidd)
+- Bug in logic for detecting and exposing available virtual sources and destinations (#144, #145, thanks to jrmaxdev)
+
+
+### DEPRECATED
+This release deprecates a number of existing MIKMIDI APIs. These APIs remain available, and functional, but developers should switch to the use of their replacements as soon as possible.
+
+- `-[MIKMIDISequence addTrack:]`. Use `-addTrackWithError:` instead. (#134)
+
 ##[1.5.0] - 2015-11-14
-###ADDED
+### ADDED
 - `MIKMIDISynthesizer` for general-purpose MIDI synthesis. `MIKMIDIEndpointSynthesizer` is now a subclass of `MIKMIDISynthesizer`.
 - `MIKMIDISequencer` now has API for routing tracks to MIDI endpoints, synthesizers, 
 or other command scheduling objects (`-(setC|c)ommandScheduler:forTrack:`)
@@ -24,7 +60,7 @@ or other command scheduling objects (`-(setC|c)ommandScheduler:forTrack:`)
 - `MIKMIDIConnectionManager` which implements a generic MIDI device connection manager including support for saving/restoring connection configuration to NSUserDefaults, etc. (#106)
 - Other minor API additions and improvements. (#87, #89, #90, #93, #94)
 
-###CHANGED
+### CHANGED
 - `MIKMIDIEndpointSynthesizerInstrument` was renamed to `MIKMIDISynthesizerInstrument`. This **does not** break existing code, due to the use of `@compatibility_alias`
 - `MIKMIDISequencer` creates and uses default synthesizers for each track, allowing a minimum of configuration for simple MIDI playback. (#34)
 - `MIKMIDISequence` and `MIKMIDITrack` are now KVO compliant for most of their properties. Check documentation for specifics. (#35 & #67)
@@ -32,7 +68,7 @@ or other command scheduling objects (`-(setC|c)ommandScheduler:forTrack:`)
 - Significantly improved performance of MIDI responder hierarchy search code, including adding (optional) caching. (#82)
 - Improved `MIKMIDIDeviceManager` API to simplify device disconnection, in particular. (#109)
 
-###FIXED
+### FIXED
 - `MIKMIDIEndpointSynthesizer` had too much reverb by default. (#38)
 - `MIKMIDISequencer`'s playback would stall or drop notes when the main thread was busy/blocked. Processing is now done in the background. (#48 & #92)
 - `MIKMIDIEvent` (or subclass) instances created with `alloc/init` no longer have a NULL `eventType`. (#59)
@@ -43,7 +79,7 @@ or other command scheduling objects (`-(setC|c)ommandScheduler:forTrack:`)
 - Exception is no longer thrown when setting "empty" `MIKMutableMIDIMetaTimeSignatureEvent`'s numerator. (#57)
 - Other minor bug fixes (#71, #83)
 
-###DEPRECATED
+### DEPRECATED
 This release deprecates a number of existing MIKMIDI APIs. These APIs remain available, and functional, but developers should switch to the use of their replacements as soon as possible.  
 
 - `-[MIKMIDITrack getTrackNumber:]`. Use `trackNumber` @property on `MIKMIDITrack` instead.
@@ -57,25 +93,25 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 
 ##[1.0.1] - 2015-04-20
 
-###ADDED
+### ADDED
 - Support for [Carthage](https://github.com/Carthage/Carthage)
 - Better error handling for `MIKMIDIClientSource/DestinationEndpoint`, particularly on iOS.
 - `MIKMIDISequence` initializer methods that include an error parameter.
 
-###CHANGED
+### CHANGED
 - Improved documentation.
 
-###FIXED
+### FIXED
 - `MIKMIDIMetronome` on iOS (8).
 - `MIKMIDICommand`'s channel now defaults to 0 as it should.
 
-###DEPRECATED
+### DEPRECATED
 - `-[MIKMIDISequence initWithData:]`. Use `-[MIKMIDISequence initWithData:error:]`, instead.
 - `+[MIKMIDISequence sequenceWithData:]`. Use `+[MIKMIDISequence sequenceWithData:error:]`, instead.
 - `-[MIKMIDISequence/MIKMIDITrack setDestinationEndpoint:]`. Use API on MIKMIDISequencer instead.
 
 ##[1.0.0] - 2015-01-29
-###ADDED
+### ADDED
 - MIDI Files Testbed OS X example app
 - Added `MIKMIDISequence`, `MIKMIDITrack`, `MIKMIDIEvent`, etc. to support loading, creating, saving MIDI files
 - API on `MIKMIDIManager` to allow obtaining only bundled or user mappings
@@ -85,27 +121,27 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 - API (`MIKMIDIClientSource/DestinationEndpoint`) for creating virtual MIDI endpoints
 - iOS framework target.
 
-###CHANGED
+### CHANGED
 
 - Improved README.
 
-###FIXED
+### FIXED
 - Fixed bug where sending a large number of MIDI messages at a time could fail.
 - `MIKMIDIMapping` save/load is now supported on iOS.
 - Warnings when building for iOS.
 
 ##[0.9.2] - 2014-06-13
-###ADDED
+### ADDED
 - Added `MIKMIDIEndpointSynthesizer` for synthesizing incoming MIDI (OS X only for now).
 - Added Cocoapods podspec file to repository.
 
-###FIXED
+### FIXED
 - `MIKMIDIInputPort` can parse multiple MIDI messages out of a single packet.
 
 ##[0.9.1] - 2014-05-24
-###FIXED
+### FIXED
 Minor documentation typo fixes.
 
 ##[0.9.0] - 2014-05-16
-###ADDED
+### ADDED
 Initial release

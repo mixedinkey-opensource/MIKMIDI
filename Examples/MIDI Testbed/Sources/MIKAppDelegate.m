@@ -124,4 +124,12 @@
     [self sendSysex:sender];
 }
 
+#pragma mark - MIKMIDIConnectionManagerDelegate
+
+// We only want to connect to the device that the user selects
+- (MIKMIDIAutoConnectBehavior)connectionManager:(MIKMIDIConnectionManager *)manager shouldConnectToNewlyAddedDevice:(MIKMIDIDevice *)device
+{
+	return MIKMIDIAutoConnectBehaviorDoNotConnect;
+}
+
 @end

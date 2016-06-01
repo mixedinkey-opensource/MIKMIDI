@@ -185,7 +185,7 @@
 
 + (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
 {
-	MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
+	MIKMutableMIDINoteOnCommand *noteOn = [[MIKMutableMIDINoteOnCommand alloc] init];
 	noteOn.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp];
 	noteOn.channel = noteEvent.channel;
 	noteOn.note = noteEvent.note;
@@ -195,7 +195,7 @@
 
  +(MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
 {
-	MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
+	MIKMutableMIDINoteOffCommand *noteOff = [[MIKMutableMIDINoteOffCommand alloc] init];
 	noteOff.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
 	noteOff.channel = noteEvent.channel;
 	noteOff.note = noteEvent.note;

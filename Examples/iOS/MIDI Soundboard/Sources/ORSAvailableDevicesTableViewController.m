@@ -7,7 +7,7 @@
 //
 
 #import "ORSAvailableDevicesTableViewController.h"
-#import "MIKMIDI.h"
+#import <MIKMIDI/MIKMIDI.h>
 
 @interface ORSAvailableDevicesTableViewController ()
 
