@@ -15,29 +15,40 @@
 @property (nonatomic, strong) MIKMIDIDevice	*device;
 @property (nonatomic, strong) id connectionToken;
 
-@property (nonatomic, strong) NSMutableSet *audioPlayers;
+@property (nonatomic, strong, readonly) MIKMIDISynthesizer *synthesizer;
+
+@property (nonatomic, strong) IBOutletCollection(UIButton) NSArray *pianoButtons;
 
 @end
 
 @implementation ORSSoundboardViewController
 
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	for (UIButton *button in self.pianoButtons) {
+		[button addTarget:self action:@selector(pianoKeyDown:) forControlEvents:UIControlEventTouchDown];
+		[button addTarget:self action:@selector(pianoKeyUp:) forControlEvents:UIControlEventTouchUpInside];
+		[button addTarget:self action:@selector(pianoKeyUp:) forControlEvents:UIControlEventTouchUpOutside];
+		[button addTarget:self action:@selector(pianoKeyUp:) forControlEvents:UIControlEventTouchCancel];
+	}
+}
+
+#pragma mark - Actions
+
 - (IBAction)pianoKeyDown:(id)sender
 {
-	NSString *fileName = [NSString stringWithFormat:@"%li", (long)[sender tag]];
-	NSURL *fileURL = [[NSBundle mainBundle] URLForResource:fileName withExtension:@"aiff"];
-	if (!fileURL) return;
-	
-	NSError *error = nil;
-	AVAudioPlayer *audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
-	if (!audioPlayer) {
-		NSLog(@"Unable to load %@ into audio player: %@", fileURL, error);
-		return;
-	}
-	
-	audioPlayer.delegate = self;
-	audioPlayer.volume = 1.0;
-	[audioPlayer play];
-	[self.audioPlayers addObject:audioPlayer];
+	UInt8 note = 60 + [sender tag];
+	MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:note velocity:127 channel:0 timestamp:[NSDate date]];
+	[self.synthesizer handleMIDIMessages:@[noteOn]];
+}
+
+- (IBAction)pianoKeyUp:(id)sender
+{
+	UInt8 note = 60 + [sender tag];
+	MIKMIDINoteOffCommand *noteOff = [MIKMIDINoteOffCommand noteOffCommandWithNote:note velocity:127 channel:0 timestamp:[NSDate date]];
+	[self.synthesizer handleMIDIMessages:@[noteOff]];
 }
 
 #pragma mark - Private
@@ -73,13 +84,6 @@
 	}];
 	if (!connectionToken) NSLog(@"Unable to connect to input: %@", error);
 	self.connectionToken = connectionToken;
-}
-
-#pragma mark - AVAudioPlayerDelegate
-
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
-{
-	[self.audioPlayers removeObject:player];
 }
 
 #pragma mark ORSAvailableDevicesTableViewControllerDelegate
@@ -130,12 +134,18 @@
 	}
 }
 
-- (NSMutableSet *)audioPlayers
+@synthesize synthesizer = _synthesizer;
+- (MIKMIDISynthesizer *)synthesizer
 {
-	if (!_audioPlayers) {
-		_audioPlayers = [NSMutableSet set];
+	if (!_synthesizer) {
+		_synthesizer = [[MIKMIDISynthesizer alloc] init];
+		NSURL *soundfont = [[NSBundle mainBundle] URLForResource:@"Grand Piano" withExtension:@"sf2"];
+		NSError *error = nil;
+		if (![_synthesizer loadSoundfontFromFileAtURL:soundfont error:&error]) {
+			NSLog(@"Error loading soundfont for synthesizer. Sound will be degraded. %@", error);
+		}
 	}
-	return _audioPlayers;
+	return _synthesizer;
 }
 
 @end

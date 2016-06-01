@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="KUJ-BH-N5Q">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="KUJ-BH-N5Q">
     <dependencies>
-        <deployment defaultVersion="1552" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--Available Devices Table View Controller - MIDI Devices-->
+        <!--MIDI Devices-->
         <scene sceneID="RER-yD-W6r">
             <objects>
                 <tableViewController clearsSelectionOnViewWillAppear="NO" id="APj-5j-gTb" customClass="ORSAvailableDevicesTableViewController" sceneMemberID="viewController">
@@ -13,7 +13,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AvailableDeviceTableViewCell" textLabel="eVr-o9-YQo" style="IBUITableViewCellStyleDefault" id="gv7-Gf-7eW">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
@@ -111,9 +110,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ohY-Rc-5vH"/>
-                                </connections>
                             </button>
                             <button tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhj-JA-aPC" customClass="ORSPianoButton">
                                 <rect key="frame" x="258" y="202" width="38" height="161"/>
@@ -125,9 +121,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="jTw-ja-Dp5"/>
-                                </connections>
                             </button>
                             <button tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZZ-o7-o2w" customClass="ORSPianoButton">
                                 <rect key="frame" x="296" y="202" width="38" height="161"/>
@@ -139,9 +132,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ge9-8c-wVQ"/>
-                                </connections>
                             </button>
                             <button tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aMe-Nz-qwu" customClass="ORSPianoButton">
                                 <rect key="frame" x="334" y="202" width="38" height="161"/>
@@ -153,9 +143,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="bmN-xg-QPX"/>
-                                </connections>
                             </button>
                             <button tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7E8-vN-yfV" customClass="ORSPianoButton">
                                 <rect key="frame" x="372" y="202" width="38" height="161"/>
@@ -167,9 +154,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="xFr-Sp-wkI"/>
-                                </connections>
                             </button>
                             <button tag="9" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4rq-Kh-Yvw" customClass="ORSPianoButton">
                                 <rect key="frame" x="410" y="202" width="38" height="161"/>
@@ -181,9 +165,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="1Zz-z1-D1j"/>
-                                </connections>
                             </button>
                             <button tag="11" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sX0-pj-Xfu" customClass="ORSPianoButton">
                                 <rect key="frame" x="448" y="202" width="38" height="161"/>
@@ -195,9 +176,6 @@
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="LLJ-pS-Yo3"/>
-                                </connections>
                             </button>
                             <button tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gfs-vh-kba" customClass="ORSPianoButton">
                                 <rect key="frame" x="241" y="111" width="34" height="91"/>
@@ -214,9 +192,6 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="2D5-8x-ebO"/>
-                                </connections>
                             </button>
                             <button tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N8T-r9-xSH" customClass="ORSPianoButton">
                                 <rect key="frame" x="279" y="111" width="34" height="91"/>
@@ -232,9 +207,6 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="B6K-sh-PeC"/>
-                                </connections>
                             </button>
                             <button tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n1g-ks-U0D" customClass="ORSPianoButton">
                                 <rect key="frame" x="355" y="111" width="34" height="91"/>
@@ -250,9 +222,6 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="ESN-wP-EZ5"/>
-                                </connections>
                             </button>
                             <button tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Qc-n7-Mnz" customClass="ORSPianoButton">
                                 <rect key="frame" x="393" y="111" width="34" height="91"/>
@@ -268,9 +237,6 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="KlH-NE-oLr"/>
-                                </connections>
                             </button>
                             <button tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7OE-Vl-5wE" customClass="ORSPianoButton">
                                 <rect key="frame" x="431" y="111" width="34" height="91"/>
@@ -286,9 +252,6 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="pianoKeyDown:" destination="9Pk-ki-nTr" eventType="touchUpInside" id="Exe-Jy-DUa"/>
-                                </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A0s-zq-3yp">
                                 <rect key="frame" x="0.0" y="404" width="703" height="364"/>
@@ -343,11 +306,22 @@
                             <constraint firstItem="A0s-zq-3yp" firstAttribute="leading" secondItem="Maz-Ib-b4y" secondAttribute="leading" id="yMN-1s-kdW"/>
                             <constraint firstItem="sX0-pj-Xfu" firstAttribute="leading" secondItem="4rq-Kh-Yvw" secondAttribute="trailing" id="zOq-er-WvP"/>
                         </constraints>
-                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <connections>
                         <outlet property="navigationBar" destination="CfH-Nu-sMX" id="ucT-n1-VFw"/>
                         <outlet property="textView" destination="A0s-zq-3yp" id="olH-xg-ONW"/>
+                        <outletCollection property="pianoButtons" destination="f4Z-Cb-kZZ" id="Odm-L3-Zfu"/>
+                        <outletCollection property="pianoButtons" destination="vhj-JA-aPC" id="Fyk-bz-1mz"/>
+                        <outletCollection property="pianoButtons" destination="pZZ-o7-o2w" id="QPP-H5-BJ4"/>
+                        <outletCollection property="pianoButtons" destination="aMe-Nz-qwu" id="4cb-Gl-UDw"/>
+                        <outletCollection property="pianoButtons" destination="7E8-vN-yfV" id="rTa-Hu-8Oz"/>
+                        <outletCollection property="pianoButtons" destination="4rq-Kh-Yvw" id="Ohy-nm-XVk"/>
+                        <outletCollection property="pianoButtons" destination="sX0-pj-Xfu" id="pSz-On-ZyD"/>
+                        <outletCollection property="pianoButtons" destination="Gfs-vh-kba" id="Foh-0j-Bis"/>
+                        <outletCollection property="pianoButtons" destination="N8T-r9-xSH" id="NvR-OC-wbB"/>
+                        <outletCollection property="pianoButtons" destination="n1g-ks-U0D" id="qyZ-74-50V"/>
+                        <outletCollection property="pianoButtons" destination="6Qc-n7-Mnz" id="cbQ-bI-YlQ"/>
+                        <outletCollection property="pianoButtons" destination="7OE-Vl-5wE" id="jJD-TE-GAd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5nn-Z8-fCu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -355,9 +329,4 @@
             <point key="canvasLocation" x="945" y="258"/>
         </scene>
     </scenes>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination"/>
-    </simulatedMetricsContainer>
 </document>
