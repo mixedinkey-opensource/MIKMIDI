@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MIKMIDI.h"
+#import <MIKMIDI/MIKMIDI.h>
 
 @interface ORSPianoButton : UIButton <MIKMIDIResponder>
 

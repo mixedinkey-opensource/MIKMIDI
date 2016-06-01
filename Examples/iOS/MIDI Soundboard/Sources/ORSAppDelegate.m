@@ -7,7 +7,7 @@
 //
 
 #import "ORSAppDelegate.h"
-#import "MIKMIDI.h"
+#import <MIKMIDI/MIKMIDI.h>
 
 @implementation ORSAppDelegate
 

@@ -8,6 +8,7 @@
 
 #import "ORSPianoButton.h"
 #import <QuartzCore/QuartzCore.h>
+#import <MIKMIDI/MIKMIDI.h>
 
 @implementation ORSPianoButton
 
