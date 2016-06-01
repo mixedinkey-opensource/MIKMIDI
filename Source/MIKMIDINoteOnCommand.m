@@ -42,6 +42,20 @@
 	return [self isMutable] ? result : [result copy];
 }
 
++ (instancetype)noteOnCommandWithNote:(NSUInteger)note
+							 velocity:(NSUInteger)velocity
+							  channel:(UInt8)channel
+						midiTimeStamp:(MIDITimeStamp)timestamp
+{
+	MIKMutableMIDINoteOnCommand *result = [[MIKMutableMIDINoteOnCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.midiTimestamp = timestamp;
+
+	return [self isMutable] ? result : [result copy];
+}
+
 #pragma mark - Properties
 
 - (NSUInteger)note { return self.dataByte1; }

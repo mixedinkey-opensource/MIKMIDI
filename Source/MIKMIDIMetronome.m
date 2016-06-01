@@ -22,7 +22,7 @@
 	AudioComponentDescription instrumentcd = (AudioComponentDescription){0};
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
-	instrumentcd.componentSubType = kAudioUnitSubType_MIDISynth;
+	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
 	return instrumentcd;
 }
 #endif

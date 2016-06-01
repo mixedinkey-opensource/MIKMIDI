@@ -10,7 +10,7 @@
 #import "ORSAvailableDevicesTableViewController.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface ORSSoundboardViewController : UIViewController <ORSAvailableDevicesTableViewControllerDelegate, AVAudioPlayerDelegate>
+@interface ORSSoundboardViewController : UIViewController <ORSAvailableDevicesTableViewControllerDelegate>
 
 - (IBAction)pianoKeyDown:(id)sender;
 

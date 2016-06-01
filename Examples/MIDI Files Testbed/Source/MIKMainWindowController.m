@@ -67,7 +67,13 @@
 		return;
 	} else {
 		if (!self.sequence) self.sequence = [MIKMIDISequence sequence];
-		self.sequencer.recordEnabledTracks = [NSSet setWithObject:[self.sequence addTrack]];
+		NSError *error = nil;
+		MIKMIDITrack *newTrack = [self.sequence addTrackWithError:&error];
+		if (!newTrack) {
+			[self presentError:error];
+			return;
+		}
+		self.sequencer.recordEnabledTracks = [NSSet setWithObject:newTrack];
 		[self.sequencer startRecording];
 	}
 }

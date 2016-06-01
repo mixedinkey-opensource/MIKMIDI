@@ -150,6 +150,11 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 	return result;
 }
 
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp()
+{
+	return mach_absolute_time();
+}
+
 #pragma mark - Note Utilities
 
 BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber)

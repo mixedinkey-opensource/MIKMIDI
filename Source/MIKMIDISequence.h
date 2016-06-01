@@ -9,18 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDICompilerCompatibility.h"
-
-typedef struct {
-	UInt8 numerator;
-	UInt8 denominator;
-} MIKMIDITimeSignature; // Deprecated
-
-NS_INLINE MIKMIDITimeSignature MIKMIDITimeSignatureMake(UInt8 numerator, UInt8 denominator) {
-	MIKMIDITimeSignature ts;
-	ts.numerator = numerator;
-	ts.denominator = denominator;
-	return ts;
-}
+#import "MIKMIDIMetaTimeSignatureEvent.h"
 
 @class MIKMIDITrack;
 @class MIKMIDISequencer;
@@ -161,9 +150,21 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Track Management
 
 /**
- *  Creates and adds a new MIDI track to the sequence. May return nil if an error occurs.
+ *  Creates and adds a new MIDI track to the sequence.
+ *
+ *  @param error If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
+ *  you may pass in NULL.
+ *
+ *  @return The newly created track, or nil if an error occurred.
  */
-- (nullable MIKMIDITrack *)addTrack;
+- (nullable MIKMIDITrack *)addTrackWithError:(NSError **)error;
+
+/**
+ *  Creates and adds a new MIDI track to the sequence. May return nil if an error occurs.
+ *
+ *  @deprecated: This method is deprecated. You should use -addTrackWithError: instead.
+ */
+- (nullable MIKMIDITrack *)addTrack DEPRECATED_ATTRIBUTE NS_SWIFT_UNAVAILABLE("Use the error throwing variant instead.");
 
 /**
  *  Removes the specified MIDI track from the sequence.

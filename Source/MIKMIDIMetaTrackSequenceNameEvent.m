@@ -22,11 +22,12 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
 
-+ (NSSet *)keyPathsForValuesAffectingName
+- (instancetype)initWithName:(NSString *)name timeStamp:(MusicTimeStamp)timeStamp
 {
-	return [NSSet setWithObjects:@"string", nil];
+	return [self initWithString:name timeStamp:timeStamp];
 }
 
++ (NSSet *)keyPathsForValuesAffectingName { return [NSSet setWithObject:@"string"]; }
 - (NSString *)name { return self.string; }
 
 @end

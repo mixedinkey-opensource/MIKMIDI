@@ -17,6 +17,11 @@ framework module MIKMIDI {
 		export *
 	}
 	
+	explicit module MIKMIDIMetaEventSubclass {
+		header "MIKMIDIMetaEvent_SubclassMethods.h"
+		export *
+	}
+	
 	explicit module MIKMIDISynthesizerSubclass {
 		header "MIKMIDISynthesizer_SubclassMethods.h"
 		export *
