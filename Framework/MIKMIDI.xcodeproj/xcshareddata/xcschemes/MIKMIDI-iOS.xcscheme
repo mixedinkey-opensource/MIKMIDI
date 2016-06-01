@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9D4DF1391AAB57430065F004"
+               BuildableName = "MIKMIDI Tests.xctest"
+               BlueprintName = "MIKMIDI Tests"
+               ReferencedContainer = "container:MIKMIDI.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "9DAF8B051A7AFF1100F46528"
+            BuildableName = "MIKMIDI.framework"
+            BlueprintName = "MIKMIDI-iOS"
+            ReferencedContainer = "container:MIKMIDI.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
