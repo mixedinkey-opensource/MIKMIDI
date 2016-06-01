@@ -14,7 +14,7 @@ This section is for recent changes not yet included in an official release.
 - Fixed issue where click track events would be added to the beginning of a loop when the status was EnabledOnlyInPreRoll. (2535c5b)
 - Convenience initializers for `MIKMIDINoteOn/OffCommand` that take `MIDITimeStamp`s instead of `NSDate`s. (0bf4a00)
 - Custom initializers for several `MIKMIDIMetaEvent` subclasses, greatly simplifing their creation. (#150)
-
+- `MIKMIDIPacketCreate()` function to ease creating `MIDIPacket` structs in Swift. (a12f121)
 ### CHANGED
 
 - Improved support for subclassing `MIKMIDISynthesizer` and customizing MIDI event scheduling (87b38ea)
