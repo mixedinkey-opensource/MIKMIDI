@@ -1,4 +1,4 @@
-This README file is meant to give a broad overview of MIKMIDI. More complete documentation for MIKMIDI can be found [here](http://cocoadocs.org/docsets/MIKMIDI). Questions should be directed to [Andrew Madsen](mailto:andrew@mixedinkey.com).
+This README file is meant to give a broad overview of MIKMIDI. More complete documentation for MIKMIDI can be found [here](http://cocoadocs.org/docsets/MIKMIDI). Questions should be directed to [Andrew Madsen](mailto:andrew@openreelsoftware.com).
 
 MIKMIDI
 -------
