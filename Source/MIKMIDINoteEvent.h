@@ -29,10 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An initialized MIKMIDINoteEvent instance, or nil if an error occurred.
  */
-+ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
-										   note:(UInt8)note
-									   velocity:(UInt8)velocity
-									   duration:(Float32)duration
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp
+								  note:(UInt8)note
+							  velocity:(UInt8)velocity
+							  duration:(Float32)duration
 										channel:(UInt8)channel;
 
 /**
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A new MIKMIDINoteEvent instance, or nil if there is an error.
  */
-+ (nullable instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
++ (instancetype)noteEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDINoteMessage)message;
 
 // Properties
 
