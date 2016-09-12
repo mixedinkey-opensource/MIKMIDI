@@ -122,6 +122,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDICommand (MIKMIDINoteEventToCommands)
 
+/**
+ *  Creates an MIKMIDINoteOnCommand and MIKMIDINoteOffCommand from an MIKMIDINoteEvent.
+ *
+ *  @param noteEvent A MIKMIDINoteEvent instance.
+ *  @param clock     An MIKMIDIClock instance used to convert from the note event's sequence timestamp to a realtime MIDI time stamp. If clock is nil, the noteEvent's timestamp is ignored, and its duration is assumed to be a quarter note at the default MIDI tempo of 120 BPM.
+ */
 + (MIKArrayOf(MIKMIDICommand *) *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
 + (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
 + (MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
