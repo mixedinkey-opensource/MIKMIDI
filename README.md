@@ -9,7 +9,7 @@ MIKMIDI can be used in projects targeting Mac OS X 10.7 and later, and iOS 6 and
 
 MIKMIDI is released under an MIT license, meaning you're free to use it in both closed and open source projects. However, even in a closed source project, you must include a publicly-accessible copy of MIKMIDI's copyright notice, which you can find in the LICENSE file.
 
-If you have any questions about, or suggestions for MIKMIDI, please [contact the maintainer](mailto:andrew@mixedinkey.com). Contributions are always welcome. Please see our [contribution guidelines](CONTRIBUTING.md) for more information. We'd also always love to hear about any cool projects you're using it in.
+If you have any questions about, or suggestions for MIKMIDI, please [contact the maintainer](mailto:andrew@openreelsoftware.com). Contributions are always welcome. Please see our [contribution guidelines](CONTRIBUTING.md) for more information. We'd also always love to hear about any cool projects you're using it in.
 
 How To Use MIKMIDI
 ------------------
