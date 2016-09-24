@@ -196,7 +196,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp DEPRECATED_ATTRIBUTE;
 
 /**
- *	@deprecated This method is deprecated. Use MIKMIDIClockMIDITimeStampsPerTimeInterval() instead.
+ *	@deprecated This method is deprecated. Use MIKMIDIClockSecondsPerMIDITimeStamp() instead.
  *
  *  Returns the number of seconds per each MIDITimeStamp.
  *
@@ -205,7 +205,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (Float64)secondsPerMIDITimeStamp DEPRECATED_ATTRIBUTE;
 
 /**
- *	@deprecated This method is deprecated. Use MIKMIDIClockSecondsPerMIDITimeStamp() instead.
+ *	@deprecated This method is deprecated. Use MIKMIDIClockMIDITimeStampsPerTimeInterval() instead.
  *
  *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
  *
