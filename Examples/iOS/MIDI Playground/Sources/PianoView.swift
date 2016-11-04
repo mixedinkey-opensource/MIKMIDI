@@ -17,7 +17,7 @@ import UIKit
 		super.init(frame: frame)
 	}
 	
-	required init(coder aDecoder: NSCoder) {
+	required init?(coder aDecoder: NSCoder) {
 		self.numberOfKeys = 128
 		self.numberOfBlackKeys = 53
 		self.numberOfWhiteKeys = 75
@@ -26,36 +26,37 @@ import UIKit
 	
 	// MARK: Drawing
 	
-	func drawBlackNote(var offset: CGFloat) {
+	func drawBlackNote(_ offset: CGFloat) {
+		let offset = offset
 		let keyWidth = self.whiteKeyWidth * 0.7
 		
-		var rect = CGRectZero
+		var rect = CGRect.zero
 		if self.isVertical {
-			rect = CGRectIntegral(CGRectMake(0, offset + keyWidth, CGRectGetWidth(self.bounds) * 0.6, keyWidth))
+			rect = CGRect(x: 0, y: offset + keyWidth, width: self.bounds.width * 0.6, height: keyWidth).integral
 		} else {
-			rect = CGRectIntegral(CGRectMake(offset + keyWidth, 0, keyWidth, CGRectGetHeight(self.bounds) * 0.6))
+			rect = CGRect(x: offset + keyWidth, y: 0, width: keyWidth, height: self.bounds.height * 0.6).integral
 		}
 		
-		UIColor.blackColor().setFill()
+		UIColor.black.setFill()
 		UIBezierPath(rect: rect).fill()
 	}
 	
-	func drawWhiteNote(offset: CGFloat) {
+	func drawWhiteNote(_ offset: CGFloat) {
 		
-		var rect = CGRectZero
+		var rect = CGRect.zero
 		if self.isVertical {
-			rect = CGRectIntegral(CGRectMake(0, offset, CGRectGetWidth(self.bounds), 1))
+			rect = CGRect(x: 0, y: offset, width: self.bounds.width, height: 1).integral
 		} else {
-			rect = CGRectIntegral(CGRectMake(offset, 0, 1, CGRectGetHeight(self.bounds)))
+			rect = CGRect(x: offset, y: 0, width: 1, height: self.bounds.height).integral
 		}
 		
-		UIColor.lightGrayColor().setFill()
+		UIColor.lightGray.setFill()
 		UIBezierPath(rect: rect).fill()
 	}
 	
-	override func drawRect(rect: CGRect) {
-		UIColor.whiteColor().setFill()
-		UIColor.blackColor().setStroke()
+	override func draw(_ rect: CGRect) {
+		UIColor.white.setFill()
+		UIColor.black.setStroke()
 		UIBezierPath(rect: self.bounds).fill()
 		UIBezierPath(rect: self.bounds).stroke()
 		
@@ -87,14 +88,14 @@ import UIKit
 	
 	// MARK: Private Utilities
 	
-	private func noteIsBlack(noteNumber: Int) -> Bool {
-		return NSSet(array:[1, 3, 6, 8, 10]).containsObject((noteNumber % 12));
+	fileprivate func noteIsBlack(_ noteNumber: Int) -> Bool {
+		return NSSet(array:[1, 3, 6, 8, 10]).contains((noteNumber % 12));
 	}
 	
 	// MARK: Properties
 	
 	var isVertical: Bool {
-		return CGRectGetWidth(self.bounds) < CGRectGetHeight(self.bounds)
+		return self.bounds.width < self.bounds.height
 	}
 	
 	@IBInspectable var numberOfKeys: Int {
@@ -102,7 +103,7 @@ import UIKit
 			var numBlackKeys = 0
 			for index in 0..<numberOfKeys {
 				if noteIsBlack(index) {
-					numBlackKeys++
+					numBlackKeys += 1
 				}
 			}
 			
@@ -117,7 +118,7 @@ import UIKit
 	var numberOfBlackKeys: Int
 	
 	var whiteKeyWidth: CGFloat {
-		let width = self.isVertical ? CGRectGetHeight(self.bounds) : CGRectGetWidth(self.bounds)
+		let width = self.isVertical ? self.bounds.height : self.bounds.width
 		return width / CGFloat(self.numberOfWhiteKeys)
 	}
 }
