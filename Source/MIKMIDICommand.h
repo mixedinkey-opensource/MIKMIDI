@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 /**
  *  Types of MIDI messages. These values correspond directly to the MIDI command type values
@@ -55,6 +56,8 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 };
 
 @class MIKMIDIMappingItem;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  In MIKMIDI, MIDI messages are objects. Specifically, they are instances of MIKMIDICommand or one of its
@@ -138,7 +141,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
  *
  *  @see +commandForCommandType:
  */
-+ (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)packet;
++ (MIKArrayOf(MIKMIDICommand *) *)commandsWithMIDIPacket:(MIDIPacket *)packet;
 
 
 /**
@@ -193,14 +196,14 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
 /**
  *  The raw data that makes up the receiver.
  */
-@property (nonatomic, copy, readonly) NSData *data;
+@property (nonatomic, copy, readonly, null_resettable) NSData *data;
 
 /**
  *  Optional mapping item used to route the command. This must be set by client code that handles
  *  receiving MIDI commands. Allows responders to understand how a command was mapped, especially
  *  useful to determine interaction type so that responders can interpret the command correctly.
  */
-@property (nonatomic, strong) MIKMIDIMappingItem *mappingItem;
+@property (nonatomic, strong, nullable) MIKMIDIMappingItem *mappingItem;
 
 @end
 
@@ -225,11 +228,12 @@ typedef NS_ENUM(NSUInteger, MIKMIDICommandType) {
  *  transfered to the caller which becomes responsible for freeing the allocated memory.
  *  Used by MIKMIDI when sending commands. Typically, this is not needed by clients of MIKMIDI.
  *
- *  @param outPacketList   A pointer pointer to a MIDIPacketList structure which will point to the created MIDIPacketList
+ *  @param outPacketList   A pointer to a pointer to a MIDIPacketList structure which will point to the created MIDIPacketList
  *                         upon success.
  *  @param commands        An array of MIKMIDICommand instances.
  *
  *  @return YES if creating the packet list was successful, NO if an error occurred.
  */
-BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList **outPacketList, NSArray *commands);
+BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList * _Nonnull * _Nonnull outPacketList, MIKArrayOf(MIKMIDICommand *) *commands);
 
+NS_ASSUME_NONNULL_END

@@ -19,6 +19,7 @@
 // MIDI Device support
 #import "MIKMIDIDevice.h"
 #import "MIKMIDIDeviceManager.h"
+#import "MIKMIDIConnectionManager.h"
 
 #import "MIKMIDIEntity.h"
 
@@ -32,11 +33,13 @@
 // MIDI Commands/Messages
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIChannelPressureCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIProgramChangeCommand.h"
 #import "MIKMIDIPitchBendChangeCommand.h"
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteOffCommand.h"
+#import "MIKMIDIPolyphonicKeyPressureCommand.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
 
@@ -79,6 +82,8 @@
 
 // MIDI Mapping
 #import "MIKMIDIMapping.h"
+#import "MIKMIDIMappingItem.h"
+#import "MIKMIDIMappableResponder.h"
 #import "MIKMIDIMappingManager.h"
 #import "MIKMIDIMappingGenerator.h"
 
@@ -90,3 +95,4 @@
 // Utilities
 #import "MIKMIDIUtilities.h"
 #import "MIKMIDIErrors.h"
+#import "MIKMIDICompilerCompatibility.h"

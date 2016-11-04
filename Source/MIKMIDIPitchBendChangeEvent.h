@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIChannelEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A pitch bed change event.
@@ -33,9 +36,11 @@
 @property (nonatomic, readonly) UInt16 pitchChange;
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 dataByte1;
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @end
+
+NS_ASSUME_NONNULL_END

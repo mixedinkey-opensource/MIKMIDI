@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDICommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI system message command. This class is also the base class for
@@ -27,6 +30,8 @@
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, copy, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite, null_resettable) NSData *data;
 
 @end
+
+NS_ASSUME_NONNULL_END

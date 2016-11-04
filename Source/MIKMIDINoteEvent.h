@@ -7,8 +7,11 @@
 //
 
 #import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDIClock;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI note event.
@@ -30,7 +33,7 @@
 								  note:(UInt8)note
 							  velocity:(UInt8)velocity
 							  duration:(Float32)duration
-							   channel:(UInt8)channel;
+										channel:(UInt8)channel;
 
 /**
  *  Convenience method for creating a new MIKMIDINoteEvent from a CoreMIDI MIDINoteMessage struct.
@@ -70,7 +73,7 @@
 @property (nonatomic, readonly) Float32 duration;
 
 /**
- *  The time stamp at the end of the notes duration.
+ *  The time stamp at the end of the notes duration. This is simply the event's timeStamp + duration.
  */
 @property (nonatomic, readonly) MusicTimeStamp endTimeStamp;
 
@@ -99,7 +102,7 @@
 @interface MIKMutableMIDINoteEvent : MIKMIDINoteEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) UInt8 note;
 @property (nonatomic, readwrite) UInt8 velocity;
 @property (nonatomic, readwrite) UInt8 channel;
@@ -108,13 +111,27 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
+
 #pragma mark -
 
-#import <MIKMIDI/MIKMIDINoteOnCommand.h>
-#import <MIKMIDI/MIKMIDINoteOffCommand.h>
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDICommand (MIKMIDINoteEventToCommands)
 
-+ (NSArray *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock;
+/**
+ *  Creates an MIKMIDINoteOnCommand and MIKMIDINoteOffCommand from an MIKMIDINoteEvent.
+ *
+ *  @param noteEvent A MIKMIDINoteEvent instance.
+ *  @param clock     An MIKMIDIClock instance used to convert from the note event's sequence timestamp to a realtime MIDI time stamp. If clock is nil, the noteEvent's timestamp is ignored, and its duration is assumed to be a quarter note at the default MIDI tempo of 120 BPM.
+ */
++ (MIKArrayOf(MIKMIDICommand *) *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
++ (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
++ (MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(nullable MIKMIDIClock *)clock;
 
 @end
+
+NS_ASSUME_NONNULL_END

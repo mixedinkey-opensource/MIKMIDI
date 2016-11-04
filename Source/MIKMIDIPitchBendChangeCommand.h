@@ -6,7 +6,10 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  A MIDI pitch bend change command.
@@ -37,6 +40,8 @@
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @property (nonatomic, readwrite) MIDITimeStamp midiTimestamp;
-@property (nonatomic, copy, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite, null_resettable) NSData *data;
 
 @end
+
+NS_ASSUME_NONNULL_END

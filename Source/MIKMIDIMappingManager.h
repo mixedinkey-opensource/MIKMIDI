@@ -7,10 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 #define kMIKMIDIMappingFileExtension @"midimap"
 
 @class MIKMIDIMapping;
+
+@protocol MIKMIDIMappingManagerDelegate;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIMappingManager provides a centralized way to manage an application's
@@ -41,7 +46,7 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)mappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)mappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of bundled mappings for the controller
@@ -51,7 +56,7 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)bundledMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)bundledMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtain the set of user-supplied mappings for the controller
@@ -61,16 +66,16 @@
  *
  *  @return An NSSet containing MIKMIDIMapping instances.
  */
-- (NSSet *)userMappingsForControllerName:(NSString *)name;
+- (MIKSetOf(MIKMIDIMapping *) *)userMappingsForControllerName:(NSString *)name;
 
 /**
  *  Used to obtaining a mapping file with a given mapping name.
  *
  *  @param mappingName NSString representing the mapping name for the desired mapping.
  *
- *  @return An MIKMIDIMapping instance, or nil if no mapping could be found.
+ *  @return An array of MIKMIDIMapping instances, or an empty array if no mapping could be found.
  */
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+- (MIKArrayOf(MIKMIDIMapping *) *)mappingsWithName:(NSString *)mappingName;
 
 #if !TARGET_OS_IPHONE
 /**
@@ -91,7 +96,7 @@
  *
  *  @return An MIKMIDIMapping instance for the imported file, or nil if there was an error.
  */
-- (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
+- (nullable MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 
 /**
  *  Saves user mappings to disk. These mappings are currently saved to a folder at <AppSupport>/<ApplicationBundleID>/MIDI Mappings.
@@ -108,15 +113,23 @@
 // Properties
 
 /**
+ *  The delegate of the MIKMIDIMappingManager. Can be used to customize mapping file naming, etc.
+ *  See the MIKMIDIMappingManagerDelegate protocol for details.
+ *
+ *  @see MIKMIDIMappingManagerDelegate
+ */
+@property (nonatomic, MIKTargetSafeWeak) id<MIKMIDIMappingManagerDelegate> delegate;
+
+/**
  *  MIDI mappings loaded from the application's bundle. These are built in mapping, shipped
  *  with the application.
  */
-@property (nonatomic, strong, readonly) NSSet *bundledMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *bundledMappings;
 
 /**
  *  MIDI mappings loaded from the user mappings folder on disk, as well as added at runtime.
  */
-@property (nonatomic, strong, readonly) NSSet *userMappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *userMappings;
 
 /**
  *  Add a new user mapping. The mapping will automatically be saved to a file in the
@@ -140,6 +153,57 @@
  *  The value of this property is the same as the union of -bundledMappings and -userMappings
  *
  */
-@property (nonatomic, strong, readonly) NSSet *mappings;
+@property (nonatomic, strong, readonly) MIKSetOf(MIKMIDIMapping *) *mappings;
 
 @end
+
+@interface MIKMIDIMappingManager (Deprecated)
+
+/**
+ *  Used to obtaining a mapping file with a given mapping name.
+ *
+ *  @param mappingName NSString representing the mapping name for the desired mapping.
+ *
+ *  @return An MIKMIDIMapping instance, or nil if no mapping could be found.
+ *
+ *  @deprecated Deprecated. Use -mappingsWithName: instead.
+ */
+- (nullable MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
+
+@end
+
+@protocol MIKMIDIMappingManagerDelegate <NSObject>
+
+/**
+ *  Used to determine the file name for a user mapping. This file name does *not* include the
+ *	file extension, which will be added by the caller.
+ *
+ *  If this method is not implemented, or returns nil, the mapping's name itself will be used.
+ *
+ *  @param manager The MIKMIDIMappingManager asking for the name.
+ *  @param mapping The mapping a file name is needed for.
+ *
+ *  @return A file name for the mapping.
+ */
+- (nullable NSString *)mappingManager:(MIKMIDIMappingManager *)manager fileNameForMapping:(MIKMIDIMapping *)mapping;
+
+/**
+ *	When deleting user mappings, this method is called as a way to provide any additional
+ *	file names that the mapping may have had in past versions of -fileNameForMapping:
+ *
+ *	If you have changed the naming scheme that -fileNameForMapping: uses in any user-reaching
+ *	code, you will probably want to implement this method as well, so users will be able to
+ *	properly delete mappings with the old naming scheme.
+ *
+ *	Just as with -fileNameForMapping:, the file names should *not* include the file extension.
+ *
+ *  @param manager The MIKMIDIMappingManager asking for legacy names.
+ *	@param mapping The mapping to return legacy file names for.
+ *
+ *	@return An array of legacy file names, or nil.
+ */
+- (nullable MIKArrayOf(NSString *) *)mappingManager:(MIKMIDIMappingManager *)manager legacyFileNamesForUserMapping:(MIKMIDIMapping *)mapping;
+
+@end
+
+NS_ASSUME_NONNULL_END

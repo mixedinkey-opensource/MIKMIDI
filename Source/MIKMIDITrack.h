@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDIEvent;
 @class MIKMIDINoteEvent;
 @class MIKMIDIDestinationEndpoint;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Instances of MIKMIDITrack contain sequences of MIDI events. Commonly,
@@ -35,7 +38,7 @@
  *
  *  @param events An NSArray containing the events to be added.
  */
-- (void)addEvents:(NSArray *)events;
+- (void)addEvents:(MIKArrayOf(MIKMIDIEvent *) *)events;
 
 /**
  *  Removes the specified MIDI event from the receiver.
@@ -49,7 +52,7 @@
  *
  *  @param events An NSArray containing the events to be removed.
  */
-- (void)removeEvents:(NSArray *)events;
+- (void)removeEvents:(MIKArrayOf(MIKMIDIEvent *) *)events;
 
 /**
  *  Removes all MIDI events from the receiver.
@@ -65,7 +68,7 @@
  *
  *  @return An array of MIKMIDIEvent.
  */
-- (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOf(MIKMIDIEvent *) *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 /**
  *  Gets all of the MIDI events of a specific class in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
@@ -77,7 +80,7 @@
  *
  *  @return An array of specified class of MIDI events.
  */
-- (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOfKindOf(MIKMIDIEvent *) *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 /**
  *  Gets all of the MIDI notes in the track starting from startTimeStamp and ending at endTimeStamp inclusively.
@@ -86,11 +89,11 @@
  *  @param endTimeStamp The ending time stamp for the range to get MIDI notes for. Use kMusicTimeStamp_EndOfTrack to get events up to the
  *  end of the track.
  *
- *  @return An array of MIKMIDINoteEvent.
+ *  @return An array of MIKMIDINoteEvent instances.
  *
  *  @discussion Calling this method is equivalent to calling eventsOfClass:fromTimeStamp:toTimeStamp: with [MIKMIDINoteEvent class].
  */
-- (NSArray *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
+- (MIKArrayOf(MIKMIDINoteEvent *) *)notesFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp;
 
 #pragma mark - Event Manipulation
 
@@ -153,7 +156,7 @@
 /**
  *  The MIDI sequence the track belongs to.
  */
-@property (weak, nonatomic, readonly) MIKMIDISequence *sequence;
+@property (weak, nonatomic, readonly, nullable) MIKMIDISequence *sequence;
 
 /**
  *  The underlying MusicTrack that backs the instance of MIKMIDITrack.
@@ -165,14 +168,14 @@
  *
  *  This property can be observed using Key Value Observing.
  */
-@property (nonatomic, copy) NSArray *events;
+@property (nonatomic, copy) MIKArrayOf(MIKMIDIEvent *) *events;
 
 /**
  *  An array of MIKMIDINoteEvent containing all of the MIDI note events for the track, sorted by timestamp.
  *
  *  This property can be observed using Key Value Observing.
  */
-@property (nonatomic, readonly) NSArray *notes;
+@property (nonatomic, readonly) MIKArrayOf(MIKMIDINoteEvent *) *notes;
 
 /**
  *  The receiver's index in its containing sequence, or -1 if the track isn't in a sequence.
@@ -180,43 +183,16 @@
 @property (nonatomic, readonly) NSInteger trackNumber;
 
 /**
- *  Whether the track is set to loop.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic, readonly) BOOL doesLoop;
-
-/**
- *	The number of times to play the designated portion of the music track. By default, a music track plays once.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) SInt32 numberOfLoops;
-
-/**
- *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
- *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) MusicTimeStamp loopDuration;
-
-/**
- *  The loop info for the track.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) MusicTrackLoopInfo loopInfo;
-
-/**
  *  A MIDI track’s start time in terms of beat number. By default this value is 0.
+ *
+ *  This can be used to offset playback by MIKMIDISequencer of individual tracks in a sequence.
  *
  *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTimeStamp offset;
 
 /**
- *  Whether or not the MIDI track is muted.
+ *  Whether or not the MIDI track is muted. Muted tracks are not played by MIKMIDISequencer.
  *
  *  This property can be observed using Key Value Observing.
  */
@@ -225,6 +201,11 @@
 /**
  *  Whether or not the MIDI track is soloed.
  *
+ *  If a track is muted, it is not played by MIKMIDISequencer, and its solo status is ignored.
+ *  If any non-muted tracks in a sequence have this property set to YES, MIKMIDISequencer will only play those,
+ *  and will not play the non-solo tracks. If this is set to NO for all non-muted tracks, then
+ *  all non-muted tracks will be played.
+ *
  *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic, getter = isSolo) BOOL solo;
@@ -232,7 +213,9 @@
 /**
  *  The length of the MIDI track.
  *
- *  This property can be observed using Key Value Observing.
+ *  This property can be observed using Key Value Observing. 
+ *
+ *	@note This property will automatically get updated whenever the tracks events are changed.
  */
 @property (nonatomic) MusicTimeStamp length;
 
@@ -248,13 +231,51 @@
 #pragma mark - Deprecated
 
 /**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `-[MIKMIDISequencer isLooping]` instead.
+ *
+ *  Whether the track is set to loop.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic, readonly) BOOL doesLoop DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
+ *
+ *	The number of times to play the designated portion of the music track. By default, a music track plays once.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) SInt32 numberOfLoops DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer.
+ *  Use `-[MIKMIDISequencer setLoopStartTimeStamp:endTimeStamp:]`, and associated properties instead.
+ *
+ *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
+ *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) MusicTimeStamp loopDuration DEPRECATED_ATTRIBUTE;
+
+/**
+ *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
+ *
+ *  The loop info for the track.
+ *
+ *  This property can be observed using Key Value Observing.
+ */
+@property (nonatomic) MusicTrackLoopInfo loopInfo DEPRECATED_ATTRIBUTE;
+
+/**
+ *	@deprecated This method is deprecated. Use -trackNumber instead.
+ *
  *  Gets the track's track number in it's owning MIDI sequence.
  *
  *  @param trackNumber On output, the track number of the track.
  *
  *  @return Whether or not getting the track number was succesful.
- *
- *	@deprecated This method is deprecated. Use -trackNumber instead.
  */
 - (BOOL)getTrackNumber:(UInt32 *)trackNumber DEPRECATED_ATTRIBUTE;
 
@@ -263,7 +284,7 @@
  *  
  *	The destination endpoint for the MIDI events of the track during playback.
  */
-@property (nonatomic, strong, readwrite) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
+@property (nonatomic, strong, readwrite, nullable) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -addEvent: instead.
@@ -285,7 +306,7 @@
  *
  *  @return Whether or not inserting the MIDI events was succesful.
  */
-- (BOOL)insertMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+- (BOOL)insertMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -removeEvent: instead.
@@ -296,7 +317,7 @@
  *
  *  @return Whether or not removing the MIDI events was succesful.
  */
-- (BOOL)removeMIDIEvents:(NSSet *)events DEPRECATED_ATTRIBUTE;
+- (BOOL)removeMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
 
 /**
  *  @deprecated Use -removeAllEvents instead.
@@ -308,3 +329,5 @@
 - (BOOL)clearAllEvents DEPRECATED_ATTRIBUTE;
 
 @end
+
+NS_ASSUME_NONNULL_END

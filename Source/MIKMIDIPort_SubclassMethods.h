@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIPort.h"
+#import <MIKMIDI/MIKMIDIPort.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDIPort ()
 
@@ -14,3 +17,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END

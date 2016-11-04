@@ -7,15 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "MIKMIDIPrivate.h"
+#import "MIKMIDICompilerCompatibility.h"
 
 #import "MIKMIDIMapping.h"
 
 @class MIKMIDIDevice;
 @class MIKMIDIMapping;
 @class MIKMIDIMappingItem;
+@class MIKMIDICommand;
 
 @protocol MIKMIDIMappingGeneratorDelegate;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Completion block for mapping generation method.
@@ -24,7 +27,7 @@
  *  @param messages    The messages used to generate the mapping. May not include all messages received during mapping.
  *  @param error       If mapping failed, an NSError explaing the failure, nil if mapping succeeded.
  */
-typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, NSArray *messages, NSError *error);
+typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem *mappingItem, MIKArrayOf(MIKMIDICommand *) *messages, NSError *_Nullable error);
 
 /**
  *  MIKMIDIMappingGenerator is used to map incoming commands from a MIDI device to MIDI responders in an application.
@@ -65,7 +68,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  *
  *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
  */
-- (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
+- (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Begins mapping a given MIDIResponder. This method returns immediately.
@@ -87,30 +90,52 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  */
 - (void)cancelCurrentCommandLearning;
 
-// Properties
+/**
+ *  Temporarily suspends mapping without discarding state. Unlike -cancelCurrentCommandLearning, or -endMapping,
+ *  mapping can be resumed exactly where it left off by calling -resumeMapping. Incoming MIDI is simply
+ *  ignored while mapping is suspended.
+ *
+ *  Note that if mapping is not currently in progress, this method has no effect.
+ */
+- (void)suspendMapping;
 
-#if !TARGET_OS_IPHONE && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8)
-#define MIKMIDIMappingGeneratorWeakProperty weak
-#else
-#define MIKMIDIMappingGeneratorWeakProperty unsafe_unretained
-#endif
+/**
+ *  Resumes mapping after it was previously suspended using -suspendMapping.
+ *
+ *  Note that if mapping was not previously in progress and currently suspended, this has no effect.
+ */
+- (void)resumeMapping;
+
+/**
+ *  Stops mapping generation, disconnecting from the device.
+ */
+- (void)endMapping;
+
+// Properties
 
 /**
  * The delegate for the mapping generator. Can be used to customize certain mapping behavior. Optional.
  *
  * The delegate must implement the MIKMIDIMappingGeneratorDelegate protocol.
  */
-@property (nonatomic, MIKMIDIMappingGeneratorWeakProperty) id<MIKMIDIMappingGeneratorDelegate> delegate;
+@property (nonatomic, MIKTargetSafeWeak) id<MIKMIDIMappingGeneratorDelegate> delegate;
 
 /**
- *  The device for which a mapping is being generated. Must not be nil.
+ *  The device for which a mapping is being generated. Must not be nil for mapping to work.
  */
-@property (nonatomic, strong) MIKMIDIDevice *device;
+@property (nonatomic, strong, nullable) MIKMIDIDevice *device;
 
 /**
  *  The mapping being generated. Assign before mapping starts to modify existing mapping.
  */
 @property (nonatomic, strong) MIKMIDIMapping *mapping;
+
+/**
+ *  Set this to YES to enable printing diagnostic messages to the console. This is intended
+ *  to help with eg. debugging trouble mapping specific controllers. The default
+ *  is NO, ie. logging is disabled.
+ */
+@property (nonatomic, getter=isDiagnosticLoggingEnabled) BOOL diagnosticLoggingEnabled;
 
 @end
 
@@ -173,7 +198,7 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  *  @return The behavior to use when mapping the newResponder. See MIKMIDIMappingGeneratorRemapBehavior for a list of possible values.
  */
 - (MIKMIDIMappingGeneratorRemapBehavior)mappingGenerator:(MIKMIDIMappingGenerator *)generator
-			  behaviorForRemappingControlMappedWithItems:(NSSet *)mappingItems
+			  behaviorForRemappingControlMappedWithItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems
 										  toNewResponder:(id<MIKMIDIMappableResponder>)newResponder
 									   commandIdentifier:(NSString *)commandIdentifier;
 
@@ -190,7 +215,21 @@ typedef NS_ENUM(NSUInteger, MIKMIDIMappingGeneratorRemapBehavior) {
  *  @return YES to remove the existing mapping items. NO to keep the existing mapping items in addition to the new mapping item being generated.
  */
 - (BOOL)mappingGenerator:(MIKMIDIMappingGenerator *)generator
-shouldRemoveExistingMappingItems:(NSSet *)mappingItems
+shouldRemoveExistingMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems
  forResponderBeingMapped:(id<MIKMIDIMappableResponder>)responder;
 
+/**
+ *  The delegate can implement this to do some transformation of incoming commands in order to customize
+ *  mapping. For instance, controls can be dynamically remapped, or incoming commands can be selectively ignored.
+ *  Most users of MIKMIDIMappingGenerator will not need to use this.
+ *
+ *  @param command An incoming MIKMIDICommand.
+ *
+ *  @return A processed/modified copy of the incoming command, or nil to ignore the command.
+ */
+- (MIKMIDIChannelVoiceCommand *)mappingGenerator:(MIKMIDIMappingGenerator *)generator
+			  commandByProcessingIncomingCommand:(MIKMIDIChannelVoiceCommand *)command;
+
 @end
+
+NS_ASSUME_NONNULL_END

@@ -9,7 +9,6 @@
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
-#import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDINoteOnCommand.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDINoteOnCommand.m in the Build Phases for this target
@@ -29,13 +28,41 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDINoteOnCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDINoteOnCommand class]; }
 
++ (instancetype)noteOnCommandWithNote:(NSUInteger)note
+							 velocity:(NSUInteger)velocity
+							  channel:(UInt8)channel
+							timestamp:(NSDate *)timestamp
+{
+	MIKMutableMIDINoteOnCommand *result = [[MIKMutableMIDINoteOnCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.timestamp = timestamp ?: [NSDate date];
+	
+	return [self isMutable] ? result : [result copy];
+}
+
++ (instancetype)noteOnCommandWithNote:(NSUInteger)note
+							 velocity:(NSUInteger)velocity
+							  channel:(UInt8)channel
+						midiTimeStamp:(MIDITimeStamp)timestamp
+{
+	MIKMutableMIDINoteOnCommand *result = [[MIKMutableMIDINoteOnCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.midiTimestamp = timestamp;
+
+	return [self isMutable] ? result : [result copy];
+}
+
 #pragma mark - Properties
 
 - (NSUInteger)note { return self.dataByte1; }
 - (void)setNote:(NSUInteger)value
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	self.dataByte1 = value;
+	self.dataByte1 = (UInt8)value;
 }
 
 - (NSUInteger)velocity { return self.value; }

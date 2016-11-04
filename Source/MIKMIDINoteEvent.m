@@ -12,7 +12,7 @@
 #import "MIKMIDIClock.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDINoteEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDINoteEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDINoteEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDINoteEvent
@@ -71,7 +71,7 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     MIDINoteMessage *noteMessage = (MIDINoteMessage*)[self.internalData bytes];
-    noteMessage->channel = note;
+    noteMessage->note = note;
 }
 
 - (UInt8)channel
@@ -138,8 +138,8 @@
 - (float)frequency
 {
     //tuning based on A4 = 440 hz
-    float A = 440.0;
-    return (A / 32.0) * powf(2.0, (((float)self.note - 9.0) / 12.0));
+    float A = 440.0f;
+    return (A / 32.0f) * powf(2.0f, (((float)self.note - 9.0f) / 12.0f));
 }
 
 - (NSString *)noteLetter
@@ -180,21 +180,34 @@
 
 + (NSArray *)commandsFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
 {
-	// Note On
-	MIKMutableMIDINoteOnCommand *noteOn = [MIKMutableMIDINoteOnCommand commandForCommandType:MIKMIDICommandTypeNoteOn];
-	noteOn.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp];
+	if (!clock) {
+		clock = [MIKMIDIClock clock];
+		[clock syncMusicTimeStamp:noteEvent.timeStamp withMIDITimeStamp:MIKMIDIGetCurrentTimeStamp() tempo:120];
+	}
+
+	return @[[self noteOnCommandFromNoteEvent:noteEvent clock:clock], [self noteOffCommandFromNoteEvent:noteEvent clock:clock]];
+}
+
++ (MIKMIDINoteOnCommand *)noteOnCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
+{
+	MIKMutableMIDINoteOnCommand *noteOn = [[MIKMutableMIDINoteOnCommand alloc] init];
+	MIDITimeStamp timestamp = clock ? [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp] : MIKMIDIGetCurrentTimeStamp();
+	noteOn.midiTimestamp = timestamp;
 	noteOn.channel = noteEvent.channel;
 	noteOn.note = noteEvent.note;
 	noteOn.velocity = noteEvent.velocity;
-	
-	// Note Off
-	MIKMutableMIDINoteOffCommand *noteOff = [MIKMutableMIDINoteOffCommand commandForCommandType:MIKMIDICommandTypeNoteOff];
-	noteOff.midiTimestamp = [clock midiTimeStampForMusicTimeStamp:noteEvent.endTimeStamp];
+	return [noteOn copy];
+}
+
++ (MIKMIDINoteOffCommand *)noteOffCommandFromNoteEvent:(MIKMIDINoteEvent *)noteEvent clock:(MIKMIDIClock *)clock
+{
+	MIKMutableMIDINoteOffCommand *noteOff = [[MIKMutableMIDINoteOffCommand alloc] init];
+	MIDITimeStamp timestamp = clock ? [clock midiTimeStampForMusicTimeStamp:noteEvent.timeStamp] : MIKMIDIGetCurrentTimeStamp();
+	noteOff.midiTimestamp = timestamp;
 	noteOff.channel = noteEvent.channel;
 	noteOff.note = noteEvent.note;
 	noteOff.velocity = noteEvent.releaseVelocity;
-
-	return @[[noteOn copy], [noteOff copy]];
+	return [noteOff copy];
 }
 
 @end

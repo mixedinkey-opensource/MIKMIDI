@@ -112,8 +112,11 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 			self.midiTimestamp = packet->timeStamp;
 			self.internalData = [NSMutableData dataWithBytes:packet->data length:packet->length];
 		} else {
-			self.internalData = [NSMutableData dataWithLength:3];
+			self.midiTimestamp = MIKMIDIGetCurrentTimeStamp();
 			MIKMIDICommandType commandType = [[[[self class] supportedMIDICommandTypes] firstObject] unsignedCharValue];
+			NSInteger length = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+			if (length <= 0) { length = 3; };
+			self.internalData = [NSMutableData dataWithLength:length];
 			((UInt8 *)[self.internalData mutableBytes])[0] = commandType;
 		}
 	}
@@ -297,7 +300,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
-	self.internalData = [data mutableCopy];
+	self.internalData = data ? [data mutableCopy] : [NSMutableData data];
 }
 
 @end

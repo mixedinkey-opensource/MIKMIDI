@@ -44,6 +44,7 @@
 	if (lsbCommand.controllerNumber - msbCommand.controllerNumber != 32) return nil;
 	
 	MIKMIDIControlChangeCommand *result = [[MIKMIDIControlChangeCommand alloc] init];
+	result.midiTimestamp = lsbCommand.midiTimestamp;
 	result.internalData = [msbCommand.data mutableCopy];
 	result.fourteenBitCommand = YES;
 	[result.internalData appendData:[lsbCommand.data subdataWithRange:NSMakeRange(2, 1)]];
@@ -83,7 +84,7 @@
 - (void)setControllerNumber:(NSUInteger)value
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	self.dataByte1 = value;
+	self.dataByte1 = (UInt8)value;
 }
 
 - (NSUInteger)controllerValue { return self.value; }

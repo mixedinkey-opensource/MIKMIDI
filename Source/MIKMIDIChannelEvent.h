@@ -6,7 +6,10 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDIEvent.h>
+#import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDIChannelEvent : MIKMIDIEvent
 
@@ -18,7 +21,7 @@
  *
  *  @return A new instance of a subclass of MIKMIDIChannelEvent, or nil if there is an error.
  */
-+ (instancetype)channelEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDIChannelMessage)message;
++ (nullable instancetype)channelEventWithTimeStamp:(MusicTimeStamp)timeStamp message:(MIDIChannelMessage)message;
 
 // Properties
 
@@ -45,21 +48,27 @@
 @interface MIKMutableMIDIChannelEvent : MIKMIDIChannelEvent
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, strong, readwrite) NSMutableData *data;
+@property (nonatomic, strong, readwrite, null_resettable) NSMutableData *data;
 @property (nonatomic, readwrite) UInt8 channel;
 @property (nonatomic, readwrite) UInt8 dataByte1;
 @property (nonatomic, readwrite) UInt8 dataByte2;
 
 @end
 
+NS_ASSUME_NONNULL_END
+
 #pragma mark -
 
-#import <MIKMIDI/MIKMIDICommand.h>
+#import "MIKMIDICommand.h"
 
 @class MIKMIDIClock;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MIKMIDICommand (MIKMIDIChannelEventToCommands)
 
-+ (instancetype)commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:(MIKMIDIClock *)clock;
++ (nullable instancetype)commandFromChannelEvent:(MIKMIDIChannelEvent *)event clock:(MIKMIDIClock *)clock;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -28,6 +28,35 @@
 + (Class)immutableCounterpartClass; { return [MIKMIDINoteOffCommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDINoteOffCommand class]; }
 
++ (instancetype)noteOffCommandWithNote:(NSUInteger)note
+							  velocity:(NSUInteger)velocity
+							   channel:(UInt8)channel
+							 timestamp:(NSDate *)timestamp
+{
+	MIKMutableMIDINoteOffCommand *result = [[MIKMutableMIDINoteOffCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.timestamp = timestamp ?: [NSDate date];
+	
+	return [self isMutable] ? result : [result copy];
+}
+
++ (instancetype)noteOffCommandWithNote:(NSUInteger)note
+							  velocity:(NSUInteger)velocity
+							   channel:(UInt8)channel
+						 midiTimeStamp:(MIDITimeStamp)timestamp
+{
+	MIKMutableMIDINoteOffCommand *result = [[MIKMutableMIDINoteOffCommand alloc] init];
+	result.note = note;
+	result.velocity = velocity;
+	result.channel = channel;
+	result.midiTimestamp = timestamp;
+
+	return [self isMutable] ? result : [result copy];
+}
+
+
 - (NSString *)additionalCommandDescription
 {
 	return [NSString stringWithFormat:@"%@ note: %lu velocity: %lu", [super additionalCommandDescription], (unsigned long)self.note, (unsigned long)self.velocity];
@@ -39,7 +68,7 @@
 - (void)setNote:(NSUInteger)value
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
-	self.dataByte1 = value;
+	self.dataByte1 = (UInt8)value;
 }
 
 - (NSUInteger)velocity { return self.value; }

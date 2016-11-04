@@ -11,7 +11,7 @@
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaTrackSequenceNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaTrackSequenceNameEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaTrackSequenceNameEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaTrackSequenceNameEvent
@@ -22,11 +22,12 @@
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTrackSequenceNameEvent class]; }
 + (BOOL)isMutable { return NO; }
 
-+ (NSSet *)keyPathsForValuesAffectingName
+- (instancetype)initWithName:(NSString *)name timeStamp:(MusicTimeStamp)timeStamp
 {
-	return [NSSet setWithObjects:@"string", nil];
+	return [self initWithString:name timeStamp:timeStamp];
 }
 
++ (NSSet *)keyPathsForValuesAffectingName { return [NSSet setWithObject:@"string"]; }
 - (NSString *)name { return self.string; }
 
 @end

@@ -103,11 +103,11 @@
 
 #pragma mark - MIKMIDICommand+MIKMIDIChannelEventToCommands
 
-#import <MIKMIDI/MIKMIDIPolyphonicKeyPressureEvent.h>
-#import <MIKMIDI/MIKMIDIControlChangeCommand.h>
-#import <MIKMIDI/MIKMIDIProgramChangeCommand.h>
-#import <MIKMIDI/MIKMIDIChannelPressureEvent.h>
-#import <MIKMIDI/MIKMIDIPitchBendChangeCommand.h>
+#import "MIKMIDIPolyphonicKeyPressureEvent.h"
+#import "MIKMIDIControlChangeCommand.h"
+#import "MIKMIDIProgramChangeCommand.h"
+#import "MIKMIDIChannelPressureEvent.h"
+#import "MIKMIDIPitchBendChangeCommand.h"
 
 @implementation MIKMIDICommand (MIKMIDIChannelEventToCommands)
 

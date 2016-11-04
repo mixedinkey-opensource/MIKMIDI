@@ -7,6 +7,9 @@
 //
 
 #import "MIKMIDIObject.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  These methods can be called and/or overridden by subclasses of MIKMIDIObject, but are not
@@ -35,7 +38,7 @@
  *
  *  @return An NSArray containing NSNumber representations of MIDIObjectType values.
  */
-+ (NSArray *)representedMIDIObjectTypes;
++ (MIKArrayOf(NSNumber *) *)representedMIDIObjectTypes;
 
 /**
  *  Whether the receiver can be initialized with the passed in objectRef,
@@ -55,3 +58,5 @@
 @property (nonatomic, readwrite) BOOL isVirtual;
 
 @end
+
+NS_ASSUME_NONNULL_END

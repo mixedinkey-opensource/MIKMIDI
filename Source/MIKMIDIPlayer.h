@@ -8,13 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDISequence;
 @class MIKMIDIMetronome;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  *  MIKMIDIPlayer can be used to play an MIKMIDISequence.
  */
+__attribute((deprecated("use MIKMIDISequencer instead")))
 @interface MIKMIDIPlayer : NSObject
 
 /**
@@ -52,7 +56,7 @@
 /**
  *  The music sequence to play.
  */
-@property (strong, nonatomic) MIKMIDISequence *sequence;
+@property (strong, nonatomic, nullable) MIKMIDISequence *sequence;
 
 /**
  *  The current position in the music sequence.
@@ -79,10 +83,12 @@
 @property (nonatomic, getter=isLooping) BOOL looping;
 
 @property (nonatomic, getter=isClickTrackEnabled) BOOL clickTrackEnabled;
-@property (strong, nonatomic) MIKMIDIMetronome *metronome;
+@property (strong, nonatomic, nullable) MIKMIDIMetronome *metronome;
 
 @property (nonatomic) BOOL stopPlaybackAtEndOfSequence;
 
 @property (nonatomic) MusicTimeStamp maxClickTrackTimeStamp;
 
 @end
+
+NS_ASSUME_NONNULL_END

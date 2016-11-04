@@ -11,7 +11,7 @@
 #import "MIKMIDINoteEvent.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetronome.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetronome.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetronome.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetronome
@@ -22,7 +22,7 @@
 	AudioComponentDescription instrumentcd = (AudioComponentDescription){0};
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
-	instrumentcd.componentSubType = kAudioUnitSubType_MIDISynth;
+	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
 	return instrumentcd;
 }
 #endif
@@ -43,22 +43,6 @@
 - (instancetype)init
 {
 	if (self = [super init]) {
-		if (![self setupMetronome]) return nil;
-	}
-	return self;
-}
-
-- (instancetype)initWithClientDestinationEndpoint:(MIKMIDIClientDestinationEndpoint *)destination componentDescription:(AudioComponentDescription)componentDescription
-{
-	if (self = [super initWithClientDestinationEndpoint:destination componentDescription:componentDescription]) {
-		if (![self setupMetronome]) return nil;
-	}
-	return self;
-}
-
-- (instancetype)initWithMIDISource:(MIKMIDISourceEndpoint *)source componentDescription:(AudioComponentDescription)componentDescription
-{
-	if (self = [super initWithMIDISource:source componentDescription:componentDescription]) {
 		if (![self setupMetronome]) return nil;
 	}
 	return self;

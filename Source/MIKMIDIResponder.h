@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MIKMIDICompilerCompatibility.h"
 
 @class MIKMIDICommand;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The MIKMIDIResponder protocol defines methods to be implemented by any object that wishes
@@ -63,11 +66,13 @@
  *  application, as long as the receiver (or a parent responder) is registered.
  *
  *  Should return a flat (non-recursive) array of subresponders.
- *  Return nil, empty array, or don't implement if you don't want subresponders to be
+ *  Return empty array, or don't implement if you don't want subresponders to be
  *  included in any case where the receiver would be considered for receiving MIDI
  *
  *  @return An NSArray containing the receivers subresponders. Each object in the array must also conform to MIKMIDIResponder.
  */
-- (NSArray *)subresponders;
+- (nullable MIKArrayOf(id<MIKMIDIResponder>) *)subresponders; // Nullable for historical reasons.
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  MIKMIDIObject is the base class for all of MIKMIDI's Objective-C wrapper classes for CoreMIDI classes.
@@ -27,7 +30,7 @@
  *
  *  @return An instance of the appropriate subclass of MIKMIDIObject.
  */
-+ (instancetype)MIDIObjectWithObjectRef:(MIDIObjectRef)objectRef; // Returns a subclass of MIKMIDIObject (device, entity, or endpoint)
++ (nullable instancetype)MIDIObjectWithObjectRef:(MIDIObjectRef)objectRef; // Returns a subclass of MIKMIDIObject (device, entity, or endpoint)
 
 /**
  *  Creates and initializes an MIKMIDIObject instance. Returns an instance of a
@@ -38,7 +41,7 @@
  *
  *  @return An instance of the appropriate subclass of MIKMIDIObject.
  */
-- (id)initWithObjectRef:(MIDIObjectRef)objectRef;
+- (nullable instancetype)initWithObjectRef:(MIDIObjectRef)objectRef;
 
 /**
  *  Used to get a dictionary containing key/value pairs corresponding to
@@ -69,13 +72,13 @@
 /**
  *  The name of the receiver. Devices, entities, and endpoints may all have names.
  */
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong, nullable) NSString *name;
 
 /**
  *  The Apple-recommended  user-visible name of the receiver. May be
  *  identical to the value returned by -name.
  */
-@property (nonatomic, strong, readonly) NSString *displayName;
+@property (nonatomic, strong, readonly, nullable) NSString *displayName;
 
 /**
  *  Indicates whether the object is "virtual". This has slightly different meanings
@@ -97,3 +100,5 @@
 @property (nonatomic, readonly) BOOL isVirtual;
 
 @end
+
+NS_ASSUME_NONNULL_END

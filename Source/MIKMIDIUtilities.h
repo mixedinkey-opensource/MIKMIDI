@@ -8,9 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "MIKMIDIMapping.h"
+#import "MIKMIDIMappableResponder.h"
+#import "MIKMIDICommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+#include <mach/mach_time.h>
 
-NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error);
+NS_ASSUME_NONNULL_BEGIN
+
+NSString * _Nullable MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error);
 BOOL MIKSetStringPropertyOnMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSString *string, NSError *__autoreleasing*error);
 
 SInt32 MIKIntegerPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSError *__autoreleasing*error);
@@ -23,12 +28,23 @@ MIKMIDIResponderType MIKMIDIMappingInteractionTypeForAttributeString(NSString *s
 
 NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType commandType);
 
+MIDIPacket MIKMIDIPacketCreate(MIDITimeStamp timeStamp, UInt16 length, MIKArrayOf(NSNumber *) *data /*max length 256*/);
+
 // Subclasses of MIKMIDICommand and MIKMIDIEvent can and should use this macro to raise an exception
 // when the setter for a public property is called on an immutable object.
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])
 
 // A prettier way to get the mac_absolute_time() when working with MIDITimeStamps.
-#define MIKMIDIGetCurrentTimeStamp()	(mach_absolute_time())
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp();
+
+/**
+ *  Returns whether a given MIDI note number corresponds to a "black key" on a piano.
+ *
+ *  @param noteNumber The MIDI note number for the note. Between 0 and 127.
+ *
+ *  @return YES if the passed in note number is a flat / sharp note, NO otherwise.
+ */
+BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber);
 
 /**
  *  Returns the note letter of the passed in MIDI note number as a string.
@@ -56,3 +72,4 @@ NSString *MIKMIDINoteLetterForMIDINoteNumber(UInt8 noteNumber);
  */
 NSString *MIKMIDINoteLetterAndOctaveForMIDINote(UInt8 noteNumber);
 
+NS_ASSUME_NONNULL_END

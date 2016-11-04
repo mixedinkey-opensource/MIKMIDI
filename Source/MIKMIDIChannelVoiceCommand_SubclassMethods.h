@@ -8,9 +8,14 @@
 
 #import "MIKMIDIChannelVoiceCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
+#import "MIKMIDICompilerCompatibility.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMIDIChannelVoiceCommand ()
 
 @property (nonatomic, readwrite) NSUInteger value;
 
 @end
+
+NS_ASSUME_NONNULL_END

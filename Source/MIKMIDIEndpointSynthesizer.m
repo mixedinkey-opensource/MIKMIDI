@@ -12,7 +12,7 @@
 #import "MIKMIDIClientDestinationEndpoint.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIEndpointSynthesizer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIEndpointSynthesizer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIEndpointSynthesizer.m in the Build Phases for this target
 #endif
 
 @interface MIKMIDIEndpointSynthesizer ()
@@ -93,12 +93,10 @@
 
 - (void)dealloc
 {
-	if (_endpoint) {
-		if ([_endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
-			[[MIKMIDIDeviceManager sharedDeviceManager] disconnectInput:(MIKMIDISourceEndpoint *)self.endpoint forConnectionToken:self.connectionToken];
-		}
-		// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
+	if ([_endpoint isKindOfClass:[MIKMIDISourceEndpoint class]]) {
+		[[MIKMIDIDeviceManager sharedDeviceManager] disconnectConnectionForToken:self.connectionToken];
 	}
+	// Don't need to do anything for a destination endpoint. __weak reference in the messages handler will automatically nil out.
 }
 
 #pragma mark - Private

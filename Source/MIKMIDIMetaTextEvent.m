@@ -7,11 +7,11 @@
 //
 
 #import "MIKMIDIMetaTextEvent.h"
-#import "MIKMIDIEvent_SubclassMethods.h"
+#import "MIKMIDIMetaEvent_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)
-#error MIKMIDIMetaTextEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMappingManager.m in the Build Phases for this target
+#error MIKMIDIMetaTextEvent.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIMetaTextEvent.m in the Build Phases for this target
 #endif
 
 @implementation MIKMIDIMetaTextEvent
@@ -21,6 +21,12 @@
 + (Class)immutableCounterpartClass { return [MIKMIDIMetaTextEvent class]; }
 + (Class)mutableCounterpartClass { return [MIKMutableMIDIMetaTextEvent class]; }
 + (BOOL)isMutable { return NO; }
+
+- (instancetype)initWithString:(NSString *)string timeStamp:(MusicTimeStamp)timeStamp
+{
+	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+	return [self initWithMetaData:data timeStamp:timeStamp];
+}
 
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
 {
@@ -49,7 +55,6 @@
 }
 
 @end
-
 
 @implementation MIKMutableMIDIMetaTextEvent
 

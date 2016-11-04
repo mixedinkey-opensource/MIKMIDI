@@ -94,21 +94,54 @@ static MIKMIDIMappingManager *sharedManager = nil;
 - (NSSet *)bundledMappingsForControllerName:(NSString *)name
 {
 	if (![name length]) return [NSSet set];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
-	return [self.bundledMappings filteredSetUsingPredicate:predicate];
+	NSMutableSet *result = [NSMutableSet set];
+	for (MIKMIDIMapping *mapping in self.bundledMappings) {
+		if ([mapping.controllerName isEqualToString:name]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
 }
 
 - (NSSet *)userMappingsForControllerName:(NSString *)name
 {
 	if (![name length]) return [NSSet set];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"controllerName LIKE %@", name];
-	return [self.userMappings filteredSetUsingPredicate:predicate];
+	NSMutableSet *result = [NSMutableSet set];
+	for (MIKMIDIMapping *mapping in self.userMappings) {
+		if ([mapping.controllerName isEqualToString:name]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
 }
 
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+- (NSArray *)userMappingsWithName:(NSString *)mappingName;
 {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name LIKE %@", mappingName];
-	return [[self.mappings filteredSetUsingPredicate:predicate] anyObject];
+	NSMutableArray *result = [NSMutableArray array];
+	for (MIKMIDIMapping *mapping in self.userMappings) {
+		if ([mapping.name isEqualToString:mappingName]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
+}
+
+- (NSArray *)bundledMappingsWithName:(NSString *)mappingName;
+{
+	NSMutableArray *result = [NSMutableArray array];
+	for (MIKMIDIMapping *mapping in self.bundledMappings) {
+		if ([mapping.name isEqualToString:mappingName]) {
+			[result addObject:mapping];
+		}
+	}
+	return result;
+}
+
+- (NSArray *)mappingsWithName:(NSString *)mappingName;
+{
+	NSMutableArray *result = [NSMutableArray arrayWithArray:[self userMappingsWithName:mappingName]];
+	[result addObjectsFromArray:[self bundledMappingsWithName:mappingName]];
+	return result;
 }
 
 - (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
@@ -192,7 +225,12 @@ static MIKMIDIMappingManager *sharedManager = nil;
 			if (![[file pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) continue;
 			
 			// process the mapping file
-			MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+			NSError *error = nil;
+			MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file error:&error];
+			if (!mapping) {
+				NSLog(@"Error loading MIDI mapping from %@: %@", file, error);
+				continue;
+			}
 			if (mapping) [mappings addObject:mapping];
 		}
 	} else {
@@ -209,7 +247,12 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	NSBundle *bundle = [NSBundle mainBundle];
 	NSArray *bundledMappingFileURLs = [bundle URLsForResourcesWithExtension:kMIKMIDIMappingFileExtension subdirectory:nil];
 	for (NSURL *file in bundledMappingFileURLs) {
-		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file];
+		NSError *error = nil;
+		MIKMIDIMapping *mapping = [[MIKMIDIMapping alloc] initWithFileAtURL:file error:&error];
+		if (!mapping) {
+			NSLog(@"Error loading MIDI mapping from %@: %@", file, error);
+			continue;
+		}
 		mapping.bundledMapping = YES;
 		if (mapping) [mappings addObject:mapping];
 	}
@@ -219,23 +262,46 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (NSURL *)fileURLForMapping:(MIKMIDIMapping *)mapping shouldBeUnique:(BOOL)unique
 {
-	NSURL *mappingsFolder = [self userMappingsFolder];
-	NSString *filename = [mapping.name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
-	
-	NSURL *result = [mappingsFolder URLByAppendingPathComponent:filename];
-	
+	NSURL *fileURL = [self fileURLWithBaseFilename:[self fileNameForMapping:mapping]];
+
 	if (unique) {
+		NSURL *mappingsFolder = [self userMappingsFolder];
 		NSFileManager *fm = [NSFileManager defaultManager];
 		unsigned long numberSuffix = 0;
-		while ([fm fileExistsAtPath:[result path]]) {
+		while ([fm fileExistsAtPath:[fileURL path]]) {
+			MIKMIDIMapping *existingMapping = [[MIKMIDIMapping alloc] initWithFileAtURL:fileURL error:NULL];
+			if ([existingMapping isEqual:mapping]) break;
+			
 			if (numberSuffix > 1000) return nil; // Don't go crazy
 			NSString *name = [mapping.name stringByAppendingFormat:@" %lu", ++numberSuffix];
-			filename = [name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
-			result = [mappingsFolder URLByAppendingPathComponent:filename];
+			NSString *filename = [name stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
+			fileURL = [mappingsFolder URLByAppendingPathComponent:filename];
 		}
 	}
 	
-	return result;
+	return fileURL;
+}
+
+- (NSURL *)fileURLWithBaseFilename:(NSString *)baseFileName
+{
+	NSString *filename = [baseFileName stringByAppendingPathExtension:kMIKMIDIMappingFileExtension];
+	return [[self userMappingsFolder] URLByAppendingPathComponent:filename];
+}
+
+- (NSString *)fileNameForMapping:(MIKMIDIMapping *)mapping
+{
+	NSString *result = nil;
+	if ([self.delegate respondsToSelector:@selector(mappingManager:fileNameForMapping:)]) {
+		result = [self.delegate mappingManager:self fileNameForMapping:mapping];
+	}
+	return [result length] ? result : mapping.name;
+}
+
+- (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping
+{
+	if (![self.delegate respondsToSelector:@selector(mappingManager:legacyFileNamesForUserMapping:)]) return nil;
+	
+	return [self.delegate mappingManager:self legacyFileNamesForUserMapping:mapping];
 }
 
 #pragma mark - Properties
@@ -261,9 +327,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (void)addUserMappingsObject:(MIKMIDIMapping *)mapping
 {
-	MIKMIDIMapping *existing = [self mappingWithName:mapping.name];
-	if (existing) [self.internalUserMappings removeObject:existing];
-	mapping.bundledMapping = NO;
+	if (mapping.isBundledMapping) mapping = [MIKMIDIMapping userMappingFromBundledMapping:mapping];
 	[self.internalUserMappings addObject:mapping];
 	
 	[self saveMappingsToDisk];
@@ -277,12 +341,44 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	
 	// Remove XML file for mapping from disk
 	NSURL *mappingURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
-	if (!mappingURL) return;
+	NSArray *legacyFilenames = [self legacyFileNamesForUserMappingsObject:mapping];
+	if (!mappingURL && !legacyFilenames.count) return;
+
+	NSMutableArray *possibleURLs = [NSMutableArray array];
+	if (mappingURL) [possibleURLs addObject:mappingURL];
+
+	for (NSString *filename in legacyFilenames) {
+		[possibleURLs addObject:[self fileURLWithBaseFilename:filename]];
+	}
+
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSError *error = nil;
-	if (![fm removeItemAtURL:mappingURL error:&error]) {
-		NSLog(@"Error removing mapping file for MIDI mapping %@: %@", mapping, error);
+	BOOL removedAtLeastOneFile = NO;
+	for (NSURL *url in possibleURLs) {
+		if (![fm fileExistsAtPath:url.path]) continue;
+
+		if ([fm removeItemAtURL:url error:&error]) {
+			removedAtLeastOneFile = YES;
+		} else {
+			NSLog(@"Error removing mapping file for MIDI mapping %@: %@", mapping, error);
+		}
 	}
+
+	if (!removedAtLeastOneFile) {
+		NSLog(@"No mapping files were found to delete for the mapping named \"%@\"", mapping.name);
+	}
+}
+
+@end
+
+#pragma mark - Deprecated
+
+@implementation MIKMIDIMappingManager (Deprecated)
+
+- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
+{
+	MIKMIDIMapping *result = [[self userMappingsWithName:mappingName] firstObject];
+	return result ?: [[self bundledMappingsWithName:mappingName] firstObject];
 }
 
 @end
