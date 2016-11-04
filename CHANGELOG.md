@@ -4,6 +4,23 @@ All notable changes to MIKMIDI are documented in this file. This project adheres
 ##[Unreleased]
 This section is for recent changes not yet included in an official release.
 
+##[1.6.1] - 2016-11-04
+
+### ADDED
+
+- MIDI To Audio example project showing how to use MIKMIDI to do offline rendering of MIDI to an audio file. (#164)
+
+### Fixed
+
+- Incorrect nullability annotations for MIKMIDINoteEvent convenience methods.
+- Minor documentation mistakes.
+- Updated example projects for Xcode 8.
+
+### Changed
+
+- Moved macOS example projects into a "macOS" subfolder of Examples.
+- Email address for maintainer (Andrew Madsen).
+
 ##[1.6.0] - 2016-06-01
 
 ### ADDED
