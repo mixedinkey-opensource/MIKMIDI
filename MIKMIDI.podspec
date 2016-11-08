@@ -23,8 +23,8 @@ Pod::Spec.new do |s|
   s.private_header_files = 'Source/MIKMIDIPrivateUtilities.h'
   s.requires_arc = true
   
-  s.osx.frameworks = 'CoreMIDI'
-  s.ios.frameworks = 'CoreMIDI'
+  s.osx.frameworks = 'CoreMIDI', 'AudioToolbox', 'AudioUnit'
+  s.ios.frameworks = 'CoreMIDI', 'AudioToolbox'
   s.ios.library = 'xml2'
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SDK_DIR)"/usr/include/libxml2' }
 
