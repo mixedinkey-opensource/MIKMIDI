@@ -20,6 +20,9 @@
 static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 @interface MIKMIDIObject ()
+{
+	NSUInteger _hash;
+}
 
 @property (nonatomic, readwrite) MIDIObjectRef objectRef;
 @property (nonatomic, readwrite) MIDIUniqueID uniqueID;
@@ -95,7 +98,10 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 	return self.uniqueID == [(MIKMIDIObject *)object uniqueID];
 }
 
-- (NSUInteger)hash { return self.uniqueID; }
+- (NSUInteger)hash
+{
+	return _hash;
+}
 
 - (NSString *)description
 {
@@ -118,6 +124,8 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 
 #pragma mark - Properties
 
+@synthesize uniqueID = _uniqueID;
+
 - (MIDIUniqueID)uniqueID
 {
 	if (!_uniqueID) {
@@ -130,6 +138,12 @@ static NSMutableSet *registeredMIKMIDIObjectSubclasses;
 		self.uniqueID = value;
 	}
 	return _uniqueID;
+}
+
+- (void)setUniqueID:(MIDIUniqueID)uniqueID
+{
+	_uniqueID = uniqueID;
+	_hash = @(uniqueID).hash;
 }
 
 - (BOOL)isOnline
