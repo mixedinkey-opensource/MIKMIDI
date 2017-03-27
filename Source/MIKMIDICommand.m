@@ -60,7 +60,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 		packetType = inputPacket->data[packetIndex];
 		packetLength = MIKMIDIStandardLengthOfMessageForCommandType(packetType);
 		NSInteger dataOffset = packetIndex;
-		if (dataOffset > (inputPacket->length - packetLength)) break;
+		if (packetLength == -1 || dataOffset > (inputPacket->length - packetLength)) break;
 		const Byte *packetData = inputPacket->data + dataOffset;
 
 		// This is gross, but it's the only way I can find to reliably create a
