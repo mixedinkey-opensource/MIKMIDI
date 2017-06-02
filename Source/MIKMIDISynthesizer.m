@@ -184,6 +184,14 @@
 #endif
 }
 
+- (void)setVolume:(float)vol
+{
+    OSStatus err = AudioUnitSetParameter(self.mixerUnit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Output, 0, vol, 0);
+    if (err) {
+        NSLog(@"Set Mixer Volume:%f fail:%@", vol, @(err));
+    }
+}
+
 #pragma mark - Private
 
 - (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error
@@ -288,10 +296,34 @@
 		return NO;
 	}
 	
-	if ((err = AUGraphConnectNodeInput(graph, instrumentNode, 0, outputNode, 0))) {
-		NSLog(@"Unable to connect instrument to output: %@", @(err));
+    AUNode mixerNode;
+    AudioUnit mixerUnit;
+    AudioComponentDescription MixerUnitDescription;
+    MixerUnitDescription.componentType          = kAudioUnitType_Mixer;
+    MixerUnitDescription.componentSubType       = kAudioUnitSubType_MultiChannelMixer;
+    MixerUnitDescription.componentManufacturer  = kAudioUnitManufacturer_Apple;
+    MixerUnitDescription.componentFlags         = 0;
+    MixerUnitDescription.componentFlagsMask     = 0;
+    AUGraphAddNode (
+                                graph,
+                                &MixerUnitDescription,
+                                &mixerNode
+                                );
+    
+    if ((err = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit))) {
+        NSLog(@"Unable to get instrument AU unit: %@", @(err));
+        return NO;
+    }
+    
+	if ((err = AUGraphConnectNodeInput(graph, instrumentNode, 0, mixerNode, 0))) {
+		NSLog(@"Unable to connect instrument to mixerNode: %@", @(err));
 		return NO;
 	}
+    
+    if ((err = AUGraphConnectNodeInput(graph, mixerNode, 0, outputNode, 0))) {
+        NSLog(@"Unable to connect mixerNode to output: %@", @(err));
+        return NO;
+    }
 	
 	if ((err = AUGraphInitialize(graph))) {
 		NSLog(@"Unable to initialize AU graph: %@", @(err));
@@ -314,7 +346,8 @@
 	
 	self.graph = graph;
 	self.instrumentUnit = instrumentUnit;
-	
+    self.mixerUnit = mixerUnit;
+    
 	return YES;
 }
 
