@@ -271,7 +271,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 				// this is nonoptimal and needs better safeguards, but should work in most cases.
 				
 				// sysexData being atomic, we can safely add to it without locking
-				[self.sysexData appendBytes:packet->data length:packet->length];
+				[self.sysexData appendBytes:data length:length];
 				
 				// Check for Sysex End
 				if(data[length - 1] == kMIKMIDISysexEndDelimiter) {
