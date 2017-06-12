@@ -247,11 +247,9 @@
 		
 		self.sysexData = nil;
 		self.sysexStartTimeStamp = 0;
-		
-		return YES;
 	}
 	
-	return NO;
+	return YES;
 }
 
 #pragma mark Command Handling
