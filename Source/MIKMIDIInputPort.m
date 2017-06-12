@@ -227,18 +227,17 @@
 	const Byte *data = packet->data;
 	UInt16 length = packet->length;
 	
-	if(self.sysexData != nil) {
-		[self.sysexData appendBytes:data length:length];
-	}
-	else {
+	if(self.sysexData == nil) {
 		// Check for Sysex Begin
-		if(data[0] == kMIKMIDISysexBeginDelimiter) {
-			self.sysexData = [NSMutableData dataWithBytes:data length:length];
-			self.sysexStartTimeStamp = packet->timeStamp;
-		}
-		else {
+		if(data[0] != kMIKMIDISysexBeginDelimiter) {
 			return NO;
 		}
+		
+		self.sysexData = [NSMutableData dataWithBytes:data length:length];
+		self.sysexStartTimeStamp = packet->timeStamp;
+	}
+	else {
+		[self.sysexData appendBytes:data length:length];
 	}
 	
 	// Check for Sysex End
