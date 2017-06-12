@@ -39,6 +39,7 @@
 
 @property (atomic, strong) NSMutableData *sysexData;
 @property (assign) MIDITimeStamp sysexStartTimeStamp;
+@property (readonly) BOOL isCoalescingSysex;
 
 @end
 
@@ -218,6 +219,41 @@
 	return [coalescedCommands copy];
 }
 
+- (BOOL)coalesceSysexInMIDIPacket:(const MIDIPacket *)packet intoResultingCommand:(MIKMIDISystemExclusiveCommand **)command
+{
+	// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
+	// this is nonoptimal and needs better safeguards, but should work in most cases.
+	
+	const Byte *data = packet->data;
+	UInt16 length = packet->length;
+	
+	if(self.sysexData != nil) {
+		[self.sysexData appendBytes:data length:length];
+	}
+	else {
+		// Check for Sysex Begin
+		if(data[0] == kMIKMIDISysexBeginDelimiter) {
+			self.sysexData = [NSMutableData dataWithBytes:data length:length];
+			self.sysexStartTimeStamp = packet->timeStamp;
+		}
+		else {
+			return NO;
+		}
+	}
+	
+	// Check for Sysex End
+	if(data[length - 1] == kMIKMIDISysexEndDelimiter) {
+		*command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
+		
+		self.sysexData = nil;
+		self.sysexStartTimeStamp = 0;
+		
+		return YES;
+	}
+	
+	return NO;
+}
+
 #pragma mark Command Handling
 
 - (void)sendCommands:(NSArray *)commands toEventHandlersFromSource:(MIKMIDISourceEndpoint *)source
@@ -252,42 +288,23 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 				continue;
 			}
 			
-			const Byte *data = packet->data;
-			UInt16 length = packet->length;
+			// Try Sysex Coalescing
+			MIKMIDISystemExclusiveCommand *sysexCommand = nil;
 			
-			if(self.sysexData == nil) {
-				// Check for Sysex Begin
-				if(data[0] == kMIKMIDISysexBeginDelimiter) {
-					self.sysexData = [NSMutableData new];
-					self.sysexStartTimeStamp = packet->timeStamp;
-				}
-				else {
-					[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
+			if([self coalesceSysexInMIDIPacket:packet intoResultingCommand:&sysexCommand]) {
+				// Check if all sysex has been coalesced
+				if(sysexCommand != nil) {
+					[receivedCommands addObject:sysexCommand];
 				}
 			}
-			
-			if(self.sysexData != nil) {
-				// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
-				// this is nonoptimal and needs better safeguards, but should work in most cases.
-				
-				// sysexData being atomic, we can safely add to it without locking
-				[self.sysexData appendBytes:data length:length];
-				
-				// Check for Sysex End
-				if(data[length - 1] == kMIKMIDISysexEndDelimiter) {
-					MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
-					
-					self.sysexData = nil;
-					self.sysexStartTimeStamp = 0;
-					
-					[receivedCommands addObject:command];
-				}
+			else {
+				[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
 			}
 			
 			packet = MIDIPacketNext(packet);
 		}
 		
-		if (self.sysexData != nil || [receivedCommands count] == 0) {
+		if (self.isCoalescingSysex || [receivedCommands count] == 0) {
 			return;
 		}
 		
@@ -346,6 +363,11 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	MIKMIDI_GCD_RETAIN(commandsBufferQueue);
 	MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 	_bufferedCommandQueue = commandsBufferQueue;
+}
+
+- (BOOL)isCoalescingSysex
+{
+	return (self.sysexData != nil);
 }
 
 @end
