@@ -12,6 +12,7 @@
 #import "MIKMIDIPrivate.h"
 #import "MIKMIDISourceEndpoint.h"
 #import "MIKMIDICommand.h"
+#import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIUtilities.h"
 
@@ -35,6 +36,10 @@
 
 @property (nonatomic, strong) NSMutableArray *bufferedMSBCommands;
 @property (nonatomic) dispatch_queue_t bufferedCommandQueue;
+
+@property (atomic, strong) NSMutableData *sysexData;
+@property (assign) MIDITimeStamp sysexStartTimeStamp;
+@property (readonly) BOOL isReadingSysexData;
 
 @end
 
@@ -236,21 +241,60 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		MIKMIDISourceEndpoint *source = (__bridge MIKMIDISourceEndpoint *)srcConnRefCon;
 		
 		NSMutableArray *receivedCommands = [NSMutableArray array];
+		
+		// Get the first packet
 		MIDIPacket *packet = (MIDIPacket *)pktList->packet;
-		for (int i=0; i<pktList->numPackets; i++) {
-            if (packet->length > 0) {
-                NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
-                if (commands) [receivedCommands addObjectsFromArray:commands];
-            }
+		
+		for (int i = 0; i < pktList->numPackets; i++)
+		{
+			// Ignore empty packets
+			if (packet->length == 0) {
+				packet = MIDIPacketNext(packet);
+				continue;
+			}
+			
+			const Byte *data = packet->data;
+			UInt16 length = packet->length;
+			
+			if(self.isReadingSysexData == NO) {
+				// Check for Sysex Begin
+				if(data[0] == kMIKMIDISysexBeginDelimiter) {
+					self.sysexData = [NSMutableData dataWithBytes:data length:length];
+					self.sysexStartTimeStamp = packet->timeStamp;
+				}
+				else {
+					[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
+				}
+			}
+			else {
+				// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
+				// this is nonoptimal and needs better safeguards, but should work in most cases.
+				
+				// sysexData being atomic, we can safely add to it without locking
+				[self.sysexData appendBytes:packet->data length:packet->length];
+				
+				// Check for Sysex End
+				if(data[length - 1] == kMIKMIDISysexEndDelimiter) {
+					MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
+					
+					self.sysexData = nil;
+					self.sysexStartTimeStamp = 0;
+					
+					[receivedCommands addObject:command];
+				}
+			}
+			
 			packet = MIDIPacketNext(packet);
 		}
 		
-		if (![receivedCommands count]) return;
+		if (self.isReadingSysexData || [receivedCommands count] == 0) {
+			return;
+		}
 		
 		if (self.coalesces14BitControlChangeCommands) {
 			dispatch_sync(self.bufferedCommandQueue, ^{
 				if ([self.bufferedMSBCommands count]) {
-					[receivedCommands insertObject:[self.bufferedMSBCommands objectAtIndex:0] atIndex:0];
+					[receivedCommands insertObject:self.bufferedMSBCommands.firstObject atIndex:0];
 					[self.bufferedMSBCommands removeObjectAtIndex:0];
 				}
 			});
@@ -271,7 +315,9 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			}
 		}
 		
-		if (![receivedCommands count]) return;
+		if ([receivedCommands count] == 0) {
+			return;
+		}
 		
 		[self sendCommands:receivedCommands toEventHandlersFromSource:source];
 	}
@@ -300,6 +346,11 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	MIKMIDI_GCD_RETAIN(commandsBufferQueue);
 	MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 	_bufferedCommandQueue = commandsBufferQueue;
+}
+
+- (BOOL)isReadingSysexData
+{
+	return self.sysexData != nil;
 }
 
 @end

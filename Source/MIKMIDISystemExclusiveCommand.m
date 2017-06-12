@@ -75,6 +75,16 @@
     return self;
 }
 
+- (id)initWithRawData:(NSData *)data timeStamp:(MIDITimeStamp)timeStamp
+{
+	self = [super initWithMIDIPacket:NULL];
+	if (self) {
+		self.midiTimestamp = timeStamp;
+		self.internalData = data.mutableCopy;
+	}
+	return self;
+}
+
 - (UInt32)manufacturerID
 {
     if ([self.internalData length] < 2) return 0;
