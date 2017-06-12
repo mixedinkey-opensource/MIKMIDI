@@ -39,7 +39,6 @@
 
 @property (atomic, strong) NSMutableData *sysexData;
 @property (assign) MIDITimeStamp sysexStartTimeStamp;
-@property (readonly) BOOL isReadingSysexData;
 
 @end
 
@@ -256,17 +255,18 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			const Byte *data = packet->data;
 			UInt16 length = packet->length;
 			
-			if(self.isReadingSysexData == NO) {
+			if(self.sysexData == nil) {
 				// Check for Sysex Begin
 				if(data[0] == kMIKMIDISysexBeginDelimiter) {
-					self.sysexData = [NSMutableData dataWithBytes:data length:length];
+					self.sysexData = [NSMutableData new];
 					self.sysexStartTimeStamp = packet->timeStamp;
 				}
 				else {
 					[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
 				}
 			}
-			else {
+			
+			if(self.sysexData != nil) {
 				// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
 				// this is nonoptimal and needs better safeguards, but should work in most cases.
 				
@@ -287,7 +287,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			packet = MIDIPacketNext(packet);
 		}
 		
-		if (self.isReadingSysexData || [receivedCommands count] == 0) {
+		if (self.sysexData != nil || [receivedCommands count] == 0) {
 			return;
 		}
 		
@@ -346,11 +346,6 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	MIKMIDI_GCD_RETAIN(commandsBufferQueue);
 	MIKMIDI_GCD_RELEASE(_bufferedCommandQueue);
 	_bufferedCommandQueue = commandsBufferQueue;
-}
-
-- (BOOL)isReadingSysexData
-{
-	return self.sysexData != nil;
 }
 
 @end
