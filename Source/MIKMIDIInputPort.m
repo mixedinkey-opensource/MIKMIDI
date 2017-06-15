@@ -351,6 +351,12 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			// Create or extend time-out timer
 			if(!self.sysexTimeOutTimer) {
 				self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:self selector:@selector(sysexCoalescingTimedOut:) userInfo:@{@"MIKMIDISourceEndpoint":source} repeats:NO];
+				
+				// Run Timer
+				NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
+				NSRunLoopMode mode = currentRunLoop.currentMode ?: NSDefaultRunLoopMode;
+				
+				[currentRunLoop addTimer:self.sysexTimeOutTimer forMode:mode];
 			}
 			else {
 				self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];
