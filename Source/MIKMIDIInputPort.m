@@ -38,6 +38,7 @@
 @property (nonatomic) dispatch_queue_t bufferedCommandQueue;
 
 @property (atomic, strong) NSMutableData *sysexData;
+@property (atomic, strong) NSTimer *sysexTimeOutTimer;
 @property (assign) MIDITimeStamp sysexStartTimeStamp;
 @property (readonly) BOOL isCoalescingSysex;
 
@@ -64,6 +65,8 @@
 		
 		_bufferedCommandQueue = dispatch_queue_create("com.mixedinkey.MIKMIDI.MIKMIDIInputPort.bufferedCommandQueue", DISPATCH_QUEUE_SERIAL);
 		dispatch_async(self.bufferedCommandQueue, ^{ self.bufferedMSBCommands = [[NSMutableArray alloc] init]; });
+		
+		_sysexTimeOut = 1.0; // seconds
 	}
 	return self;
 }
@@ -219,13 +222,13 @@
 	return [coalescedCommands copy];
 }
 
-- (BOOL)coalesceSysexInMIDIPacket:(const MIDIPacket *)packet intoResultingCommand:(MIKMIDISystemExclusiveCommand **)command
+- (BOOL)coalesceSysexInMIDIPacket:(const MIDIPacket *)packet intoCommandsArray:(NSMutableArray **)commandsArray
 {
 	// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
 	// this is nonoptimal and needs better safeguards, but should work in most cases.
 	
 	const Byte *data = packet->data;
-	UInt16 length = packet->length;
+	UInt16 originalLength = packet->length;
 	
 	if(self.sysexData == nil) {
 		// Check for Sysex Begin
@@ -233,22 +236,76 @@
 			return NO;
 		}
 		
-		self.sysexData = [NSMutableData dataWithBytes:data length:length];
+		self.sysexData = [NSMutableData new];
 		self.sysexStartTimeStamp = packet->timeStamp;
 	}
-	else {
-		[self.sysexData appendBytes:data length:length];
-	}
 	
-	// Check for Sysex End
-	if(data[length - 1] == kMIKMIDISysexEndDelimiter) {
-		*command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
+	UInt16 length = originalLength;
+	Byte byte;
+	
+	while (length--) {
+		byte = *data++;
 		
-		self.sysexData = nil;
-		self.sysexStartTimeStamp = 0;
+		if(byte > 0x7F) {
+			// Check for Sysex End
+			BOOL isEndDelimiter = (byte == kMIKMIDISysexEndDelimiter);
+			
+			if(isEndDelimiter) {
+				[self.sysexData appendBytes:&byte length:1];
+				
+				MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
+				[*commandsArray addObject:command];
+			}
+			
+			// Clear Sysex Buffer & Timestamp
+			self.sysexData = nil;
+			self.sysexStartTimeStamp = 0;
+			
+			// Try to parse remaining data
+			if(isEndDelimiter && length > 0) {
+				MIDIPacket *remainingPacket = {0};
+				remainingPacket->timeStamp = packet->timeStamp;
+				remainingPacket->length = length;
+				
+				NSRange remainingRange = {originalLength - length, length};
+				[[NSData dataWithBytes:data length:originalLength] getBytes:remainingPacket->data range:remainingRange];
+				
+				if(![self coalesceSysexInMIDIPacket:remainingPacket intoCommandsArray:commandsArray]) {
+					[*commandsArray addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:remainingPacket]];
+				}
+			}
+			
+			// This returns NO for faulty bytes:
+			// packet will then be parsed for commands, sysex gathered until now will be ignored.
+			return isEndDelimiter;
+		}
+		else {
+			[self.sysexData appendBytes:&byte length:1];
+		}
 	}
 	
 	return YES;
+}
+
+- (void)sysexCoalescingTimedOut:(NSTimer *)timer
+{
+	MIKMIDISourceEndpoint *source = timer.userInfo[NSStringFromClass([MIKMIDISourceEndpoint class])];
+	
+	// Nullify Timer
+	self.sysexTimeOutTimer = nil;
+	
+	if(self.isCoalescingSysex == NO) {
+		return;
+	}
+
+	// Force-End Sysex
+	MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
+	
+	// Clear Sysex Buffer & Timestamp
+	self.sysexData = nil;
+	self.sysexStartTimeStamp = 0;
+	
+	[self sendCommands:@[command] toEventHandlersFromSource:source];
 }
 
 #pragma mark Command Handling
@@ -285,23 +342,31 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 				continue;
 			}
 			
-			// Try Sysex Coalescing
-			MIKMIDISystemExclusiveCommand *sysexCommand = nil;
-			
-			if([self coalesceSysexInMIDIPacket:packet intoResultingCommand:&sysexCommand]) {
-				// Check if all sysex has been coalesced
-				if(sysexCommand != nil) {
-					[receivedCommands addObject:sysexCommand];
-				}
-			}
-			else {
+			// Try Sysex Coalescing, otherwise parse MIDI commands
+			if(![self coalesceSysexInMIDIPacket:packet intoCommandsArray:&receivedCommands]) {
 				[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
 			}
 			
 			packet = MIDIPacketNext(packet);
 		}
 		
-		if (self.isCoalescingSysex || [receivedCommands count] == 0) {
+		if(self.isCoalescingSysex) {
+			// Create or extend time-out timer
+			if(!self.sysexTimeOutTimer) {
+				self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:self selector:@selector(sysexCoalescingTimedOut:) userInfo:@{@"MIKMIDISourceEndpoint":source} repeats:NO];
+			}
+			else {
+				self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];
+			}
+			return;
+		}
+		else {
+			// Clear Sysex Timer
+			[self.sysexTimeOutTimer invalidate];
+			self.sysexTimeOutTimer = nil;
+		}
+		
+		if ([receivedCommands count] == 0) {
 			return;
 		}
 		
