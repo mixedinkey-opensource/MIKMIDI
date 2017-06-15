@@ -223,10 +223,7 @@
 }
 
 - (BOOL)coalesceSysexInMIDIPacket:(const MIDIPacket *)packet intoCommandsArray:(NSMutableArray **)commandsArray
-{
-	// Warning: This code assumes sysex chunks end at packet end and have a valid EOT marker (0xF7)
-	// this is nonoptimal and needs better safeguards, but should work in most cases.
-	
+{	
 	const Byte *data = packet->data;
 	UInt16 originalLength = packet->length;
 	
