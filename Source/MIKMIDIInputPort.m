@@ -347,6 +347,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			packet = MIDIPacketNext(packet);
 		}
 		
+		// Safeguard against sysex time-out
 		if(self.isCoalescingSysex) {
 			// Create or extend time-out timer
 			if(!self.sysexTimeOutTimer) {
@@ -363,13 +364,13 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			}
 			return;
 		}
-		else {
-			// Clear Sysex Timer
-			[self.sysexTimeOutTimer invalidate];
-			self.sysexTimeOutTimer = nil;
-		}
 		
-		if ([receivedCommands count] == 0) {
+		// Clear Sysex Timer
+		[self.sysexTimeOutTimer invalidate];
+		self.sysexTimeOutTimer = nil;
+		
+		// Handle Commands
+		if(receivedCommands.count == 0) {
 			return;
 		}
 		
