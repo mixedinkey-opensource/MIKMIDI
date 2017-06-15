@@ -57,7 +57,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 		const Byte *packetData = inputPacket->data + dataOffset;
 		NSInteger commandType = (NSInteger) packetData[0];
 		NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
-        if (dataOffset > (inputPacket->length - standardLength)) break;
+		if (dataOffset > (inputPacket->length - standardLength)) break;
 
 		// This is gross, but it's the only way I can find to reliably create a
 		// single-message MIDIPacket.
