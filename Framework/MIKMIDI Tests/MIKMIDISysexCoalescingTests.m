@@ -61,6 +61,23 @@
 	
 	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data]);
 }
+
+- (void)testNonTerminatedSysexFollowedByCommand
+{
+	NSMutableArray <MIKMIDICommand*> *cmdArray = [NSMutableArray new];
+	
+	// Simulate non terminated sysex packet
+	NSRange rangeBeforeEOT = NSMakeRange(0, _validSysexData.length - 1);
+	MIDIPacket testPacket = [self packetWithData:[_validSysexData subdataWithRange:rangeBeforeEOT]];
+	
+	[_debugInputPort coalesceSysexFromMIDIPacket:&testPacket toCommandInArray:&cmdArray];
+	
+	// Simulate following note-on command
+	MIDIPacket noteOnPacket = [self packetWithData:[MIKMIDINoteOnCommand noteOnCommandWithNote:0 velocity:0 channel:0 timestamp:nil].data];
+	
+	XCTAssert([_debugInputPort coalesceSysexFromMIDIPacket:&noteOnPacket toCommandInArray:&cmdArray] == NO, @"Sysex coalescing should have failed because of an invalid start byte in noteOnPacket");
+	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data], @"Sysex coalescing should have ended because of an invalid start byte in noteOnPacket");
+}
 		
 #pragma mark - Helpers
 
