@@ -31,7 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL coalesces14BitControlChangeCommands; // Default is YES
 
-
 /**
  * Time before sysex transmissions are considered over.
  *

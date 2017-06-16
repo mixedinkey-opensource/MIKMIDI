@@ -222,87 +222,70 @@
 	return [coalescedCommands copy];
 }
 
-- (BOOL)coalesceSysexInMIDIPacket:(const MIDIPacket *)packet intoCommandsArray:(NSMutableArray **)commandsArray
+- (BOOL)coalesceSysexFromMIDIPacket:(const MIDIPacket *)packet toCommandInArray:(NSMutableArray **)commandsArray
 {	
 	const Byte *data = packet->data;
-	UInt16 originalLength = packet->length;
+	
+	Byte firstByte = data[0];
 	
 	if(self.sysexData == nil) {
 		// Check for Sysex Begin
-		if(data[0] != kMIKMIDISysexBeginDelimiter) {
+		if(firstByte != kMIKMIDISysexBeginDelimiter) {
 			return NO;
 		}
 		
 		self.sysexData = [NSMutableData new];
 		self.sysexStartTimeStamp = packet->timeStamp;
 	}
-	
-	UInt16 length = originalLength;
-	Byte byte;
-	
-	while (length--) {
-		byte = *data++;
-		
-		if(byte > 0x7F) {
-			// Check for Sysex End
-			BOOL isEndDelimiter = (byte == kMIKMIDISysexEndDelimiter);
-			
-			if(isEndDelimiter) {
-				[self.sysexData appendBytes:&byte length:1];
-				
-				MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
-				[*commandsArray addObject:command];
-			}
-			
-			// Clear Sysex Buffer & Timestamp
-			self.sysexData = nil;
-			self.sysexStartTimeStamp = 0;
-			
-			// Try to parse remaining data
-			if(isEndDelimiter && length > 0) {
-				MIDIPacket *remainingPacket = {0};
-				remainingPacket->timeStamp = packet->timeStamp;
-				remainingPacket->length = length;
-				
-				NSRange remainingRange = {originalLength - length, length};
-				[[NSData dataWithBytes:data length:originalLength] getBytes:remainingPacket->data range:remainingRange];
-				
-				if(![self coalesceSysexInMIDIPacket:remainingPacket intoCommandsArray:commandsArray]) {
-					[*commandsArray addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:remainingPacket]];
-				}
-			}
-			
-			// This returns NO for faulty bytes:
-			// packet will then be parsed for commands, sysex gathered until now will be ignored.
-			return isEndDelimiter;
-		}
-		else {
-			[self.sysexData appendBytes:&byte length:1];
-		}
+	else if(firstByte > 0x7F && firstByte != kMIKMIDISysexEndDelimiter) {
+		// Invalid Start Byte: send sysex buffered until now, even if invalid
+		[*commandsArray addObject:[self commandByCoalescingSysexData]];
+		// Parse current packet normally
+		return NO;
 	}
 	
+	for (UInt16 idx = 0; idx < packet->length; idx++)
+	{
+		Byte byte = data[idx];
+		
+		// Append byte
+		[self.sysexData appendBytes:&byte length:1];
+		
+		// Check for Sysex End
+		if(byte == kMIKMIDISysexEndDelimiter) {
+			[*commandsArray addObject:[self commandByCoalescingSysexData]];
+			break;
+		}
+	}
+
 	return YES;
 }
 
-- (void)sysexCoalescingTimedOut:(NSTimer *)timer
+- (MIKMIDISystemExclusiveCommand *)commandByCoalescingSysexData
 {
-	MIKMIDISourceEndpoint *source = timer.userInfo[NSStringFromClass([MIKMIDISourceEndpoint class])];
+	NSParameterAssert(self.sysexData);
 	
-	// Nullify Timer
-	self.sysexTimeOutTimer = nil;
-	
-	if(self.isCoalescingSysex == NO) {
-		return;
-	}
-
-	// Force-End Sysex
 	MIKMIDISystemExclusiveCommand *command = [[MIKMIDISystemExclusiveCommand alloc] initWithRawData:self.sysexData timeStamp:self.sysexStartTimeStamp];
 	
 	// Clear Sysex Buffer & Timestamp
 	self.sysexData = nil;
 	self.sysexStartTimeStamp = 0;
 	
-	[self sendCommands:@[command] toEventHandlersFromSource:source];
+	// Clear Sysex Timer
+	[self.sysexTimeOutTimer invalidate];
+	self.sysexTimeOutTimer = nil;
+	
+	return command;
+}
+
+- (void)sysexTransmissionTimedOut:(NSTimer *)timer
+{
+	MIKMIDISourceEndpoint *source = timer.userInfo[NSStringFromClass([MIKMIDISourceEndpoint class])];
+	
+	// Force-End Sysex, if necessary
+	if(self.isCoalescingSysex) {
+		[self sendCommands:@[[self commandByCoalescingSysexData]] toEventHandlersFromSource:source];
+	}
 }
 
 #pragma mark Command Handling
@@ -340,7 +323,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			}
 			
 			// Try Sysex Coalescing, otherwise parse MIDI commands
-			if(![self coalesceSysexInMIDIPacket:packet intoCommandsArray:&receivedCommands]) {
+			if(![self coalesceSysexFromMIDIPacket:packet toCommandInArray:&receivedCommands]) {
 				[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
 			}
 			
@@ -351,7 +334,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		if(self.isCoalescingSysex) {
 			// Create or extend time-out timer
 			if(!self.sysexTimeOutTimer) {
-				self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:self selector:@selector(sysexCoalescingTimedOut:) userInfo:@{@"MIKMIDISourceEndpoint":source} repeats:NO];
+				self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:self selector:@selector(sysexTransmissionTimedOut:) userInfo:@{@"MIKMIDISourceEndpoint":source} repeats:NO];
 				
 				// Run Timer
 				NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
