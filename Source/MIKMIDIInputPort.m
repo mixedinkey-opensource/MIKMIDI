@@ -278,16 +278,6 @@
 	return command;
 }
 
-- (void)sysexTransmissionTimedOut:(NSTimer *)timer
-{
-	MIKMIDISourceEndpoint *source = timer.userInfo[NSStringFromClass([MIKMIDISourceEndpoint class])];
-	
-	// Force-End Sysex, if necessary
-	if(self.isCoalescingSysex) {
-		[self sendCommands:@[[self commandByCoalescingSysexData]] toEventHandlersFromSource:source];
-	}
-}
-
 #pragma mark Command Handling
 
 - (void)sendCommands:(NSArray *)commands toEventHandlersFromSource:(MIKMIDISourceEndpoint *)source
@@ -309,84 +299,102 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		MIKMIDIInputPort *self = (__bridge MIKMIDIInputPort *)readProcRefCon;
 		MIKMIDISourceEndpoint *source = (__bridge MIKMIDISourceEndpoint *)srcConnRefCon;
 		
-		NSMutableArray *receivedCommands = [NSMutableArray array];
-		
-		// Get the first packet
-		MIDIPacket *packet = (MIDIPacket *)pktList->packet;
-		
-		for (int i = 0; i < pktList->numPackets; i++)
-		{
-			// Ignore empty packets
-			if (packet->length == 0) {
-				packet = MIDIPacketNext(packet);
-				continue;
-			}
-			
-			// Try Sysex Coalescing, otherwise parse MIDI commands
-			if(![self coalesceSysexFromMIDIPacket:packet toCommandInArray:&receivedCommands]) {
-				[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
-			}
-			
-			packet = MIDIPacketNext(packet);
-		}
-		
-		// Safeguard against sysex time-out
-		if(self.isCoalescingSysex) {
-			// Create or extend time-out timer
-			if(!self.sysexTimeOutTimer) {
-				self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:self selector:@selector(sysexTransmissionTimedOut:) userInfo:@{@"MIKMIDISourceEndpoint":source} repeats:NO];
-				
-				// Run Timer
-				NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
-				NSRunLoopMode mode = currentRunLoop.currentMode ?: NSDefaultRunLoopMode;
-				
-				[currentRunLoop addTimer:self.sysexTimeOutTimer forMode:mode];
-			}
-			else {
-				self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];
-			}
-			return;
-		}
-		
-		// Clear Sysex Timer
-		[self.sysexTimeOutTimer invalidate];
-		self.sysexTimeOutTimer = nil;
-		
-		// Handle Commands
-		if(receivedCommands.count == 0) {
-			return;
-		}
-		
-		if (self.coalesces14BitControlChangeCommands) {
-			dispatch_sync(self.bufferedCommandQueue, ^{
-				if ([self.bufferedMSBCommands count]) {
-					[receivedCommands insertObject:self.bufferedMSBCommands.firstObject atIndex:0];
-					[self.bufferedMSBCommands removeObjectAtIndex:0];
-				}
-			});
-			receivedCommands = [[self commandsByCoalescingCommands:receivedCommands] mutableCopy];
-			MIKMIDICommand *finalCommand = [receivedCommands lastObject];
-			if ([self commandIsPossibleMSBOf14BitCommand:finalCommand]) {
-				// Hold back and wait for a possible LSB command to come in.
-				dispatch_sync(self.bufferedCommandQueue, ^{ [self.bufferedMSBCommands addObject:finalCommand]; });
-				[receivedCommands removeLastObject];
-				
-				// Wait 4ms, then send the buffered command if it hasn't been coalesced (and therefore set to nil)
-				dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_MSEC));
-				dispatch_after(popTime, self.bufferedCommandQueue, ^(void){
-					if (![self.bufferedMSBCommands containsObject:finalCommand]) return;
-					[self.bufferedMSBCommands removeObject:finalCommand];
-					[self sendCommands:@[finalCommand] toEventHandlersFromSource:source];
-				});
-			}
-		}
-		
-		if ([receivedCommands count] == 0) {
-			return;
-		}
-		
-		[self sendCommands:receivedCommands toEventHandlersFromSource:source];
+		[self interpretPacketList:pktList handleResultingCommands:^(NSArray <MIKMIDICommand*> *receivedCommands) {
+			[self sendCommands:receivedCommands toEventHandlersFromSource:source];
+		}];
 	}
+}
+
+- (void)interpretPacketList:(const MIDIPacketList *)pktList handleResultingCommands:(void (^_Nonnull)(NSArray <MIKMIDICommand*> *receivedCommands))completionBlock
+{
+	NSMutableArray *receivedCommands = [NSMutableArray array];
+	
+	// Get the first packet
+	MIDIPacket *packet = (MIDIPacket *)pktList->packet;
+	
+	for (int i = 0; i < pktList->numPackets; i++)
+	{
+		// Ignore empty packets
+		if (packet->length == 0) {
+			packet = MIDIPacketNext(packet);
+			continue;
+		}
+		
+		// Try Sysex Coalescing, otherwise parse MIDI commands
+		if(![self coalesceSysexFromMIDIPacket:packet toCommandInArray:&receivedCommands]) {
+			[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
+		}
+		
+		packet = MIDIPacketNext(packet);
+	}
+	
+	// Safeguard against sysex time-out
+	if(self.isCoalescingSysex) {
+		// Create or extend time-out timer
+		if(!self.sysexTimeOutTimer) {
+			// Weakify Self
+			__weak typeof(self) weakSelf = self;
+			
+			self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:[NSBlockOperation blockOperationWithBlock:^{
+				// Strongify Self
+				__strong typeof(self) self = weakSelf;
+				
+				// Force-End Sysex, if necessary
+				if(self.isCoalescingSysex) {
+					completionBlock(@[[self commandByCoalescingSysexData]]);
+				}
+			}] selector:@selector(main) userInfo:nil repeats:NO];
+			
+			// Run Timer
+			NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
+			NSRunLoopMode mode = currentRunLoop.currentMode ?: NSDefaultRunLoopMode;
+			
+			[currentRunLoop addTimer:self.sysexTimeOutTimer forMode:mode];
+		}
+		else {
+			self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];
+		}
+		return;
+	}
+	
+	// Clear Sysex Timer
+	[self.sysexTimeOutTimer invalidate];
+	self.sysexTimeOutTimer = nil;
+	
+	// Handle Commands
+	if(receivedCommands.count == 0) {
+		return;
+	}
+	
+	if (self.coalesces14BitControlChangeCommands) {
+		dispatch_sync(self.bufferedCommandQueue, ^{
+			if ([self.bufferedMSBCommands count]) {
+				[receivedCommands insertObject:self.bufferedMSBCommands.firstObject atIndex:0];
+				[self.bufferedMSBCommands removeObjectAtIndex:0];
+			}
+		});
+		receivedCommands = [[self commandsByCoalescingCommands:receivedCommands] mutableCopy];
+		MIKMIDICommand *finalCommand = [receivedCommands lastObject];
+		if ([self commandIsPossibleMSBOf14BitCommand:finalCommand]) {
+			// Hold back and wait for a possible LSB command to come in.
+			dispatch_sync(self.bufferedCommandQueue, ^{ [self.bufferedMSBCommands addObject:finalCommand]; });
+			[receivedCommands removeLastObject];
+			
+			// Wait 4ms, then send the buffered command if it hasn't been coalesced (and therefore set to nil)
+			dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_MSEC));
+			dispatch_after(popTime, self.bufferedCommandQueue, ^(void){
+				if (![self.bufferedMSBCommands containsObject:finalCommand]) return;
+				[self.bufferedMSBCommands removeObject:finalCommand];
+				completionBlock(@[finalCommand]);
+			});
+		}
+	}
+	
+	if ([receivedCommands count] == 0) {
+		return;
+	}
+	
+	completionBlock(@[receivedCommands]);
 }
 
 #pragma mark - Properties
