@@ -46,7 +46,7 @@
 	
 	[_debugInputPort coalesceSysexFromMIDIPacket:&testPacket toCommandInArray:&cmdArray];
 	
-	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data]);
+	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data], @"Single-packet sysex message failed coalescing properly");
 }
 		
 - (void)testMultiplePacketsMessage
@@ -59,7 +59,7 @@
 		[_debugInputPort coalesceSysexFromMIDIPacket:&chunk toCommandInArray:&cmdArray];
 	}
 	
-	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data]);
+	XCTAssert([_validSysexData isEqualToData:cmdArray.firstObject.data], @"Chunked sysex message failed coalescing properly");
 }
 
 - (void)testNonTerminatedSysexFollowedByCommand
