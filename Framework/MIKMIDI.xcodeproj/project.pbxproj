@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6609EF0C1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */; };
 		8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DA1A262FE100E0CC9F /* MIKMIDISequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833B73DB1A262FE100E0CC9F /* MIKMIDISequencer.m in Sources */ = {isa = PBXBuildFile; fileRef = 833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */; };
@@ -315,6 +316,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISysexCoalescingTests.m; sourceTree = "<group>"; };
 		8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDICommandScheduler.h; sourceTree = "<group>"; };
 		833B73D81A262FE100E0CC9F /* MIKMIDISequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDISequencer.h; sourceTree = "<group>"; };
 		833B73D91A262FE100E0CC9F /* MIKMIDISequencer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequencer.m; sourceTree = "<group>"; };
@@ -537,6 +539,7 @@
 			isa = PBXGroup;
 			children = (
 				9D4DF13E1AAB57430065F004 /* MIKMIDI_Tests.m */,
+				6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */,
 				9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */,
 				9D4DF14C1AAB57800065F004 /* MIKMIDISequenceTests.m */,
 				9D4DF1531AAB60490065F004 /* MIKMIDITrackTests.m */,
@@ -1169,6 +1172,7 @@
 				9D1D9C251BF542BB001377F7 /* MIKMIDICommandTests.m in Sources */,
 				9DCDDB5A1AB3514100F8347E /* MIKMIDISequencerTests.m in Sources */,
 				9D0225311CC92ECF0090EAB4 /* MIKMIDIMetaEventTests.m in Sources */,
+				6609EF0C1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m in Sources */,
 				9D4DF13F1AAB57430065F004 /* MIKMIDI_Tests.m in Sources */,
 				9D2ED25F1AFBD062000325CC /* MIKMIDIResponderChainTests.m in Sources */,
 				9D4DF14D1AAB57800065F004 /* MIKMIDISequenceTests.m in Sources */,
