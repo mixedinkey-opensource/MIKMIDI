@@ -394,7 +394,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		return;
 	}
 	
-	completionBlock(@[receivedCommands]);
+	completionBlock(receivedCommands);
 }
 
 #pragma mark - Properties
