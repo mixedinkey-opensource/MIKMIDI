@@ -24,10 +24,8 @@ NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef prop
 		return nil;
 	}
 
-	NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];
-	NSString *string = [(__bridge NSString *)result stringByTrimmingCharactersInSet:controlCharacters];
-	CFRelease(result);
-	return string;
+  NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];
+	return [CFBridgingRelease(result) stringByTrimmingCharactersInSet:controlCharacters];
 }
 
 BOOL MIKSetStringPropertyOnMIDIObject(MIDIObjectRef object, CFStringRef propertyID, NSString *string, NSError *__autoreleasing*error)
