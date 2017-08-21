@@ -23,8 +23,8 @@ NSString *MIKStringPropertyFromMIDIObject(MIDIObjectRef object, CFStringRef prop
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return nil;
 	}
-	
-	NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];
+
+  NSCharacterSet *controlCharacters = [NSCharacterSet controlCharacterSet];
 	return [CFBridgingRelease(result) stringByTrimmingCharactersInSet:controlCharacters];
 }
 
