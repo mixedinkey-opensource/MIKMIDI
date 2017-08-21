@@ -13,6 +13,7 @@
 #define kMIKMIDISysexRealtimeManufacturerID 0x7F
 
 #define kMIKMIDISysexChannelDisregard 0x7F
+#define kMIKMIDISysexBeginDelimiter 0xF0
 #define kMIKMIDISysexEndDelimiter 0xF7
 
 NS_ASSUME_NONNULL_BEGIN
@@ -36,6 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return An identity request command object.
  */
 + (instancetype)identityRequestCommand;
+
+/**
+ * Initializes the command with raw sysex data and timestamp.
+ *
+ * @param data Assumed to be valid with begin+end delimiters.
+ * @param timeStamp Time at which the first sysex byte was received.
+ */
+- (id)initWithRawData:(NSData *)data timeStamp:(MIDITimeStamp)timeStamp;
 
 /**
  *  The manufacturer ID for the command. This is used by devices to determine
