@@ -43,10 +43,13 @@ NS_ASSUME_NONNULL_BEGIN
  *  Manufacturer IDs are assigned by the MIDI Manufacturer's Association, and
  *  a list can be found here: http://www.midi.org/techspecs/manid.php
  *
+ *  The default is 0x7E (kMIKMIDISysexNonRealtimeManufacturerID).
+ *
  *  The manufacturer ID can be either 1 byte or 3 bytes.
  *
  *  Values 0x7E (kMIKMIDISysexNonRealtimeManufacturerID) and 0x7F (kMIKMIDISysexRealtimeManufacturerID)
- *  mean that the message is a universal exclusive message.
+ *  mean that the message is a universal (non-manufacturer specific)
+ *  system exclusive message.
  */
 @property (nonatomic, readonly) UInt32 manufacturerID;
 
