@@ -106,11 +106,14 @@
 
 - (void)testMultipleCommandTypesInOnePacket
 {
-	NSArray *commands = @[[MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil],
-						  [MIKMIDIControlChangeCommand controlChangeCommandWithControllerNumber:27 value:63]];
-	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(0, commands);
+	MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil];
+	MIKMutableMIDIControlChangeCommand *cc = [MIKMutableMIDIControlChangeCommand controlChangeCommandWithControllerNumber:27 value:63];
+	cc.midiTimestamp = noteOn.midiTimestamp; // Messages in a MIDIPacket all have the same timestamp.
+	NSArray *commands = @[noteOn, cc];
+	
+	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(cc.midiTimestamp, commands);
 	NSArray *parsedCommands = [MIKMIDICommand commandsWithMIDIPacket:packet];
-	XCTAssertEqual(commands, parsedCommands, @"Parsing multiple commands from MIDI packet failed to produce original commands.");
+	XCTAssertEqualObjects(commands, parsedCommands, @"Parsing multiple commands from MIDI packet failed to produce original commands.");
 	
 	MIKMIDIPacketFree(packet);
 }
