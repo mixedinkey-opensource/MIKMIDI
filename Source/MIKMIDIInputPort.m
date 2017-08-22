@@ -228,31 +228,29 @@
 	
 	Byte firstByte = data[0];
 	
-	if(self.sysexData == nil) {
+	if (self.sysexData == nil) {
 		// Check for Sysex Begin
-		if(firstByte != kMIKMIDISysexBeginDelimiter) {
+		if (firstByte != kMIKMIDISysexBeginDelimiter) {
 			return NO;
 		}
 		
 		self.sysexData = [NSMutableData new];
 		self.sysexStartTimeStamp = packet->timeStamp;
-	}
-	else if(firstByte > 0x7F && firstByte != kMIKMIDISysexEndDelimiter) {
+	} else if (firstByte > 0x7F && firstByte != kMIKMIDISysexEndDelimiter) {
 		// Invalid Start Byte: send sysex buffered until now, even if invalid
 		[*commandsArray addObject:[self commandByCoalescingSysexData]];
 		// Parse current packet normally
 		return NO;
 	}
 	
-	for (UInt16 idx = 0; idx < packet->length; idx++)
-	{
+	for (UInt16 idx = 0; idx < packet->length; idx++) {
 		Byte byte = data[idx];
 		
 		// Append byte
 		[self.sysexData appendBytes:&byte length:1];
 		
 		// Check for Sysex End
-		if(byte == kMIKMIDISysexEndDelimiter) {
+		if (byte == kMIKMIDISysexEndDelimiter) {
 			[*commandsArray addObject:[self commandByCoalescingSysexData]];
 			break;
 		}
@@ -321,7 +319,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		}
 		
 		// Try Sysex Coalescing, otherwise parse MIDI commands
-		if(![self coalesceSysexFromMIDIPacket:packet toCommandInArray:&receivedCommands]) {
+		if (![self coalesceSysexFromMIDIPacket:packet toCommandInArray:&receivedCommands]) {
 			[receivedCommands addObjectsFromArray:[MIKMIDICommand commandsWithMIDIPacket:packet]];
 		}
 		
@@ -329,9 +327,9 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	}
 	
 	// Safeguard against sysex time-out
-	if(self.isCoalescingSysex) {
+	if (self.isCoalescingSysex) {
 		// Create or extend time-out timer
-		if(!self.sysexTimeOutTimer) {
+		if (!self.sysexTimeOutTimer) {
 			// Weakify Self
 			__weak typeof(self) weakSelf = self;
 			
@@ -340,7 +338,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 				__strong typeof(self) self = weakSelf;
 				
 				// Force-End Sysex, if necessary
-				if(self.isCoalescingSysex) {
+				if (self.isCoalescingSysex) {
 					completionBlock(@[[self commandByCoalescingSysexData]]);
 				}
 			}] selector:@selector(main) userInfo:nil repeats:NO];
@@ -350,8 +348,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 			NSRunLoopMode mode = currentRunLoop.currentMode ?: NSDefaultRunLoopMode;
 			
 			[currentRunLoop addTimer:self.sysexTimeOutTimer forMode:mode];
-		}
-		else {
+		} else {
 			self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];
 		}
 		return;
@@ -362,7 +359,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 	self.sysexTimeOutTimer = nil;
 	
 	// Handle Commands
-	if(receivedCommands.count == 0) {
+	if (receivedCommands.count == 0) {
 		return;
 	}
 	
