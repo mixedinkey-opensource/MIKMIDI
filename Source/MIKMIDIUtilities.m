@@ -177,6 +177,26 @@ MIDIPacket MIKMIDIPacketCreate(MIDITimeStamp timeStamp, UInt16 length, MIKArrayO
 	return result;
 }
 
+MIDIPacket *MIKMIDIPacketCreateFromCommands(MIDITimeStamp timeStamp, MIKArrayOf(MIKMIDICommand *) *commands)
+{
+	NSMutableData *allPacketData = [NSMutableData data];
+	for (MIKMIDICommand *command in commands) {
+		[allPacketData appendData:command.data];
+	}
+
+	MIDIPacket *result = malloc(sizeof(MIDIPacket) + allPacketData.length);
+	result->timeStamp = timeStamp;
+	result->length = allPacketData.length;
+	[allPacketData getBytes:result->data length:allPacketData.length];
+	
+	return result;
+}
+
+void MIKMIDIPacketFree(MIDIPacket packet)
+{
+	free(packet.data);
+}
+
 #pragma mark - Note Utilities
 
 BOOL MIKMIDINoteIsBlackKey(NSInteger noteNumber)
