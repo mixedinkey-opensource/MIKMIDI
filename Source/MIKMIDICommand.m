@@ -140,6 +140,20 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 	return [NSString stringWithFormat:@"%@ time: %@ command: %lu %@\n\tdata: %@", [super description], timestamp, (unsigned long)self.commandType, additionalDescription, self.data];
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if (![object isKindOfClass:[MIKMIDICommand class]]) { return NO; }
+	return [self isEqualToCommand:(MIKMIDICommand *)object];
+}
+
+- (BOOL)isEqualToCommand:(MIKMIDICommand *)command
+{
+	if (self.commandType != command.commandType) { return NO; }
+	if (self.midiTimestamp != command.midiTimestamp) { return NO; }
+	if (![self.data isEqual:command.data]) { return NO; }
+	return YES;
+}
+
 #pragma mark - Private
 
 + (Class)subclassForCommandType:(MIKMIDICommandType)commandType
