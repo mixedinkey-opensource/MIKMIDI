@@ -104,4 +104,15 @@
 	XCTAssertEqual(command.manufacturerID, 0x002076, @"Setting a 3-byte manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
 }
 
+- (void)testMultipleCommandTypesInOnePacket
+{
+	NSArray *commands = @[[MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil],
+						  [MIKMIDIControlChangeCommand controlChangeCommandWithControllerNumber:27 value:63]];
+	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(0, commands);
+	NSArray *parsedCommands = [MIKMIDICommand commandsWithMIDIPacket:packet];
+	XCTAssertEqual(commands, parsedCommands, @"Parsing multiple commands from MIDI packet failed to produce original commands.");
+	
+	MIKMIDIPacketFree(packet);
+}
+
 @end

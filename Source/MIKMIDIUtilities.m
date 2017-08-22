@@ -192,9 +192,9 @@ MIDIPacket *MIKMIDIPacketCreateFromCommands(MIDITimeStamp timeStamp, MIKArrayOf(
 	return result;
 }
 
-void MIKMIDIPacketFree(MIDIPacket packet)
+void MIKMIDIPacketFree(MIDIPacket *packet)
 {
-	free(packet.data);
+	free(packet);
 }
 
 #pragma mark - Note Utilities
