@@ -8,27 +8,6 @@
 
 import UIKit
 
-extension UIColor {
-	func colorByInterpolatingWith(otherColor: UIColor, amount: CGFloat) -> UIColor {
-		let clampedAmount = min(max(amount, 0.0), 1.0)
-		
-		guard let startComponent = self.cgColor.components,
-			let endComponent = otherColor.cgColor.components else {
-				return self
-		}
-		
-		let startAlpha = self.cgColor.alpha
-		let endAlpha = otherColor.cgColor.alpha
-		
-		let r = startComponent[0] + (endComponent[0] - startComponent[0]) * clampedAmount
-		let g = startComponent[1] + (endComponent[1] - startComponent[1]) * clampedAmount
-		let b = startComponent[2] + (endComponent[2] - startComponent[2]) * clampedAmount
-		let a = startAlpha + (endAlpha - startAlpha) * clampedAmount
-		
-		return UIColor(red: r, green: g, blue: b, alpha: a)
-	}
-}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
