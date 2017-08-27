@@ -18,7 +18,7 @@ class ViewController: UIViewController {
             do {
                 let sequence = try MIKMIDISequence(fileAt: sequenceURL)
                 sequenceView.sequence = sequence
-                configureSequencer(sequence: sequence)
+                configureSequencer(sequence)
                 playheadTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
                     self?.sequenceView.playheadTimestamp = self?.sequencer.currentTimeStamp
                 }
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         }
     }
     
-    private func configureSequencer(sequence: MIKMIDISequence) {
+    fileprivate func configureSequencer(_ sequence: MIKMIDISequence) {
         sequencer.sequence = sequence
         if let soundfontURL = Bundle.main.url(forResource: "piano", withExtension: "sf2") {
             for track in sequence.tracks {
@@ -39,15 +39,15 @@ class ViewController: UIViewController {
         }
     }
     
-    private var sequenceView: MIDISequenceView {
+    fileprivate var sequenceView: MIDISequenceView {
         get {
             return self.view as! MIDISequenceView
         }
     }
     
-    private let sequencer = MIKMIDISequencer()
+    fileprivate let sequencer = MIKMIDISequencer()
     
-    private var playheadTimer: Timer? {
+    fileprivate var playheadTimer: Timer? {
         willSet {
             playheadTimer?.invalidate()
         }

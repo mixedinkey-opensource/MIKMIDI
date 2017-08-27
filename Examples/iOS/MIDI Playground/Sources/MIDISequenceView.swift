@@ -56,7 +56,7 @@ extension UIColor {
     
     // MARK: Drawing
     
-    private func draw(note: MIKMIDINoteEvent, dirtyRect: CGRect? = nil) {
+    fileprivate func draw(note: MIKMIDINoteEvent, dirtyRect: CGRect? = nil) {
         let dirtyRect = dirtyRect ?? bounds
         
         let yPosition = (self.bounds).maxY - CGFloat(note.note) * self.noteHeightInPixels
@@ -71,7 +71,7 @@ extension UIColor {
         path.fill()
     }
     
-    private func drawNotes(dirtyRect: CGRect? = nil) {
+    fileprivate func drawNotes(_ dirtyRect: CGRect? = nil) {
         let dirtyRect = dirtyRect ?? bounds
         
         self.noteHeightInPixels = self.bounds.height / 127.0
@@ -87,7 +87,7 @@ extension UIColor {
         }
     }
     
-    private func drawScale() {
+    fileprivate func drawScale() {
         for note: UInt8 in 0...127 {
             let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
             let font = UIFont(name: "Helvetica", size: 12.0)!
@@ -100,7 +100,7 @@ extension UIColor {
         UIBezierPath(rect: CGRect(x: 45.0, y: 0.0, width: 1.0, height: self.bounds.height)).fill()
     }
     
-    private func drawGridlines() {
+    fileprivate func drawGridlines() {
         let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
             return max(currMax, track.length);
         }
@@ -110,7 +110,7 @@ extension UIColor {
         }
     }
     
-    private func drawPlayhead(dirtyRect: CGRect? = nil) {
+    fileprivate func drawPlayhead(_ dirtyRect: CGRect? = nil) {
         guard let timestamp = playheadTimestamp else { return }
         let dirtyRect = dirtyRect ?? bounds
         
@@ -134,14 +134,14 @@ extension UIColor {
         // Draw gridlines
         drawGridlines()
         // Draw notes
-        drawNotes(dirtyRect: rect)
+        drawNotes(rect)
         // Draw playhead
-        drawPlayhead(dirtyRect: rect)
+        drawPlayhead(rect)
     }
     
     // MARK: Utilities
     
-    private func colorForNote(_ note: MIKMIDINoteEvent) -> UIColor {
+    fileprivate func colorForNote(_ note: MIKMIDINoteEvent) -> UIColor {
         let colors = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.cyan, UIColor.blue]
         let noteIndex = Int(note.note) % 12
         let floatIndex = Double(noteIndex) / (Double(12) / Double(colors.count-1))
@@ -151,7 +151,7 @@ extension UIColor {
         return leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
     }
     
-    private func colorForTrackAtIndex(_ index: Int) -> UIColor {
+    fileprivate func colorForTrackAtIndex(_ index: Int) -> UIColor {
         let colors = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.cyan, UIColor.blue]
         if let numTracks = self.noteTracks?.count {
             let floatIndex = Double(index) / (Double(numTracks) / Double(colors.count-1))
@@ -164,7 +164,7 @@ extension UIColor {
         }
     }
     
-    private func rectFor(playheadAt timestamp: MusicTimeStamp) -> CGRect {
+    fileprivate func rectFor(playheadAt timestamp: MusicTimeStamp) -> CGRect {
         let position = self.bounds.minX + 60.0 + CGFloat(timestamp) * self.pixelsPerTick
         return CGRect(x: position, y: 0, width: 2.0, height: self.bounds.height)
     }
@@ -196,7 +196,7 @@ extension UIColor {
         }
     }
     
-    private func calculatePixelsPerTick () {
+    fileprivate func calculatePixelsPerTick () {
         guard let noteTracks = noteTracks else {
             pixelsPerTick = 10.0
             return

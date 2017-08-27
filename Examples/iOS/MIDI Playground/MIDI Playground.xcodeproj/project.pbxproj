@@ -183,7 +183,7 @@
 					9DA164DE1A7B1F5F0056AFB6 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = T4A2E2DEM7;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0830;
 					};
 					9DA164F31A7B1F5F0056AFB6 = {
 						CreatedOnToolsVersion = 6.1.1;
