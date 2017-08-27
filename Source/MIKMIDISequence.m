@@ -26,9 +26,6 @@ void * MIKMIDISequenceKVOContext = &MIKMIDISequenceKVOContext;
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 @interface MIKMIDISequence ()
-{
-	MIKMIDISequencer *_sequencer;
-}
 
 @property (nonatomic) MusicSequence musicSequence;
 @property (nonatomic, strong) MIKMIDITrack *tempoTrack;
@@ -501,8 +498,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return (__bridge_transfer NSData *)data;
 }
 
-- (MIKMIDISequencer *)sequencer { return _sequencer; }
-
 #pragma mark - Deprecated
 
 + (instancetype)sequenceWithData:(NSData *)data
@@ -559,12 +554,5 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	signature->denominator = result.denominator;
 	return YES;
 }
-
-@end
-
-#pragma mark -
-@implementation MIKMIDISequence (MIKMIDIPrivate)
-
-- (void)setSequencer:(MIKMIDISequencer *)sequencer { _sequencer = sequencer; }
 
 @end
