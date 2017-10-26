@@ -15,6 +15,7 @@
 #import "MIKMIDIOutputPort.h"
 #import "MIKMIDIClientSourceEndpoint.h"
 #import "MIKMIDIErrors.h"
+#import <UIKit/UIKit.h>
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIDeviceManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDeviceManager.m in the Build Phases for this target
@@ -73,6 +74,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[self createClient];
         [self retrieveAvailableDevices];
 		[self retrieveVirtualEndpoints];
+        [self addObservers];
     }
     return self;
 }
@@ -85,6 +87,11 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 - (id)copyWithZone:(NSZone *)zone
 {
 	return self;
+}
+
+- (void)dealloc
+{
+    [self removeObservers];
 }
 
 #pragma mark - Public
@@ -182,6 +189,28 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[destinations addObject:destination];
 	}
 	self.internalVirtualDestinations = destinations;
+}
+
+#pragma mark - Observers
+
+- (void)addObservers
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActiveNotification:)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
+}
+
+- (void)removeObservers
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
+}
+
+- (void)appDidBecomeActiveNotification:(NSNotification *)notification
+{
+    [self retrieveAvailableDevices];
 }
 
 #pragma mark - Callbacks
