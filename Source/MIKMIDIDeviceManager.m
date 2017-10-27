@@ -15,7 +15,9 @@
 #import "MIKMIDIOutputPort.h"
 #import "MIKMIDIClientSourceEndpoint.h"
 #import "MIKMIDIErrors.h"
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #import <UIKit/UIKit.h>
+#endif
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIDeviceManager.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIDeviceManager.m in the Build Phases for this target
@@ -195,17 +197,21 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 - (void)addObservers
 {
+    #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveNotification:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
+    #endif
 }
 
 - (void)removeObservers
 {
+    #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
+    #endif
 }
 
 - (void)appDidBecomeActiveNotification:(NSNotification *)notification
