@@ -15,8 +15,9 @@
 #import "MIKMIDIOutputPort.h"
 #import "MIKMIDIClientSourceEndpoint.h"
 #import "MIKMIDIErrors.h"
-#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-#import <UIKit/UIKit.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIApplication.h>
 #endif
 
 #if !__has_feature(objc_arc)
@@ -76,7 +77,12 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 		[self createClient];
         [self retrieveAvailableDevices];
 		[self retrieveVirtualEndpoints];
-        [self addObservers];
+        
+#if TARGET_OS_IPHONE
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(appDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
+#endif
+        
     }
     return self;
 }
@@ -93,7 +99,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 
 - (void)dealloc
 {
-    [self removeObservers];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Public
@@ -193,26 +199,7 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	self.internalVirtualDestinations = destinations;
 }
 
-#pragma mark - Observers
-
-- (void)addObservers
-{
-    #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(appDidBecomeActiveNotification:)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
-    #endif
-}
-
-- (void)removeObservers
-{
-    #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIApplicationDidBecomeActiveNotification
-                                                  object:nil];
-    #endif
-}
+#pragma mark - Notifications
 
 - (void)appDidBecomeActiveNotification:(NSNotification *)notification
 {
