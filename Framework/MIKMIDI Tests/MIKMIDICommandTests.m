@@ -66,6 +66,26 @@
 	XCTAssertEqual(mutableCommand.pressure, 27, @"Setting the pressure on a MIKMutableMIDIChannelPressureCommand instance failed.");
 }
 
+- (void)testKeepAliveCommand
+{
+	MIDIPacket packet = MIKMIDIPacketCreate(0, 1, @[@0xfe]);
+	XCTAssertTrue([[MIKMIDICommand commandWithMIDIPacket:&packet] isKindOfClass:[MIKMIDISystemKeepAliveCommand class]]);
+	
+	Class immutableClass = [MIKMIDISystemKeepAliveCommand class];
+	Class mutableClass = [MIKMutableMIDISystemKeepAliveCommand class];
+	
+	MIKMIDISystemKeepAliveCommand *command = [[immutableClass alloc] init];
+	XCTAssert([command isMemberOfClass:[immutableClass class]], @"[[MIKMIDISystemKeepAliveCommand alloc] init] did not return an MIKMIDISystemKeepAliveCommand instance.");
+	XCTAssert([[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeSystemKeepAlive] isMemberOfClass:[immutableClass class]], @"[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeSystemExclusive] did not return an MIKMIDISystemKeepAliveCommand instance.");
+	XCTAssert([[command copy] isMemberOfClass:[immutableClass class]], @"[MIKMIDISystemKeepAliveCommand copy] did not return an MIKMIDISystemKeepAliveCommand instance.");
+	XCTAssertEqual(command.commandType, MIKMIDICommandTypeSystemKeepAlive, @"[[MIKMIDISystemKeepAliveCommand alloc] init] produced a command instance with the wrong command type.");
+	XCTAssertEqual(command.data.length, 1, "MIKMIDISystemKeepAliveCommand had an incorrect data length %@ (should be 1)", @(command.data.length));
+	
+	MIKMutableMIDISystemKeepAliveCommand *mutableCommand = [command mutableCopy];
+	XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"-[MIKMIDISystemKeepAliveCommand mutableCopy] did not return an mutableClass instance.");
+	XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDISystemKeepAliveCommand instance.");	
+}
+
 - (void)testSystemExclusiveCommand
 {
 	Class immutableClass = [MIKMIDISystemExclusiveCommand class];
