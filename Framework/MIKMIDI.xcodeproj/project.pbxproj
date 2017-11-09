@@ -305,7 +305,6 @@
 		9DF99E7A1831841A004EE5F4 /* MIKMIDICommandThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */; };
 		9DF99E7D18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */; };
 		9DF99E7E18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */; };
-		D9E590031FA20E8600166B5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9E590021FA20E8600166B5C /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -492,7 +491,6 @@
 		9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivateUtilities.h; sourceTree = "<group>"; };
 		9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPrivateUtilities.m; sourceTree = "<group>"; };
 		9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivate.h; sourceTree = "<group>"; };
-		D9E590021FA20E8600166B5C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -518,7 +516,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9E590031FA20E8600166B5C /* UIKit.framework in Frameworks */,
 				9DAF8B8A1A7B028B00F46528 /* libxml2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -606,7 +603,6 @@
 		9D74EEA717A7129300BEE89F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D9E590021FA20E8600166B5C /* UIKit.framework */,
 				9DAF8B861A7B01AA00F46528 /* libxml2.2.dylib */,
 				9DAF8B841A7B019900F46528 /* libxml2.dylib */,
 				9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */,
