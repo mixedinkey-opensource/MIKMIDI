@@ -186,7 +186,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 #pragma mark - Sequencer Synchronization
 
-- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)())block
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)(void))block
 {
 	if (!block) return;
 	
@@ -200,7 +200,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 #pragma mark - Adding and Removing Tracks
 
-- (MIKMIDITrack *)addTrackWithError:(NSError **)error
+- (MIKMIDITrack *)addTrackWithError:(NSError * __autoreleasing *)error
 {
 	__block MIKMIDITrack *track = nil;
 	error = error ?: &(NSError *__autoreleasing){ nil };

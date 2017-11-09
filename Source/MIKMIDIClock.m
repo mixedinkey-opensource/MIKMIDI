@@ -89,7 +89,7 @@
 
 #pragma mark - Queue
 
-static void dispatchToClockQueue(MIKMIDIClock *self, void(^block)())
+static void dispatchToClockQueue(MIKMIDIClock *self, void(^block)(void))
 {
 	if (!block) return;
 
