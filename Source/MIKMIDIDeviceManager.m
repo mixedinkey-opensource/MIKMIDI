@@ -451,6 +451,27 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 	return result;
 }
 
++ (NSSet *)keyPathsForValuesAffectingConnectedDevices
+{
+	return [NSSet setWithObjects:@"connectedInputSources", @"availableDevices", nil];
+}
+
+- (NSArray<MIKMIDIDevice *> *)connectedDevices
+{
+	NSSet *connectedSources = [NSSet setWithArray:self.connectedInputSources];
+	NSMutableArray *result = [NSMutableArray array];
+	for (MIKMIDIDevice *device in self.availableDevices) {
+		NSMutableArray *sources = [device.entities valueForKeyPath:@"@unionOfArrays.sources"];
+		for (MIKMIDISourceEndpoint *source in sources) {
+			if ([connectedSources containsObject:source]) {
+				[result addObject:device];
+				break;
+			}
+		}
+	}
+	return result;
+}
+
 - (MIKMIDIInputPort *)inputPort
 {
 	if (!_inputPort) {
