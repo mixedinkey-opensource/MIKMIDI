@@ -4,19 +4,42 @@ All notable changes to MIKMIDI are documented in this file. This project adheres
 ##[Unreleased]
 This section is for recent changes not yet included in an official release.
 
+##[1.6.2] - 2017-11-09
+
+### ADDED
+
+- System Exclusive multi-packet coalescing (#200)
+- `MIKMIDISystemKeepAliveCommand` for keep alive messages
+- `MIKMIDIPacketCreateFromCommands()`
+- Convenience method for creating control change commands
+
+### FIXED
+
+- `-[MIKMIDIDeviceManager connectedDevices]` is no longer always nil (#162)
+- Incorrect MIKMIDIClock timing on iOS devices (#180 and #199)
+- Incorrect metaDataType on instances of `MIKMIDIMetaEvent` subclasses (#151)
+- Minor GCD queue creation bug (#204)
+- Parsing multiple MIDI messages of different types in a single incoming packet (#201)
+- Buffer overflow in `-[MIKMIDISystemExclusiveCommand manufacturerID]` (#197)
+- Memory leak in `MIKStringPropertyFromMIDIObject()` (#206)
+- Retain cycle between `MIKMIDISequence` and `MIKMIDISequencer` (#205)
+- Bug that caused note offs to be scheduled early by `MIKMIDISequencer`
+- Frequent hash collisions between instances of `MIKMIDIObject` (#181)
+- Minor Swift incompatibilities
+
 ##[1.6.1] - 2016-11-04
 
 ### ADDED
 
 - MIDI To Audio example project showing how to use MIKMIDI to do offline rendering of MIDI to an audio file. (#164)
 
-### Fixed
+### FIXED
 
 - Incorrect nullability annotations for MIKMIDINoteEvent convenience methods.
 - Minor documentation mistakes.
 - Updated example projects for Xcode 8.
 
-### Changed
+### CHANGED
 
 - Moved macOS example projects into a "macOS" subfolder of Examples.
 - Email address for maintainer (Andrew Madsen).
@@ -32,6 +55,7 @@ This section is for recent changes not yet included in an official release.
 - Convenience initializers for `MIKMIDINoteOn/OffCommand` that take `MIDITimeStamp`s instead of `NSDate`s. (0bf4a00)
 - Custom initializers for several `MIKMIDIMetaEvent` subclasses, greatly simplifing their creation. (#150)
 - `MIKMIDIPacketCreate()` function to ease creating `MIDIPacket` structs in Swift. (a12f121)
+
 ### CHANGED
 
 - Improved support for subclassing `MIKMIDISynthesizer` and customizing MIDI event scheduling (87b38ea)
