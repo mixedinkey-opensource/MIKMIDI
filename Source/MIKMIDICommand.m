@@ -42,7 +42,6 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 {
     Class subclass;
-    // initWithMIDIPacket get be passed a NULL packet, so we should accept a NULL packet here, too
     if(packet) {
         MIKMIDICommandType commandType = packet->data[0];
         subclass = [[self class] subclassForCommandType:commandType];
