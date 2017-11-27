@@ -230,10 +230,6 @@ BOOL MIKMIDINoteOffCommandCorrespondsWithNoteOnCommand(MIKMIDINoteOffCommand *no
 			MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[endpoint]];
 			if (device) [result addObject:device];
 		}
-		for (MIKMIDIEndpoint *endpoint in devicelessSources) {
-			MIKMIDIDevice *device = [MIKMIDIDevice deviceWithVirtualEndpoints:@[endpoint]];
-			if (device) [result addObject:device];
-		}
 	}
 	
 	self.availableDevices = [result copy];
