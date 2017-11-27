@@ -41,13 +41,13 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 {
-    Class subclass;
-    if(packet) {
+    Class subclass = Nil;
+    if (packet) {
         MIKMIDICommandType commandType = packet->data[0];
         subclass = [[self class] subclassForCommandType:commandType];
     }
     
-	if (!subclass) subclass = self;
+	if (!subclass) { subclass = self; }
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] initWithMIDIPacket:packet];
 }
