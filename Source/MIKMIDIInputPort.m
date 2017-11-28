@@ -207,7 +207,7 @@
 - (NSArray *)commandsByCoalescingCommands:(NSArray *)commands
 {
 	NSMutableArray *coalescedCommands = [commands mutableCopy];
-	MIKMIDICommand *lastCommand = nil;
+	MIKMIDICommand *lastCommand = commands.firstObject;
 	for (MIKMIDICommand *command in commands) {
 		MIKMIDIControlChangeCommand *coalesced =
 		[MIKMIDIControlChangeCommand commandByCoalescingMSBCommand:(MIKMIDIControlChangeCommand *)lastCommand

@@ -22,9 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MIKMIDIInputPort : MIKMIDIPort
 
-- (id)connectToSource:(MIKMIDISourceEndpoint *)source
-				error:(NSError **)error
-		 eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
+- (id _Nullable)connectToSource:(MIKMIDISourceEndpoint *)source
+						  error:(NSError **)error
+				   eventHandler:(MIKMIDIEventHandlerBlock)eventHandler;
 - (void)disconnectConnectionForToken:(id)token;
 
 @property (nonatomic, strong, readonly) MIKArrayOf(MIKMIDIEndpoint *) *connectedSources;
