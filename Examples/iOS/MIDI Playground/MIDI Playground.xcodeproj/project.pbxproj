@@ -16,6 +16,8 @@
 		9DA1651C1A7B20090056AFB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DA165181A7B20090056AFB6 /* Images.xcassets */; };
 		9DA1652C1A7B4BE60056AFB6 /* default.mid in Resources */ = {isa = PBXBuildFile; fileRef = 9DA1652B1A7B4BE60056AFB6 /* default.mid */; };
 		9DB146DD1A867B77006915FC /* PianoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB146DC1A867B77006915FC /* PianoView.swift */; };
+		9DE0AE201FCDE5EC00987A1B /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */; };
+		9DE0AE211FCDE5EC00987A1B /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,12 +31,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9DE0AE151FCDE0CD00987A1B /* Embed Frameworks */ = {
+		9DE0AE221FCDE5EC00987A1B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9DE0AE211FCDE5EC00987A1B /* MIKMIDI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,7 +58,7 @@
 		9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDISequenceView.swift; sourceTree = "<group>"; };
 		9DA1652B1A7B4BE60056AFB6 /* default.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = default.mid; sourceTree = "<group>"; };
 		9DB146DC1A867B77006915FC /* PianoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PianoView.swift; sourceTree = "<group>"; };
-		9DE0AE161FCDE33E00987A1B /* MIKMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MIKMIDI.framework; sourceTree = "<group>"; };
+		9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MIKMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DE0AE201FCDE5EC00987A1B /* MIKMIDI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,22 +80,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9D7803F41A8ABE3200661FA9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				9DE0AE161FCDE33E00987A1B /* MIKMIDI.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		9DA164D61A7B1F5F0056AFB6 = {
 			isa = PBXGroup;
 			children = (
 				9DA1650E1A7B1FFF0056AFB6 /* Sources */,
 				9DA165131A7B20090056AFB6 /* Resources */,
 				9DA164F71A7B1F5F0056AFB6 /* MIDI PlaygroundTests */,
-				9D7803F41A8ABE3200661FA9 /* Frameworks */,
 				9DA164E01A7B1F5F0056AFB6 /* Products */,
+				9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -154,7 +150,7 @@
 				9DA164DB1A7B1F5F0056AFB6 /* Sources */,
 				9DA164DC1A7B1F5F0056AFB6 /* Frameworks */,
 				9DA164DD1A7B1F5F0056AFB6 /* Resources */,
-				9DE0AE151FCDE0CD00987A1B /* Embed Frameworks */,
+				9DE0AE221FCDE5EC00987A1B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
