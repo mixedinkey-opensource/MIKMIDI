@@ -1,10 +1,10 @@
 # Change Log
 All notable changes to MIKMIDI are documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
-##[Unreleased]
+## [Unreleased]
 This section is for recent changes not yet included in an official release.
 
-##[1.6.2] - 2017-11-09
+## [1.6.2] - 2017-11-09
 
 ### ADDED
 
@@ -27,7 +27,7 @@ This section is for recent changes not yet included in an official release.
 - Frequent hash collisions between instances of `MIKMIDIObject` (#181)
 - Minor Swift incompatibilities
 
-##[1.6.1] - 2016-11-04
+## [1.6.1] - 2016-11-04
 
 ### ADDED
 
@@ -44,7 +44,7 @@ This section is for recent changes not yet included in an official release.
 - Moved macOS example projects into a "macOS" subfolder of Examples.
 - Email address for maintainer (Andrew Madsen).
 
-##[1.6.0] - 2016-06-01
+## [1.6.0] - 2016-06-01
 
 ### ADDED
 
@@ -81,7 +81,7 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 
 - `-[MIKMIDISequence addTrack:]`. Use `-addTrackWithError:` instead. (#134)
 
-##[1.5.0] - 2015-11-14
+## [1.5.0] - 2015-11-14
 ### ADDED
 - `MIKMIDISynthesizer` for general-purpose MIDI synthesis. `MIKMIDIEndpointSynthesizer` is now a subclass of `MIKMIDISynthesizer`.
 - `MIKMIDISequencer` now has API for routing tracks to MIDI endpoints, synthesizers, 
@@ -132,7 +132,7 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 - `-setMusicTimeStamp:withTempo:atMIDITimeStamp:`, `+secondsPerMIDITimeStamp`, `+midiTimeStampsPerTimeInterval:` on `MIKMIDIClock`. See documentation for replacement API.
 - `+[MIKMIDICommand supportsMIDICommandType:]`. Use `+[MIKMIDICommand supportedMIDICommandTypes]` instead. This is only relevant when creating custom subclasses of `MIKMIDICommand`, which most MIKMIDI users do not need to do. (#57)
 
-##[1.0.1] - 2015-04-20
+## [1.0.1] - 2015-04-20
 
 ### ADDED
 - Support for [Carthage](https://github.com/Carthage/Carthage)
@@ -151,7 +151,7 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 - `+[MIKMIDISequence sequenceWithData:]`. Use `+[MIKMIDISequence sequenceWithData:error:]`, instead.
 - `-[MIKMIDISequence/MIKMIDITrack setDestinationEndpoint:]`. Use API on MIKMIDISequencer instead.
 
-##[1.0.0] - 2015-01-29
+## [1.0.0] - 2015-01-29
 ### ADDED
 - MIDI Files Testbed OS X example app
 - Added `MIKMIDISequence`, `MIKMIDITrack`, `MIKMIDIEvent`, etc. to support loading, creating, saving MIDI files
@@ -171,7 +171,7 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 - `MIKMIDIMapping` save/load is now supported on iOS.
 - Warnings when building for iOS.
 
-##[0.9.2] - 2014-06-13
+## [0.9.2] - 2014-06-13
 ### ADDED
 - Added `MIKMIDIEndpointSynthesizer` for synthesizing incoming MIDI (OS X only for now).
 - Added Cocoapods podspec file to repository.
@@ -179,10 +179,10 @@ This release deprecates a number of existing MIKMIDI APIs. These APIs remain ava
 ### FIXED
 - `MIKMIDIInputPort` can parse multiple MIDI messages out of a single packet.
 
-##[0.9.1] - 2014-05-24
+## [0.9.1] - 2014-05-24
 ### FIXED
 Minor documentation typo fixes.
 
-##[0.9.0] - 2014-05-16
+## [0.9.0] - 2014-05-16
 ### ADDED
 Initial release
