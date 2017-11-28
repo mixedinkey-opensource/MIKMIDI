@@ -91,7 +91,7 @@ extension UIColor {
         for note: UInt8 in 0...127 {
             let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
             let font = UIFont(name: "Helvetica", size: 12.0)!
-            let attributes = [NSFontAttributeName : font, NSForegroundColorAttributeName : UIColor.black]
+            let attributes = [NSAttributedStringKey.font : font, NSAttributedStringKey.foregroundColor : UIColor.black]
             let attrString = NSAttributedString(string: noteString, attributes: attributes)
             let yPosition = self.bounds.maxY - CGFloat(note) * self.noteHeightInPixels
             attrString.draw(at: CGPoint(x: 3.0, y: yPosition))
