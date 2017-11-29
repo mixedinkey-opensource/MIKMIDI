@@ -11,13 +11,11 @@ import UIKit
 @IBDesignable class PianoView: UIView {
 	
 	override init(frame: CGRect) {
-		numberOfKeys = 128
 		numberOfWhiteKeys = 75
 		super.init(frame: frame)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
-		numberOfKeys = 128
 		numberOfWhiteKeys = 75
 		super.init(coder: aDecoder)
 	}
@@ -62,7 +60,7 @@ import UIKit
 		UIBezierPath(rect: bounds).fill()
 		UIBezierPath(rect: bounds).stroke()
 		
-		let allKeys = Array(0..<numberOfKeys)
+		let allKeys = Array(minNote..<maxNote)
 		let whiteKeys = allKeys.filter { !noteIsBlack($0) }
 		let blackKeys = allKeys.filter { noteIsBlack($0) }
 		whiteKeys.forEach(draw)
@@ -76,6 +74,9 @@ import UIKit
 	}
 	
 	private func rectForKey(note: Int) -> CGRect {
+		
+		if note < minNote || note > maxNote { return .zero } // Note is out of bounds
+		
 		var keyWidth = whiteKeyWidth
 		var keyHeight = isVertical ? bounds.width : bounds.height
 		if noteIsBlack(note) {
@@ -83,7 +84,7 @@ import UIKit
 			keyHeight *= 0.6
 		}
 		
-		let whiteNotes = Array(0..<note).filter { !noteIsBlack($0) }
+		let whiteNotes = Array(minNote..<note).filter { !noteIsBlack($0) }
 		var offset = CGFloat(whiteNotes.count) * whiteKeyWidth
 		if noteIsBlack(note) { offset -= keyWidth / 2.0 }
 		
@@ -102,14 +103,21 @@ import UIKit
 		return bounds.width < bounds.height
 	}
 	
-	@IBInspectable var numberOfKeys: Int {
+	@IBInspectable var minNote: Int = 0 {
 		didSet {
-			let blackKeys = Array(0..<numberOfKeys).filter(noteIsBlack)
-			numberOfWhiteKeys = numberOfKeys - blackKeys.count
-			
+			let blackKeys = Array(minNote..<maxNote).filter(noteIsBlack)
+			numberOfWhiteKeys = numberOfNotes - blackKeys.count
 			setNeedsDisplay()
 		}
 	}
+	@IBInspectable var maxNote: Int = 128 {
+		didSet {
+			let blackKeys = Array(minNote..<maxNote).filter(noteIsBlack)
+			numberOfWhiteKeys = numberOfNotes - blackKeys.count
+			setNeedsDisplay()
+		}
+	}
+	var numberOfNotes: Int { return maxNote - minNote }
 	
 	var numberOfWhiteKeys: Int
 	

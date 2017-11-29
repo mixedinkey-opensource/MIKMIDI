@@ -29,6 +29,12 @@ class ViewController: UIViewController {
 		}
 	}
 	
+	// MARK: Actions
+	
+	@IBAction func togglePlayback(_ sender: Any) {
+		sequencer.isPlaying ? sequencer.stop() : sequencer.resumePlayback()
+	}
+	
 	// MARK: Private
 	
 	private func commandWasScheduled(command: MIKMIDICommand) {
@@ -58,19 +64,21 @@ class ViewController: UIViewController {
 				sequencer.setCommandScheduler(noteTap, for: track)
 			}
 		}
+		
+		playingObserver = sequencer.observe(\MIKMIDISequencer.playing, options: [.initial]) { [weak self] (sequencer, change) in
+			self?.playButton.title = sequencer.isPlaying ? NSLocalizedString("Pause", comment: "Pause") : NSLocalizedString("Play", comment: "Play")
+		}
 	}
 	
 	// MARK: Properties
 	
-	private var sequenceView: MIDISequenceView {
-		get {
-			return self.view as! MIDISequenceView
-		}
-	}
+	@IBOutlet var playButton: UIBarButtonItem!
 	
+	@IBOutlet var sequenceView: MIDISequenceView!
 	@IBOutlet var pianoView: PianoView!
 	
 	private let sequencer = MIKMIDISequencer()
+	private var playingObserver: NSKeyValueObservation?
 	
 	private var playheadTimer: Timer? {
 		willSet {

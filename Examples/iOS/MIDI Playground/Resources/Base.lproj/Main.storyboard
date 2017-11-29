@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad9_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -13,41 +14,78 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="MIDI_Playground" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="MIDISequenceView" customModule="MIDI_Playground" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JMI-vY-jk0" customClass="PianoView" customModule="MIDI_Playground" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="60" height="667"/>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ndR-qI-wjt">
+                                <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                                <items>
+                                    <barButtonItem enabled="NO" title="Files" id="cMi-VV-HsT"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="WuT-NI-vhV"/>
+                                    <barButtonItem title="Play" id="gAQ-WU-Yq7">
+                                        <connections>
+                                            <action selector="togglePlayback:" destination="BYZ-38-t0r" id="oJ8-bW-JyH"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="mog-Zy-rpq"/>
+                                    <barButtonItem enabled="NO" title="Devices" id="Cu5-M1-0eb"/>
+                                </items>
+                            </toolbar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rez-G2-8sG" customClass="PianoView" customModule="MIDI_Playground" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="64" width="60" height="704"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="60" id="kfq-Qw-bc6"/>
+                                    <constraint firstAttribute="width" constant="60" id="Qfm-ge-iBc"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="numberOfKeys">
-                                        <integer key="value" value="128"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="minNote">
+                                        <integer key="value" value="21"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="maxNote">
+                                        <integer key="value" value="108"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gwy-Xq-pQr" customClass="MIDISequenceView" customModule="MIDI_Playground" customModuleProvider="target">
+                                <rect key="frame" x="60" y="64" width="964" height="704"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <viewLayoutGuide key="safeArea" id="kEt-FA-oj0"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="minNote">
+                                        <integer key="value" value="21"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="maxNote">
+                                        <integer key="value" value="108"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="JMI-vY-jk0" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="GfS-zl-3rv"/>
-                            <constraint firstItem="JMI-vY-jk0" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="frn-AI-WsV"/>
-                            <constraint firstItem="JMI-vY-jk0" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="jg6-8g-L55"/>
+                            <constraint firstItem="ndR-qI-wjt" firstAttribute="trailing" secondItem="nRn-3r-mio" secondAttribute="trailing" id="CNI-2H-Tqx"/>
+                            <constraint firstItem="gwy-Xq-pQr" firstAttribute="trailing" secondItem="nRn-3r-mio" secondAttribute="trailing" id="IaS-ry-qcV"/>
+                            <constraint firstItem="rez-G2-8sG" firstAttribute="top" secondItem="ndR-qI-wjt" secondAttribute="bottom" id="Jxt-JG-gFu"/>
+                            <constraint firstItem="nRn-3r-mio" firstAttribute="top" secondItem="ndR-qI-wjt" secondAttribute="top" id="KgY-Wx-df2"/>
+                            <constraint firstItem="rez-G2-8sG" firstAttribute="bottom" secondItem="nRn-3r-mio" secondAttribute="bottom" id="M4p-RN-uI9"/>
+                            <constraint firstItem="rez-G2-8sG" firstAttribute="leading" secondItem="nRn-3r-mio" secondAttribute="leading" id="Vgq-Q5-Bnp"/>
+                            <constraint firstItem="gwy-Xq-pQr" firstAttribute="bottom" secondItem="nRn-3r-mio" secondAttribute="bottom" id="aCd-db-4rF"/>
+                            <constraint firstItem="gwy-Xq-pQr" firstAttribute="top" secondItem="ndR-qI-wjt" secondAttribute="bottom" id="rUb-Tx-KPm"/>
+                            <constraint firstItem="gwy-Xq-pQr" firstAttribute="leading" secondItem="rez-G2-8sG" secondAttribute="trailing" id="tHb-a5-CiK"/>
+                            <constraint firstItem="ndR-qI-wjt" firstAttribute="leading" secondItem="nRn-3r-mio" secondAttribute="leading" id="xHv-pt-pHN"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="nRn-3r-mio"/>
                     </view>
                     <connections>
-                        <outlet property="pianoView" destination="JMI-vY-jk0" id="iZg-sD-uHH"/>
+                        <outlet property="pianoView" destination="rez-G2-8sG" id="pas-xN-H60"/>
+                        <outlet property="playButton" destination="gAQ-WU-Yq7" id="LwF-Om-RoV"/>
+                        <outlet property="sequenceView" destination="gwy-Xq-pQr" id="A3A-O3-5Ue"/>
+                        <outlet property="view" destination="8bC-Xf-vdC" id="bta-0T-Y4c"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="295" y="326"/>
+            <point key="canvasLocation" x="294.7265625" y="325.78125"/>
         </scene>
     </scenes>
 </document>
