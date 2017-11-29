@@ -19,6 +19,7 @@
 		9DE0AE311FCF22AA00987A1B /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; };
 		9DE0AE321FCF22AA00987A1B /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9DE0AE361FCF314200987A1B /* NoteTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0AE351FCF314200987A1B /* NoteTap.swift */; };
+		9DE0AE3A1FCF38FF00987A1B /* piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 9DE0AE391FCF38FF00987A1B /* piano.sf2 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		9DB146DC1A867B77006915FC /* PianoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PianoView.swift; sourceTree = "<group>"; };
 		9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 		9DE0AE351FCF314200987A1B /* NoteTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTap.swift; sourceTree = "<group>"; };
+		9DE0AE391FCF38FF00987A1B /* piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = piano.sf2; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				9DA1652B1A7B4BE60056AFB6 /* default.mid */,
+				9DE0AE391FCF38FF00987A1B /* piano.sf2 */,
 				9DA165141A7B20090056AFB6 /* LaunchScreen.xib */,
 				9DA165161A7B20090056AFB6 /* Main.storyboard */,
 				9DA165181A7B20090056AFB6 /* Images.xcassets */,
@@ -304,6 +307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DE0AE3A1FCF38FF00987A1B /* piano.sf2 in Resources */,
 				9DA1652C1A7B4BE60056AFB6 /* default.mid in Resources */,
 				9DA1651C1A7B20090056AFB6 /* Images.xcassets in Resources */,
 				9DA1651A1A7B20090056AFB6 /* LaunchScreen.xib in Resources */,
