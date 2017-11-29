@@ -84,7 +84,8 @@ import UIKit
 		}
 		
 		let whiteNotes = Array(0..<note).filter { !noteIsBlack($0) }
-		let offset = CGFloat(whiteNotes.count) * whiteKeyWidth
+		var offset = CGFloat(whiteNotes.count) * whiteKeyWidth
+		if noteIsBlack(note) { offset -= keyWidth / 2.0 }
 		
 		var rect = CGRect.zero
 		if isVertical {
