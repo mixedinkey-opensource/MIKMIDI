@@ -24,18 +24,35 @@ import UIKit
 	
 	// MARK: Public
 	
+	private var pressedKeys = Set<Int>() {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+	
+	func pressDown(key: Int) {
+		pressedKeys.insert(key)
+	}
+	
+	func liftUp(key: Int) {
+		pressedKeys.remove(key)
+	}
+	
 	// MARK: Drawing
 	
 	private func draw(note: Int) {
+		let isPressedDown = pressedKeys.contains(note)
 		var rect = rectForKey(note: note)
-		if !noteIsBlack(note) {
+		if !noteIsBlack(note) && !isPressedDown {
 			if isVertical {
 				rect.size.height = 1
 			} else {
 				rect.size.width = 1
 			}
 		}
-		UIColor.black.setFill()
+		
+		let color: UIColor = isPressedDown ? .gray : .black
+		color.setFill()
 		UIBezierPath(rect: rect).fill()
 	}
 	
@@ -45,7 +62,11 @@ import UIKit
 		UIBezierPath(rect: bounds).fill()
 		UIBezierPath(rect: bounds).stroke()
 		
-		Array(0..<numberOfKeys).forEach(draw)
+		let allKeys = Array(0..<numberOfKeys)
+		let whiteKeys = allKeys.filter { !noteIsBlack($0) }
+		let blackKeys = allKeys.filter { noteIsBlack($0) }
+		whiteKeys.forEach(draw)
+		blackKeys.forEach(draw)
 	}
 	
 	// MARK: Private Utilities
@@ -67,9 +88,9 @@ import UIKit
 		
 		var rect = CGRect.zero
 		if isVertical {
-			rect = CGRect(x: 0, y: offset + keyWidth, width: keyHeight, height: keyWidth)
+			rect = CGRect(x: 0, y: bounds.maxY-offset - keyWidth, width: keyHeight, height: keyWidth)
 		} else {
-			rect = CGRect(x: offset + keyWidth, y: 0, width: keyWidth, height: keyHeight)
+			rect = CGRect(x: bounds.maxY-offset - keyWidth, y: 0, width: keyWidth, height: keyHeight)
 		}
 		return rect.integral
 	}

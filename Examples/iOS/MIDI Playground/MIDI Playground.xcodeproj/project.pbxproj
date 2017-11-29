@@ -18,6 +18,7 @@
 		9DB146DD1A867B77006915FC /* PianoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB146DC1A867B77006915FC /* PianoView.swift */; };
 		9DE0AE311FCF22AA00987A1B /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; };
 		9DE0AE321FCF22AA00987A1B /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9DE0AE361FCF314200987A1B /* NoteTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0AE351FCF314200987A1B /* NoteTap.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		9DA1652B1A7B4BE60056AFB6 /* default.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = default.mid; sourceTree = "<group>"; };
 		9DB146DC1A867B77006915FC /* PianoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PianoView.swift; sourceTree = "<group>"; };
 		9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
+		9DE0AE351FCF314200987A1B /* NoteTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTap.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				9DA165101A7B1FFF0056AFB6 /* ViewController.swift */,
 				9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */,
 				9DB146DC1A867B77006915FC /* PianoView.swift */,
+				9DE0AE351FCF314200987A1B /* NoteTap.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DE0AE361FCF314200987A1B /* NoteTap.swift in Sources */,
 				9D6DE79A1A86918E00AD9C10 /* MIDISequenceView.swift in Sources */,
 				9DB146DD1A867B77006915FC /* PianoView.swift in Sources */,
 				9DA165121A7B1FFF0056AFB6 /* ViewController.swift in Sources */,
