@@ -87,19 +87,6 @@ extension UIColor {
         }
     }
     
-    fileprivate func drawScale() {
-        for note: UInt8 in 0...127 {
-            let noteString = MIKMIDINoteLetterAndOctaveForMIDINote(note)
-            let font = UIFont(name: "Helvetica", size: 12.0)!
-            let attributes = [NSAttributedStringKey.font : font, NSAttributedStringKey.foregroundColor : UIColor.black]
-            let attrString = NSAttributedString(string: noteString, attributes: attributes)
-            let yPosition = self.bounds.maxY - CGFloat(note) * self.noteHeightInPixels
-            attrString.draw(at: CGPoint(x: 3.0, y: yPosition))
-        }
-        UIColor.black.setFill()
-        UIBezierPath(rect: CGRect(x: 45.0, y: 0.0, width: 1.0, height: self.bounds.height)).fill()
-    }
-    
     fileprivate func drawGridlines() {
         let maxLength = self.noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
             return max(currMax, track.length);
@@ -125,9 +112,6 @@ extension UIColor {
         
         UIColor.white.setFill()
         UIBezierPath(rect: self.bounds).fill()
-        
-        // Draw scale on left
-        //drawScale()
         
         if self.noteTracks == nil { return }
         
