@@ -16,8 +16,8 @@
 		9DA1651C1A7B20090056AFB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DA165181A7B20090056AFB6 /* Images.xcassets */; };
 		9DA1652C1A7B4BE60056AFB6 /* default.mid in Resources */ = {isa = PBXBuildFile; fileRef = 9DA1652B1A7B4BE60056AFB6 /* default.mid */; };
 		9DB146DD1A867B77006915FC /* PianoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB146DC1A867B77006915FC /* PianoView.swift */; };
-		9DE0AE201FCDE5EC00987A1B /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */; };
-		9DE0AE211FCDE5EC00987A1B /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9DE0AE311FCF22AA00987A1B /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; };
+		9DE0AE321FCF22AA00987A1B /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +28,34 @@
 			remoteGlobalIDString = 9DA164DE1A7B1F5F0056AFB6;
 			remoteInfo = "MIDI Playground";
 		};
+		9DE0AE2B1FCF22A100987A1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D74EEA517A7129300BEE89F;
+			remoteInfo = MIKMIDI;
+		};
+		9DE0AE2D1FCF22A100987A1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DAF8B061A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+		9DE0AE2F1FCF22A100987A1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
+			remoteInfo = "MIKMIDI Tests";
+		};
+		9DE0AE331FCF22AA00987A1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DAF8B051A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,7 +65,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9DE0AE211FCDE5EC00987A1B /* MIKMIDI.framework in Embed Frameworks */,
+				9DE0AE321FCF22AA00987A1B /* MIKMIDI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,7 +86,7 @@
 		9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDISequenceView.swift; sourceTree = "<group>"; };
 		9DA1652B1A7B4BE60056AFB6 /* default.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = default.mid; sourceTree = "<group>"; };
 		9DB146DC1A867B77006915FC /* PianoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PianoView.swift; sourceTree = "<group>"; };
-		9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MIKMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DE0AE201FCDE5EC00987A1B /* MIKMIDI.framework in Frameworks */,
+				9DE0AE311FCF22AA00987A1B /* MIKMIDI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,9 +113,9 @@
 			children = (
 				9DA1650E1A7B1FFF0056AFB6 /* Sources */,
 				9DA165131A7B20090056AFB6 /* Resources */,
+				9DE0AE241FCF229000987A1B /* Frameworks */,
 				9DA164F71A7B1F5F0056AFB6 /* MIDI PlaygroundTests */,
 				9DA164E01A7B1F5F0056AFB6 /* Products */,
-				9DE0AE1F1FCDE5EC00987A1B /* MIKMIDI.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -140,6 +168,24 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		9DE0AE241FCF229000987A1B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9DE0AE261FCF22A100987A1B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9DE0AE2C1FCF22A100987A1B /* MIKMIDI.framework */,
+				9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */,
+				9DE0AE301FCF22A100987A1B /* MIKMIDI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -155,6 +201,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9DE0AE341FCF22AA00987A1B /* PBXTargetDependency */,
 			);
 			name = "MIDI Playground";
 			productName = "MIDI Playground";
@@ -211,6 +258,12 @@
 			mainGroup = 9DA164D61A7B1F5F0056AFB6;
 			productRefGroup = 9DA164E01A7B1F5F0056AFB6 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9DE0AE261FCF22A100987A1B /* Products */;
+					ProjectRef = 9DE0AE251FCF22A100987A1B /* MIKMIDI.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				9DA164DE1A7B1F5F0056AFB6 /* MIDI Playground */,
@@ -218,6 +271,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9DE0AE2C1FCF22A100987A1B /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9DE0AE2B1FCF22A100987A1B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9DE0AE2E1FCF22A100987A1B /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9DE0AE2D1FCF22A100987A1B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9DE0AE301FCF22A100987A1B /* MIKMIDI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "MIKMIDI Tests.xctest";
+			remoteRef = 9DE0AE2F1FCF22A100987A1B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		9DA164DD1A7B1F5F0056AFB6 /* Resources */ = {
@@ -267,6 +344,11 @@
 			isa = PBXTargetDependency;
 			target = 9DA164DE1A7B1F5F0056AFB6 /* MIDI Playground */;
 			targetProxy = 9DA164F51A7B1F5F0056AFB6 /* PBXContainerItemProxy */;
+		};
+		9DE0AE341FCF22AA00987A1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "MIKMIDI-iOS";
+			targetProxy = 9DE0AE331FCF22AA00987A1B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -400,7 +482,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -417,7 +498,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -436,7 +516,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MIDI Playground.app/MIDI Playground";
 			};
@@ -451,7 +530,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MIDI Playground.app/MIDI Playground";
 			};
