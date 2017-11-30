@@ -253,7 +253,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	MIDITimeStamp stopTimeStamp = MIKMIDIGetCurrentTimeStamp();
 	if (!self.isPlaying) return;
 
-	void (^stopPlayback)() = ^{
+	void (^stopPlayback)(void) = ^{
 		self.processingTimer = NULL;
 
 		MIKMIDIClock *clock = self.clock;
@@ -848,7 +848,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 #pragma mark -
 @implementation MIKMIDISequencer (MIKMIDIPrivate)
 
-- (void)dispatchSyncToProcessingQueueAsNeeded:(void (^)())block
+- (void)dispatchSyncToProcessingQueueAsNeeded:(void (^)(void))block
 {
 	if (!block) return;
 

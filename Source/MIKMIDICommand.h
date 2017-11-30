@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @see +commandForCommandType:
  */
-+ (__kindof instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
++ (instancetype)commandWithMIDIPacket:(MIDIPacket * _Nullable)packet;
 
 /**
  *  Convenience method for creating a new MIKMIDICommand instance from a MIDIPacket as received or created

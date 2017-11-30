@@ -58,7 +58,7 @@ void MIKMIDIPacketFree(MIDIPacket *packet);
 #define MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION ([NSException raise:NSInternalInconsistencyException format:@"Attempt to mutate immutable %@", NSStringFromClass([self class])])
 
 // A prettier way to get the mac_absolute_time() when working with MIDITimeStamps.
-MIDITimeStamp MIKMIDIGetCurrentTimeStamp();
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp(void);
 
 /**
  *  Returns whether a given MIDI note number corresponds to a "black key" on a piano.
