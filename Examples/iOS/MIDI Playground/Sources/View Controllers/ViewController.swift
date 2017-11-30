@@ -9,7 +9,7 @@
 import UIKit
 import MIKMIDI
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -22,7 +22,6 @@ class ViewController: UIViewController {
 				playheadTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
 					self?.sequenceView.playheadTimestamp = self?.sequencer.currentTimeStamp
 				}
-				sequencer.startPlayback()
 			} catch {
 				NSLog("Error loading MIDI file: \(error)")
 			}
@@ -43,6 +42,18 @@ class ViewController: UIViewController {
 				self.pianoView.pressDown(key: Int(noteOn.note))
 			} else if let noteOff = command as? MIKMIDINoteOffCommand {
 				self.pianoView.liftUp(key: Int(noteOff.note))
+			}
+		}
+	}
+	
+	private func deviceSent(commands: [MIKMIDICommand]) {
+		previewSynthesizer?.handleMIDIMessages(commands)
+		let notes = commands.flatMap { $0 as? MIKMIDINoteCommand }
+		for note in notes {
+			if note.isNoteOn {
+				pianoView.pressDown(key: Int(note.note))
+			} else {
+				pianoView.liftUp(key: Int(note.note))
 			}
 		}
 	}
@@ -70,6 +81,21 @@ class ViewController: UIViewController {
 		}
 	}
 	
+	// MARK: Navigation
+	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if segue.identifier == "ShowDevices" {
+			var vc: DevicesTableViewController!
+			if let navVC = segue.destination as? UINavigationController {
+				vc = navVC.topViewController as! DevicesTableViewController
+			} else {
+				vc = segue.destination as! DevicesTableViewController
+			}
+			
+			vc.connectionManager = connectionManager
+		}
+	}
+	
 	// MARK: Properties
 	
 	@IBOutlet var playButton: UIBarButtonItem!
@@ -79,6 +105,20 @@ class ViewController: UIViewController {
 	
 	private let sequencer = MIKMIDISequencer()
 	private var playingObserver: NSKeyValueObservation?
+	
+	let previewSynthesizer: MIKMIDISynthesizer? = {
+		let synth = MIKMIDISynthesizer()
+		if let soundfontURL = Bundle.main.url(forResource: "piano", withExtension: "sf2") {
+			try? synth?.loadSoundfontFromFile(at: soundfontURL)
+		}
+		return synth
+	}()
+	
+	private lazy var connectionManager = {
+		return MIKMIDIConnectionManager(name: "MIDI Playground", delegate: self) { [weak self] (source, commands) in
+			self?.deviceSent(commands: commands)
+		}
+	}()
 	
 	private var playheadTimer: Timer? {
 		willSet {

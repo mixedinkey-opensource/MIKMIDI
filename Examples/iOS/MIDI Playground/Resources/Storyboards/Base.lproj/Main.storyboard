@@ -29,7 +29,13 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="mog-Zy-rpq"/>
-                                    <barButtonItem enabled="NO" title="Devices" id="Cu5-M1-0eb"/>
+                                    <barButtonItem title="Devices" id="Cu5-M1-0eb">
+                                        <connections>
+                                            <segue destination="ieF-H4-OMe" kind="popoverPresentation" identifier="ShowDevices" popoverAnchorBarButtonItem="Cu5-M1-0eb" id="Yxa-E9-7fu">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rez-G2-8sG" customClass="PianoView" customModule="MIDI_Playground" customModuleProvider="target">
@@ -86,6 +92,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="294.7265625" y="325.78125"/>
+        </scene>
+        <!--DeviceTableView-->
+        <scene sceneID="CJF-JF-BOs">
+            <objects>
+                <viewControllerPlaceholder storyboardName="DeviceTableView" id="ieF-H4-OMe" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9N1-Ne-sWZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="682" y="59"/>
         </scene>
     </scenes>
 </document>
