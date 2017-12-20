@@ -75,6 +75,7 @@ extern NSString * const MIKMIDIEndpointKey;
 + (instancetype)sharedDeviceManager;
 
 /*
+ * Call this method after your app connect to MIDI device via bluetooth successful.
  * Use to restart MIDI after the application connected to MIDI device via bluetooth
  * Need this method because. If not restart then: after connect to midi successful via bluetooth the function
  * `void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *refCon)` didn't called
