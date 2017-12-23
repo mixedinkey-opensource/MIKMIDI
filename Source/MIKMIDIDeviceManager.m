@@ -103,7 +103,8 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 }
 
 -(void)restartMidiClient {
-    sleep(3);//IS this time enough for restart the Midi? I dont know, just work around for this number.
+    //This time is need for watting after MIDI devices connected, to make restart effected.
+    sleep(3);
     MIDIRestart();
 }
 
