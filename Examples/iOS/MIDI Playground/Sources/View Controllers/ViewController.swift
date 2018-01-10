@@ -16,12 +16,7 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 		
 		if let sequenceURL = Bundle.main.url(forResource: "default", withExtension: "mid") {
 			do {
-				let sequence = try MIKMIDISequence(fileAt: sequenceURL)
-				sequenceView.sequence = sequence
-				configureSequencer(sequence)
-				playheadTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-					self?.sequenceView.playheadTimestamp = self?.sequencer.currentTimeStamp
-				}
+				sequence = try MIKMIDISequence(fileAt: sequenceURL)
 			} catch {
 				NSLog("Error loading MIDI file: \(error)")
 			}
@@ -29,6 +24,8 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	}
 	
 	// MARK: Actions
+	
+	@IBAction func returnToMainView(_ sender: UIStoryboardSegue) {}
 	
 	@IBAction func togglePlayback(_ sender: Any) {
 		sequencer.isPlaying ? sequencer.stop() : sequencer.resumePlayback()
@@ -97,6 +94,21 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	}
 	
 	// MARK: Properties
+	
+	var sequence: MIKMIDISequence? {
+		didSet {
+			if let sequence = sequence {
+				sequenceView.sequence = sequence
+				configureSequencer(sequence)
+				playheadTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+					self?.sequenceView.playheadTimestamp = self?.sequencer.currentTimeStamp
+				}
+			} else {
+				sequenceView.sequence = nil
+				playheadTimer = nil
+			}
+		}
+	}
 	
 	@IBOutlet var playButton: UIBarButtonItem!
 	

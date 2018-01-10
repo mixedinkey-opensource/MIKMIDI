@@ -15,6 +15,19 @@ class MIDIFilesController {
 		scanForFiles()
 	}
 	
+	// MARK: Public
+	
+	func createNewFile(named: String) throws -> MIDIFile {
+		var url = documentsURL.appendingPathComponent(named)
+		if url.pathExtension != "mid" && url.pathExtension != "midi" {
+			url.appendPathExtension("mid")
+		}
+		
+		let sequence = MIKMIDISequence()
+		try sequence.write(to: url)
+		return MIDIFile(fileURL: url, midiSequence: sequence)
+	}
+	
 	// MARK: Private
 	
 	private func scanForFiles() {
