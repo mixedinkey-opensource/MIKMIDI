@@ -76,7 +76,10 @@ extension UIColor {
 		
 		UIColor.black.setStroke()
         for (index, track) in noteTracks!.enumerated() {
-            let notes = track.events.flatMap { $0 as? MIKMIDINoteEvent }
+            var notes = track.events.flatMap { $0 as? MIKMIDINoteEvent }
+			if case .limited(let limitedWidth) = maxTimeToDisplay {
+				notes = notes.filter { $0.timeStamp <= limitedWidth }
+			}
             for note in notes {
                 let noteColor = noteTracks!.count == 1 ? colorForNote(note) : colorForTrackAtIndex(index)
                 noteColor.setFill()
@@ -86,9 +89,10 @@ extension UIColor {
     }
     
     private func drawGridlines() {
-        let maxLength = noteTracks!.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
-            return max(currMax, track.length);
-        }
+		var maxLength = noteTracks?.map({ $0.length }).max(by: <) ?? 0
+		if case .limited(let limitedWidth) = maxTimeToDisplay {
+			maxLength = min(maxLength, limitedWidth)
+		}
         UIColor(white: 0.9, alpha: 1.0).setFill()
         for tick in 0...Int(maxLength) {
             UIBezierPath(rect: CGRect(x: CGFloat(tick) * pixelsPerTick, y: 0, width: 1.0, height: bounds.height)).fill()
@@ -114,7 +118,7 @@ extension UIColor {
         if noteTracks == nil { return }
         
         // Draw gridlines
-        drawGridlines()
+		if drawsGridlines { drawGridlines() }
         // Draw notes
         drawNotes(rect)
         // Draw playhead
@@ -172,6 +176,24 @@ extension UIColor {
     }
     
     // MARK: Properties
+	
+	enum TimeWidth {
+		case all
+		case limited(MusicTimeStamp)
+	}
+	
+	var maxTimeToDisplay = TimeWidth.all {
+		didSet {
+			calculatePixelsPerTick()
+			setNeedsDisplay()
+		}
+	}
+	
+	var drawsGridlines = true {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
     
     var sequence: MIKMIDISequence? {
         didSet {
@@ -216,9 +238,10 @@ extension UIColor {
             return
         }
         
-        let maxLength = noteTracks.reduce(0) { (currMax: MusicTimeStamp, track: MIKMIDITrack) -> MusicTimeStamp in
-            return max(currMax, track.length);
-        }
+		var maxLength = noteTracks.map({ $0.length }).max(by: <) ?? 0
+		if case .limited(let limitedWidth) = maxTimeToDisplay {
+			maxLength = min(maxLength, limitedWidth)
+		}
         pixelsPerTick = bounds.width / CGFloat(maxLength)
     }
     private var pixelsPerTick : CGFloat = 10.0

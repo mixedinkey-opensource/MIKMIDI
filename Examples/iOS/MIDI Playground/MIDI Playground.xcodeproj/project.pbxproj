@@ -23,6 +23,10 @@
 		9DE0AE3F1FCF769D00987A1B /* DeviceTableView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9DE0AE3E1FCF769D00987A1B /* DeviceTableView.storyboard */; };
 		9DE0AE451FCF772400987A1B /* DeviceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0AE441FCF772400987A1B /* DeviceTableViewCell.swift */; };
 		9DE0AE471FCF772F00987A1B /* DevicesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0AE461FCF772F00987A1B /* DevicesTableViewController.swift */; };
+		9DFEE1D72005783700D1BA90 /* FilesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFEE1D62005783700D1BA90 /* FilesCollectionViewController.swift */; };
+		9DFEE1D92005786900D1BA90 /* MIDIFilesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFEE1D82005786900D1BA90 /* MIDIFilesController.swift */; };
+		9DFEE1DC20057AA100D1BA90 /* MIDIFileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFEE1DB20057AA100D1BA90 /* MIDIFileCollectionViewCell.swift */; };
+		9DFEE1DE2005815D00D1BA90 /* MIDIFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFEE1DD2005815D00D1BA90 /* MIDIFile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +101,10 @@
 		9DE0AE3E1FCF769D00987A1B /* DeviceTableView.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DeviceTableView.storyboard; sourceTree = "<group>"; };
 		9DE0AE441FCF772400987A1B /* DeviceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTableViewCell.swift; sourceTree = "<group>"; };
 		9DE0AE461FCF772F00987A1B /* DevicesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesTableViewController.swift; sourceTree = "<group>"; };
+		9DFEE1D62005783700D1BA90 /* FilesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesCollectionViewController.swift; sourceTree = "<group>"; };
+		9DFEE1D82005786900D1BA90 /* MIDIFilesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIFilesController.swift; sourceTree = "<group>"; };
+		9DFEE1DB20057AA100D1BA90 /* MIDIFileCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIFileCollectionViewCell.swift; sourceTree = "<group>"; };
+		9DFEE1DD2005815D00D1BA90 /* MIDIFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,8 +167,9 @@
 			isa = PBXGroup;
 			children = (
 				9DA1650F1A7B1FFF0056AFB6 /* AppDelegate.swift */,
-				9DE0AE431FCF770F00987A1B /* View Controllers */,
+				9DFEE1DA2005786C00D1BA90 /* Model */,
 				9DE0AE421FCF770400987A1B /* Views */,
+				9DE0AE431FCF770F00987A1B /* View Controllers */,
 				9DE0AE351FCF314200987A1B /* NoteTap.swift */,
 			);
 			path = Sources;
@@ -220,6 +229,7 @@
 				9DA1651E1A7B20700056AFB6 /* MIDISequenceView.swift */,
 				9DB146DC1A867B77006915FC /* PianoView.swift */,
 				9DE0AE441FCF772400987A1B /* DeviceTableViewCell.swift */,
+				9DFEE1DB20057AA100D1BA90 /* MIDIFileCollectionViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -229,8 +239,18 @@
 			children = (
 				9DA165101A7B1FFF0056AFB6 /* ViewController.swift */,
 				9DE0AE461FCF772F00987A1B /* DevicesTableViewController.swift */,
+				9DFEE1D62005783700D1BA90 /* FilesCollectionViewController.swift */,
 			);
 			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		9DFEE1DA2005786C00D1BA90 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9DFEE1DD2005815D00D1BA90 /* MIDIFile.swift */,
+				9DFEE1D82005786900D1BA90 /* MIDIFilesController.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,11 +391,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DFEE1DC20057AA100D1BA90 /* MIDIFileCollectionViewCell.swift in Sources */,
 				9DE0AE471FCF772F00987A1B /* DevicesTableViewController.swift in Sources */,
 				9DE0AE361FCF314200987A1B /* NoteTap.swift in Sources */,
 				9DE0AE451FCF772400987A1B /* DeviceTableViewCell.swift in Sources */,
 				9D6DE79A1A86918E00AD9C10 /* MIDISequenceView.swift in Sources */,
+				9DFEE1DE2005815D00D1BA90 /* MIDIFile.swift in Sources */,
+				9DFEE1D72005783700D1BA90 /* FilesCollectionViewController.swift in Sources */,
 				9DB146DD1A867B77006915FC /* PianoView.swift in Sources */,
+				9DFEE1D92005786900D1BA90 /* MIDIFilesController.swift in Sources */,
 				9DA165121A7B1FFF0056AFB6 /* ViewController.swift in Sources */,
 				9DA165111A7B1FFF0056AFB6 /* AppDelegate.swift in Sources */,
 			);
