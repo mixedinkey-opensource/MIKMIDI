@@ -56,9 +56,9 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
 	NSMutableArray *result = [NSMutableArray array];
 	NSInteger dataOffset = 0;
-	while (1) {
+	while (dataOffset < inputPacket->length) {
 		const Byte *packetData = inputPacket->data + dataOffset;
-		NSInteger commandType = (NSInteger) packetData[0];
+		MIKMIDICommandType commandType = (MIKMIDICommandType)packetData[0];
 		NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
 		if (dataOffset > (inputPacket->length - standardLength)) break;
 
