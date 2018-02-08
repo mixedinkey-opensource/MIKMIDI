@@ -142,8 +142,10 @@
 {
 	MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil];
 	MIKMutableMIDIControlChangeCommand *cc = [MIKMutableMIDIControlChangeCommand controlChangeCommandWithControllerNumber:27 value:63];
+	MIKMutableMIDIChannelPressureCommand *pressure = [MIKMutableMIDIChannelPressureCommand channelPressureCommandWithPressure:42 channel:0 timestamp:nil];
 	cc.midiTimestamp = noteOn.midiTimestamp; // Messages in a MIDIPacket all have the same timestamp.
-	NSArray *commands = @[noteOn, cc];
+	pressure.midiTimestamp = noteOn.midiTimestamp;
+	NSArray *commands = @[noteOn, pressure, cc];
 	
 	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(cc.midiTimestamp, commands);
 	NSArray *parsedCommands = [MIKMIDICommand commandsWithMIDIPacket:packet];
