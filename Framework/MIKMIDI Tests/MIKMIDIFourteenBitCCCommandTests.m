@@ -45,4 +45,30 @@
 	XCTAssertNil(coalescedCommand);
 }
 
+- (void)testDirectlyCreatingFourteenBitCommand
+{
+	MIKMIDIControlChangeCommand *fourteenBitCommand = [MIKMIDIControlChangeCommand fourteenBitControlChangeCommandWithControllerNumber:27 value:4227];
+	XCTAssertNotNil(fourteenBitCommand);
+	XCTAssertEqual(fourteenBitCommand.controllerNumber, 27);
+	XCTAssertEqual(fourteenBitCommand.fourteenBitValue, 4227);
+	XCTAssertEqual(fourteenBitCommand.controllerValue, 33);
+}
+
+- (void)testSplittingFourteenBitCommand
+{
+	MIKMIDIControlChangeCommand *fourteenBitCommand = [MIKMIDIControlChangeCommand fourteenBitControlChangeCommandWithControllerNumber:27 value:4227];
+	
+	MIKMIDIControlChangeCommand *msbCommand = [fourteenBitCommand commandForMostSignificantBits];
+	XCTAssertNotNil(msbCommand);
+	XCTAssertEqual(msbCommand.controllerValue, 33);
+	
+	MIKMIDIControlChangeCommand *lsbCommand = [fourteenBitCommand commandForLeastSignificantBits];
+	XCTAssertNotNil(lsbCommand);
+	XCTAssertEqual(lsbCommand.controllerValue, 3);
+	
+	MIKMIDIControlChangeCommand *coalescedCommand = [MIKMIDIControlChangeCommand commandByCoalescingMSBCommand:msbCommand andLSBCommand:lsbCommand];
+	XCTAssertNotNil(coalescedCommand);
+	XCTAssertEqualObjects(fourteenBitCommand, coalescedCommand);
+}
+
 @end
