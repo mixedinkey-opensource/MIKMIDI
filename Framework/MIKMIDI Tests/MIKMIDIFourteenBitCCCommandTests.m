@@ -56,15 +56,18 @@
 
 - (void)testSplittingFourteenBitCommand
 {
-	MIKMIDIControlChangeCommand *fourteenBitCommand = [MIKMIDIControlChangeCommand fourteenBitControlChangeCommandWithControllerNumber:27 value:4227];
+	MIKMutableMIDIControlChangeCommand *fourteenBitCommand = [MIKMutableMIDIControlChangeCommand fourteenBitControlChangeCommandWithControllerNumber:27 value:4227];
+	fourteenBitCommand.channel = 7;
 	
 	MIKMIDIControlChangeCommand *msbCommand = [fourteenBitCommand commandForMostSignificantBits];
 	XCTAssertNotNil(msbCommand);
 	XCTAssertEqual(msbCommand.controllerValue, 33);
+	XCTAssertEqual(msbCommand.channel, fourteenBitCommand.channel);
 	
 	MIKMIDIControlChangeCommand *lsbCommand = [fourteenBitCommand commandForLeastSignificantBits];
 	XCTAssertNotNil(lsbCommand);
 	XCTAssertEqual(lsbCommand.controllerValue, 3);
+	XCTAssertEqual(lsbCommand.channel, fourteenBitCommand.channel);
 	
 	MIKMIDIControlChangeCommand *coalescedCommand = [MIKMIDIControlChangeCommand commandByCoalescingMSBCommand:msbCommand andLSBCommand:lsbCommand];
 	XCTAssertNotNil(coalescedCommand);
