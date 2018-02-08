@@ -469,7 +469,7 @@
 		9D8DC3D1202BD95000DDA4A8 /* MIKMIDITransmittable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDITransmittable.h; sourceTree = "<group>"; };
 		9D9F02981FB50B1900FE340E /* MIKMIDI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MIKMIDI-Info.plist"; sourceTree = "<group>"; };
 		9D9F02991FB50B1900FE340E /* MIKMIDI-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDI-Prefix.pch"; sourceTree = "<group>"; };
-		9D9F029A1FB50B1900FE340E /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		9D9F029A1FB50B1900FE340E /* MIKMIDI.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = MIKMIDI.modulemap; sourceTree = "<group>"; };
 		9D9F029B1FB50B1900FE340E /* MIKMIDI-iOS-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDI-iOS-Prefix.pch"; sourceTree = "<group>"; };
 		9D9F02A51FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDISystemKeepAliveCommand.h; sourceTree = "<group>"; };
 		9D9F02A61FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISystemKeepAliveCommand.m; sourceTree = "<group>"; };
@@ -678,7 +678,7 @@
 			isa = PBXGroup;
 			children = (
 				9D9F02981FB50B1900FE340E /* MIKMIDI-Info.plist */,
-				9D9F029A1FB50B1900FE340E /* module.modulemap */,
+				9D9F029A1FB50B1900FE340E /* MIKMIDI.modulemap */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1531,7 +1531,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1553,7 +1553,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1593,7 +1593,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MIKMIDI;
@@ -1634,7 +1634,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MIKMIDI;
