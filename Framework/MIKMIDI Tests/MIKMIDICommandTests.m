@@ -112,6 +112,20 @@
 	XCTAssertEqual(mutableCommand.sysexChannel, 27, @"Setting the sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance failed.");
 }
 
+- (void)testCreatingSysexFromMIDIPacket
+{
+	MIKMutableMIDISystemExclusiveCommand *sysex = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+	sysex.manufacturerID = kMIKMIDISysexNonRealtimeManufacturerID;
+	sysex.sysexChannel = kMIKMIDISysexChannelDisregard;
+	sysex.sysexData = [NSData dataWithBytes:(UInt8[]){0x41, 0x42, 0x43, 0x44, 0x45} length:5];
+	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(0, @[sysex]);
+	
+	NSArray *commands = [MIKMIDICommand commandsWithMIDIPacket:packet];
+	XCTAssertEqual(commands.count, 1);
+	MIKMIDISystemExclusiveCommand *command = commands[0];
+	XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+}
+
 - (void)testManufacturerSpecificSystemExclusiveCommand
 {
 	MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
