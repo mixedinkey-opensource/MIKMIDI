@@ -65,7 +65,7 @@
 	MIKMIDIControlChangeCommand *result = [[MIKMIDIControlChangeCommand alloc] init];
 	result.midiTimestamp = lsbCommand.midiTimestamp;
 	result.internalData = [msbCommand.data mutableCopy];
-	result.fourteenBitCommand = YES;
+	result->_fourteenBitCommand = YES;
 	[result.internalData appendData:[lsbCommand.data subdataWithRange:NSMakeRange(2, 1)]];
 	
 	return result;
@@ -83,23 +83,21 @@
 - (id)copyWithZone:(NSZone *)zone
 {
 	MIKMIDIControlChangeCommand *result = [super copyWithZone:zone];
-	result.fourteenBitCommand = self.isFourteenBitCommand;
+	result->_fourteenBitCommand = self.isFourteenBitCommand;
 	return result;
 }
 
 - (id)mutableCopy
 {
 	MIKMIDIControlChangeCommand *result = [super mutableCopy];
-	result.fourteenBitCommand = self.isFourteenBitCommand;
+	result->_fourteenBitCommand = self.isFourteenBitCommand;
 	return result;
 }
 
 - (MIKMIDIControlChangeCommand *)commandForMostSignificantBits
 {
-	MIKMutableMIDIControlChangeCommand *result =
-	[MIKMutableMIDIControlChangeCommand controlChangeCommandWithControllerNumber:self.controllerNumber
-																		   value:self.controllerValue];
-	result.midiTimestamp = self.midiTimestamp;
+	MIKMutableMIDIControlChangeCommand *result = [self mutableCopy];
+	result.fourteenBitCommand = NO;
 	return [result copy];
 }
 
@@ -110,10 +108,11 @@
 	UInt8 *data = (UInt8 *)[self.data bytes];
 	NSUInteger LSB = data[3] & 0x7F;
 	
-	MIKMutableMIDIControlChangeCommand *result =
-	[MIKMutableMIDIControlChangeCommand controlChangeCommandWithControllerNumber:self.controllerNumber+32
-																		   value:LSB];
-	result.midiTimestamp = self.midiTimestamp;
+	MIKMutableMIDIControlChangeCommand *result = [self mutableCopy];
+	result.fourteenBitCommand = NO;
+	result.controllerNumber += 32;
+	result.controllerValue = LSB;
+	
 	return [result copy];
 }
 
@@ -148,6 +147,23 @@
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
 	self.value = value;
+}
+
+- (void)setFourteenBitCommand:(BOOL)fourteenBitCommand
+{
+	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+	
+	if (fourteenBitCommand != _fourteenBitCommand) {
+		_fourteenBitCommand = fourteenBitCommand;
+		if (_fourteenBitCommand) {
+			[self setFourteenBitValue:(self.controllerValue << 7) & 0x7F];
+		} else {
+			// Shrink internal data
+			if ([self.internalData length] >= 4) {
+				[self.internalData replaceBytesInRange:NSMakeRange(3, [self.internalData length] - 3) withBytes:NULL length:0];
+			}
+		}
+	}
 }
 
 - (NSUInteger)fourteenBitValue

@@ -3,6 +3,7 @@ framework module MIKMIDI {
 	
 	private header "MIKMIDIPort_SubclassMethods.h"
 	private header "MIKMIDISynthesizer_SubclassMethods.h"
+	private header "MIKMIDITransmittable.h"
 	
 	export *
 	module * { export * }

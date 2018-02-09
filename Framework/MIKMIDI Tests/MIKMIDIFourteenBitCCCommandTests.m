@@ -63,11 +63,13 @@
 	XCTAssertNotNil(msbCommand);
 	XCTAssertEqual(msbCommand.controllerValue, 33);
 	XCTAssertEqual(msbCommand.channel, fourteenBitCommand.channel);
+	XCTAssertFalse(msbCommand.isFourteenBitCommand);
 	
 	MIKMIDIControlChangeCommand *lsbCommand = [fourteenBitCommand commandForLeastSignificantBits];
 	XCTAssertNotNil(lsbCommand);
 	XCTAssertEqual(lsbCommand.controllerValue, 3);
 	XCTAssertEqual(lsbCommand.channel, fourteenBitCommand.channel);
+	XCTAssertFalse(lsbCommand.isFourteenBitCommand);
 	
 	MIKMIDIControlChangeCommand *coalescedCommand = [MIKMIDIControlChangeCommand commandByCoalescingMSBCommand:msbCommand andLSBCommand:lsbCommand];
 	XCTAssertNotNil(coalescedCommand);
