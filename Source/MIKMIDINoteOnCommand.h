@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDINoteCommand.h>
+#import "MIKMIDINoteCommand.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
