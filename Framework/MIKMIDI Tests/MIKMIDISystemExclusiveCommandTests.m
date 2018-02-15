@@ -44,11 +44,12 @@
 - (void)testSettingSysexData
 {
 	MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
-	NSData *sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x44, 0x06, 0x01, 0x21, 0x02, 0x3A, 0x00, 0x00, 0xf7} length:10];
+	NSData *sysexData = [NSData dataWithBytes:(UInt8[]){0x06, 0x44, 0x06, 0x01, 0x21, 0x02, 0x3A, 0x00, 0x00} length:9];
 	command.sysexData = sysexData;
 	command.manufacturerID = kMIKMIDISysexRealtimeManufacturerID;
 	command.sysexChannel = kMIKMIDISysexChannelDisregard;
 	XCTAssertEqualObjects(command.sysexData, sysexData);
+	XCTAssertEqual(command.data.length, command.sysexData.length+4);
 }
 
 - (void)testCreatingSysexFromMIDIPacket
