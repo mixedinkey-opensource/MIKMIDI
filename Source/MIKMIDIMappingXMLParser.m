@@ -143,7 +143,8 @@
 	}
 	
 	if ([elementName isEqualToString:self.currentElementName]) {
-		// Current element is stored as a string which may need to be converted to an NSNumber
+		// Current element is stored as a string which may need to be converted to an NSNumber.
+		// Using NSScanner here, as detailed in https://stackoverflow.com/a/572312/8653957
 		NSString* currentElement = [self.currentElementValueBuffer copy];
 		NSScanner* scanner = [NSScanner scannerWithString:currentElement];
 		self.currentItemInfo[[elementName mik_uncapitalizedString]] = ([scanner scanInt:nil] && [scanner isAtEnd]) ? @(currentElement.integerValue) : currentElement;
