@@ -33,6 +33,7 @@
 // MIDI Commands/Messages
 #import "MIKMIDICommand.h"
 #import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDINoteCommand.h"
 #import "MIKMIDIChannelPressureCommand.h"
 #import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIProgramChangeCommand.h"
@@ -42,6 +43,7 @@
 #import "MIKMIDIPolyphonicKeyPressureCommand.h"
 #import "MIKMIDISystemExclusiveCommand.h"
 #import "MIKMIDISystemMessageCommand.h"
+#import "MIKMIDISystemKeepAliveCommand.h"
 
 // MIDI Sequence/File support
 #import "MIKMIDISequence.h"

@@ -72,9 +72,9 @@
 		XCTAssertEqual(mutableEvent.eventType, eventType, "-[[%@ alloc] init] did not produce instance with expected event type (%@)", NSStringFromClass(mutableSubclass), @(eventType));
 
 		// FIXME: See Issue #151
-//		MIKMIDIMetaEventType metadataType = [MIKMIDIMetaEvent metaSubtypeForEventType:eventType];
-//		XCTAssertEqual(event.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(subclass), @(metadataType));
-//		XCTAssertEqual(mutableEvent.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(mutableSubclass), @(metadataType));
+		MIKMIDIMetaEventType metadataType = [MIKMIDIMetaEvent metaSubtypeForEventType:eventType];
+		XCTAssertEqual(event.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(subclass), @(metadataType));
+		XCTAssertEqual(mutableEvent.metadataType, metadataType, "-[[%@ alloc] init] did not produce instance with expected metadata type (%@)", NSStringFromClass(mutableSubclass), @(metadataType));
 	}
 	
 }
