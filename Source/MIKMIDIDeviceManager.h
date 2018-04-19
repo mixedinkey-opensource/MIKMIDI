@@ -15,6 +15,7 @@
 @class MIKMIDIClientSourceEndpoint;
 @class MIKMIDIDestinationEndpoint;
 @class MIKMIDICommand;
+@class MIKMIDIOutputPort;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -136,6 +137,16 @@ extern NSString * const MIKMIDIEndpointKey;
  *  @return YES if the commands were successfully sent, NO if an error occurred.
  */
 - (BOOL)sendCommands:(MIKArrayOf(MIKMIDICommand *) *)commands toVirtualEndpoint:(MIKMIDIClientSourceEndpoint *)endpoint error:(NSError **)error;
+
+
+/**
+ *  Returns the current MIDI output port.
+ *  Typically this should only be required for custom Core MIDI implementations in C/C++ where MIKMIDI has already been implemented to handle endpoint setup.
+ *  Creates a new MIDI output port if one does not already exist.
+ *
+ *  @return An MIKMIDIOutputPort representing the current MIDI output port.
+ */
+- (MIKMIDIOutputPort *)outputPort;
 
 
 
