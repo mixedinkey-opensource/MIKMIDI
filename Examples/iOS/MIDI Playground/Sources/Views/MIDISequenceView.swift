@@ -209,12 +209,12 @@ extension UIColor {
     
     var playheadTimestamp: MusicTimeStamp? {
         willSet {
-            if let timestamp = playheadTimestamp {
+            if let timestamp = playheadTimestamp, timestamp != newValue {
                 setNeedsDisplay(rectFor(playheadAt: timestamp))
             }
         }
         didSet {
-            if let timestamp = playheadTimestamp {
+            if let timestamp = playheadTimestamp, timestamp != oldValue {
                 setNeedsDisplay(rectFor(playheadAt: timestamp))
             }
         }
