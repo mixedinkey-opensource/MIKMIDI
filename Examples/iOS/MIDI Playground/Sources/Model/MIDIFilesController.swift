@@ -42,7 +42,7 @@ class MIDIFilesController {
 				midiFileURLs.append(url)
 			}
 		}
-		files = midiFileURLs.flatMap { MIDIFile(fileURL: $0) }
+		files = midiFileURLs.compactMap { MIDIFile(fileURL: $0) }
 	}
 	
 	private var documentsURL: URL {

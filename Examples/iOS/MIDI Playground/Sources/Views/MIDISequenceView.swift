@@ -76,7 +76,7 @@ extension UIColor {
 		
 		UIColor.black.setStroke()
         for (index, track) in noteTracks!.enumerated() {
-            var notes = track.events.flatMap { $0 as? MIKMIDINoteEvent }
+			var notes = track.events.compactMap { $0 as? MIKMIDINoteEvent }
 			if case .limited(let limitedWidth) = maxTimeToDisplay {
 				notes = notes.filter { $0.timeStamp <= limitedWidth }
 			}

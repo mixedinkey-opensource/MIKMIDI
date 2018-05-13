@@ -45,7 +45,7 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	
 	private func deviceSent(commands: [MIKMIDICommand]) {
 		previewSynthesizer?.handleMIDIMessages(commands)
-		let notes = commands.flatMap { $0 as? MIKMIDINoteCommand }
+		let notes = commands.compactMap { $0 as? MIKMIDINoteCommand }
 		for note in notes {
 			if note.isNoteOn {
 				pianoView.pressDown(key: Int(note.note))
