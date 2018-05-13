@@ -88,14 +88,17 @@ extension UIColor {
         }
     }
     
-    private func drawGridlines() {
+	private func drawGridlines(_ dirtyRect: CGRect) {
 		var maxLength = noteTracks?.map({ $0.length }).max(by: <) ?? 0
 		if case .limited(let limitedWidth) = maxTimeToDisplay {
 			maxLength = min(maxLength, limitedWidth)
 		}
         UIColor(white: 0.9, alpha: 1.0).setFill()
         for tick in 0...Int(maxLength) {
-            UIBezierPath(rect: CGRect(x: CGFloat(tick) * pixelsPerTick, y: 0, width: 1.0, height: bounds.height)).fill()
+			let rect = CGRect(x: CGFloat(tick) * pixelsPerTick, y: 0, width: 1.0, height: bounds.height)
+			if rect.intersects(dirtyRect) {
+            	UIBezierPath(rect: rect).fill()
+			}
         }
     }
     
@@ -113,12 +116,12 @@ extension UIColor {
     override func draw(_ rect: CGRect) {
         
         UIColor.white.setFill()
-        UIBezierPath(rect: bounds).fill()
+        UIBezierPath(rect: rect).fill()
         
         if noteTracks == nil { return }
         
         // Draw gridlines
-		if drawsGridlines { drawGridlines() }
+		if drawsGridlines { drawGridlines(rect) }
         // Draw notes
         drawNotes(rect)
         // Draw playhead
@@ -136,30 +139,47 @@ extension UIColor {
         let interpolationAmount = floatIndex - floor(floatIndex)
         return leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
     }
-    
+	
+	private var colorsCache = [Int : UIColor]()
     private func colorForTrackAtIndex(_ index: Int) -> UIColor {
+		
+		if let cachedColor = colorsCache[index] {
+			return cachedColor
+		}
+		
         let colors = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.cyan, UIColor.blue]
         if let numTracks = noteTracks?.count {
             let floatIndex = Double(index) / (Double(numTracks) / Double(colors.count-1))
             let leftColor = colors[Int(floor(floatIndex))]
             let rightColor = colors[Int(ceil(floatIndex))]
             let interpolationAmount = floatIndex - floor(floatIndex)
-            return leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
+			let result = leftColor.colorByInterpolatingWith(rightColor, amount: CGFloat(interpolationAmount))
+			colorsCache[index] = result
+			return result
         } else {
             return UIColor.gray
         }
     }
 	
 	private func noteIsBlack(_ noteNumber: Int) -> Bool {
-		return [1, 3, 6, 8, 10].contains(noteNumber % 12);
+		let noteIndex = noteNumber % 12
+		if noteIndex == 1 { return true }
+		if noteIndex == 3 { return true }
+		if noteIndex == 6 { return true }
+		if noteIndex == 8 { return true }
+		if noteIndex == 10 { return true }
+		return false
 	}
 	
 	private func rect(for noteEvent: MIKMIDINoteEvent) -> CGRect {
 		let note = Int(noteEvent.note)
 		if note < minNote || note > maxNote { return .zero } // Note is out of bounds
 		
-		let whiteNotes = Array(minNote..<note).filter { !noteIsBlack($0) }
-		var offset = CGFloat(whiteNotes.count) * noteHeightInPixels
+		var whiteNotesCount = 0
+		for n in minNote..<note {
+			if !noteIsBlack(n) { whiteNotesCount += 1 }
+		}
+		var offset = CGFloat(whiteNotesCount) * noteHeightInPixels
 		if noteIsBlack(note) { offset -= noteHeightInPixels / 2.0 }
 		
 		let width = CGFloat(noteEvent.duration) * pixelsPerTick
@@ -205,7 +225,11 @@ extension UIColor {
             setNeedsDisplay()
         }
     }
-    var noteTracks: [MIKMIDITrack]?
+	var noteTracks: [MIKMIDITrack]? {
+		didSet {
+			colorsCache = [:]
+		}
+	}
     
     var playheadTimestamp: MusicTimeStamp? {
         willSet {

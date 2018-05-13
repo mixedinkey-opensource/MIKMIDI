@@ -13,18 +13,23 @@ import UIKit
 	override init(frame: CGRect) {
 		numberOfWhiteKeys = 75
 		super.init(frame: frame)
+		isVertical = bounds.width < bounds.height
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		numberOfWhiteKeys = 75
 		super.init(coder: aDecoder)
+		isVertical = bounds.width < bounds.height
 	}
 	
 	// MARK: Public
 	
 	private var pressedKeys = Set<Int>() {
 		didSet {
-			setNeedsDisplay()
+			let changed = pressedKeys.union(oldValue).subtracting(pressedKeys.intersection(oldValue))
+			for key in changed {
+				setNeedsDisplay(rectForKey(note: key))
+			}
 		}
 	}
 	
@@ -38,7 +43,7 @@ import UIKit
 	
 	// MARK: Drawing
 	
-	private func draw(note: Int) {
+	private func draw(note: Int, dirtyRect: CGRect) {
 		let isPressedDown = pressedKeys.contains(note)
 		var rect = rectForKey(note: note)
 		if !noteIsBlack(note) && !isPressedDown {
@@ -49,22 +54,24 @@ import UIKit
 			}
 		}
 		
+		if rect.intersects(dirtyRect) {
 		let color: UIColor = isPressedDown ? .gray : .black
 		color.setFill()
 		UIBezierPath(rect: rect).fill()
+		}
 	}
 	
 	override func draw(_ rect: CGRect) {
 		UIColor.white.setFill()
 		UIColor.black.setStroke()
-		UIBezierPath(rect: bounds).fill()
-		UIBezierPath(rect: bounds).stroke()
+		UIBezierPath(rect: rect).fill()
+		UIBezierPath(rect: rect).stroke()
 		
 		let allKeys = Array(minNote..<maxNote)
 		let whiteKeys = allKeys.filter { !noteIsBlack($0) }
 		let blackKeys = allKeys.filter { noteIsBlack($0) }
-		whiteKeys.forEach(draw)
-		blackKeys.forEach(draw)
+		for key in whiteKeys { draw(note: key, dirtyRect: rect) }
+		for key in blackKeys { draw(note: key, dirtyRect: rect) }
 	}
 	
 	// MARK: Private Utilities
@@ -84,8 +91,11 @@ import UIKit
 			keyHeight *= 0.6
 		}
 		
-		let whiteNotes = Array(minNote..<note).filter { !noteIsBlack($0) }
-		var offset = CGFloat(whiteNotes.count) * whiteKeyWidth
+		var whiteNotesCount = 0
+		for n in minNote..<note {
+			if !noteIsBlack(n) { whiteNotesCount += 1 }
+		}
+		var offset = CGFloat(whiteNotesCount) * whiteKeyWidth
 		if noteIsBlack(note) { offset -= keyWidth / 2.0 }
 		
 		var rect = CGRect.zero
@@ -99,9 +109,13 @@ import UIKit
 	
 	// MARK: Properties
 	
-	var isVertical: Bool {
-		return bounds.width < bounds.height
+	override var bounds: CGRect {
+		didSet {
+			isVertical = bounds.width < bounds.height
+		}
 	}
+	
+	var isVertical: Bool = false
 	
 	@IBInspectable var minNote: Int = 0 {
 		didSet {
