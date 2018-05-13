@@ -74,7 +74,13 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 		}
 		
 		playingObserver = sequencer.observe(\MIKMIDISequencer.playing, options: [.initial]) { [weak self] (sequencer, change) in
-			self?.playButton.title = sequencer.isPlaying ? NSLocalizedString("Pause", comment: "Pause") : NSLocalizedString("Play", comment: "Play")
+			if sequencer.isPlaying {
+				self?.playButton.title = NSLocalizedString("Pause", comment: "Pause")
+				self?.configureDisplayLink()
+			} else {
+				self?.playButton.title = NSLocalizedString("Play", comment: "Play")
+				self?.displayLink = nil
+			}
 		}
 	}
 	
@@ -93,6 +99,18 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 		}
 	}
 	
+	// MARK: Display Link
+	
+	private func configureDisplayLink() {
+		let link = CADisplayLink(target: self, selector: #selector(updatePlayhead(_:)))
+		link.add(to: .main, forMode: RunLoopMode.defaultRunLoopMode)
+		displayLink = link
+	}
+	
+	@objc func updatePlayhead(_ displayLink: CADisplayLink?) {
+		sequenceView.playheadTimestamp = sequencer.currentTimeStamp
+	}
+	
 	// MARK: Properties
 	
 	var sequence: MIKMIDISequence? {
@@ -100,12 +118,8 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 			if let sequence = sequence {
 				sequenceView.sequence = sequence
 				configureSequencer(sequence)
-				playheadTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-					self?.sequenceView.playheadTimestamp = self?.sequencer.currentTimeStamp
-				}
 			} else {
 				sequenceView.sequence = nil
-				playheadTimer = nil
 			}
 		}
 	}
@@ -132,9 +146,9 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 		}
 	}()
 	
-	private var playheadTimer: Timer? {
+	var displayLink: CADisplayLink? {
 		willSet {
-			playheadTimer?.invalidate()
+			displayLink?.invalidate()
 		}
 	}
 }
