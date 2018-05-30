@@ -144,7 +144,6 @@ extern NSString * const MIKMIDIEndpointKey;
  *  Typically this should only be required for custom Core MIDI implementations in C/C++ where MIKMIDI has already been implemented to handle endpoint setup.
  *  Creates a new MIDI output port if one does not already exist.
  */
-//- (MIKMIDIOutputPort *)outputPort;
 @property (nonatomic, readonly) MIKMIDIOutputPort *outputPort;
 
 
