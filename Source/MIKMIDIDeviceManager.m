@@ -102,6 +102,12 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+-(void)restartMidiClient {
+    //This time is need for watting after MIDI devices connected, to make restart effected.
+    sleep(3);
+    MIDIRestart();
+}
+
 #pragma mark - Public
 
 - (nullable id)connectDevice:(MIKMIDIDevice *)device error:(NSError **)error eventHandler:(MIKMIDIEventHandlerBlock)eventHandler
