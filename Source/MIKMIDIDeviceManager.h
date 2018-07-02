@@ -69,11 +69,11 @@ extern NSString * const MIKMIDIEndpointKey;
 /**
  *  Used to obtain the shared MIKMIDIDeviceManager instance.
  *  MIKMIDIDeviceManager should not be created directly using +alloc/-init or +new.
- *  Rather, the singleton shared instance should always be obtained by calling this method.
+ *  Rather, the singleton shared instance should always be obtained using this property.
  *
  *  @return The shared MIKMIDIDeviceManager instance.
  */
-+ (instancetype)sharedDeviceManager;
+@property (class, readonly) MIKMIDIDeviceManager *sharedDeviceManager;
 
 /**
  *  Used to connect to a MIDI device. Returns a token that must be kept and passed into the
