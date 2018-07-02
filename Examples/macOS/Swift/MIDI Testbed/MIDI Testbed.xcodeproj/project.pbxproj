@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9DBD5DE720E9AA240003C6F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD5DE620E9AA240003C6F7 /* AppDelegate.swift */; };
+		9DBD5DE920E9AA240003C6F7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD5DE820E9AA240003C6F7 /* ViewController.swift */; };
+		9DBD5DEB20E9AA240003C6F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DBD5DEA20E9AA240003C6F7 /* Assets.xcassets */; };
+		9DBD5DEE20E9AA240003C6F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9DBD5DEC20E9AA240003C6F7 /* Main.storyboard */; };
+		9DBD5E0420E9AA3E0003C6F7 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBD5DFF20E9AA3B0003C6F7 /* MIKMIDI.framework */; };
+		9DBD5E0520E9AA3E0003C6F7 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBD5DFF20E9AA3B0003C6F7 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9DBD5DFE20E9AA3B0003C6F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D74EEA517A7129300BEE89F;
+			remoteInfo = MIKMIDI;
+		};
+		9DBD5E0020E9AA3B0003C6F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DAF8B061A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+		9DBD5E0220E9AA3B0003C6F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
+			remoteInfo = "MIKMIDI Tests";
+		};
+		9DBD5E0620E9AA3E0003C6F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D74EEA417A7129300BEE89F;
+			remoteInfo = MIKMIDI;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9DBD5E0820E9AA3E0003C6F7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9DBD5E0520E9AA3E0003C6F7 /* MIKMIDI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9DBD5DE320E9AA240003C6F7 /* MIDI Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DBD5DE620E9AA240003C6F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9DBD5DE820E9AA240003C6F7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		9DBD5DEA20E9AA240003C6F7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9DBD5DED20E9AA240003C6F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9DBD5DEF20E9AA240003C6F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9DBD5DF020E9AA240003C6F7 /* MIDI_Testbed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MIDI_Testbed.entitlements; sourceTree = "<group>"; };
+		9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9DBD5DE020E9AA240003C6F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DBD5E0420E9AA3E0003C6F7 /* MIKMIDI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9DBD5DDA20E9AA240003C6F7 = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DE520E9AA240003C6F7 /* Sources */,
+				9DBD5DF620E9AA2B0003C6F7 /* Resources */,
+				9DBD5DF720E9AA300003C6F7 /* Frameworks */,
+				9DBD5DE420E9AA240003C6F7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9DBD5DE420E9AA240003C6F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DE320E9AA240003C6F7 /* MIDI Testbed.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9DBD5DE520E9AA240003C6F7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DE620E9AA240003C6F7 /* AppDelegate.swift */,
+				9DBD5DE820E9AA240003C6F7 /* ViewController.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		9DBD5DF620E9AA2B0003C6F7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DEA20E9AA240003C6F7 /* Assets.xcassets */,
+				9DBD5DEC20E9AA240003C6F7 /* Main.storyboard */,
+				9DBD5DEF20E9AA240003C6F7 /* Info.plist */,
+				9DBD5DF020E9AA240003C6F7 /* MIDI_Testbed.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9DBD5DF720E9AA300003C6F7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9DBD5DF920E9AA3A0003C6F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD5DFF20E9AA3B0003C6F7 /* MIKMIDI.framework */,
+				9DBD5E0120E9AA3B0003C6F7 /* MIKMIDI.framework */,
+				9DBD5E0320E9AA3B0003C6F7 /* MIKMIDI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9DBD5DE220E9AA240003C6F7 /* MIDI Testbed */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9DBD5DF320E9AA240003C6F7 /* Build configuration list for PBXNativeTarget "MIDI Testbed" */;
+			buildPhases = (
+				9DBD5DDF20E9AA240003C6F7 /* Sources */,
+				9DBD5DE020E9AA240003C6F7 /* Frameworks */,
+				9DBD5DE120E9AA240003C6F7 /* Resources */,
+				9DBD5E0820E9AA3E0003C6F7 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9DBD5E0720E9AA3E0003C6F7 /* PBXTargetDependency */,
+			);
+			name = "MIDI Testbed";
+			productName = "MIDI Testbed";
+			productReference = 9DBD5DE320E9AA240003C6F7 /* MIDI Testbed.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9DBD5DDB20E9AA240003C6F7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0940;
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = "Mixed In Key";
+				TargetAttributes = {
+					9DBD5DE220E9AA240003C6F7 = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 9DBD5DDE20E9AA240003C6F7 /* Build configuration list for PBXProject "MIDI Testbed" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9DBD5DDA20E9AA240003C6F7;
+			productRefGroup = 9DBD5DE420E9AA240003C6F7 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9DBD5DF920E9AA3A0003C6F7 /* Products */;
+					ProjectRef = 9DBD5DF820E9AA3A0003C6F7 /* MIKMIDI.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				9DBD5DE220E9AA240003C6F7 /* MIDI Testbed */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9DBD5DFF20E9AA3B0003C6F7 /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9DBD5DFE20E9AA3B0003C6F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9DBD5E0120E9AA3B0003C6F7 /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = 9DBD5E0020E9AA3B0003C6F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9DBD5E0320E9AA3B0003C6F7 /* MIKMIDI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "MIKMIDI Tests.xctest";
+			remoteRef = 9DBD5E0220E9AA3B0003C6F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9DBD5DE120E9AA240003C6F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DBD5DEB20E9AA240003C6F7 /* Assets.xcassets in Resources */,
+				9DBD5DEE20E9AA240003C6F7 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9DBD5DDF20E9AA240003C6F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DBD5DE920E9AA240003C6F7 /* ViewController.swift in Sources */,
+				9DBD5DE720E9AA240003C6F7 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9DBD5E0720E9AA3E0003C6F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MIKMIDI;
+			targetProxy = 9DBD5E0620E9AA3E0003C6F7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9DBD5DEC20E9AA240003C6F7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9DBD5DED20E9AA240003C6F7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9DBD5DF120E9AA240003C6F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9DBD5DF220E9AA240003C6F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		9DBD5DF420E9AA240003C6F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = T4A2E2DEM7;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.MIDI-Testbed";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		9DBD5DF520E9AA240003C6F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = T4A2E2DEM7;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.MIDI-Testbed";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9DBD5DDE20E9AA240003C6F7 /* Build configuration list for PBXProject "MIDI Testbed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9DBD5DF120E9AA240003C6F7 /* Debug */,
+				9DBD5DF220E9AA240003C6F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9DBD5DF320E9AA240003C6F7 /* Build configuration list for PBXNativeTarget "MIDI Testbed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9DBD5DF420E9AA240003C6F7 /* Debug */,
+				9DBD5DF520E9AA240003C6F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9DBD5DDB20E9AA240003C6F7 /* Project object */;
+}

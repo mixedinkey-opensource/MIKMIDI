@@ -74,22 +74,18 @@
         return;
     }
     
-    struct MIDIPacket packet;
-    packet.timeStamp = mach_absolute_time();
-    packet.length = commandString.length / 2;
-    
+    NSMutableArray *bytes = [NSMutableArray array];
     char byte_chars[3] = {'\0','\0','\0'};
-    for (int i = 0; i < packet.length; i++) {
+    for (int i = 0; i < commandString.length / 2; i++) {
         byte_chars[0] = [commandString characterAtIndex:i*2];
         byte_chars[1] = [commandString characterAtIndex:i*2+1];
-        packet.data[i] = strtol(byte_chars, NULL, 16);;
+        [bytes addObject:@(strtol(byte_chars, NULL, 16))];
     }
+    MIDIPacket packet = MIKMIDIPacketCreate(mach_absolute_time(), commandString.length / 2, bytes);
 
     MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:&packet];
-	NSLog(@"Sending idenity request command: %@", command);
 	
 	NSArray *destinations = [self.device.entities valueForKeyPath:@"@unionOfArrays.destinations"];
-	if (![destinations count]) return;
 	for (MIKMIDIDestinationEndpoint *destination in destinations) {
         NSError *error = nil;
         if (![self.midiDeviceManager sendCommands:@[command] toEndpoint:destination error:&error]) {

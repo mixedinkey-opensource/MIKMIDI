@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D5184A51D97049D007EA2F9 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D5184A01D970497007EA2F9 /* MIKMIDI.framework */; };
-		9D5184A61D97049D007EA2F9 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D5184A01D970497007EA2F9 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9D749417175BCADC00A95994 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 9D74940B175BCADC00A95994 /* Credits.rtf */; };
 		9D749418175BCADC00A95994 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D74940D175BCADC00A95994 /* InfoPlist.strings */; };
 		9D749419175BCADC00A95994 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D74940F175BCADC00A95994 /* MainMenu.xib */; };
 		9D74941B175BCADC00A95994 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D749413175BCADC00A95994 /* main.m */; };
 		9D74941C175BCADC00A95994 /* MIKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D749416175BCADC00A95994 /* MIKAppDelegate.m */; };
+		9D92E0DA20E9A9BF0053A223 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D92E0D520E9A9B70053A223 /* MIKMIDI.framework */; };
+		9D92E0DB20E9A9BF0053A223 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D92E0D520E9A9B70053A223 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9DEB7E6C16E947A7007EA932 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DEB7E6B16E947A7007EA932 /* Cocoa.framework */; };
 		9DEB7E9016E9492A007EA932 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DEB7E8E16E9492A007EA932 /* AudioToolbox.framework */; };
 		9DEB7E9116E9492A007EA932 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DEB7E8F16E9492A007EA932 /* AudioUnit.framework */; };
@@ -21,30 +21,30 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9D51849F1D970497007EA2F9 /* PBXContainerItemProxy */ = {
+		9D92E0D420E9A9B70053A223 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */;
+			containerPortal = 9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 9D74EEA517A7129300BEE89F;
 			remoteInfo = MIKMIDI;
 		};
-		9D5184A11D970497007EA2F9 /* PBXContainerItemProxy */ = {
+		9D92E0D620E9A9B70053A223 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */;
+			containerPortal = 9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 9DAF8B061A7AFF1100F46528;
 			remoteInfo = "MIKMIDI-iOS";
 		};
-		9D5184A31D970497007EA2F9 /* PBXContainerItemProxy */ = {
+		9D92E0D820E9A9B70053A223 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */;
+			containerPortal = 9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
 			remoteInfo = "MIKMIDI Tests";
 		};
-		9D5184A71D97049D007EA2F9 /* PBXContainerItemProxy */ = {
+		9D92E0DC20E9A9BF0053A223 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */;
+			containerPortal = 9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 9D74EEA417A7129300BEE89F;
 			remoteInfo = MIKMIDI;
@@ -58,7 +58,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9D5184A61D97049D007EA2F9 /* MIKMIDI.framework in Embed Frameworks */,
+				9D92E0DB20E9A9BF0053A223 /* MIKMIDI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,7 +66,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 		9D74940C175BCADC00A95994 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		9D74940E175BCADC00A95994 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9D749410175BCADC00A95994 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -75,6 +74,7 @@
 		9D749414175BCADC00A95994 /* MIDI Testbed-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIDI Testbed-Prefix.pch"; sourceTree = "<group>"; };
 		9D749415175BCADC00A95994 /* MIKAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKAppDelegate.h; sourceTree = "<group>"; };
 		9D749416175BCADC00A95994 /* MIKAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKAppDelegate.m; sourceTree = "<group>"; };
+		9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 		9DEB7E6816E947A7007EA932 /* MIDI Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI Testbed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DEB7E6B16E947A7007EA932 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9DEB7E6E16E947A7007EA932 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -93,7 +93,7 @@
 				9DEB7E9316E9492E007EA932 /* CoreMIDI.framework in Frameworks */,
 				9DEB7E9016E9492A007EA932 /* AudioToolbox.framework in Frameworks */,
 				9DEB7E9116E9492A007EA932 /* AudioUnit.framework in Frameworks */,
-				9D5184A51D97049D007EA2F9 /* MIKMIDI.framework in Frameworks */,
+				9D92E0DA20E9A9BF0053A223 /* MIKMIDI.framework in Frameworks */,
 				9DEB7E6C16E947A7007EA932 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,16 +101,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9D51849A1D970497007EA2F9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				9D5184A01D970497007EA2F9 /* MIKMIDI.framework */,
-				9D5184A21D970497007EA2F9 /* MIKMIDI.framework */,
-				9D5184A41D970497007EA2F9 /* MIKMIDI Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		9D74940A175BCADC00A95994 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +139,16 @@
 			name = XIBs;
 			sourceTree = "<group>";
 		};
+		9D92E0CF20E9A9B60053A223 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9D92E0D520E9A9B70053A223 /* MIKMIDI.framework */,
+				9D92E0D720E9A9B70053A223 /* MIKMIDI.framework */,
+				9D92E0D920E9A9B70053A223 /* MIKMIDI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		9DEB7E5F16E947A7007EA932 = {
 			isa = PBXGroup;
 			children = (
@@ -170,7 +170,7 @@
 		9DEB7E6A16E947A7007EA932 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */,
+				9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */,
 				9DEB7E9216E9492E007EA932 /* CoreMIDI.framework */,
 				9DEB7E8E16E9492A007EA932 /* AudioToolbox.framework */,
 				9DEB7E8F16E9492A007EA932 /* AudioUnit.framework */,
@@ -205,7 +205,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				9D5184A81D97049D007EA2F9 /* PBXTargetDependency */,
+				9D92E0DD20E9A9BF0053A223 /* PBXTargetDependency */,
 			);
 			name = "MIDI Testbed";
 			productName = "MIDI Testbed";
@@ -234,8 +234,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 9D51849A1D970497007EA2F9 /* Products */;
-					ProjectRef = 9D5184991D970497007EA2F9 /* MIKMIDI.xcodeproj */;
+					ProductGroup = 9D92E0CF20E9A9B60053A223 /* Products */;
+					ProjectRef = 9D92E0CE20E9A9B60053A223 /* MIKMIDI.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -246,25 +246,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		9D5184A01D970497007EA2F9 /* MIKMIDI.framework */ = {
+		9D92E0D520E9A9B70053A223 /* MIKMIDI.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = MIKMIDI.framework;
-			remoteRef = 9D51849F1D970497007EA2F9 /* PBXContainerItemProxy */;
+			remoteRef = 9D92E0D420E9A9B70053A223 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9D5184A21D970497007EA2F9 /* MIKMIDI.framework */ = {
+		9D92E0D720E9A9B70053A223 /* MIKMIDI.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = MIKMIDI.framework;
-			remoteRef = 9D5184A11D970497007EA2F9 /* PBXContainerItemProxy */;
+			remoteRef = 9D92E0D620E9A9B70053A223 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9D5184A41D970497007EA2F9 /* MIKMIDI Tests.xctest */ = {
+		9D92E0D920E9A9B70053A223 /* MIKMIDI Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "MIKMIDI Tests.xctest";
-			remoteRef = 9D5184A31D970497007EA2F9 /* PBXContainerItemProxy */;
+			remoteRef = 9D92E0D820E9A9B70053A223 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -295,10 +295,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9D5184A81D97049D007EA2F9 /* PBXTargetDependency */ = {
+		9D92E0DD20E9A9BF0053A223 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MIKMIDI;
-			targetProxy = 9D5184A71D97049D007EA2F9 /* PBXContainerItemProxy */;
+			targetProxy = 9D92E0DC20E9A9BF0053A223 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
