@@ -264,7 +264,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		self.looping = NO;
 
 		MusicTimeStamp stopMusicTimeStamp = [clock musicTimeStampForMIDITimeStamp:stopTimeStamp];
-		_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength) ? stopMusicTimeStamp : self.sequenceLength;
+		self->_currentTimeStamp = (stopMusicTimeStamp <= self.sequenceLength) ? stopMusicTimeStamp : self.sequenceLength;
 
 		[clock unsyncMusicTimeStampsAndTemposFromMIDITimeStamps];
 	};
@@ -695,8 +695,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		[self willChangeValueForKey:@"loopStartTimeStamp"];
 		[self willChangeValueForKey:@"loopEndTimeStamp"];
 
-		_loopStartTimeStamp = loopStartTimeStamp;
-		_loopEndTimeStamp = loopEndTimeStamp;
+		self->_loopStartTimeStamp = loopStartTimeStamp;
+		self->_loopEndTimeStamp = loopEndTimeStamp;
 
 		[self didChangeValueForKey:@"loopStartTimeStamp"];
 		[self didChangeValueForKey:@"loopEndTimeStamp"];
@@ -812,13 +812,13 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (_sequence != sequence) {
 		[self dispatchSyncToProcessingQueueAsNeeded:^{
 			[self willChangeValueForKey:@"sequence"];
-			[_sequence removeObserver:self forKeyPath:@"tracks"];
+			[self->_sequence removeObserver:self forKeyPath:@"tracks"];
 			
-			if (_sequence.sequencer == self) _sequence.sequencer = nil;
-			_sequence = sequence;
-			_sequence.sequencer = self;
+			if (self->_sequence.sequencer == self) self->_sequence.sequencer = nil;
+			self->_sequence = sequence;
+			self->_sequence.sequencer = self;
 
-			[_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
+			[self->_sequence addObserver:self forKeyPath:@"tracks" options:NSKeyValueObservingOptionInitial context:NULL];
 			[self didChangeValueForKey:@"sequence"];
 		}];
 	}
