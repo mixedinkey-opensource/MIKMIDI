@@ -163,6 +163,7 @@
 {
 	NSUInteger sysexStartLocation = [self sysexDataStartLocation];
 	NSInteger length = MAX(0, [self.data length]-sysexStartLocation-1);
+    if ([self.data length] < length + sysexStartLocation) { return [NSData data]; }
 	return [self.data subdataWithRange:NSMakeRange(sysexStartLocation, length)];
 }
 
