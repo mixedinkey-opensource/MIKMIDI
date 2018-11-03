@@ -170,6 +170,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 {
 	NSUInteger sysexStartLocation = [self sysexDataStartLocation];
 	NSInteger length = MAX(0u, [self.data length]-sysexStartLocation-1);
+    if ([self.data length] < length + sysexStartLocation) { return [NSData data]; }
 	return [self.data subdataWithRange:NSMakeRange(sysexStartLocation, length)];
 }
 
