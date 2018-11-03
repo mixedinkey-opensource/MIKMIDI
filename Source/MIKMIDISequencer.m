@@ -627,7 +627,12 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	id<MIKMIDICommandScheduler> result = [self.tracksToDestinationsMap objectForKey:track];
 	if (!result && self.shouldCreateSynthsIfNeeded) {
 		// Create a default synthesizer
-		result = [[MIKMIDISynthesizer alloc] init];
+        NSError *error = nil;
+		result = [[MIKMIDISynthesizer alloc] initWithError:&error];
+        if (!result) {
+            NSLog(@"Error creating default synthesizer for %@: %@", track, error);
+            return nil;
+        }
 		[self setCommandScheduler:result forTrack:track];
 		[self.tracksToDefaultSynthsMap setObject:result forKey:track];
 	}
@@ -785,7 +790,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (MIKMIDIMetronome *)metronome
 {
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0) || !TARGET_OS_IPHONE
-	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] init];
+	if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithError:NULL];
 	return _metronome;
 #else
 	return nil;
