@@ -11,7 +11,7 @@
 #import "MIKMIDISynthesizer_SubclassMethods.h"
 #import "MIKMIDIErrors.h"
 #import "MIKMIDIClock.h"
-
+#import "MIKMIDIPrivate.h"
 
 @interface MIKMIDISynthesizer ()
 {
@@ -27,17 +27,17 @@
 
 @implementation MIKMIDISynthesizer
 
-- (instancetype)init
+- (instancetype)initWithError:(NSError **)error
 {
-	return [self initWithAudioUnitDescription:[[self class] appleSynthComponentDescription]];
+	return [self initWithAudioUnitDescription:[[self class] appleSynthComponentDescription] error:error];
 }
 
-- (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription
+- (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription error:(NSError ** _Nullable)error
 {
 	self = [super init];
 	if (self) {
 		_componentDescription = componentDescription;
-		if (![self setupAUGraph]) return nil;
+		if (![self setupAUGraphWithError:error]) { return nil; }
 
 		self.sendMIDICommand = ^(MIKMIDISynthesizer *synth, MusicDeviceComponent inUnit, UInt32 inStatus, UInt32 inData1, UInt32 inData2, UInt32 inOffsetSampleFrame) {
 			return MusicDeviceMIDIEvent(inUnit, inStatus, inData1, inData2, inOffsetSampleFrame);
@@ -244,12 +244,14 @@
 
 #pragma mark Audio Graph
 
-- (BOOL)setupAUGraph
+- (BOOL)setupAUGraphWithError:(NSError **)error
 {
+	error = error ?: &(NSError *__autoreleasing){ nil };
 	AUGraph graph;
 	OSStatus err = 0;
 	if ((err = NewAUGraph(&graph))) {
 		NSLog(@"Unable to create AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
@@ -266,6 +268,7 @@
 	AUNode outputNode;
 	if ((err = AUGraphAddNode(graph, &outputcd, &outputNode))) {
 		NSLog(@"Unable to add ouptput node to graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
@@ -274,27 +277,32 @@
 	AUNode instrumentNode;
 	if ((err = AUGraphAddNode(graph, &instrumentcd, &instrumentNode))) {
 		NSLog(@"Unable to add instrument node to AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
 	if ((err = AUGraphOpen(graph))) {
 		NSLog(@"Unable to open AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
 	AudioUnit instrumentUnit;
 	if ((err = AUGraphNodeInfo(graph, instrumentNode, NULL, &instrumentUnit))) {
 		NSLog(@"Unable to get instrument AU unit: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
 	if ((err = AUGraphConnectNodeInput(graph, instrumentNode, 0, outputNode, 0))) {
 		NSLog(@"Unable to connect instrument to output: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
 	if ((err = AUGraphInitialize(graph))) {
 		NSLog(@"Unable to initialize AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
@@ -309,6 +317,7 @@
 	
 	if ((err = AUGraphStart(graph))) {
 		NSLog(@"Unable to start AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
 	
@@ -536,6 +545,24 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 }
 
 #pragma mark - Deprecated
+
+- (instancetype)init
+{
+	SHOW_STANDARD_DEPRECATION_WARNING;
+	return [self initWithError:NULL];
+}
+
+- (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription
+{
+	SHOW_STANDARD_DEPRECATION_WARNING;
+	return [self initWithAudioUnitDescription:componentDescription error:NULL];
+}
+
+- (BOOL)setupAUGraph
+{
+	SHOW_STANDARD_DEPRECATION_WARNING;
+	return [self setupAUGraphWithError:NULL];
+}
 
 + (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
 - (AudioUnit)instrument { return self.instrumentUnit; }
