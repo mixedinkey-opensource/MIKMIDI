@@ -1,8 +1,33 @@
 # Change Log
-All notable changes to MIKMIDI are documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
+All notable changes to MIKMIDI are documented in this file. This project adheres to [Semantic Versioning](http://semver.org/). GitHub issue numbers for changes are in parentheses where available.
 
 ## [Unreleased]
 This section is for recent changes not yet included in an official release.
+
+## [1.7.0] - 2018-11-03
+
+### ADDED
+
+- An `outputPort` property on `MIKMIDIDeviceManager` (#251)
+- Support for saving/loading MIDI mappings on iOS (#131)
+- Support for sending 14-bit control change messages (#230/#235)
+- Sysex message coalescing (#122, #198, #200)
+- Custom initializers for various `MIKMIDIMetaEvent` subclasses (#150)
+
+### CHANGED
+
+- MIKMIDISynthesizer (and subclass) creation methods now take an `NSError` parameter. Non-error-returning versions are deprecated. (#217)
+
+### FIXED
+
+- Several sharp edges when bridging into Swift (#207, #216, #238)
+- Exception thrown when converting channel pressure and polyphonic key pressure events to commands (#249)
+- Failure to parse sysex messages in certain circumstances (#233)
+- Bug that caused setting `MIKMIDISystemExclusiveCommand.sysexChannel` to sometimes delete or corrupt `sysexData` (#239)
+- Crash caused by race condition in `MIKMIDIInputPort` (#223)
+- Failure to notice new virtual endpoints created in other processes (#120)
+- Duplicate virtual devices in connection manager
+- Crash when MIDI events are received after an `MIKMIDIConnectionManager` has been deallocated (#215)
 
 ## [1.6.2] - 2017-11-09
 
