@@ -384,27 +384,27 @@
 	for (MIKMIDICommand *command in commands) {
 		dispatch_sync(queue, ^{
 			NSUInteger count = commands.count;
-			if (!_scheduledCommandsByTimeStamp) {
-				_scheduledCommandsByTimeStamp = CFDictionaryCreateMutable(NULL, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+			if (!self->_scheduledCommandsByTimeStamp) {
+				self->_scheduledCommandsByTimeStamp = CFDictionaryCreateMutable(NULL, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 			}
-			if (!_scheduledCommandTimeStampsSet) {
-				_scheduledCommandTimeStampsSet = CFSetCreateMutable(NULL, count, &kCFTypeSetCallBacks);
+			if (!self->_scheduledCommandTimeStampsSet) {
+				self->_scheduledCommandTimeStampsSet = CFSetCreateMutable(NULL, count, &kCFTypeSetCallBacks);
 			}
-			if (!_scheduledCommandTimeStampsArray) {
-				_scheduledCommandTimeStampsArray = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
+			if (!self->_scheduledCommandTimeStampsArray) {
+				self->_scheduledCommandTimeStampsArray = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
 			}
 
 			MIDITimeStamp timeStamp = command.midiTimestamp;
 			void *timeStampNumber = (__bridge void*)@(timeStamp);
-			CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(_scheduledCommandsByTimeStamp, timeStampNumber);
+			CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber);
 			if (!commandsAtTimeStamp) {
 				commandsAtTimeStamp = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-				CFDictionarySetValue(_scheduledCommandsByTimeStamp, timeStampNumber, (void *)commandsAtTimeStamp);
+				CFDictionarySetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber, (void *)commandsAtTimeStamp);
 				CFRelease(commandsAtTimeStamp);
 
-				if (!CFSetContainsValue(_scheduledCommandTimeStampsSet, timeStampNumber)) {
-					CFSetAddValue(_scheduledCommandTimeStampsSet, timeStampNumber);
-					CFArrayAppendValue(_scheduledCommandTimeStampsArray, timeStampNumber);
+				if (!CFSetContainsValue(self->_scheduledCommandTimeStampsSet, timeStampNumber)) {
+					CFSetAddValue(self->_scheduledCommandTimeStampsSet, timeStampNumber);
+					CFArrayAppendValue(self->_scheduledCommandTimeStampsArray, timeStampNumber);
 				}
 			}
 
@@ -565,11 +565,20 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 }
 
 + (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
-- (AudioUnit)instrument { return self.instrumentUnit; }
-- (void)setInstrument:(AudioUnit)instrument { self.instrumentUnit = instrument; }
+- (AudioUnit)instrument
+{
+	SHOW_STANDARD_DEPRECATION_WARNING;
+	return self.instrumentUnit;
+}
+- (void)setInstrument:(AudioUnit)instrument
+{
+	SHOW_STANDARD_DEPRECATION_WARNING;
+	self.instrumentUnit = instrument;
+}
 
 - (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument
 {
+	SHOW_STANDARD_DEPRECATION_WARNING;
 	return [self selectInstrument:instrument error:NULL];
 }
 
