@@ -138,6 +138,9 @@
 
 #pragma mark - Deprecated
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 + (instancetype)playerWithMIDISource:(MIKMIDISourceEndpoint *)source
 {
     SHOW_STANDARD_DEPRECATION_WARNING;
@@ -186,5 +189,6 @@
     return [self initWithClientDestinationEndpoint:destination componentDescription:componentDescription error:NULL];
 }
 
+#pragma clang diagnostic pop
 
 @end
