@@ -165,7 +165,10 @@
 	}
 #else
 	FSRef fsRef;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	err = FSPathMakeRef((const UInt8*)[[fileURL path] cStringUsingEncoding:NSUTF8StringEncoding], &fsRef, 0);
+#pragma clang diagnostic pop
 	if (err != noErr) {
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
@@ -372,8 +375,10 @@
 		dispatch_queue_attr_t attr = DISPATCH_QUEUE_SERIAL;
 
 #if defined (__MAC_10_10) || defined (__IPHONE_8_0)
-		if (&dispatch_queue_attr_make_with_qos_class != NULL) {
-			attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+		if (@available(macOS 10.10, iOS 8, *)) {
+			if (&dispatch_queue_attr_make_with_qos_class != NULL) {
+				attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+			}
 		}
 #endif
 		
