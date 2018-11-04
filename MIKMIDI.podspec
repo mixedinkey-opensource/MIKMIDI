@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   
   s.name         = 'MIKMIDI'
-  s.version      = '1.6.3'
+  s.version      = '1.7.0'
   s.summary      = 'Library useful for programmers writing Objective-C or Swift OS X or iOS apps that use MIDI.'
   s.description  = <<-DESC
                      MIKMIDI is a library intended to simplify implementing Objective-C or Swift apps 
