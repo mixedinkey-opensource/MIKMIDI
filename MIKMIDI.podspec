@@ -11,12 +11,12 @@ Pod::Spec.new do |s|
  					 higher level feature not included in CoreMIDI itself.'
                      DESC
   s.homepage     = 'https://github.com/mixedinkey-opensource/MIKMIDI'
-  s.license      = 'MIT'
+  s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com' }
   s.social_media_url = 'https://twitter.com/armadsen'
 
   s.ios.deployment_target = '6.0'
-  s.osx.deployment_target = '10.7'
+  s.osx.deployment_target = '10.8'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
   s.source_files = 'Source/**/*.{h,m}'
@@ -27,5 +27,6 @@ Pod::Spec.new do |s|
   s.ios.frameworks = 'CoreMIDI', 'AudioToolbox'
   s.ios.library = 'xml2'
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SDK_DIR)"/usr/include/libxml2' }
+# s.compiler_flags = '-Wno-deprecated-implementations'
 
 end
