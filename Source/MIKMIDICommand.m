@@ -51,18 +51,28 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
 {
+	NSInteger firstCommandType = inputPacket->data[0];
+	NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(firstCommandType);
+	if (standardLength <= 0 || inputPacket->length == standardLength) {
+		// Can't parse multiple message because we don't know the length of each one,
+		// or there's only one message there
+		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
+		return command ? @[command] : @[];
+	}
+	
 	NSMutableArray *result = [NSMutableArray array];
-	NSInteger packetIndex  = 0;
-	NSInteger packetType   = 0;
-	NSInteger packetLength = 0;
+	NSInteger packetCount = 0;
 	while (1) {
-
-		packetType = inputPacket->data[packetIndex];
-		packetLength = MIKMIDIStandardLengthOfMessageForCommandType(packetType);
-		NSInteger dataOffset = packetIndex;
-		if (dataOffset > (inputPacket->length - packetLength)) break;
+		
+		NSInteger dataOffset = packetCount * standardLength;
+		if (dataOffset > (inputPacket->length - standardLength)) break;
 		const Byte *packetData = inputPacket->data + dataOffset;
-
+		if (packetData[0] != firstCommandType && ((packetData[0] | 0x0F) != (firstCommandType | 0x0F))) {
+			// Doesn't look like multiple messages because they're not all the same type
+			MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
+			return command ? @[command] : @[];
+		}
+		
 		// This is gross, but it's the only way I can find to reliably create a
 		// single-message MIDIPacket.
 		MIDIPacketList packetList;
@@ -71,13 +81,13 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 										  sizeof(MIDIPacketList),
 										  midiPacket,
 										  inputPacket->timeStamp,
-                                          packetLength,
+										  standardLength,
 										  packetData);
 		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
 		if (command) [result addObject:command];
-		packetIndex += packetLength;
+		packetCount++;
 	}
-
+	
 	return result;
 }
 
