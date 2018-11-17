@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @see +commandForCommandType:
  */
-+ (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
++ (instancetype)commandWithMIDIPacket:(MIDIPacket * _Nullable)packet;
 
 /**
  *  Convenience method for creating a new MIKMIDICommand instance from a MIDIPacket as received or created
@@ -154,7 +154,16 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return For supported command types, an initialized MIKMIDICommand subclass. Otherwise, an instance
  *  of MIKMIDICommand itself. nil if there is an error.
  */
-+ (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
++ (__kindof instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
+
+/**
+ * Returns a boolean value that indicates whether the receiver is equal to another command.
+ * Compares command type, timestamp, and raw data to determine if the two commands are equal.
+ *
+ * @param command The command with which to compare the receiver.
+ * @return YES if command is equivalent to the receiver, otherwise NO.
+ */
+- (BOOL)isEqualToCommand:(MIKMIDICommand *)command;
 
 /**
  *  The time at which the MIDI message was received. Will be set for commands received from a connected MIDI source. For commands

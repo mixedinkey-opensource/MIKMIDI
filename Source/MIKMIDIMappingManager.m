@@ -85,7 +85,7 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (NSSet *)mappingsForControllerName:(NSString *)name;
 {
-	if (![name length]) return nil;
+	if (![name length]) return [NSSet set];
 	NSSet *bundledMappings = [self bundledMappingsForControllerName:name];
 	NSSet *userMappings = [self userMappingsForControllerName:name];
 	return [bundledMappings setByAddingObjectsFromSet:userMappings];
@@ -146,7 +146,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (MIKMIDIMapping *)importMappingFromFileAtURL:(NSURL *)URL overwritingExistingMapping:(BOOL)shouldOverwrite error:(NSError **)error;
 {
-#if !TARGET_OS_IPHONE
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	if (![[URL pathExtension] isEqualToString:kMIKMIDIMappingFileExtension]) {
 		NSString *recoverySuggestion = [NSString stringWithFormat:NSLocalizedString(@"%1$@ can't be imported, because it does not have the file extension %2$@.", @"MIDI mapping import failed because of incorrect file extension message. Placeholder 1 is the filename, 2 is the required extension (e.g. 'midimap')")];
@@ -169,13 +168,10 @@ static MIKMIDIMappingManager *sharedManager = nil;
 	
 	[self addUserMappingsObject:mapping];
 	return mapping;
-#endif // TARGET_OS_IPHONE
-	return nil;
 }
 
 - (void)saveMappingsToDisk
 {
-#if !TARGET_OS_IPHONE
 	for (MIKMIDIMapping *mapping in self.userMappings) {
 		NSURL *fileURL = [self fileURLForMapping:mapping shouldBeUnique:NO];
 		if (!fileURL) {
@@ -185,7 +181,6 @@ static MIKMIDIMappingManager *sharedManager = nil;
 		
 		[mapping writeToFileAtURL:fileURL error:NULL];
 	}
-#endif
 }
 
 #pragma mark - Private
@@ -290,18 +285,20 @@ static MIKMIDIMappingManager *sharedManager = nil;
 
 - (NSString *)fileNameForMapping:(MIKMIDIMapping *)mapping
 {
+    id<MIKMIDIMappingManagerDelegate> delegate = self.delegate;
 	NSString *result = nil;
-	if ([self.delegate respondsToSelector:@selector(mappingManager:fileNameForMapping:)]) {
-		result = [self.delegate mappingManager:self fileNameForMapping:mapping];
+	if ([delegate respondsToSelector:@selector(mappingManager:fileNameForMapping:)]) {
+		result = [delegate mappingManager:self fileNameForMapping:mapping];
 	}
 	return [result length] ? result : mapping.name;
 }
 
 - (NSArray *)legacyFileNamesForUserMappingsObject:(MIKMIDIMapping *)mapping
 {
-	if (![self.delegate respondsToSelector:@selector(mappingManager:legacyFileNamesForUserMapping:)]) return nil;
+    id<MIKMIDIMappingManagerDelegate> delegate = self.delegate;
+	if (![delegate respondsToSelector:@selector(mappingManager:legacyFileNamesForUserMapping:)]) return nil;
 	
-	return [self.delegate mappingManager:self legacyFileNamesForUserMapping:mapping];
+	return [delegate mappingManager:self legacyFileNamesForUserMapping:mapping];
 }
 
 #pragma mark - Properties

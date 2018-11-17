@@ -26,9 +26,6 @@ void * MIKMIDISequenceKVOContext = &MIKMIDISequenceKVOContext;
 const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 @interface MIKMIDISequence ()
-{
-	MIKMIDISequencer *_sequencer;
-}
 
 @property (nonatomic) MusicSequence musicSequence;
 @property (nonatomic, strong) MIKMIDITrack *tempoTrack;
@@ -189,7 +186,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 #pragma mark - Sequencer Synchronization
 
-- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)())block
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)(void))block
 {
 	if (!block) return;
 	
@@ -203,7 +200,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 
 #pragma mark - Adding and Removing Tracks
 
-- (MIKMIDITrack *)addTrackWithError:(NSError **)error
+- (MIKMIDITrack *)addTrackWithError:(NSError * __autoreleasing *)error
 {
 	__block MIKMIDITrack *track = nil;
 	error = error ?: &(NSError *__autoreleasing){ nil };
@@ -463,7 +460,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	__block MusicTimeStamp length = 0;
 	
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		length = (_length == MIKMIDISequenceLongestTrackLength) ? self.lengthDefinedByTracks : _length;
+		length = (self->_length == MIKMIDISequenceLongestTrackLength) ? self.lengthDefinedByTracks : self->_length;
 	}];
 	
 	return length;
@@ -472,7 +469,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 - (void)setLength:(MusicTimeStamp)length
 {
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		_length = length;
+		self->_length = length;
 	}];
 }
 
@@ -500,8 +497,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	
 	return (__bridge_transfer NSData *)data;
 }
-
-- (MIKMIDISequencer *)sequencer { return _sequencer; }
 
 #pragma mark - Deprecated
 
@@ -559,12 +554,5 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	signature->denominator = result.denominator;
 	return YES;
 }
-
-@end
-
-#pragma mark -
-@implementation MIKMIDISequence (MIKMIDIPrivate)
-
-- (void)setSequencer:(MIKMIDISequencer *)sequencer { _sequencer = sequencer; }
 
 @end

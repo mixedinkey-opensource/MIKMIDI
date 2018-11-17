@@ -82,9 +82,6 @@
 		9DB2A5FA192D184D0047A3EB /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		9DB2A5FB192D184D0047A3EB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9DB2A615192D184D0047A3EB /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		9DB2A61C192D184D0047A3EB /* MIDI Files TestbedTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MIDI Files TestbedTests-Info.plist"; sourceTree = "<group>"; };
-		9DB2A61E192D184D0047A3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9DB2A620192D184D0047A3EB /* MIDI_Files_TestbedTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDI_Files_TestbedTests.m; sourceTree = "<group>"; };
 		9DB2A62B192D18970047A3EB /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9DB2A62C192D18970047A3EB /* MIDI Files Testbed-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIDI Files Testbed-Prefix.pch"; sourceTree = "<group>"; };
 		9DB2A62D192D18970047A3EB /* MIKAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKAppDelegate.h; sourceTree = "<group>"; };
@@ -124,7 +121,6 @@
 			children = (
 				9DB2A62A192D18970047A3EB /* Source */,
 				9DB2A631192D189E0047A3EB /* Resources */,
-				9DB2A61A192D184D0047A3EB /* MIDI Files TestbedTests */,
 				9DB2A5F5192D184D0047A3EB /* Frameworks */,
 				9DB2A5F4192D184D0047A3EB /* Products */,
 			);
@@ -157,24 +153,6 @@
 				9DB2A5FB192D184D0047A3EB /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		9DB2A61A192D184D0047A3EB /* MIDI Files TestbedTests */ = {
-			isa = PBXGroup;
-			children = (
-				9DB2A620192D184D0047A3EB /* MIDI_Files_TestbedTests.m */,
-				9DB2A61B192D184D0047A3EB /* Supporting Files */,
-			);
-			path = "MIDI Files TestbedTests";
-			sourceTree = "<group>";
-		};
-		9DB2A61B192D184D0047A3EB /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				9DB2A61C192D184D0047A3EB /* MIDI Files TestbedTests-Info.plist */,
-				9DB2A61D192D184D0047A3EB /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		9DB2A62A192D18970047A3EB /* Source */ = {
@@ -236,7 +214,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = MIK;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Mixed In Key";
 			};
 			buildConfigurationList = 9DB2A5EE192D184D0047A3EB /* Build configuration list for PBXProject "MIDI Files Testbed" */;
@@ -334,14 +312,6 @@
 			name = MainWindow.xib;
 			sourceTree = "<group>";
 		};
-		9DB2A61D192D184D0047A3EB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9DB2A61E192D184D0047A3EB /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		9DB2A632192D189E0047A3EB /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -377,14 +347,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -421,14 +397,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

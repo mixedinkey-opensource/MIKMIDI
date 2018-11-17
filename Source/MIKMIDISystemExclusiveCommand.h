@@ -9,11 +9,12 @@
 #import "MIKMIDISystemMessageCommand.h"
 #import "MIKMIDICompilerCompatibility.h"
 
-#define kMIKMIDISysexNonRealtimeManufacturerID 0x7E
-#define kMIKMIDISysexRealtimeManufacturerID 0x7F
+extern uint32_t const kMIKMIDISysexNonRealtimeManufacturerID;
+extern uint32_t const kMIKMIDISysexRealtimeManufacturerID;
 
-#define kMIKMIDISysexChannelDisregard 0x7F
-#define kMIKMIDISysexEndDelimiter 0xF7
+extern uint8_t const kMIKMIDISysexChannelDisregard;
+extern uint8_t const kMIKMIDISysexBeginDelimiter;
+extern uint8_t const kMIKMIDISysexEndDelimiter;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,15 +39,26 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)identityRequestCommand;
 
 /**
+ * Initializes the command with raw sysex data and timestamp.
+ *
+ * @param data Assumed to be valid with begin+end delimiters.
+ * @param timeStamp Time at which the first sysex byte was received.
+ */
+- (id)initWithRawData:(NSData *)data timeStamp:(MIDITimeStamp)timeStamp;
+
+/**
  *  The manufacturer ID for the command. This is used by devices to determine
  *  if the message is one they support. If it is not, the message is ignored.
  *  Manufacturer IDs are assigned by the MIDI Manufacturer's Association, and
  *  a list can be found here: http://www.midi.org/techspecs/manid.php
  *
+ *  The default is 0x7E (kMIKMIDISysexNonRealtimeManufacturerID).
+ *
  *  The manufacturer ID can be either 1 byte or 3 bytes.
  *
  *  Values 0x7E (kMIKMIDISysexNonRealtimeManufacturerID) and 0x7F (kMIKMIDISysexRealtimeManufacturerID)
- *  mean that the message is a universal exclusive message.
+ *  mean that the message is a universal (non-manufacturer specific)
+ *  system exclusive message.
  */
 @property (nonatomic, readonly) UInt32 manufacturerID;
 

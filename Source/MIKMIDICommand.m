@@ -41,38 +41,31 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (instancetype)commandWithMIDIPacket:(MIDIPacket *)packet;
 {
-	MIKMIDICommandType commandType = packet->data[0];
-	
-	Class subclass = [[self class] subclassForCommandType:commandType];
-	if (!subclass) subclass = self;
+    Class subclass = Nil;
+    if (packet) {
+        MIKMIDICommandType commandType = packet->data[0];
+        subclass = [[self class] subclassForCommandType:commandType];
+    }
+    
+	if (!subclass) { subclass = self; }
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] initWithMIDIPacket:packet];
 }
 
 + (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
 {
-	NSInteger firstCommandType = inputPacket->data[0];
-	NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(firstCommandType);
-	if (standardLength <= 0 || inputPacket->length == standardLength) {
-		// Can't parse multiple message because we don't know the length of each one,
-		// or there's only one message there
-		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
-		return command ? @[command] : @[];
-	}
-	
 	NSMutableArray *result = [NSMutableArray array];
-	NSInteger packetCount = 0;
-	while (1) {
-		
-		NSInteger dataOffset = packetCount * standardLength;
-		if (dataOffset > (inputPacket->length - standardLength)) break;
+	NSInteger dataOffset = 0;
+	while (dataOffset < inputPacket->length) {
 		const Byte *packetData = inputPacket->data + dataOffset;
-		if (packetData[0] != firstCommandType && ((packetData[0] | 0x0F) != (firstCommandType | 0x0F))) {
-			// Doesn't look like multiple messages because they're not all the same type
-			MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:inputPacket];
-			return command ? @[command] : @[];
+		MIKMIDICommandType commandType = (MIKMIDICommandType)packetData[0];
+		NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+		if (commandType == MIKMIDICommandTypeSystemExclusive) {
+			// For sysex, the packet can only contain a single MIDI message (as per documentation for MIDIPacket)
+			standardLength = inputPacket->length;
 		}
-		
+		if (dataOffset > (inputPacket->length - standardLength)) break;
+
 		// This is gross, but it's the only way I can find to reliably create a
 		// single-message MIDIPacket.
 		MIDIPacketList packetList;
@@ -83,11 +76,12 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 										  inputPacket->timeStamp,
 										  standardLength,
 										  packetData);
+        
 		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
 		if (command) [result addObject:command];
-		packetCount++;
+		dataOffset += standardLength;
 	}
-	
+
 	return result;
 }
 
@@ -138,6 +132,20 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
         additionalDescription = [NSString stringWithFormat:@"%@ ", additionalDescription];
     }
 	return [NSString stringWithFormat:@"%@ time: %@ command: %lu %@\n\tdata: %@", [super description], timestamp, (unsigned long)self.commandType, additionalDescription, self.data];
+}
+
+- (BOOL)isEqual:(id)object
+{
+	if (![object isKindOfClass:[MIKMIDICommand class]]) { return NO; }
+	return [self isEqualToCommand:(MIKMIDICommand *)object];
+}
+
+- (BOOL)isEqualToCommand:(MIKMIDICommand *)command
+{
+	if (self.commandType != command.commandType) { return NO; }
+	if (self.midiTimestamp != command.midiTimestamp) { return NO; }
+	if (![self.data isEqual:command.data]) { return NO; }
+	return YES;
 }
 
 #pragma mark - Private
@@ -309,7 +317,10 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (BOOL)isMutable { return YES; }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
+#pragma clang diagnostic pop
 
 #pragma mark - Properties
 

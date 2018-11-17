@@ -76,7 +76,7 @@ void * MIKMIDISequenceViewKVOContext = &MIKMIDISequenceViewKVOContext;
 
 - (NSArray *)MIDIFilesFromPasteboard:(NSPasteboard *)pb
 {
-	if (![[pb types] containsObject:NSFilenamesPboardType]) return NSDragOperationNone;
+	if (![[pb types] containsObject:NSFilenamesPboardType]) return @[];
 	
 	NSArray *files = [pb propertyListForType:NSFilenamesPboardType];
 	files = [files filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *file, NSDictionary *bindings) {
