@@ -25,8 +25,7 @@
 #import "MIKMIDISequence+MIKMIDIPrivate.h"
 #import "MIKMIDICommandScheduler.h"
 #import "MIKMIDIDestinationEndpoint.h"
-#import "MIKMIDIControlChangeCommand.h"
-#import "MIKMIDIControlChangeEvent.h"
+
 
 #if !__has_feature(objc_arc)
 #error MIKMIDISequencer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDISequencer.m in the Build Phases for this target
@@ -300,7 +299,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	NSMutableDictionary *tempoEventsByTimeStamp = [NSMutableDictionary dictionary];
 	Float64 overrideTempo = self.tempo;
 
-	if (!overrideTempo) {
+	if (!overrideTempo) { 
 		NSArray *sequenceTempoEvents = [sequence.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:MAX(fromMusicTimeStamp, 0) toTimeStamp:toMusicTimeStamp];
 		for (MIKMIDITempoEvent *tempoEvent in sequenceTempoEvents) {
 			NSNumber *timeStampKey = @(tempoEvent.timeStamp);
@@ -341,14 +340,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	NSMutableArray *soloTracks = [[NSMutableArray alloc] init];
 	for (MIKMIDITrack *track in sequence.tracks) {
 		if (track.isMuted) continue;
-
+		
 		[nonMutedTracks addObject:track];
 		if (track.solo) { [soloTracks addObject:track]; }
 	}
-
+	
 	// Never play muted tracks. If any non-muted tracks are soloed, only play those. Matches MusicPlayer behavior
 	NSArray *tracksToPlay = soloTracks.count != 0 ? soloTracks : nonMutedTracks;
-
+	
 	for (MIKMIDITrack *track in tracksToPlay) {
 		MusicTimeStamp startTimeStamp = MAX(fromMusicTimeStamp - track.offset, 0);
 		MusicTimeStamp endTimeStamp = toMusicTimeStamp - track.offset;
@@ -363,7 +362,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 			}
 			events = shiftedEvents;
 		}
-
+		
 		id<MIKMIDICommandScheduler> destination = events.count ? [self commandSchedulerForTrack:track] : nil;	// only get the destination if there's events so we don't create a destination endpoint if not needed
 		for (MIKMIDIEvent *event in events) {
 			if ([event isKindOfClass:[MIKMIDINoteEvent class]] && [(MIKMIDINoteEvent *)event duration] <= 0) continue;
@@ -388,7 +387,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		if (isLooping && (musicTimeStamp < loopStartTimeStamp || musicTimeStamp >= loopEndTimeStamp)) continue;
 		MIDITimeStamp midiTimeStamp = [clock midiTimeStampForMusicTimeStamp:musicTimeStamp];
 		if (midiTimeStamp < MIKMIDIGetCurrentTimeStamp() && midiTimeStamp > fromMIDITimeStamp) continue;	// prevents events that were just recorded from being scheduled
-
+		
 		MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEventsByTimeStamp[timeStampKey];
 		if (tempoEventAtTimeStamp) [self updateClockWithMusicTimeStamp:musicTimeStamp tempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
 
@@ -540,11 +539,11 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 - (void)recordMIDICommand:(MIKMIDICommand *)command
 {
 	if (!self.isRecording) return;
-
+	
 	MIDITimeStamp midiTimeStamp = command.midiTimestamp;
 	MusicTimeStamp musicTimeStamp = [self.clock musicTimeStampForMIDITimeStamp:midiTimeStamp];
-
-	if (musicTimeStamp < 0) { return; } // Command is in pre-roll
+	
+	if (musicTimeStamp < 0) { return; } // Command is in pre-roll 
 
 	MIKMIDIEvent *event;
 	if ([command isKindOfClass:[MIKMIDINoteOnCommand class]]) {				// note On
@@ -565,15 +564,6 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	} else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
 		MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
 		event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
-	} else if([command isKindOfClass:[MIKMIDIControlChangeCommand class]])
-	{
-		MIKMIDIControlChangeCommand* ccCmd= (MIKMIDIControlChangeCommand*)command;
-		MIKMutableMIDIControlChangeEvent* ccEvent = [[MIKMutableMIDIControlChangeEvent alloc] init];
-		ccEvent.controllerNumber = ccCmd.controllerNumber;
-		ccEvent.controllerValue = ccCmd.controllerValue;
-		ccEvent.channel = ccCmd.channel;
-		ccEvent.timeStamp = musicTimeStamp;
-		event = ccEvent;
 	}
 
 	if (event) [self.recordEnabledTracks makeObjectsPerformSelector:@selector(addEvent:) withObject:event];
