@@ -568,8 +568,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
     } else if ([command isKindOfClass:[MIKMIDINoteOffCommand class]]) {		// note Off
         MIKMIDINoteOffCommand *noteOffCommand = (MIKMIDINoteOffCommand *)command;
         event = [self pendingNoteEventWithNoteNumber:@(noteOffCommand.note) channel:noteOffCommand.channel releaseVelocity:noteOffCommand.velocity offTimeStamp:musicTimeStamp];
-    } else if ([command isKindOfClass:[MIKMIDIControlChangeCommand class]]) // cc command
-    {
+    } else if ([command isKindOfClass:[MIKMIDIControlChangeCommand class]]) { // cc command
         MIKMIDIControlChangeCommand* ccCmd = (MIKMIDIControlChangeCommand*)command;
         MIKMutableMIDIControlChangeEvent* ccEvent = [[MIKMutableMIDIControlChangeEvent alloc] init];
         ccEvent.controllerNumber = ccCmd.controllerNumber;
