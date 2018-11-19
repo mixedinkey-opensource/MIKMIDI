@@ -15,6 +15,19 @@
 
 @interface MIKMIDIInputPort (Private)
 - (void)interpretPacketList:(const MIDIPacketList *)pktList handleResultingCommands:(void (^_Nonnull)(NSArray <MIKMIDICommand*> *receivedCommands))completionBlock;
+- (NSString *)createNewConnectionToken;
+- (void)addConnectionToken:(NSString *)connectionToken andEventHandler:(MIKMIDIEventHandlerBlock)eventHandler forSource:(MIKMIDISourceEndpoint *)source;
+- (MIKMIDISourceEndpoint *)sourceEndpointForConnectionToken:(NSString *)token;
+@end
+
+@interface MIKMockSourceEndpoint : MIKMIDISourceEndpoint
+@end
+
+@implementation MIKMockSourceEndpoint
+
++ (BOOL)canInitWithObjectRef:(MIDIObjectRef)objectRef { return YES; }
+- (instancetype)init { return [self initWithObjectRef:0]; }
+
 @end
 
 @interface MIKMIDIInputPortTests : XCTestCase
@@ -39,6 +52,19 @@
 	[port interpretPacketList:&list handleResultingCommands:^(NSArray<MIKMIDICommand *> *receivedCommands) {
 		XCTAssertEqualObjects(receivedCommands.firstObject, mmcCommand);
 	}];
+}
+
+- (void)testConnectionTokenHandling
+{
+    MIKMIDIInputPort *port = [[MIKMIDIDeviceManager sharedDeviceManager] inputPort];
+    MIKMIDISourceEndpoint *source = [[MIKMockSourceEndpoint alloc] init];
+    NSString *connectionToken = [port createNewConnectionToken];
+    XCTAssertNil([port sourceEndpointForConnectionToken:connectionToken]);
+    [port addConnectionToken:connectionToken andEventHandler:^(MIKMIDISourceEndpoint *s, NSArray *c){} forSource:source];
+    XCTAssertNotNil([port sourceEndpointForConnectionToken:connectionToken]);
+    XCTAssertEqual([port sourceEndpointForConnectionToken:connectionToken], source);
+    [port disconnectConnectionForToken:connectionToken];
+    XCTAssertNil([port sourceEndpointForConnectionToken:connectionToken]);
 }
 
 @end
