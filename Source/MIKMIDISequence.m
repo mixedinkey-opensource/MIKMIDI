@@ -361,6 +361,22 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return result;
 }
 
+#pragma mark - Timing
+
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	Float64 result = 0;
+	MusicSequenceGetSecondsForBeats(self.musicSequence, musicTimeStamp, &result);
+	return (NSTimeInterval)result;
+}
+
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds
+{
+	MusicTimeStamp result = 0;
+	MusicSequenceGetBeatsForSeconds(self.musicSequence, (Float64)timeInSeconds, &result);
+	return result;
+}
+
 #pragma mark - Description
 
 - (NSString *)description
