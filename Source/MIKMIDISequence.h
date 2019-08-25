@@ -271,6 +271,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp;
 
+#pragma mark - Timing
+
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds;
+
 #pragma mark - Properties
 
 /**
