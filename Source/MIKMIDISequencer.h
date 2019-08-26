@@ -255,6 +255,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
+#pragma mark - Time Conversion
+
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp ignoreLooping:(BOOL)ignoreLooping;
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds;
+
 #pragma mark - Properties
 
 /**

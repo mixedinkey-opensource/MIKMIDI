@@ -20,14 +20,95 @@
 
 - (void)setUp
 {
-    [super setUp];
+	[super setUp];
 	
 	self.sequencer = [MIKMIDISequencer sequencer];
 }
 
 - (void)tearDown
 {
-    [super tearDown];
+	[super tearDown];
+}
+
+- (void)testConversionFromMusicTimeStampToSeconds
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"tempochanges" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *s = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(s);
+	self.sequencer.sequence = s;
+
+	XCTAssertEqual([self.sequencer timeInSecondsForMusicTimeStamp:0 ignoreLooping:NO], 0.0);
+
+	XCTAssertEqualWithAccuracy([s timeInSecondsForMusicTimeStamp:3], [self.sequencer timeInSecondsForMusicTimeStamp:3 ignoreLooping:NO], 1e-6 );
+
+	MIKMIDITempoEvent *secondTempo = s.tempoEvents[1];
+	MusicTimeStamp nextCheck = secondTempo.timeStamp+1;
+	XCTAssertEqualWithAccuracy([s timeInSecondsForMusicTimeStamp:nextCheck], [self.sequencer timeInSecondsForMusicTimeStamp:nextCheck ignoreLooping:NO], 1e-6);
+
+	MusicTimeStamp testTimeStamp = 850;
+	NSTimeInterval expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
+	NSTimeInterval actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	// Test when tempo is overridden
+	Float64 overrideTempo = 80.0;
+	self.sequencer.tempo = overrideTempo;
+
+	expected = 60 * testTimeStamp / overrideTempo;
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	self.sequencer.tempo = 0; // Disable tempo override
+
+	// Test with looping
+	self.sequencer.loop = YES;
+	[self.sequencer setLoopStartTimeStamp:10 endTimeStamp:15];
+
+	testTimeStamp = 5; // Test before loop region, should be unaffected
+	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	testTimeStamp = 12; // Test inside loop region before first loop, should be unaffected
+	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	testTimeStamp = 37.5; // Test inside loop region after first loop, should be affected
+	expected = 24.284925;
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	[self.sequencer setLoopStartTimeStamp:200 endTimeStamp:600];
+
+	testTimeStamp = 160; // Test before loop region, should be unaffected
+	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	testTimeStamp = 550; // Test inside loop region before first loop, should be unaffected
+	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+	testTimeStamp = 850; // Test inside loop region after first loop, should be affected
+	expected = 427.46909;
+	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp ignoreLooping:NO];
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+}
+
+- (void)testConversionFromSecondsToMusicTimeStamp
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"tempochanges" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *s = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(s);
+	self.sequencer.sequence = s;
+
+	XCTAssertEqual([self.sequencer musicTimeStampForTimeInSeconds:0.0], 0);
 }
 
 - (void)testBuiltinSynthesizers

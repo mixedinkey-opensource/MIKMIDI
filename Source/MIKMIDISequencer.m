@@ -657,6 +657,77 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
     return [self.tracksToDefaultSynthsMap objectForKey:track];
 }
 
+#pragma mark - Time Conversion
+
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp ignoreLooping:(BOOL)ignoreLooping
+{
+	if (!ignoreLooping && self.shouldLoop && musicTimeStamp >= self.loopEndTimeStamp) {
+		MusicTimeStamp loopDuration = self.loopEndTimeStamp - self.loopStartTimeStamp;
+		NSTimeInterval loopStartTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopStartTimeStamp ignoreLooping:YES];
+		NSTimeInterval loopEndTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopEndTimeStamp ignoreLooping:YES];
+		NSTimeInterval loopDurationInSeconds = loopEndTimeInSeconds - loopStartTimeInSeconds;
+
+		MusicTimeStamp scratch = musicTimeStamp;
+		scratch -= self.loopStartTimeStamp; // Subtract off time before the loop
+		NSTimeInterval result = loopStartTimeInSeconds;
+		// "Use up" the loops until we're down to a fraction of a loop
+		while (scratch >= loopDuration)  {
+			result += loopDurationInSeconds;
+			scratch -= loopDuration;
+		}
+		// Add the remaining fraction of a loop
+		result += [self timeInSecondsForMusicTimeStamp:(self.loopStartTimeStamp + scratch) ignoreLooping:YES];
+		result -= loopStartTimeInSeconds;
+		return result;
+	}
+
+	// Calculate initial tempo, handling case where sequence doesn't specify one.
+	NSArray *tempoEvents = self.sequence.tempoEvents;
+	if (self.tempo != 0) { // Overridden tempo that should be used instead of events in the tempo track
+		tempoEvents = @[[MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:self.tempo]];
+	} else {
+		NSUInteger tempoAtZeroIndex = [tempoEvents indexOfObjectPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
+			return event.timeStamp == 0;
+		}];
+		if (tempoAtZeroIndex == NSNotFound) {
+			NSMutableArray *scratch = [tempoEvents mutableCopy];
+			MIKMIDITempoEvent *initialTempo = [MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:kDefaultTempo];
+			[scratch insertObject:initialTempo atIndex:0];
+			tempoEvents = [scratch copy];
+		}
+	}
+
+	// Get tempo events that affect the result (ie. come before musicTimeStamp) and sort them in ascending order
+	NSIndexSet *indexesOfTempoEventsAffectingResult =
+	[tempoEvents indexesOfObjectsPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
+		if (!self.shouldLoop || musicTimeStamp < self.loopEndTimeStamp || ignoreLooping) {
+			return event.timeStamp <= musicTimeStamp;
+		}
+		// musicTimeStamp is within the loop region, so include all tempo events up to the end of the loop
+		return musicTimeStamp <= self.loopEndTimeStamp;
+	}];
+	NSArray *tempoEventsAffectingResult = [tempoEvents objectsAtIndexes:indexesOfTempoEventsAffectingResult];
+	tempoEvents = [tempoEventsAffectingResult sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES]]];
+
+	NSTimeInterval result = 0.0;
+	MIKMIDITempoEvent *lastTempoEvent = tempoEvents[0];
+	for (MIKMIDITempoEvent *tempoEvent in tempoEvents) {
+		result += 60.0 * (tempoEvent.timeStamp - lastTempoEvent.timeStamp) / lastTempoEvent.bpm;
+		lastTempoEvent = tempoEvent;
+	}
+	result += 60.0 * (musicTimeStamp - lastTempoEvent.timeStamp) / lastTempoEvent.bpm;
+	return result;
+}
+
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds
+{
+	//	if (self.tempo == 0 && !self.shouldLoop) { // If tempo is not overridden, and looping is not on
+	//		// Just use MIKMIDISequence's simple implementation
+	//		return [self.sequence musicTimeStampForTimeInSeconds:timeInSeconds];
+	//	}
+	return 0;
+}
+
 #pragma mark - Click Track
 
 - (NSMutableArray *)clickTrackEventsFromTimeStamp:(MusicTimeStamp)fromTimeStamp toTimeStamp:(MusicTimeStamp)toTimeStamp
