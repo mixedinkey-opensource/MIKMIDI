@@ -113,7 +113,7 @@
 	pktList.packet[0] = testPacket;
 	
 	[_debugInputPort interpretPacketList:&pktList handleResultingCommands:^(NSArray<MIKMIDICommand *> *receivedCommands) {
-		XCTAssert([_validSysexData isEqualToData:receivedCommands.firstObject.data], @"Coalescing of non-terminated sysex message should have ended after time-out");
+		XCTAssert([self->_validSysexData isEqualToData:receivedCommands.firstObject.data], @"Coalescing of non-terminated sysex message should have ended after time-out");
 		[expectation fulfill];
 	}];
 				  
