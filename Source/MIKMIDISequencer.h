@@ -35,6 +35,25 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 	MIKMIDISequencerClickTrackStatusAlwaysEnabled
 };
 
+typedef NS_OPTIONS(NSInteger, MIKMIDISequencerTimeConversionOptions) {
+	/** Use default options (consider tempo override and looping, don't unroll loops) */
+	MIKMIDISequencerTimeConversionOptionsNone = 0,
+	/** Use the sequence's tempo events to calculate conversion, even if the sequencer has a tempo override set. The default is to use the overridden tempo for calculation if one is set.*/
+	MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride = 1 << 0,
+	/** Calculate conversion as if looping were disabled. The default is to take into account looping if it is enabled on the sequencer.*/
+	MIKMIDISequencerTimeConversionOptionsIgnoreLooping = 1 << 1,
+	/** When this option is set, conversion will return the time of events currently being played relative to the start of the sequence, and the result will never been greater than the end of the loop. The default, where this option is not set, is to calculate and return the absolute time since the sequence start.
+
+	 For example, consider a sequence that is 16 beats long, the tempo is a constant 75 bpm and looping is enabled for first 8 beats. The sequence will be exactly 20 seconds long, and the loop will consist of the first 10 seconds.
+
+	 If this option is *set*, and a time of 25 seconds is passed in, the result will be 4 beats, because the sequencer will be at the half way point of the loop on its third time through. If this option is *not set*, the result will be 20 beats, because 20 beats total will have elapsed since the start of the sequence.
+
+	 Setting the option allows you to determine what part of the raw sequence is currently being played, while leaving it unset allows you to determine total playback time.
+
+	 The same concept applies for conversion from beats to seconds.*/
+	MIKMIDISequencerTimeConversionOptionsDontUnrollLoop = 1 << 2,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -257,8 +276,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Time Conversion
 
-- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp ignoreLooping:(BOOL)ignoreLooping;
-- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds;
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp options:(MIKMIDISequencerTimeConversionOptions)options;
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds options:(MIKMIDISequencerTimeConversionOptions)options;
 
 #pragma mark - Properties
 

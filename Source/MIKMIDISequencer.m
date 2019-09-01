@@ -659,24 +659,30 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 #pragma mark - Time Conversion
 
-- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp ignoreLooping:(BOOL)ignoreLooping
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp options:(MIKMIDISequencerTimeConversionOptions)options
 {
+	BOOL ignoreLooping = options & MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
 	if (!ignoreLooping && self.shouldLoop && musicTimeStamp >= self.loopEndTimeStamp) {
+		options |= MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
 		MusicTimeStamp loopDuration = self.loopEndTimeStamp - self.loopStartTimeStamp;
-		NSTimeInterval loopStartTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopStartTimeStamp ignoreLooping:YES];
-		NSTimeInterval loopEndTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopEndTimeStamp ignoreLooping:YES];
+		NSTimeInterval loopStartTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopStartTimeStamp options:options];
+		NSTimeInterval loopEndTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopEndTimeStamp options:options];
 		NSTimeInterval loopDurationInSeconds = loopEndTimeInSeconds - loopStartTimeInSeconds;
 
 		MusicTimeStamp scratch = musicTimeStamp;
 		scratch -= self.loopStartTimeStamp; // Subtract off time before the loop
 		NSTimeInterval result = loopStartTimeInSeconds;
+		BOOL shouldUnroll = !(options & MIKMIDISequencerTimeConversionOptionsDontUnrollLoop);
 		// "Use up" the loops until we're down to a fraction of a loop
 		while (scratch >= loopDuration)  {
-			result += loopDurationInSeconds;
+			// Only add time for full loops to result if we're unrolling loops
+			if (shouldUnroll) {
+				result += loopDurationInSeconds;
+			}
 			scratch -= loopDuration;
 		}
 		// Add the remaining fraction of a loop
-		result += [self timeInSecondsForMusicTimeStamp:(self.loopStartTimeStamp + scratch) ignoreLooping:YES];
+		result += [self timeInSecondsForMusicTimeStamp:(self.loopStartTimeStamp + scratch) options:options];
 		result -= loopStartTimeInSeconds;
 		return result;
 	}
@@ -719,7 +725,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	return result;
 }
 
-- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds options:(MIKMIDISequencerTimeConversionOptions)options
 {
 	//	if (self.tempo == 0 && !self.shouldLoop) { // If tempo is not overridden, and looping is not on
 	//		// Just use MIKMIDISequence's simple implementation
