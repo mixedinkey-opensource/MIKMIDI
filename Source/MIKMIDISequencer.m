@@ -727,9 +727,6 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	BOOL timeIsInLoop = self.shouldLoop && musicTimeStamp >= self.loopEndTimeStamp && !ignoreLooping;
 	NSIndexSet *indexesOfTempoEventsAffectingResult =
 	[tempoEvents indexesOfObjectsPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
-		if (!self.shouldLoop || musicTimeStamp < self.loopEndTimeStamp || ignoreLooping) {
-			return event.timeStamp <= musicTimeStamp;
-		}
 		// if musicTimeStamp is within the loop region, include all tempo events up to the end of the loop
 		MusicTimeStamp limit = timeIsInLoop ? self.loopEndTimeStamp : musicTimeStamp;
 		return event.timeStamp <= limit;
