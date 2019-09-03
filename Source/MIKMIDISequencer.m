@@ -846,19 +846,6 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
     _maximumLookAheadInterval = MIN(MAX(maximumLookAheadInterval, 0.05), 1.0);
 }
 
-#pragma mark - Deprecated
-
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track
-{
-    [self setCommandScheduler:endpoint forTrack:track];
-}
-
-- (MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track
-{
-    id<MIKMIDICommandScheduler> commandScheduler = [self commandSchedulerForTrack:track];
-    return [commandScheduler isKindOfClass:[MIKMIDIDestinationEndpoint class]] ? commandScheduler : nil;
-}
-
 @end
 
 

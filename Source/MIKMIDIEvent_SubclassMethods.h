@@ -97,19 +97,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)additionalEventDescription;
 
-// Deprecated
-
-/**
- *  @deprecated This method has been replaced by +supportedMIDIEventTypes
- *  and by default simply calls through to that method. Subclasses
- *  no longer need implement this.
- *
- *  @param type An MIKMIDIEventType value.
- *
- *  @return YES if the subclass supports type, NO otherwise.
- */
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type DEPRECATED_ATTRIBUTE;
-
 @end
 
 NS_ASSUME_NONNULL_END

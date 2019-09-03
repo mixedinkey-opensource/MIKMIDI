@@ -79,7 +79,6 @@
 #import "MIKMIDISequencer.h"
 #import "MIKMIDIMetronome.h"
 #import "MIKMIDIClock.h"
-#import "MIKMIDIPlayer.h"
 #import "MIKMIDIEndpointSynthesizer.h"
 
 // MIDI Mapping

@@ -380,23 +380,6 @@ Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
     return midiTimeStampsPerSecond * timeInterval;
 }
 
-#pragma mark - Deprecated Methods
-
-- (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp
-{
-    [self syncMusicTimeStamp:musicTimeStamp withMIDITimeStamp:midiTimeStamp tempo:tempo];
-}
-
-+ (Float64)secondsPerMIDITimeStamp
-{
-    return MIKMIDIClockSecondsPerMIDITimeStamp();
-}
-
-+ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval
-{
-    return MIKMIDIClockMIDITimeStampsPerTimeInterval(timeInterval);
-}
-
 @end
 
 
@@ -453,7 +436,6 @@ Float64 MIKMIDIClockMIDITimeStampsPerTimeInterval(NSTimeInterval timeInterval)
     // Ignored selectors
     if (selector == @selector(syncMusicTimeStamp:withMIDITimeStamp:tempo:)) return;
     if (selector == @selector(unsyncMusicTimeStampsAndTemposFromMIDITimeStamps)) return;
-    if (selector == @selector(setMusicTimeStamp:withTempo:atMIDITimeStamp:)) return;	// deprecated
     
     // Pass through remaining selectors
     [invocation invokeWithTarget:_masterClock];

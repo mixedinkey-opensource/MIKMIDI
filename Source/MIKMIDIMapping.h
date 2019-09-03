@@ -100,22 +100,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)userMappingFromBundledMapping:(MIKMIDIMapping *)bundledMapping;
 
-#if !TARGET_OS_IPHONE
-/**
- *  Returns an NSXMLDocument representation of the receiver.
- *  The XML document returned by this method can be written to disk.
- *
- *  @note This method is currently only available on OS X. -XMLStringRepresentation can be used on iOS.
- *  @deprecated This method is deprecated on OS X. Use -XMLStringRepresentation instead.
- *
- *  @return An NSXMLDocument representation of the receiver.
- *
- *  @see -writeToFileAtURL:error:
- */
-- (NSXMLDocument *)XMLRepresentation DEPRECATED_ATTRIBUTE;
-
-#endif
-
 /**
  *  Returns an NSString instance containing an XML representation of the receiver.
  *  The XML document returned by this method can be written to disk.
@@ -242,24 +226,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param mappingItems An NSSet containing mappings to be removed.
  */
 - (void)removeMappingItems:(MIKSetOf(MIKMIDIMappingItem *) *)mappingItems;
-
-@end
-
-#pragma mark - 
-
-@interface MIKMIDIMapping (Deprecated)
-
-/**
- *  @deprecated Use -initWithFileAtURL:error: instead.
- *  Initializes and returns an MIKMIDIMapping object created from the XML file at url.
- *
- *  @param url   An NSURL for the file to be read.
- *
- *  @return An initialized MIKMIDIMapping instance, or nil if an error occurred.
- *
- *  @see -initWithFileAtURL:error:
- */
-- (nullable instancetype)initWithFileAtURL:(NSURL *)url DEPRECATED_ATTRIBUTE;
 
 @end
 

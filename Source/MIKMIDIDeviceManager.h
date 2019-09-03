@@ -196,20 +196,4 @@ extern NSString * const MIKMIDIEndpointKey;
 
 @end
 
-@interface MIKMIDIDeviceManager (Deprecated)
-
-/**
- *  @deprecated Use disconnectConnectionforToken: instead. This method now simply calls through to that one.
- *
- *  Disconnects a previously connected MIDI input/source endpoint. The connectionToken argument
- *  must be a token previously returned by -connectInput:error:eventHandler:. Only the
- *  event handler block passed into the call that returned the token will be disconnected.
- *
- *  @param endpoint        This argument is ignored.
- *  @param connectionToken The connection token returned by -connectInput:error:eventHandler: when the input was connected.
- */
-- (void)disconnectInput:(nullable MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken DEPRECATED_ATTRIBUTE;
-
-@end
-
 NS_ASSUME_NONNULL_END

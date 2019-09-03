@@ -48,26 +48,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark - Deprecated
-
-@interface MIKMIDIClientSourceEndpoint (Deprecated)
-
-/**
- *  @deprecated Use -initWithName:error: instead.
- *
- *  Initializes a new virtual source endpoint.
- *
- *  This is essentially equivalent to creating a Core MIDI source endpoint
- *  using MIDISourceCreate(). Source endpoints created using this
- *  method can be used by your application to *send* MIDI rather than receive
- *  it. They can be seen and connected to by other applications on the system.
- *
- *  @param name	A name for the new virtual endpoint.
- *
- *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
- */
-- (nullable instancetype)initWithName:(NSString *)name DEPRECATED_ATTRIBUTE;
-
-@end
-
 NS_ASSUME_NONNULL_END

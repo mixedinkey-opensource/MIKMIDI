@@ -97,26 +97,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark - Deprecated
-
-@interface MIKMIDIMetaKeySignatureEvent (Deprecated)
-
-/**
- *  @deprecated: This property is deprecated, and didn't work properly in previous versions
- *  due to the use of a signed type. Use numberOfFlatsAndSharps, which is directly equivalent, or 
- *  musicalKey, instead.
- *
- *  The key for the event. Values can be between -7 and 7 and specify
- *  the key signature in terms of number of flats (if negative) or sharps (if positive).
- */
-@property (nonatomic, readonly) UInt8 key DEPRECATED_ATTRIBUTE;
-
-@end
-
-@interface MIKMutableMIDIMetaKeySignatureEvent (Deprecated)
-
-@property (nonatomic, readwrite) UInt8 key DEPRECATED_ATTRIBUTE;
-
-@end
-
 NS_ASSUME_NONNULL_END

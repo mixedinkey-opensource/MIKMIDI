@@ -42,29 +42,4 @@ NS_ASSUME_NONNULL_BEGIN
 // For backwards compatibility with applications written against MIKMIDI 1.0.x
 @compatibility_alias MIKMIDIEndpointSynthesizerInstrument MIKMIDISynthesizerInstrument;
 
-@interface MIKMIDISynthesizerInstrument (Deprecated)
-
-/**
- *	@deprecated Use -[MIKMIDISynthesizer availableInstruments] instead.
- *
- *  An array of available MIKMIDISynthesizerInstruments for use
- *  with MIKMIDIEndpointSynthesizer.
- *
- *  @return An NSArray containing MIKMIDISynthesizerInstrument instances.
- */
-+ (MIKArrayOf(MIKMIDISynthesizerInstrument *) *)availableInstruments DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated Use +instrumentWithID:inInstrumentUnit: instead.
- *
- *  Creates and initializes an MIKMIDISynthesizerInstrument with the corresponding instrument ID.
- *
- *  @param instrumentID The MusicDeviceInstrumentID for the desired MIKMIDISynthesizerInstrument
- *
- *  @return A MIKMIDISynthesizerInstrument with the matching instrument ID, or nil if no instrument was found.
- */
-+ (nullable instancetype)instrumentWithID:(MusicDeviceInstrumentID)instrumentID DEPRECATED_ATTRIBUTE;
-
-@end
-
 NS_ASSUME_NONNULL_END

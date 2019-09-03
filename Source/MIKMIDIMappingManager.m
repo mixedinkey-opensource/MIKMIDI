@@ -367,15 +367,3 @@ static MIKMIDIMappingManager *sharedManager = nil;
 }
 
 @end
-
-#pragma mark - Deprecated
-
-@implementation MIKMIDIMappingManager (Deprecated)
-
-- (MIKMIDIMapping *)mappingWithName:(NSString *)mappingName;
-{
-	MIKMIDIMapping *result = [[self userMappingsWithName:mappingName] firstObject];
-	return result ?: [[self bundledMappingsWithName:mappingName] firstObject];
-}
-
-@end

@@ -133,12 +133,3 @@
 + (BOOL)isMutable { return YES; }
 
 @end
-
-#pragma mark -
-
-@implementation MIKMIDIMetaKeySignatureEvent (Deprecated)
-
-- (UInt8)key { return self.numberOfFlatsAndSharps; }
-- (void)setKey:(UInt8)key { self.numberOfFlatsAndSharps = key; }
-
-@end

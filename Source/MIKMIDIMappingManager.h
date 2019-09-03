@@ -151,21 +151,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MIKMIDIMappingManager (Deprecated)
-
-/**
- *  Used to obtaining a mapping file with a given mapping name.
- *
- *  @param mappingName NSString representing the mapping name for the desired mapping.
- *
- *  @return An MIKMIDIMapping instance, or nil if no mapping could be found.
- *
- *  @deprecated Deprecated. Use -mappingsWithName: instead.
- */
-- (nullable MIKMIDIMapping *)mappingWithName:(NSString *)mappingName DEPRECATED_ATTRIBUTE;
-
-@end
-
 @protocol MIKMIDIMappingManagerDelegate <NSObject>
 
 /**

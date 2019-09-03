@@ -461,14 +461,3 @@ CLEANUP_AND_EXIT:
 }
 
 @end
-
-#pragma mark -
-
-@implementation MIKMIDIMapping (Deprecated)
-
-- (instancetype)initWithFileAtURL:(NSURL *)url
-{
-	return [self initWithFileAtURL:url error:NULL];
-}
-
-@end

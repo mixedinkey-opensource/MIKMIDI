@@ -228,36 +228,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) SInt16 timeResolution;
 
+@end
+
 #pragma mark - Deprecated
 
-/**
- *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `-[MIKMIDISequencer isLooping]` instead.
- *
- *  Whether the track is set to loop.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic, readonly) BOOL doesLoop DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
- *
- *	The number of times to play the designated portion of the music track. By default, a music track plays once.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) SInt32 numberOfLoops DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated This method only affects playback using MIKMIDIPlayer.
- *  Use `-[MIKMIDISequencer setLoopStartTimeStamp:endTimeStamp:]`, and associated properties instead.
- *
- *  The point in a MIDI track, measured in beats from the end of the MIDI track, at which to begin playback during looped playback.
- *  That is, during looped playback, a MIDI track plays from (length – loopDuration) to length.
- *
- *  This property can be observed using Key Value Observing.
- */
-@property (nonatomic) MusicTimeStamp loopDuration DEPRECATED_ATTRIBUTE;
+@interface MIKMIDITrack (Deprecated)
 
 /**
  *  @deprecated This method only affects playback using MIKMIDIPlayer. Use `MIKMIDISequencer` looping API instead.
@@ -267,66 +242,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  This property can be observed using Key Value Observing.
  */
 @property (nonatomic) MusicTrackLoopInfo loopInfo DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This method is deprecated. Use -trackNumber instead.
- *
- *  Gets the track's track number in it's owning MIDI sequence.
- *
- *  @param trackNumber On output, the track number of the track.
- *
- *  @return Whether or not getting the track number was succesful.
- */
-- (BOOL)getTrackNumber:(UInt32 *)trackNumber DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This property has been deprecated. Use -[MIKMIDISequencer setDestinationEndpoint:forTrack:] instead.
- *  
- *	The destination endpoint for the MIDI events of the track during playback.
- */
-@property (nonatomic, strong, readwrite, nullable) MIKMIDIDestinationEndpoint *destinationEndpoint DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated Use -addEvent: instead.
- *
- *  Inserts the specified MIDI event into the track.
- *
- *  @param event The MIDI event to insert into the track.
- *
- *  @return Whether or not inserting the MIDI event was succesful.
- */
-- (BOOL)insertMIDIEvent:(MIKMIDIEvent *)event DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated Use -addEvent: instead.
- *
- *  Inserts MIDI events into the track.
- *
- *  @param events An NSSet of MIKMIDIEvent to insert into the track.
- *
- *  @return Whether or not inserting the MIDI events was succesful.
- */
-- (BOOL)insertMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated Use -removeEvent: instead.
- *
- *  Removes MIDI events from a track.
- *
- *  @param events An NSSet of MIKMIDIEvent to remove from the track.
- *
- *  @return Whether or not removing the MIDI events was succesful.
- */
-- (BOOL)removeMIDIEvents:(MIKSetOf(MIKMIDIEvent *) *)events DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated Use -removeAllEvents instead.
- *
- *  Removes all MIDI events from the track.
- *
- *  @return Whether or not removing all of the MIDI events from the track was succesful.
- */
-- (BOOL)clearAllEvents DEPRECATED_ATTRIBUTE;
 
 @end
 

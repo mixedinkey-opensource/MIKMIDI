@@ -317,11 +317,6 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (BOOL)isMutable { return YES; }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
-#pragma clang diagnostic pop
-
 #pragma mark - Properties
 
 // MIKMIDICommand already implements a getter *and* setter for these. @dynamic keeps the compiler happy.

@@ -34,12 +34,6 @@
 	return self;
 }
 
-- (id)init
-{
-	[NSException raise:NSInternalInconsistencyException format:@"-[MIKMIDIMappingItem init] is deprecated and should be replaced with a call to -initWithMIDIResponderIdentifier:andCommandIdentifier:."];
-	return [self initWithMIDIResponderIdentifier:@"Unknown" andCommandIdentifier:@"Unknown"];
-}
-
 #if !TARGET_OS_IPHONE
 
 - (instancetype)initWithXMLElement:(NSXMLElement *)element;

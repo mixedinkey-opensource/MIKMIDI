@@ -15,27 +15,6 @@
 #error NSApplication+MIKMIDI.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for NSApplication+MIKMIDI.m in the Build Phases for this target
 #endif
 
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-
-@interface MIK_VIEW_CLASS (MIKSubviews)
-- (NSSet *)mik_allSubviews; // returns all subviews in flat set
-@end
-
-@implementation MIK_VIEW_CLASS (MIKSubviews)
-
-- (NSSet *)mik_allSubviews
-{
-	NSMutableSet *result = [NSMutableSet setWithArray:[self subviews]];
-	for (MIK_VIEW_CLASS *subview in [self subviews]) {
-		[result unionSet:[subview mik_allSubviews]];
-	}
-	return result;
-}
-
-@end
-
-#endif
-
 static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 {
 	if (!object) return NO;
@@ -117,18 +96,7 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 			break;
 		}
 	}
-	
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-	if (!result) {
-		NSMutableSet *viewHierarchyResponders = [[self MIDIRespondersInViewHierarchy] mutableCopy];
-		[viewHierarchyResponders minusSet:registeredResponders];
-		result = [[viewHierarchyResponders filteredSetUsingPredicate:predicate] anyObject];
-		
-		if (result) {
-			NSLog(@"WARNING: Found responder %@ for identifier %@ by traversing view hierarchy. This path for finding MIDI responders is deprecated. Responders should be explicitly registered with NS/UIApplication.", result, identifier);
-		}
-	}
-#endif
+
 	return result;
 }
 
@@ -160,10 +128,6 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	for (id<MIKMIDIResponder> responder in self.registeredMIKMIDIResponders) {
 		[result unionSet:[self recursiveSubrespondersOfMIDIResponder:responder]];
 	}
-	
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-	[result unionSet:[self MIDIRespondersInViewHierarchy]];
-#endif
 
 	if (self.shouldCacheMIKMIDISubresponders) {
 		// Load cache with result
@@ -194,41 +158,6 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	return _midiIdentifierPredicate;
 }
 
-#pragma mark - Deprecated
-
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-- (NSSet *)MIDIRespondersInViewHierarchy
-{
-	NSMutableSet *result = [NSMutableSet set];
-	
-	// Go through the entire view hierarchy
-	for (MIK_WINDOW_CLASS *window in [[MIK_APPLICATION_CLASS sharedApplication] windows]) {
-		if ([window conformsToProtocol:@protocol(MIKMIDIResponder)]) {
-			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)window]];
-		}
-#if !TARGET_OS_IPHONE
-		if ([[window delegate] conformsToProtocol:@protocol(MIKMIDIResponder)]) {
-			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)[window delegate]]];
-		}
-		if ([[window windowController] conformsToProtocol:@protocol(MIKMIDIResponder)]) {
-			[result unionSet:[self recursiveSubrespondersOfMIDIResponder:[window windowController]]];
-		}
-		NSSet *allSubviews = [[window contentView] mik_allSubviews];
-#else
-		NSSet *allSubviews = [window.rootViewController.view mik_allSubviews];
-#endif
-		for (MIK_VIEW_CLASS *subview in allSubviews) {
-			if ([subview conformsToProtocol:@protocol(MIKMIDIResponder)]) {
-				[result unionSet:[self recursiveSubrespondersOfMIDIResponder:(id<MIKMIDIResponder>)subview]];
-			}
-		}
-	}
-	
-	return result;
-}
-
-#endif // MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-
 @end
 
 #pragma mark -
@@ -245,11 +174,7 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	
 	NSSet *registeredResponders = [self respondersForCommand:command inResponders:manager.allMIDIResponders];
 	if ([registeredResponders count]) return YES;
-	
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-	NSSet *viewHierarchyResponders = [self respondersForCommand:command inResponders:[self MIDIRespondersInViewHierarchy]];
-	return ([viewHierarchyResponders count] != 0);
-#endif
+
 	return NO;
 }
 
@@ -260,16 +185,6 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 	for (id<MIKMIDIResponder> responder in registeredResponders) {
 		[responder handleMIDICommand:command];
 	}
-	
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-	NSMutableSet *viewHierarchyResponders = [[self respondersForCommand:command inResponders:[self MIDIRespondersInViewHierarchy]] mutableCopy];
-	[viewHierarchyResponders minusSet:registeredResponders];
-	
-	for (id<MIKMIDIResponder> responder in viewHierarchyResponders) {
-		NSLog(@"WARNING: Found responder %@ for command %@ by traversing view hierarchy. This path for finding MIDI responders is deprecated. Responders should be explicitly registered with NS/UIApplication.", responder, command);
-		[responder handleMIDICommand:command];
-	}
-#endif
 }
 
 - (id<MIKMIDIResponder>)MIDIResponderWithIdentifier:(NSString *)identifier;
@@ -307,11 +222,5 @@ static BOOL MIKObjectRespondsToMIDICommand(id object, MIKMIDICommand *command)
 }
 - (BOOL)shouldCacheMIKMIDISubresponders { return [self.mikmidi_responderHierarchyManager shouldCacheMIKMIDISubresponders]; }
 - (void)setShouldCacheMIKMIDISubresponders:(BOOL)flag { [self.mikmidi_responderHierarchyManager setShouldCacheMIKMIDISubresponders:flag]; }
-
-#pragma mark - Deprecated
-
-#if MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
-- (NSSet *)MIDIRespondersInViewHierarchy { return [self.mikmidi_responderHierarchyManager MIDIRespondersInViewHierarchy]; }
-#endif // MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS
 
 @end

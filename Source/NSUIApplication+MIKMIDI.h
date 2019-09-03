@@ -26,14 +26,6 @@
 
 #import "MIKMIDICompilerCompatibility.h"
 
-/**
- *  Define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS as a non-zero value to (re)enable searching
- *  the view hierarchy for MIDI responders. This is disabled by default because it's slow.
- *
- *  @deprecated This feature still works, but its use is discouraged. It is deprecated and may be removed in the future.
- */
-//#define MIKMIDI_SEARCH_VIEW_HIERARCHY_FOR_RESPONDERS 0
-
 @protocol MIKMIDIResponder;
 
 @class MIKMIDICommand;

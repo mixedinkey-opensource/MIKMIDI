@@ -19,7 +19,6 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 @implementation MIKMIDIEvent
 
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self supportedMIDIEventTypes] containsObject:@(type)]; }
 + (NSArray *)supportedMIDIEventTypes { return @[]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDIEvent class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDIEvent class]; }
@@ -262,13 +261,6 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 @dynamic eventType;
 @dynamic data;
 @dynamic timeStamp;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-
-+ (BOOL)supportsMIKMIDIEventType:(MIKMIDIEventType)type { return [[self immutableCounterpartClass] supportsMIKMIDIEventType:type]; }
-
-#pragma clang diagnostic pop
 
 @end
 

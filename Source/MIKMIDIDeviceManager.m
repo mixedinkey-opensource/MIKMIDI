@@ -489,14 +489,3 @@ void MIKMIDIDeviceManagerNotifyCallback(const MIDINotification *message, void *r
 }
 
 @end
-
-#pragma mark -
-
-@implementation MIKMIDIDeviceManager (Deprecated)
-
-- (void)disconnectInput:(MIKMIDISourceEndpoint *)endpoint forConnectionToken:(id)connectionToken
-{
-	[self disconnectConnectionForToken:connectionToken];
-}
-
-@end

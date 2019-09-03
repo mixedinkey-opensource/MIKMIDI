@@ -27,6 +27,11 @@
 
 @implementation MIKMIDISynthesizer
 
+- (instancetype)init
+{
+	return [self initWithError:NULL];
+}
+
 - (instancetype)initWithError:(NSError **)error
 {
 	return [self initWithAudioUnitDescription:[[self class] appleSynthComponentDescription] error:error];
@@ -543,48 +548,5 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 		}
 	}
 }
-
-#pragma mark - Deprecated
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-
-- (instancetype)init
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	return [self initWithError:NULL];
-}
-
-- (instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	return [self initWithAudioUnitDescription:componentDescription error:NULL];
-}
-
-- (BOOL)setupAUGraph
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	return [self setupAUGraphWithError:NULL];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
-- (AudioUnit)instrument
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	return self.instrumentUnit;
-}
-- (void)setInstrument:(AudioUnit)instrument
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	self.instrumentUnit = instrument;
-}
-
-- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument
-{
-	SHOW_STANDARD_DEPRECATION_WARNING;
-	return [self selectInstrument:instrument error:NULL];
-}
-
-#pragma clang diagnostic pop
 
 @end

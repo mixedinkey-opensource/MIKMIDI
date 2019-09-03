@@ -160,13 +160,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable MIKMIDITrack *)addTrackWithError:(NSError **)error;
 
 /**
- *  Creates and adds a new MIDI track to the sequence. May return nil if an error occurs.
- *
- *  @deprecated: This method is deprecated. You should use -addTrackWithError: instead.
- */
-- (nullable MIKMIDITrack *)addTrack DEPRECATED_ATTRIBUTE NS_SWIFT_UNAVAILABLE("Use the error throwing variant instead.");
-
-/**
  *  Removes the specified MIDI track from the sequence.
  *
  *  @param track The track to remove.
@@ -326,59 +319,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (copy, nonatomic) void (^callBackBlock)(MIKMIDITrack *track, MusicTimeStamp eventTime, const MusicEventUserData *eventData, MusicTimeStamp startSliceBeat, MusicTimeStamp endSliceBeat);
 
+@end
+
 #pragma mark - Deprecated
 
-/**
- *  @deprecated This method is deprecated. Use +sequenceWithData:error: instead.
- *
- *  Creates and initializes a new instance of MIKMIDISequence from MIDI data.
- *
- *  @param data The MIDI data for the new sequence.
- *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
- */
-+ (nullable instancetype)sequenceWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated This method is deprecated. Use -initWithData:error: instead.
- *
- *  Initializes a new instance of MIKMIDISequence from MIDI data.
- *
- *  @param data The MIDI data for the new sequence.
- *
- *  @return A new instance of MIKMIDISequence containing the MIDI data, or nil if an error occured.
- */
-- (nullable instancetype)initWithData:(NSData *)data DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This method is deprecated. Use -[MIKMIDISequencer 
- *	setDestinationEndpoint:forTrack:] instead.
- *
- *  Sets the destination endpoint for each track in the sequence.
- *
- *  @param destinationEndpoint The destination endpoint to set for each track in the sequence.
- */
-- (void)setDestinationEndpoint:(nullable MIKMIDIDestinationEndpoint *)destinationEndpoint DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This method has been replaced by -tempoAtTimeStamp: and simply calls through to that method.
- *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
- *
- *  @param bpm On output, the beats per minute of the tempo at the specified time stamp.
- *  @param timeStamp The time stamp that you would like to know the sequence's tempo at.
- *  @return YES if getting the tempo was successful, NO if an error occurred.
- */
-- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
-
-/**
- *  @deprecated This method has been replaced by -timeSignatureAtTimeStamp: and simply calls through to that method.
- *  You should not call it, and should update your code to call -timeSignatureAtTimeStamp: instead.
- *
- *  @param signature On output, a time signature instance with its values populated.
- *  @param timeStamp The time stamp at which you would like to know the time signature.
- *  @return YES if getting the time signature was successful, NO if an error occurred.
- */
-- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp DEPRECATED_ATTRIBUTE;
+@interface MIKMIDISequence (Deprecated)
 
 /**
  *	@deprecated This method is only useful in the context of using a sequence in MIKMIDIPlayer, which has been deprecated.
@@ -394,7 +339,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return The MusicTimeStamp of the sequence that is in an equivalent position in the sequence as loopedTimeStamp.
  */
 - (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp DEPRECATED_ATTRIBUTE;
-
 
 @end
 

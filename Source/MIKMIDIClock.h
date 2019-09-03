@@ -170,51 +170,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) Float64 currentTempo;
 
-#pragma mark - Deprecated Methods
-
-/**
- *	@deprecated This method is deprecated. Use -[MIKMIDIClock
- *	syncMusicTimeStamp:withMIDITimeStamp:tempo:] instead.
- *
- *  Internally synchronizes the musicTimeStamp with the midiTimeStamp using the specified tempo. 
- *  This method must be called at least once before -musicTimeStampForMIDITimeStamp: and 
- *  -midiTimeStampForMusicTimeStamp: will return any meaningful values.
- *
- *  @param musicTimeStamp The MusicTimeStamp to synchronize the clock to.
- *  @param tempo The beats per minute at which MusicTimeStamps should tick.
- *  @param midiTimeStamp The MIDITimeStamp to synchronize the clock to.
- *
- *  @note When this method is called, historical tempo and timing information more than 1 second
- *  old is pruned. At that point, calls to -musicTimeStampForMIDITimeStamp:,
- *  -midiTimeStampForMusicTimeStamp:, -tempoAtMIDITimeStamp:, and -tempoAtMusicTimeStamp:
- *  with time stamps more than one second older than the time stamps set with this method
- *  may not necessarily return accurate information.
- *
- *  @see -musicTimeStampForMIDITimeStamp:
- *  @see -midiTimeStampForMusicTimeStamp:
- */
-- (void)setMusicTimeStamp:(MusicTimeStamp)musicTimeStamp withTempo:(Float64)tempo atMIDITimeStamp:(MIDITimeStamp)midiTimeStamp DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This method is deprecated. Use MIKMIDIClockSecondsPerMIDITimeStamp() instead.
- *
- *  Returns the number of seconds per each MIDITimeStamp.
- *
- *  @return Then number of seconds per each MIDITimeStamp.
- */
-+ (Float64)secondsPerMIDITimeStamp DEPRECATED_ATTRIBUTE;
-
-/**
- *	@deprecated This method is deprecated. Use MIKMIDIClockMIDITimeStampsPerTimeInterval() instead.
- *
- *  Returns the number of MIDITimeStamps that would occur during a specified time interval.
- *
- *  @param timeInterval The number of seconds to convert into number of MIDITimeStamps.
- *
- *  @return The number of MIDITimeStamps that would occur in the specified time interval.
- */
-+ (Float64)midiTimeStampsPerTimeInterval:(NSTimeInterval)timeInterval DEPRECATED_ATTRIBUTE;
-
 @end
 
 NS_ASSUME_NONNULL_END

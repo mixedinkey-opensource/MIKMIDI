@@ -223,11 +223,6 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 	return track;
 }
 
-- (MIKMIDITrack *)addTrack
-{
-	return [self addTrackWithError:NULL];
-}
-
 - (BOOL)removeTrack:(MIKMIDITrack *)track
 {
 	if (!track) return NO;
@@ -271,20 +266,6 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	if (track && self.callBackBlock) {
 		self.callBackBlock(track, inEventTime, inEventData, inStartSliceBeat, inEndSliceBeat);
 	}
-}
-
-#pragma mark - Looping
-
-- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp
-{
-	MusicTimeStamp length = self.length;
-	
-	if (loopedTimeStamp > length) {
-		NSInteger numTimesLooped = (NSInteger)(loopedTimeStamp / length);
-		loopedTimeStamp -= (length * numTimesLooped);
-	}
-	
-	return loopedTimeStamp;
 }
 
 #pragma mark - Tempo
@@ -498,61 +479,22 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	return (__bridge_transfer NSData *)data;
 }
 
-#pragma mark - Deprecated
+@end
 
-+ (instancetype)sequenceWithData:(NSData *)data
-{
-	NSLog(@"%s is deprecated."
-		  "You should update your code to avoid calling this method."
-		  "Use +sequenceWithData:error: instead.", __PRETTY_FUNCTION__);
-	return [self sequenceWithData:data error:NULL];
-}
+#pragma mark -
 
-- (instancetype)initWithData:(NSData *)data
-{
-	NSLog(@"%s is deprecated."
-		  "You should update your code to avoid calling this method."
-		  "Use -initWithData:error: instead.", __PRETTY_FUNCTION__);
-	return [self initWithData:data error:NULL];
-}
+@implementation MIKMIDISequence (Deprecated)
 
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)destinationEndpoint
+- (MusicTimeStamp)equivalentTimeStampForLoopedTimeStamp:(MusicTimeStamp)loopedTimeStamp
 {
-	NSLog(@"%s is deprecated. You should update your code to avoid calling this method. Use MIKMIDISequencer's API instead.", __PRETTY_FUNCTION__);
-	for (MIKMIDITrack *track in self.tracks) {
-		track.destinationEndpoint = destinationEndpoint;
+	MusicTimeStamp length = self.length;
+
+	if (loopedTimeStamp > length) {
+		NSInteger numTimesLooped = (NSInteger)(loopedTimeStamp / length);
+		loopedTimeStamp -= (length * numTimesLooped);
 	}
-}
 
-- (BOOL)getTempo:(Float64 *)bpm atTimeStamp:(MusicTimeStamp)timeStamp
-{
-	static BOOL deprectionMsgShown = NO;
-	if (!deprectionMsgShown) {
-		NSLog(@"WARNING: %s has been deprecated. Please use -timeSignatureAtTimeStamp: instead. This message will only be logged once", __PRETTY_FUNCTION__);
-		deprectionMsgShown = YES;
-	}
-	
-	if (!bpm) return NO;
-	Float64 result = [self tempoAtTimeStamp:timeStamp];
-	if (result == 0.0) return NO;
-	*bpm = result;
-	return YES;
-}
-
-- (BOOL)getTimeSignature:(MIKMIDITimeSignature *)signature atTimeStamp:(MusicTimeStamp)timeStamp
-{
-	static BOOL deprectionMsgShown = NO;
-	if (!deprectionMsgShown) {
-		NSLog(@"WARNING: %s has been deprecated. Please use -timeSignatureAtTimeStamp: instead. This message will only be logged once", __PRETTY_FUNCTION__);
-		deprectionMsgShown = YES;
-	}
-	
-	if (!signature) return NO;
-	MIKMIDITimeSignature result = [self timeSignatureAtTimeStamp:timeStamp];
-	if (result.numerator == 0) return NO;
-	signature->numerator = result.numerator;
-	signature->denominator = result.denominator;
-	return YES;
+	return loopedTimeStamp;
 }
 
 @end

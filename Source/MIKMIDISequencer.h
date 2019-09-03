@@ -423,46 +423,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) NSTimeInterval maximumLookAheadInterval;
 
-#pragma mark - Deprecated
-
-/**
- *	@deprecated Use -setCommandScheduler:forTrack: instead.
- *
- *  Sets the destination endpoint for a track in the sequencer's sequence.
- *  Calling this method is optional. By default, the sequencer will setup internal default endpoints
- *  connected to synthesizers so that playback "just works".
- *
- *  @note If track is not contained by the receiver's sequence, this method does nothing.
- *
- *  @param endpoint The MIKMIDIDestinationEndpoint instance to which events in track should be sent during playback.
- *  @param track    An MIKMIDITrack instance.
- */
-- (void)setDestinationEndpoint:(MIKMIDIDestinationEndpoint *)endpoint forTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
-
-/**
- *	@deprecated Use -commandSchedulerForTrack: instead.
- *
- *  Returns the destination endpoint for a track in the sequencer's sequence.
- *
- *  MIKMIDISequencer will automatically create its own default endpoints connected to
- *  MIKMIDISynthesizers for any tracks not configured manually. This means that even if you
- *  haven't called -setDestinationEndpoint:forTrack:, you can use this method to retrieve
- *  the default endpoint for a given track.
- *
- *  @note If track is not contained by the receiver's sequence, this method returns nil.
- *
- *  @param track An MIKMIDITrack instance.
- *
- *  @return The destination endpoint associated with track, or nil if one can't be found.
- *
- *  @see -setDestinationEndpoint:forTrack:
- *  @see -builtinSynthesizerForTrack:
- *	@see createSynthsAndEndpointsIfNeeded
- */
-- (nullable MIKMIDIDestinationEndpoint *)destinationEndpointForTrack:(MIKMIDITrack *)track __attribute((deprecated("use -setCommandScheduler:forTrack: instead")));
-
 @end
-
 
 /**
  *  Sent out shortly before playback loops.

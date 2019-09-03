@@ -99,17 +99,4 @@
  */
 - (NSString *)additionalCommandDescription;
 
-// Deprecated
-
-/**
- *  @deprecated This method has been replaced by +supportedMIDICommandTypes
- *  and by default simply calls through to that method. Subclasses
- *  no longer need implement this.
- *
- *  @param type An MIKMIDICommandType value.
- *
- *  @return YES if the subclass supports type, NO otherwise.
- */
-+ (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type DEPRECATED_ATTRIBUTE;
-
 @end
