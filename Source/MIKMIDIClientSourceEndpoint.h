@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
  */
-- (instancetype)initWithName:(NSString *)name error:(NSError **)error;
+- (nullable instancetype)initWithName:(NSString *)name error:(NSError **)error NS_SWIFT_NAME(init(name:));
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint.

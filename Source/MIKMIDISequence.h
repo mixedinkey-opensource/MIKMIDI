@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error;
+- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error NS_SWIFT_NAME(init(data:));
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
