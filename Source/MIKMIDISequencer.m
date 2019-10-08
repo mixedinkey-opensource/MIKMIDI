@@ -801,6 +801,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 @synthesize metronome = _metronome;
 - (MIKMIDIMetronome *)metronome
 {
+#warning fix this
+	return nil;
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0) || !TARGET_OS_IPHONE
     if (!_metronome) _metronome = [[MIKMIDIMetronome alloc] initWithError:NULL];
     return _metronome;

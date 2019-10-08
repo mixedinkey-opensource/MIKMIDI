@@ -103,6 +103,15 @@
 		return;
 	}
 	self.sequence = sequence;
+
+//	NSURL *soundfontURL = [[NSBundle mainBundle] URLForResource:@"Grand Piano" withExtension:@"sf2"];
+//	for (MIKMIDITrack *track in sequence.tracks) {
+//		MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
+//		NSError *error = nil;
+//		if (![synth loadSoundfontFromFileAtURL:soundfontURL error:&error]) {
+//			NSLog(@"Error loading soundfont: %@", error);
+//		}
+//	}
 }
 
 #pragma mark Device Connection/Disconnection

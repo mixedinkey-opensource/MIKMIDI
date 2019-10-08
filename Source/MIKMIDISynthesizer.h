@@ -128,26 +128,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) AudioComponentDescription componentDescription;
 
-/**
- *  The Audio Unit instrument that ultimately receives all of the MIDI messages sent to
- *  this endpoint synthesizer.
- *
- *  @note You should only use the setter for this property from an
- *  MIKMIDIEndpointSynthesizer subclass.
- *
- *  @see -setupAUGraph
- */
-@property (nonatomic, readonly, nullable) AudioUnit instrumentUnit;
+@end
 
-/**
- *  The AUGraph for the instrument.
- *
- *  @note You should only use the setter for this property from an
- *  MIKMIDIEndpointSynthesizer subclass.
- *
- *  @see -setupAUGraph
- */
-@property (nonatomic, nullable) AUGraph graph;
+#pragma mark -
+
+@interface MIKMIDISynthesizer (Deprecated)
 
 @end
 

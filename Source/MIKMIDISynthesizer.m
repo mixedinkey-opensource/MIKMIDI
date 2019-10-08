@@ -12,6 +12,7 @@
 #import "MIKMIDIErrors.h"
 #import "MIKMIDIClock.h"
 #import "MIKMIDIPrivate.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface MIKMIDISynthesizer ()
 {
@@ -21,6 +22,9 @@
 
 	dispatch_queue_t _scheduledCommandQueue;
 }
+
+@property (strong) AVAudioUnitSampler *instrument;
+@property (strong) AVAudioEngine *engine;
 
 @end
 
@@ -65,9 +69,7 @@
 
 - (void)dealloc
 {
-	self.instrumentUnit = NULL;
-	self.graph = NULL;
-
+	[self.engine stop];
 	if (_scheduledCommandsByTimeStamp) {
 		CFRelease(_scheduledCommandsByTimeStamp);
 		_scheduledCommandsByTimeStamp = NULL;
@@ -88,52 +90,7 @@
 
 - (NSArray *)availableInstruments
 {
-#if TARGET_OS_IPHONE
 	return @[];
-#else
-	
-	AudioUnit audioUnit = [self instrumentUnit];
-	NSMutableArray *result = [NSMutableArray array];
-	
-	UInt32 instrumentCount;
-	UInt32 instrumentCountSize = sizeof(instrumentCount);
-	
-	OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentCount, kAudioUnitScope_Global, 0, &instrumentCount, &instrumentCountSize);
-	if (err) {
-		NSLog(@"AudioUnitGetProperty() (Instrument Count) failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-		return @[];
-	}
-	
-#if !TARGET_OS_IPHONE
-	if (self.componentDescription.componentSubType == kAudioUnitSubType_DLSSynth) {
-		for (UInt32 i = 0; i < instrumentCount; i++) {
-			MusicDeviceInstrumentID instrumentID;
-			UInt32 idSize = sizeof(instrumentID);
-			err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentNumber, kAudioUnitScope_Global, i, &instrumentID, &idSize);
-			if (err) {
-				NSLog(@"AudioUnitGetProperty() (Instrument Number) failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-				continue;
-			}
-			
-			char cName[256];
-			UInt32 cNameSize = sizeof(cName);
-			OSStatus err = AudioUnitGetProperty(audioUnit, kMusicDeviceProperty_InstrumentName, kAudioUnitScope_Global, instrumentID, &cName, &cNameSize);
-			if (err) {
-				NSLog(@"AudioUnitGetProperty() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
-				return @[];
-			}
-			
-			NSString *name = [NSString stringWithCString:cName encoding:NSASCIIStringEncoding];
-			MIKMIDISynthesizerInstrument *instrument = [MIKMIDISynthesizerInstrument instrumentWithID:instrumentID name:name];
-			if (instrument) [result addObject:instrument];
-		}
-	} else if (self.componentDescription.componentSubType == kAudioUnitSubType_MIDISynth)
-#endif
-	{
-	}
-	
-	return result;
-#endif
 }
 
 - (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument error:(NSError **)error
@@ -149,59 +106,8 @@
 - (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
-	OSStatus err = noErr;
-	
-	if (self.componentDescription.componentSubType == kAudioUnitSubType_Sampler) {
-		// fill out a bank preset data structure
-		NSDictionary *typesByFileExtension = @{@"sf2" : @(kInstrumentType_SF2Preset),
-											   @"dls" : @(kInstrumentType_DLSPreset),
-											   @"aupreset" : @(kInstrumentType_AUPreset)};
-		AUSamplerInstrumentData instrumentData;
-		instrumentData.fileURL  = (__bridge CFURLRef)fileURL;
-		instrumentData.instrumentType = [typesByFileExtension[[fileURL pathExtension]] intValue];
-		instrumentData.bankMSB  = kAUSampler_DefaultMelodicBankMSB;
-		instrumentData.bankLSB  = kAUSampler_DefaultBankLSB;
-		instrumentData.presetID = 0;
-		
-		// set the kAUSamplerProperty_LoadPresetFromBank property
-		err = AudioUnitSetProperty(self.instrumentUnit,
-								   kAUSamplerProperty_LoadInstrument,
-								   kAudioUnitScope_Global,
-								   0,
-								   &instrumentData,
-								   sizeof(instrumentData));
-		
-		if (err != noErr) {
-			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-			return NO;
-		}
-		return YES;
-	} else {
-#if TARGET_OS_IPHONE
-		return NO;
-	}
-#else
-	FSRef fsRef;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-	err = FSPathMakeRef((const UInt8*)[[fileURL path] cStringUsingEncoding:NSUTF8StringEncoding], &fsRef, 0);
-#pragma clang diagnostic pop
-	if (err != noErr) {
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	err = AudioUnitSetProperty(self.instrumentUnit,
-							   kMusicDeviceProperty_SoundBankFSRef,
-							   kAudioUnitScope_Global, 0,
-							   &fsRef, sizeof(fsRef));
-	if (err != noErr) {
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	return YES;
-}
-#endif
+
+	return [self.instrument loadSoundBankInstrumentAtURL:fileURL program:0 bankMSB:kAUSampler_DefaultMelodicBankMSB bankLSB:kAUSampler_DefaultBankLSB error:error];
 }
 
 #pragma mark - Private
@@ -209,11 +115,11 @@
 - (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error
 {
 	error = error ?: &(NSError *__autoreleasing){ nil };
-	
+
 	for (UInt8 channel = 0; channel < 16; channel++) {
 		// http://lists.apple.com/archives/coreaudio-api/2002/Sep/msg00015.html
-		
-		
+
+
 		CFURLRef loadedSoundfontURL = NULL;
 		UInt32 size = sizeof(loadedSoundfontURL);
 		OSStatus err = AudioUnitGetProperty(self.instrumentUnit,
@@ -231,7 +137,7 @@
 		if (loadedSoundfontURL || [self isUsingAppleDLSSynth]) {
 
 			UInt32 bankSelectStatus = 0xB0 | channel;
-			
+
 			UInt8 bankSelectMSB = (instrumentID >> 16) & 0x7F;
 			err = _sendMIDICommand(self, self.instrumentUnit, bankSelectStatus, 0x00, bankSelectMSB, 0);
 			if (err) {
@@ -239,7 +145,7 @@
 				*error = [NSError errorWithDomain:NSPOSIXErrorDomain code:err userInfo:nil];
 				return NO;
 			}
-			
+
 			UInt8 bankSelectLSB = (instrumentID >> 8) & 0x7F;
 			err = _sendMIDICommand(self, self.instrumentUnit, bankSelectStatus, 0x20, bankSelectLSB, 0);
 			if (err) {
@@ -248,7 +154,7 @@
 				return NO;
 			}
 		}
-		
+
 		UInt32 programChangeStatus = 0xC0 | channel;
 		UInt8 programChange = instrumentID & 0x7F;
 		err = _sendMIDICommand(self, self.instrumentUnit, programChangeStatus, programChange, 0, 0);
@@ -258,7 +164,7 @@
 			return NO;
 		}
 	}
-	
+
 	return YES;
 }
 
@@ -266,85 +172,42 @@
 
 - (BOOL)setupAUGraphWithError:(NSError **)error
 {
-	error = error ?: &(NSError *__autoreleasing){ nil };
-	AUGraph graph;
+	error = error ?: &(NSError * __autoreleasing){ nil };
 	OSStatus err = 0;
-	if ((err = NewAUGraph(&graph))) {
-		NSLog(@"Unable to create AU graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	AudioComponentDescription outputcd = {0};
-	outputcd.componentType = kAudioUnitType_Output;
-#if TARGET_OS_IPHONE
-	outputcd.componentSubType = kAudioUnitSubType_RemoteIO;
-#else
-	outputcd.componentSubType = kAudioUnitSubType_DefaultOutput;
-#endif
-	
-	outputcd.componentManufacturer = kAudioUnitManufacturer_Apple;
-	
-	AUNode outputNode;
-	if ((err = AUGraphAddNode(graph, &outputcd, &outputNode))) {
-		NSLog(@"Unable to add ouptput node to graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	AudioComponentDescription instrumentcd = self.componentDescription;
-	
-	AUNode instrumentNode;
-	if ((err = AUGraphAddNode(graph, &instrumentcd, &instrumentNode))) {
-		NSLog(@"Unable to add instrument node to AU graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	if ((err = AUGraphOpen(graph))) {
-		NSLog(@"Unable to open AU graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	AudioUnit instrumentUnit;
-	if ((err = AUGraphNodeInfo(graph, instrumentNode, NULL, &instrumentUnit))) {
-		NSLog(@"Unable to get instrument AU unit: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	if ((err = AUGraphConnectNodeInput(graph, instrumentNode, 0, outputNode, 0))) {
-		NSLog(@"Unable to connect instrument to output: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	if ((err = AUGraphInitialize(graph))) {
-		NSLog(@"Unable to initialize AU graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
+
+	AVAudioEngine *engine = [[AVAudioEngine alloc] init];
+
+	AVAudioUnitSampler *instrument = [[AVAudioUnitSampler alloc] initWithAudioComponentDescription:self.componentDescription];
+	[engine attachNode:instrument];
+	[engine connect:instrument to:engine.mainMixerNode format:nil];
+
+	[engine prepare];
+
 #if !TARGET_OS_IPHONE
 	// Turn down reverb which is way too high by default
-	if (instrumentcd.componentSubType == kAudioUnitSubType_DLSSynth) {
+	if (self.componentDescription.componentSubType == kAudioUnitSubType_DLSSynth) {
+		AudioUnit instrumentUnit = instrument.audioUnit;
 		if ((err = AudioUnitSetParameter(instrumentUnit, kMusicDeviceParam_ReverbVolume, kAudioUnitScope_Global, 0, -120, 0))) {
 			NSLog(@"Unable to set reverb level to -120: %@", @(err));
 		}
 	}
 #endif
-	
-	if ((err = AUGraphStart(graph))) {
-		NSLog(@"Unable to start AU graph: %@", @(err));
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
+
+	self.instrument = instrument;
+	self.engine = engine;
+
+	[self setupRenderNotify];
+
+	return [engine startAndReturnError:error];
+}
+
+- (void)setupRenderNotify
+{
+	OSStatus err;
+	if (self.instrumentUnit) {
+		err = AudioUnitRemoveRenderNotify(self.instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
+		if (err) NSLog(@"Unable to remove render notify from instrument unit %p: %@", self.instrumentUnit, @(err));
 	}
-	
-	self.graph = graph;
-	self.instrumentUnit = instrumentUnit;
-	
-	return YES;
 }
 
 #pragma mark - Instruments
@@ -361,12 +224,7 @@
 
 - (BOOL)isUsingAppleDLSSynth
 {
-	AudioComponentDescription appleCD = [[self class] appleSynthComponentDescription];
-	AudioComponentDescription description = self.componentDescription;
-	if (description.componentManufacturer != appleCD.componentManufacturer) return NO;
-	if (description.componentType != appleCD.componentType) return NO;
-	if (description.componentSubType != appleCD.componentSubType) return NO;
-	return YES;
+	return NO;
 }
 
 + (AudioComponentDescription)appleSynthComponentDescription
@@ -374,11 +232,7 @@
 	AudioComponentDescription instrumentcd = (AudioComponentDescription){0};
 	instrumentcd.componentManufacturer = kAudioUnitManufacturer_Apple;
 	instrumentcd.componentType = kAudioUnitType_MusicDevice;
-#if TARGET_OS_IPHONE
 	instrumentcd.componentSubType = kAudioUnitSubType_Sampler;
-#else
-	instrumentcd.componentSubType = kAudioUnitSubType_DLSSynth;
-#endif
 	return instrumentcd;
 }
 
@@ -387,34 +241,36 @@
 - (void)scheduleMIDICommands:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
-		dispatch_sync(_scheduledCommandQueue, ^{
-			NSUInteger count = commands.count;
-			if (!self->_scheduledCommandsByTimeStamp) {
-				self->_scheduledCommandsByTimeStamp = CFDictionaryCreateMutable(NULL, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-			}
-			if (!self->_scheduledCommandTimeStampsSet) {
-				self->_scheduledCommandTimeStampsSet = CFSetCreateMutable(NULL, count, &kCFTypeSetCallBacks);
-			}
-			if (!self->_scheduledCommandTimeStampsArray) {
-				self->_scheduledCommandTimeStampsArray = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
-			}
-
-			MIDITimeStamp timeStamp = command.midiTimestamp;
-			void *timeStampNumber = (__bridge void*)@(timeStamp);
-			CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber);
-			if (!commandsAtTimeStamp) {
-				commandsAtTimeStamp = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-				CFDictionarySetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber, (void *)commandsAtTimeStamp);
-				CFRelease(commandsAtTimeStamp);
-
-				if (!CFSetContainsValue(self->_scheduledCommandTimeStampsSet, timeStampNumber)) {
-					CFSetAddValue(self->_scheduledCommandTimeStampsSet, timeStampNumber);
-					CFArrayAppendValue(self->_scheduledCommandTimeStampsArray, timeStampNumber);
-				}
-			}
-
-			CFArrayAppendValue(commandsAtTimeStamp, (__bridge void *)command);
-		});
+		[self.instrument sendMIDIEvent:command.commandType data1:command.dataByte1 data2:command.dataByte2];
+//
+//		dispatch_sync(_scheduledCommandQueue, ^{
+//			NSUInteger count = commands.count;
+//			if (!self->_scheduledCommandsByTimeStamp) {
+//				self->_scheduledCommandsByTimeStamp = CFDictionaryCreateMutable(NULL, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+//			}
+//			if (!self->_scheduledCommandTimeStampsSet) {
+//				self->_scheduledCommandTimeStampsSet = CFSetCreateMutable(NULL, count, &kCFTypeSetCallBacks);
+//			}
+//			if (!self->_scheduledCommandTimeStampsArray) {
+//				self->_scheduledCommandTimeStampsArray = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
+//			}
+//
+//			MIDITimeStamp timeStamp = command.midiTimestamp;
+//			void *timeStampNumber = (__bridge void*)@(timeStamp);
+//			CFMutableArrayRef commandsAtTimeStamp = (CFMutableArrayRef)CFDictionaryGetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber);
+//			if (!commandsAtTimeStamp) {
+//				commandsAtTimeStamp = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+//				CFDictionarySetValue(self->_scheduledCommandsByTimeStamp, timeStampNumber, (void *)commandsAtTimeStamp);
+//				CFRelease(commandsAtTimeStamp);
+//
+//				if (!CFSetContainsValue(self->_scheduledCommandTimeStampsSet, timeStampNumber)) {
+//					CFSetAddValue(self->_scheduledCommandTimeStampsSet, timeStampNumber);
+//					CFArrayAppendValue(self->_scheduledCommandTimeStampsArray, timeStampNumber);
+//				}
+//			}
+//
+//			CFArrayAppendValue(commandsAtTimeStamp, (__bridge void *)command);
+//		});
 	}
 }
 
@@ -515,14 +371,6 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 
 #pragma mark - Properties
 
-- (void)setGraph:(AUGraph)graph
-{
-	if (graph != _graph) {
-		if (_graph) DisposeAUGraph(_graph);
-		_graph = graph;
-	}
-}
-
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
@@ -531,22 +379,6 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 	}
 }
 
-- (void)setInstrumentUnit:(AudioUnit)instrumentUnit
-{
-	if (_instrumentUnit != instrumentUnit) {
-		OSStatus err;
-		if (_instrumentUnit) {
-			err = AudioUnitRemoveRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
-			if (err) NSLog(@"Unable to remove render notify from instrument unit %p: %@", _instrumentUnit, @(err));
-		}
-
-		_instrumentUnit = instrumentUnit;
-
-		if (_instrumentUnit) {
-			err = AudioUnitAddRenderNotify(_instrumentUnit, MIKMIDISynthesizerInstrumentUnitRenderCallback, (__bridge void *)self);
-			if (err) NSLog(@"Unable to add render notify to instrument unit %p: %@", _instrumentUnit, @(err));
-		}
-	}
-}
+- (AudioUnit)instrumentUnit { return self.instrument.audioUnit; }
 
 @end

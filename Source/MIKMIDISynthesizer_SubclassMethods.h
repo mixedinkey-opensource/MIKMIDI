@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)sendBankSelectAndProgramChangeForInstrumentID:(MusicDeviceInstrumentID)instrumentID error:(NSError **)error;
 
-@property (nonatomic, readwrite, nullable) AudioUnit instrumentUnit;
+@property (nonatomic, readonly, nullable) AudioUnit instrumentUnit;
 @property (nonatomic, copy) OSStatus (^sendMIDICommand)(MIKMIDISynthesizer *synth, MusicDeviceComponent inUnit, UInt32 inStatus, UInt32 inData1, UInt32 inData2, UInt32 inOffsetSampleFrame);
 
 @end

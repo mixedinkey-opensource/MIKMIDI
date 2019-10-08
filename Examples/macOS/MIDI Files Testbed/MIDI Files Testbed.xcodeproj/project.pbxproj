@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D2342A4234C4FA1002E31A2 /* Grand Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 9D2342A1234C4FA1002E31A2 /* Grand Piano.sf2 */; };
 		9D5184941D970470007EA2F9 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D51848F1D97046A007EA2F9 /* MIKMIDI.framework */; };
 		9D5184951D970470007EA2F9 /* MIKMIDI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9D51848F1D97046A007EA2F9 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9D54C50B1A97E6F10050BB43 /* MIKMainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D54C5091A97E6F10050BB43 /* MIKMainWindowController.m */; };
@@ -68,6 +69,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9D2342A1234C4FA1002E31A2 /* Grand Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Grand Piano.sf2"; sourceTree = "<group>"; };
 		9D5184881D97046A007EA2F9 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
 		9D54C5081A97E6F10050BB43 /* MIKMainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMainWindowController.h; sourceTree = "<group>"; };
 		9D54C5091A97E6F10050BB43 /* MIKMainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMainWindowController.m; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 		9DB2A631192D189E0047A3EB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9D2342A1234C4FA1002E31A2 /* Grand Piano.sf2 */,
 				9DB2A632192D189E0047A3EB /* MainMenu.xib */,
 				9D54C50D1A97E7070050BB43 /* MainWindow.xib */,
 				9DB2A634192D189E0047A3EB /* Credits.rtf */,
@@ -222,6 +225,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -273,6 +277,7 @@
 				9DB2A63A192D189E0047A3EB /* MainMenu.xib in Resources */,
 				9D54C50F1A97E7070050BB43 /* MainWindow.xib in Resources */,
 				9DB2A63D192D189E0047A3EB /* Images.xcassets in Resources */,
+				9D2342A4234C4FA1002E31A2 /* Grand Piano.sf2 in Resources */,
 				9DB2A63C192D189E0047A3EB /* InfoPlist.strings in Resources */,
 				9DB2A63B192D189E0047A3EB /* Credits.rtf in Resources */,
 			);
