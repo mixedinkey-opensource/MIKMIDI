@@ -119,6 +119,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
         _processingQueueKey = &_processingQueueKey;
         _processingQueueContext = &_processingQueueContext;
         _maximumLookAheadInterval = 0.1;
+		_rate = 1.0;
     }
     return self;
 }
@@ -193,6 +194,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
         Float64 startingTempo = [self.sequence tempoAtTimeStamp:timeStamp];
         if (!startingTempo) startingTempo = kDefaultTempo;
+		startingTempo *= self.rate;
         [self updateClockWithMusicTimeStamp:timeStamp tempo:startingTempo atMIDITimeStamp:midiTimeStamp];
     });
 
@@ -314,8 +316,8 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
     if (self.needsCurrentTempoUpdate) {
         if (!tempoEventsByTimeStamp.count) {
-            if (!overrideTempo) overrideTempo = [sequence tempoAtTimeStamp:fromMusicTimeStamp];
-            if (!overrideTempo) overrideTempo = kDefaultTempo;
+            if (!overrideTempo) overrideTempo = [sequence tempoAtTimeStamp:fromMusicTimeStamp] * self.rate;
+            if (!overrideTempo) overrideTempo = kDefaultTempo * self.rate;
 
             MIKMIDITempoEvent *tempoEvent = [MIKMIDITempoEvent tempoEventWithTimeStamp:fromMusicTimeStamp tempo:overrideTempo];
             NSNumber *timeStampKey = @(fromMusicTimeStamp);
@@ -393,7 +395,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
         if (midiTimeStamp < MIKMIDIGetCurrentTimeStamp() && midiTimeStamp > fromMIDITimeStamp) continue;	// prevents events that were just recorded from being scheduled
 
         MIKMIDITempoEvent *tempoEventAtTimeStamp = tempoEventsByTimeStamp[timeStampKey];
-        if (tempoEventAtTimeStamp) [self updateClockWithMusicTimeStamp:musicTimeStamp tempo:tempoEventAtTimeStamp.bpm atMIDITimeStamp:midiTimeStamp];
+        if (tempoEventAtTimeStamp) [self updateClockWithMusicTimeStamp:musicTimeStamp tempo:tempoEventAtTimeStamp.bpm * self.rate atMIDITimeStamp:midiTimeStamp];
 
         NSArray *events = allEventsByTimeStamp[timeStampKey];
         for (id eventObject in events) {
@@ -807,6 +809,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 #else
     return nil;
 #endif
+}
+
+- (void)setRate:(float)rate
+{
+	if (rate != _rate && rate > 0.0) {
+		_rate = rate;
+		if (self.isPlaying) self.needsCurrentTempoUpdate = YES;
+	}
 }
 
 - (void)setTempo:(Float64)tempo
