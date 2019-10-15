@@ -52,6 +52,10 @@ typedef NS_OPTIONS(NSInteger, MIKMIDISequencerTimeConversionOptions) {
 
 	 The same concept applies for conversion from beats to seconds.*/
 	MIKMIDISequencerTimeConversionOptionsDontUnrollLoop = 1 << 2,
+	/**
+	 When this option is set, the sequencer's rate will be ignore, and the default rate of 1.0 will be used for time conversion calculations.
+	 */
+	MIKMIDISequencerTimeConversionOptionsIgnoreRate = 1 << 3,
 };
 
 NS_ASSUME_NONNULL_BEGIN
