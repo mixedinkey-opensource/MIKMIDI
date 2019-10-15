@@ -666,6 +666,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	if (musicTimeStamp < 0) { return 0; }
 
 	BOOL shouldIgnoreTempoOverride = options & MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride;
+	BOOL shouldIgnoreRate = options & MIKMIDISequencerTimeConversionOptionsIgnoreRate;
 	BOOL ignoreLooping = options & MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
 
 	// If result is beyond the end of the loop
@@ -696,15 +697,26 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	// Calculate initial tempo, handling case where sequence doesn't specify one.
 	NSArray *tempoEvents = self.sequence.tempoEvents;
+	if (!shouldIgnoreRate) {
+		NSMutableArray *scratch = [NSMutableArray array];
+		for (MIKMIDITempoEvent *event in tempoEvents) {
+			MIKMutableMIDITempoEvent *adjustedEvent = [event mutableCopy];
+			adjustedEvent.bpm *= self.rate;
+			[scratch addObject:[adjustedEvent copy]];
+		}
+		tempoEvents = [scratch copy];
+	}
 	if (self.tempo != 0 && !shouldIgnoreTempoOverride) { // Overridden tempo that should be used instead of events in the tempo track
-		tempoEvents = @[[MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:self.tempo]];
+		Float64 tempo = self.tempo * (shouldIgnoreRate ? 1.0 : self.rate);
+		tempoEvents = @[[MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:tempo]];
 	} else {
 		NSUInteger tempoAtZeroIndex = [tempoEvents indexOfObjectPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
 			return event.timeStamp == 0;
 		}];
 		if (tempoAtZeroIndex == NSNotFound) {
 			NSMutableArray *scratch = [tempoEvents mutableCopy];
-			MIKMIDITempoEvent *initialTempo = [MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:kDefaultTempo];
+			Float64 tempo = kDefaultTempo * (shouldIgnoreRate ? 1.0 : self.rate);
+			MIKMIDITempoEvent *initialTempo = [MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:tempo];
 			[scratch insertObject:initialTempo atIndex:0];
 			tempoEvents = [scratch copy];
 		}
@@ -734,15 +746,18 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 - (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds options:(MIKMIDISequencerTimeConversionOptions)options
 {
-	BOOL shouldIgnoreTempoOverride = options & MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride;
-	BOOL ignoreLooping = options & MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
+	BOOL shouldIgnoreTempoOverride = (options & MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride) != 0;
+	BOOL shouldIgnoreRate = (options & MIKMIDISequencerTimeConversionOptionsIgnoreRate) != 0;
+	BOOL ignoreLooping = (options & MIKMIDISequencerTimeConversionOptionsIgnoreLooping) != 0;
 
-	NSTimeInterval loopEndTimeInSeconds = self.loopEndTimeStamp > 0 ? [self timeInSecondsForMusicTimeStamp:self.loopEndTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreLooping] : self.sequence.durationInSeconds;
+	MIKMIDISequencerTimeConversionOptions loopCalcOptions = MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
+	if (shouldIgnoreRate) { loopCalcOptions |= MIKMIDISequencerTimeConversionOptionsIgnoreRate; }
+	NSTimeInterval loopEndTimeInSeconds = self.loopEndTimeStamp > 0 ? [self timeInSecondsForMusicTimeStamp:self.loopEndTimeStamp options:loopCalcOptions] : self.sequence.durationInSeconds;
 	// If result is beyond the end of the loop
 	if (!ignoreLooping && self.shouldLoop && timeInSeconds >= loopEndTimeInSeconds) {
 		options |= MIKMIDISequencerTimeConversionOptionsIgnoreLooping;
 		MusicTimeStamp loopDuration = self.loopEndTimeStamp - self.loopStartTimeStamp;
-		NSTimeInterval loopStartTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopStartTimeStamp options:options];
+		NSTimeInterval loopStartTimeInSeconds = [self timeInSecondsForMusicTimeStamp:self.loopStartTimeStamp options:loopCalcOptions];
 		NSTimeInterval loopDurationInSeconds = loopEndTimeInSeconds - loopStartTimeInSeconds;
 
 		NSTimeInterval scratch = timeInSeconds;
@@ -765,19 +780,35 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	// Calculate initial tempo, handling case where sequence doesn't specify one.
 	NSArray *tempoEvents = self.sequence.tempoEvents;
+	if (!shouldIgnoreRate) {
+		NSMutableArray *scratch = [NSMutableArray array];
+		for (MIKMIDITempoEvent *event in tempoEvents) {
+			MIKMutableMIDITempoEvent *adjustedEvent = [event mutableCopy];
+			adjustedEvent.bpm *= self.rate;
+			[scratch addObject:[adjustedEvent copy]];
+		}
+		tempoEvents = [scratch copy];
+	}
 	if (self.tempo != 0 && !shouldIgnoreTempoOverride) { // Overridden tempo that should be used instead of events in the tempo track
-		tempoEvents = @[[MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:self.tempo]];
+		Float64 tempo = self.tempo * (shouldIgnoreRate ? 1.0 : self.rate);
+		tempoEvents = @[[MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:tempo]];
 	} else {
 		NSUInteger tempoAtZeroIndex = [tempoEvents indexOfObjectPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
 			return event.timeStamp == 0;
 		}];
 		if (tempoAtZeroIndex == NSNotFound) {
 			NSMutableArray *scratch = [tempoEvents mutableCopy];
-			MIKMIDITempoEvent *initialTempo = [MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:kDefaultTempo];
+			Float64 tempo = kDefaultTempo * (shouldIgnoreRate ? 1.0 : self.rate);
+			MIKMIDITempoEvent *initialTempo = [MIKMIDITempoEvent tempoEventWithTimeStamp:0 tempo:tempo];
 			[scratch insertObject:initialTempo atIndex:0];
 			tempoEvents = [scratch copy];
 		}
 	}
+
+	MIKMIDISequencerTimeConversionOptions ignoreOverridesIfNeeded = MIKMIDISequencerTimeConversionOptionsNone;
+	if (shouldIgnoreTempoOverride) { ignoreOverridesIfNeeded |= MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride; }
+	if (shouldIgnoreRate) { ignoreOverridesIfNeeded |= MIKMIDISequencerTimeConversionOptionsIgnoreRate; }
+	if (ignoreLooping) { ignoreOverridesIfNeeded |= MIKMIDISequencerTimeConversionOptionsIgnoreLooping; }
 
 	// Get tempo events that affect the result (ie. come before timeInSeconds) and sort them in ascending order
 	// Check if result would be affected by loop
@@ -786,7 +817,9 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	[tempoEvents indexesOfObjectsPassingTest:^BOOL(MIKMIDITempoEvent *event, NSUInteger i, BOOL *s) {
 		// if timeInSeconds is within the loop region, include all tempo events up to the end of the loop
 		NSTimeInterval limit = timeIsInLoop ? loopEndTimeInSeconds : timeInSeconds;
-		return [self.sequence timeInSecondsForMusicTimeStamp:event.timeStamp] <= limit;
+		NSTimeInterval timeInSeconds = [self.sequence timeInSecondsForMusicTimeStamp:event.timeStamp];
+		if (!shouldIgnoreRate) { timeInSeconds /= self.rate; }
+		return timeInSeconds <= limit;
 	}];
 	NSArray *tempoEventsAffectingResult = [tempoEvents objectsAtIndexes:indexesOfTempoEventsAffectingResult];
 	tempoEvents = [tempoEventsAffectingResult sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES]]];
@@ -794,12 +827,12 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 	MusicTimeStamp result = 0.0;
 	MIKMIDITempoEvent *lastTempoEvent = tempoEvents[0];
 	for (MIKMIDITempoEvent *tempoEvent in tempoEvents) {
-		NSTimeInterval tempoTimeInSeconds = [self.sequence timeInSecondsForMusicTimeStamp:tempoEvent.timeStamp];
-		NSTimeInterval lastTempoTimeInSeconds = [self.sequence timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp];
+		NSTimeInterval tempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:tempoEvent.timeStamp options:ignoreOverridesIfNeeded];
+		NSTimeInterval lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
 		result += lastTempoEvent.bpm * (tempoTimeInSeconds - lastTempoTimeInSeconds) / 60.0;
 		lastTempoEvent = tempoEvent;
 	}
-	NSTimeInterval lastTempoTimeInSeconds = [self.sequence timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp];
+	NSTimeInterval lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
 	result += lastTempoEvent.bpm * (timeInSeconds - lastTempoTimeInSeconds) / 60.0;
 	return result;
 }

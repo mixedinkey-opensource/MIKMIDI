@@ -124,6 +124,51 @@
 	XCTAssertNotEqualWithAccuracy(withoutUnrolling, withUnrolling, 1e-6);
 	XCTAssertNotEqualWithAccuracy(withUnrolling, ignoringLooping, 1e-6);
 	XCTAssertEqualWithAccuracy(withoutUnrolling, expectedWithoutUnrolling, 1e-6);
+
+	// Test with non-default rates
+	for (NSNumber *rateNum in @[@0.9, @1.1, @2.0]) {
+		float rate = rateNum.floatValue;
+		self.sequencer.rate = rate;
+
+		[self.sequencer setLoopStartTimeStamp:10 endTimeStamp:15];
+
+		testTimeStamp = 5; // Test before loop region
+		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		testTimeStamp = 12; // Test inside loop region before first loop
+		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		testTimeStamp = 37.5; // Test inside loop region after first loop
+		expected = 24.284925 / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		[self.sequencer setLoopStartTimeStamp:200 endTimeStamp:600];
+
+		testTimeStamp = 160; // Test before loop region
+		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		testTimeStamp = 550; // Test inside loop region before first loop
+		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		testTimeStamp = 850; // Test inside loop region after first loop
+		expected = 427.46909 / rate;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+
+		testTimeStamp = 850; // Test inside loop region after first loop while ignoring rate
+		expected = 427.46909;
+		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreRate];
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	}
 }
 
 - (void)testConversionFromSecondsToMusicTimeStamp
@@ -265,8 +310,46 @@
 		XCTAssertEqualWithAccuracy(timeInSeconds, convertedTimeInSeconds, 2e-6);
 	}
 
-	// Test with looping
+	// Test with non-default rates
 	self.sequencer.tempo = 0;
+
+	for (NSNumber *rateNum in @[@0.5, @0.9, @1.1, @2.0]) {
+		self.sequencer.rate = rateNum.floatValue;
+		options = MIKMIDISequencerTimeConversionOptionsNone;
+		for (NSNumber *number in testMusicTimeStamps) {
+			MusicTimeStamp timeStamp = [number doubleValue];
+			NSTimeInterval timeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:timeStamp options:options];
+			MusicTimeStamp convertedTimeStamp = [self.sequencer musicTimeStampForTimeInSeconds:timeInSeconds options:options];
+			NSTimeInterval convertedTimeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:convertedTimeStamp options:options];
+			XCTAssertEqualWithAccuracy(timeStamp, convertedTimeStamp, 2e-6);
+			XCTAssertEqualWithAccuracy(timeInSeconds, convertedTimeInSeconds, 2e-6);
+		}
+
+		// Test ignoring rate
+		options = MIKMIDISequencerTimeConversionOptionsIgnoreRate;
+		for (NSNumber *number in testMusicTimeStamps) {
+			MusicTimeStamp timeStamp = [number doubleValue];
+			NSTimeInterval timeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:timeStamp options:options];
+			MusicTimeStamp convertedTimeStamp = [self.sequencer musicTimeStampForTimeInSeconds:timeInSeconds options:options];
+			NSTimeInterval convertedTimeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:convertedTimeStamp options:options];
+			XCTAssertEqualWithAccuracy(timeStamp, convertedTimeStamp, 2e-6);
+			XCTAssertEqualWithAccuracy(timeInSeconds, convertedTimeInSeconds, 2e-6);
+		}
+
+		// Test ignoring rate one-sided
+		options = MIKMIDISequencerTimeConversionOptionsIgnoreRate;
+		for (NSNumber *number in testMusicTimeStamps) {
+			MusicTimeStamp timeStamp = [number doubleValue];
+			NSTimeInterval timeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:timeStamp options:options];
+			MusicTimeStamp convertedTimeStamp = [self.sequencer musicTimeStampForTimeInSeconds:timeInSeconds options:MIKMIDISequencerTimeConversionOptionsNone];
+			NSTimeInterval convertedTimeInSeconds = [self.sequencer timeInSecondsForMusicTimeStamp:convertedTimeStamp options:options];
+			XCTAssertNotEqualWithAccuracy(timeStamp, convertedTimeStamp, 2e-6);
+			XCTAssertNotEqualWithAccuracy(timeInSeconds, convertedTimeInSeconds, 2e-6);
+		}
+	}
+
+	// Test with looping
+	self.sequencer.rate = 1.0;
 	self.sequencer.loop = YES;
 	[self.sequencer setLoopStartTimeStamp:200 endTimeStamp:600];
 	options = MIKMIDISequencerTimeConversionOptionsNone;
