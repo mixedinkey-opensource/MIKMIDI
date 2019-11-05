@@ -301,7 +301,7 @@
 	for (MIKMIDIEvent *event in self.events) {
 		if (event.timeStamp < startTimeStamp) { continue; }
 		if (event.timeStamp > endTimeStamp) { break; }
-		if (!eventClass || ![event isKindOfClass:eventClass]) { continue; }
+		if (eventClass && ![event isKindOfClass:eventClass]) { continue; }
 		[result addObject:event];
 	}
 	return [result copy];
