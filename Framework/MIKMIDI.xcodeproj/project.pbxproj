@@ -69,6 +69,7 @@
 		9D0895F11B0D29F200A5872E /* MIKMIDIMappingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */; };
 		9D0895F31B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895F41B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D0E6B912370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */; };
 		9D1D9C201BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C211BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C221BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */; };
@@ -387,6 +388,7 @@
 		9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingItem.h; sourceTree = "<group>"; };
 		9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMappingItem.m; sourceTree = "<group>"; };
 		9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappableResponder.h; sourceTree = "<group>"; };
+		9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIEventCachingTests.m; sourceTree = "<group>"; };
 		9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPolyphonicKeyPressureCommand.h; sourceTree = "<group>"; };
 		9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPolyphonicKeyPressureCommand.m; sourceTree = "<group>"; };
 		9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDICommandTests.m; sourceTree = "<group>"; };
@@ -575,6 +577,7 @@
 				9DCDDB591AB3514100F8347E /* MIKMIDISequencerTests.m */,
 				9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */,
 				9DE824A5207AD02000761A07 /* MIKMIDIChannelEventTests.m */,
+				9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */,
 				9D4DF13C1AAB57430065F004 /* Supporting Files */,
 				9D4DF1501AAB57CD0065F004 /* Resources */,
 			);
@@ -1156,6 +1159,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 9D74EE9B17A7129300BEE89F;
@@ -1213,6 +1217,7 @@
 				9D4DF14D1AAB57800065F004 /* MIKMIDISequenceTests.m in Sources */,
 				9D4DF1541AAB60490065F004 /* MIKMIDITrackTests.m in Sources */,
 				9DE824A6207AD02000761A07 /* MIKMIDIChannelEventTests.m in Sources */,
+				9D0E6B912370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
