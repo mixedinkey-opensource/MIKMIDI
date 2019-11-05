@@ -52,6 +52,10 @@ typedef NS_OPTIONS(NSInteger, MIKMIDISequencerTimeConversionOptions) {
 
 	 The same concept applies for conversion from beats to seconds.*/
 	MIKMIDISequencerTimeConversionOptionsDontUnrollLoop = 1 << 2,
+	/**
+	 When this option is set, the sequencer's rate will be ignore, and the default rate of 1.0 will be used for time conversion calculations.
+	 */
+	MIKMIDISequencerTimeConversionOptionsIgnoreRate = 1 << 3,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -329,6 +333,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see recordEnabledTracks
  */
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
+
+/**
+ * @property rate
+ * @abstract The playback rate of the sequencer. For example, if rate is 2.0, the sequencer will play twice as fast as normal.
+ *  Unlike the tempo property, this does not override the tempos in the sequence's tempo track. Rather, they are adjusted by multiplying by this rate.
+ * @discussion
+ * 	1.0 is normal playback rate.  Rate must be > 0.0.
+*/
+@property (nonatomic) float rate;
 
 /**
  *  The tempo the sequencer should play its sequence at. When set to 0, the sequence will be played using 
