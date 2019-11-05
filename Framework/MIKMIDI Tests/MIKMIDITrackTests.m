@@ -108,6 +108,22 @@
 	XCTAssertTrue([firstNotesTrack.notes count] > 0, @"Notes track loaded from file is empty.");
 }
 
+- (void)testGettingEventsByClass
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"bach" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	MIKMIDITrack *firstNotesTrack = sequence.tracks[1];
+	NSLog(@"%@", firstNotesTrack.events);
+
+	NSArray *allEventClasses = [firstNotesTrack eventsOfClass:nil fromTimeStamp:0 toTimeStamp:sequence.length];
+	XCTAssertEqualObjects(allEventClasses, firstNotesTrack.events);
+
+	NSArray *onlyNotes = [firstNotesTrack eventsOfClass:[MIKMIDINoteEvent class] fromTimeStamp:0 toTimeStamp:sequence.length];
+	XCTAssertEqual(onlyNotes.count, firstNotesTrack.events.count-2);
+}
+
 #pragma mark - Moving Events
 
 - (void)testMovingSingleEvent
