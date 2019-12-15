@@ -731,8 +731,7 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 		MusicTimeStamp limit = timeIsInLoop ? self.loopEndTimeStamp : musicTimeStamp;
 		return event.timeStamp <= limit;
 	}];
-	NSArray *tempoEventsAffectingResult = [tempoEvents objectsAtIndexes:indexesOfTempoEventsAffectingResult];
-	tempoEvents = [tempoEventsAffectingResult sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES]]];
+	tempoEvents = [tempoEvents objectsAtIndexes:indexesOfTempoEventsAffectingResult];
 
 	NSTimeInterval result = 0.0;
 	MIKMIDITempoEvent *lastTempoEvent = tempoEvents[0];
