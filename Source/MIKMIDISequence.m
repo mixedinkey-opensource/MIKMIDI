@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
 #import "MIKMIDITrack_Protected.h"
+#import "MIKMIDITempoTrack.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
@@ -141,7 +142,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			return nil;
 		}
-		self.tempoTrack = [MIKMIDITrack trackWithSequence:self musicTrack:tempoTrack];
+		self.tempoTrack = [MIKMIDITempoTrack trackWithSequence:self musicTrack:tempoTrack];
 		
 		UInt32 numTracks = 0;
 		err = MusicSequenceGetTrackCount(musicSequence, &numTracks);
@@ -291,7 +292,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSArray *)tempoEvents
 {
-	return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+	return [(MIKMIDITempoTrack *)self.tempoTrack tempoEvents];
 }
 
 - (BOOL)setOverallTempo:(Float64)bpm

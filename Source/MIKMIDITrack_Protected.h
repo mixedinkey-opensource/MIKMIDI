@@ -41,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)restoreLengthAndLoopInfo;
 
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)(void))block;
+
+@property (nonatomic, strong, nullable) NSArray *sortedEventsCache;
+
 @end
 
 NS_ASSUME_NONNULL_END
