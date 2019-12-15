@@ -825,13 +825,15 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 
 	MusicTimeStamp result = 0.0;
 	MIKMIDITempoEvent *lastTempoEvent = tempoEvents[0];
+	NSTimeInterval tempoTimeInSeconds = 0;
+	NSTimeInterval lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
 	for (MIKMIDITempoEvent *tempoEvent in tempoEvents) {
-		NSTimeInterval tempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:tempoEvent.timeStamp options:ignoreOverridesIfNeeded];
-		NSTimeInterval lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
+		lastTempoTimeInSeconds = tempoTimeInSeconds;
+		tempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:tempoEvent.timeStamp options:ignoreOverridesIfNeeded];
 		result += lastTempoEvent.bpm * (tempoTimeInSeconds - lastTempoTimeInSeconds) / 60.0;
 		lastTempoEvent = tempoEvent;
 	}
-	NSTimeInterval lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
+	lastTempoTimeInSeconds = [self timeInSecondsForMusicTimeStamp:lastTempoEvent.timeStamp options:ignoreOverridesIfNeeded];
 	result += lastTempoEvent.bpm * (timeInSeconds - lastTempoTimeInSeconds) / 60.0;
 	return result;
 }
