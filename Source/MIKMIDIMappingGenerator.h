@@ -55,7 +55,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  *
  *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
  */
-+ (instancetype)mappingGeneratorWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
++ (nullable instancetype)mappingGeneratorWithDevice:(MIKMIDIDevice *)device error:(NSError **)error;
 
 /**
  *  Creates and initializes a mapping generator for a MIKMIDIDevice. 
@@ -68,7 +68,7 @@ typedef void(^MIKMIDIMappingGeneratorMappingCompletionBlock)(MIKMIDIMappingItem 
  *
  *  @return An initialized MIKMIDIMappingGenerator instance, or nil if an error occurred.
  */
-- (instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithDevice:(MIKMIDIDevice *)device error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Begins mapping a given MIDIResponder. This method returns immediately.
