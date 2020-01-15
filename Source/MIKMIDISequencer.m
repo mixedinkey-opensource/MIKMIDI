@@ -21,6 +21,7 @@
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIUtilities.h"
 #import "MIKMIDISynthesizer.h"
+#import "MIKMIDISynthesizer+MIKMIDIPrivate.h"
 #import "MIKMIDISequencer+MIKMIDIPrivate.h"
 #import "MIKMIDISequence+MIKMIDIPrivate.h"
 #import "MIKMIDICommandScheduler.h"
@@ -172,6 +173,14 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
 {
     if (self.isPlaying) [self stop];
     if (adjustForPreRoll && self.isRecording) timeStamp -= self.preRoll;
+	for (MIKMIDITrack *track in self.sequence.tracks) {
+		id<MIKMIDICommandScheduler> scheduler = [self commandSchedulerForTrack:track];
+		if (![scheduler respondsToSelector:@selector(startGraphWithError:)]) { continue; }
+		NSError *error = nil;
+		if (![(MIKMIDISynthesizer *)scheduler startGraphWithError:&error]) {
+			NSLog(@"Unable to start graph for synth %@: %@", scheduler, error);
+		}
+	}
 
     NSString *queueLabel = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingFormat:@".%@.%p", [self class], self];
     dispatch_queue_attr_t attr = DISPATCH_QUEUE_SERIAL;
@@ -280,6 +289,15 @@ const MusicTimeStamp MIKMIDISequencerEndOfSequenceLoopEndTimeStamp = -1;
     self.processingQueue = NULL;
     self.playing = NO;
     self.recording = NO;
+
+	for (MIKMIDITrack *track in self.sequence.tracks) {
+		id<MIKMIDICommandScheduler> scheduler = [self commandSchedulerForTrack:track];
+		if (![scheduler respondsToSelector:@selector(stopGraphWithError:)]) { continue; }
+		NSError *error = nil;
+		if (![(MIKMIDISynthesizer *)scheduler stopGraphWithError:&error]) {
+			NSLog(@"Unable to stop graph for synth %@: %@", scheduler, error);
+		}
+	}
 }
 
 - (void)processSequenceStartingFromMIDITimeStamp:(MIDITimeStamp)fromMIDITimeStamp

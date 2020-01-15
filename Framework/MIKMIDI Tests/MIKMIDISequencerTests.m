@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <MIKMIDI/MIKMIDI.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface MIKMIDISequencerTests : XCTestCase
 
@@ -375,6 +376,62 @@
 		MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
 		XCTAssertNotNil(synth, @"-builtinSynthesizerForTrack: test failed, because it returned nil.");
 	}
+}
+
+- (void)testStoppingIO
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"bach" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(sequence);
+
+	self.sequencer.sequence = sequence;
+	
+	[self.sequencer startPlayback];
+	for (MIKMIDITrack *track in self.sequencer.sequence.tracks) {
+		MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
+		if (!synth) { continue; }
+		XCTAssertTrue([[synth valueForKey:@"graphRunning"] boolValue]);
+	}
+
+	XCTestExpectation *expectation = [self expectationWithDescription:@"Sequencer Play Time"];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self.sequencer stop];
+		for (MIKMIDITrack *track in self.sequencer.sequence.tracks) {
+			MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
+			if (!synth) { continue; }
+			XCTAssertFalse([[synth valueForKey:@"graphRunning"] boolValue]);
+		}
+		[expectation fulfill];
+	});
+	[self waitForExpectations:@[expectation] timeout:5];
+}
+
+- (void)testStoppingAndRestarting
+{
+	[self testStoppingIO];
+
+	XCTestExpectation *expectation = [self expectationWithDescription:@"Sequencer Play Time"];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self.sequencer startPlayback];
+		for (MIKMIDITrack *track in self.sequencer.sequence.tracks) {
+			MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
+			if (!synth) { continue; }
+			XCTAssertTrue([[synth valueForKey:@"graphRunning"] boolValue]);
+		}
+
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			[self.sequencer stop];
+			for (MIKMIDITrack *track in self.sequencer.sequence.tracks) {
+				MIKMIDISynthesizer *synth = [self.sequencer builtinSynthesizerForTrack:track];
+				if (!synth) { continue; }
+				XCTAssertFalse([[synth valueForKey:@"graphRunning"] boolValue]);
+			}
+			[expectation fulfill];
+		});
+	});
+	[self waitForExpectations:@[expectation] timeout:5];
 }
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "MIKMIDISynthesizer.h"
+#import "MIKMIDISynthesizer+MIKMIDIPrivate.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDISynthesizer_SubclassMethods.h"
 #import "MIKMIDIErrors.h"
@@ -50,6 +51,7 @@
 
 		_componentDescription = componentDescription;
 		if (![self setupAUGraphWithError:error]) { return nil; }
+		if (![self startGraphWithError:error]) { return nil; }
 
 		self.sendMIDICommand = ^(MIKMIDISynthesizer *synth, MusicDeviceComponent inUnit, UInt32 inStatus, UInt32 inData1, UInt32 inData2, UInt32 inOffsetSampleFrame) {
 			return MusicDeviceMIDIEvent(inUnit, inStatus, inData1, inData2, inOffsetSampleFrame);
@@ -329,16 +331,40 @@
 		}
 	}
 #endif
+
+	self.graph = graph;
+	self.instrumentUnit = instrumentUnit;
 	
-	if ((err = AUGraphStart(graph))) {
+	return YES;
+}
+
+- (BOOL)startGraphWithError:(NSError **)error
+{
+	if (self.isGraphRunning) { return YES; }
+	OSStatus err = 0;
+	error = error ?: &(NSError * __autoreleasing){ nil };
+	if (!self.graph) {
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
+	if ((err = AUGraphStart(self.graph))) {
 		NSLog(@"Unable to start AU graph: %@", @(err));
 		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 		return NO;
 	}
-	
-	self.graph = graph;
-	self.instrumentUnit = instrumentUnit;
-	
+	return YES;
+}
+
+- (BOOL)stopGraphWithError:(NSError **)error
+{
+	if (!self.graph || !self.isGraphRunning) { return YES; }
+	OSStatus err = 0;
+	error = error ?: &(NSError * __autoreleasing){ nil };
+	if ((err = AUGraphStop(self.graph))) {
+		NSLog(@"Unable to stop AU graph: %@", @(err));
+		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+		return NO;
+	}
 	return YES;
 }
 
@@ -518,6 +544,14 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 	}
 }
 
+- (BOOL)isGraphRunning
+{
+	if (!self.graph) { return NO; }
+	Boolean result = false;
+	AUGraphIsRunning(self.graph, &result);
+	return (result == true);
+}
+
 - (void)handleMIDIMessages:(NSArray *)commands
 {
 	for (MIKMIDICommand *command in commands) {
@@ -564,7 +598,8 @@ static OSStatus MIKMIDISynthesizerInstrumentUnitRenderCallback(void *						inRef
 - (BOOL)setupAUGraph
 {
 	SHOW_STANDARD_DEPRECATION_WARNING;
-	return [self setupAUGraphWithError:NULL];
+	if (![self setupAUGraphWithError:NULL]) { return NO; }
+	return [self startGraphWithError:NULL];
 }
 
 + (NSSet *)keyPathsForValuesAffectingInstrument { return [NSSet setWithObjects:@"instrumentUnit", nil]; }
