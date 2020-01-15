@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #import <MIKMIDI/MIKMIDI.h>
 

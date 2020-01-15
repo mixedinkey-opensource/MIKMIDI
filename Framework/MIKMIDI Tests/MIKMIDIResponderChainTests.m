@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #import <MIKMIDI/MIKMIDI.h>
 
@@ -64,7 +63,7 @@
 
 - (void)testRegistration
 {
-	NSApplication *app = [NSApplication sharedApplication];
+	MIK_APPLICATION_CLASS *app = [MIK_APPLICATION_CLASS sharedApplication];
 	[app registerMIDIResponder:self.dummyResponder];
 	
 	XCTAssertNotNil([app MIDIResponderWithIdentifier:@"Dummy"], @"Top level dummy responder not found.");
@@ -74,7 +73,7 @@
 
 - (void)testUncachedResponderSearchPerformance
 {
-    NSApplication *app = [NSApplication sharedApplication];
+    MIK_APPLICATION_CLASS *app = [MIK_APPLICATION_CLASS sharedApplication];
 	app.shouldCacheMIKMIDISubresponders = NO;
     [self measureBlock:^{
 		for (NSUInteger i=0; i<50000; i++) {
@@ -85,7 +84,7 @@
 
 - (void)testCachedResponderSearchPerformance
 {
-	NSApplication *app = [NSApplication sharedApplication];
+	MIK_APPLICATION_CLASS *app = [MIK_APPLICATION_CLASS sharedApplication];
 	app.shouldCacheMIKMIDISubresponders = YES;
 	[self measureBlock:^{
 		for (NSUInteger i=0; i<50000; i++) {
