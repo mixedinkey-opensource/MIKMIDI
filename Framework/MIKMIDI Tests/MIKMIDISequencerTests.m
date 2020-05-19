@@ -47,12 +47,12 @@
 
 	MIKMIDITempoEvent *secondTempo = s.tempoEvents[1];
 	MusicTimeStamp nextCheck = secondTempo.timeStamp+1;
-	XCTAssertEqualWithAccuracy([s timeInSecondsForMusicTimeStamp:nextCheck], [self.sequencer timeInSecondsForMusicTimeStamp:nextCheck options:MIKMIDISequencerTimeConversionOptionsNone], 1e-6);
+    XCTAssertEqual([s timeInSecondsForMusicTimeStamp:nextCheck], [self.sequencer timeInSecondsForMusicTimeStamp:nextCheck options:MIKMIDISequencerTimeConversionOptionsNone]);
 
 	MusicTimeStamp testTimeStamp = 850;
 	NSTimeInterval expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	NSTimeInterval actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-13);
 
 	// Test when tempo is overridden
 	Float64 overrideTempo = 80.0;
@@ -60,12 +60,12 @@
 
 	expected = 60 * testTimeStamp / overrideTempo;
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	// Test while ignoring tempo override
 	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	self.sequencer.tempo = 0; // Disable tempo override
 
@@ -76,42 +76,42 @@
 	testTimeStamp = 5; // Test before loop region, should be unaffected
 	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 12; // Test inside loop region before first loop, should be unaffected
 	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 37.5; // Test inside loop region after first loop, should be affected
 	expected = 24.284925;
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	[self.sequencer setLoopStartTimeStamp:200 endTimeStamp:600];
 
 	testTimeStamp = 160; // Test before loop region, should be unaffected
 	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 550; // Test inside loop region before first loop, should be unaffected
 	expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp];
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 850; // Test inside loop region after first loop, should be affected
 	expected = 427.46909;
 	actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 850; // Test inside loop region after first loop, but ignoring looping should be affected
 	NSTimeInterval withLooping = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
 	NSTimeInterval ignoringLooping = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreLooping];
 	self.sequencer.loop = NO;
 	NSTimeInterval withoutLooping = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertNotEqualWithAccuracy(withLooping, ignoringLooping, 1e-6);
-	XCTAssertEqualWithAccuracy(withoutLooping, ignoringLooping, 1e-6);
+	XCTAssertNotEqualWithAccuracy(withLooping, ignoringLooping, 1e-12);
+	XCTAssertEqualWithAccuracy(withoutLooping, ignoringLooping, 1e-12);
 
 	// Test loop "unrolling"
 	self.sequencer.loop = YES;
@@ -121,9 +121,9 @@
 	NSTimeInterval withUnrolling = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
 	NSTimeInterval expectedWithoutUnrolling = 8.094975;
 	ignoringLooping = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreLooping];
-	XCTAssertNotEqualWithAccuracy(withoutUnrolling, withUnrolling, 1e-6);
-	XCTAssertNotEqualWithAccuracy(withUnrolling, ignoringLooping, 1e-6);
-	XCTAssertEqualWithAccuracy(withoutUnrolling, expectedWithoutUnrolling, 1e-6);
+	XCTAssertNotEqualWithAccuracy(withoutUnrolling, withUnrolling, 1e-12);
+	XCTAssertNotEqualWithAccuracy(withUnrolling, ignoringLooping, 1e-12);
+	XCTAssertEqualWithAccuracy(withoutUnrolling, expectedWithoutUnrolling, 1e-12);
 
 	// Test with non-default rates
 	for (NSNumber *rateNum in @[@0.9, @1.1, @2.0]) {
@@ -135,39 +135,39 @@
 		testTimeStamp = 5; // Test before loop region
 		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		testTimeStamp = 12; // Test inside loop region before first loop
 		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		testTimeStamp = 37.5; // Test inside loop region after first loop
 		expected = 24.284925 / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		[self.sequencer setLoopStartTimeStamp:200 endTimeStamp:600];
 
 		testTimeStamp = 160; // Test before loop region
 		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		testTimeStamp = 550; // Test inside loop region before first loop
 		expected = [s timeInSecondsForMusicTimeStamp:testTimeStamp] / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		testTimeStamp = 850; // Test inside loop region after first loop
 		expected = 427.46909 / rate;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 		testTimeStamp = 850; // Test inside loop region after first loop while ignoring rate
 		expected = 427.46909;
 		actual = [self.sequencer timeInSecondsForMusicTimeStamp:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreRate];
-		XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+		XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 	}
 }
 
@@ -182,17 +182,17 @@
 
 	XCTAssertEqual([self.sequencer musicTimeStampForTimeInSeconds:0.0 options:MIKMIDISequencerTimeConversionOptionsNone], 0);
 
-	XCTAssertEqualWithAccuracy([s musicTimeStampForTimeInSeconds:3], [self.sequencer musicTimeStampForTimeInSeconds:3 options:MIKMIDISequencerTimeConversionOptionsNone], 1e-6);
+	XCTAssertEqualWithAccuracy([s musicTimeStampForTimeInSeconds:3], [self.sequencer musicTimeStampForTimeInSeconds:3 options:MIKMIDISequencerTimeConversionOptionsNone], 1e-12);
 
 	MIKMIDITempoEvent *secondTempo = s.tempoEvents[1];
 	MusicTimeStamp nextCheckTimeStamp = secondTempo.timeStamp+1;
 	NSTimeInterval nextCheck = [s timeInSecondsForMusicTimeStamp:nextCheckTimeStamp];
-	XCTAssertEqualWithAccuracy(nextCheckTimeStamp, [self.sequencer musicTimeStampForTimeInSeconds:nextCheck options:MIKMIDISequencerTimeConversionOptionsNone], 1e-6);
+	XCTAssertEqualWithAccuracy(nextCheckTimeStamp, [self.sequencer musicTimeStampForTimeInSeconds:nextCheck options:MIKMIDISequencerTimeConversionOptionsNone], 1e-12);
 
 	NSTimeInterval testTimeStamp = 400;
 	MusicTimeStamp expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	MusicTimeStamp actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	// Test when tempo is overridden
 	Float64 overrideTempo = 80.0;
@@ -200,12 +200,12 @@
 
 	expected = overrideTempo * testTimeStamp / 60.0;
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	// Test while ignoring tempo override
 	expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	self.sequencer.tempo = 0; // Disable tempo override
 
@@ -216,12 +216,12 @@
 	testTimeStamp = 5; // Test before loop region, should be unaffected
 	expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 8; // Test inside loop region before first loop, should be unaffected
 	expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 37.5; // Test inside loop region after first loop, should be affected
 	expected = 57.906294;
@@ -233,12 +233,12 @@
 	testTimeStamp = 160; // Test before loop region, should be unaffected
 	expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 200; // Test inside loop region before first loop, should be unaffected
 	expected = [s musicTimeStampForTimeInSeconds:testTimeStamp];
 	actual = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertEqualWithAccuracy(expected, actual, 1e-6);
+	XCTAssertEqualWithAccuracy(expected, actual, 1e-12);
 
 	testTimeStamp = 450; // Test inside loop region after first loop, should be affected
 	expected = 896.188353;
@@ -250,8 +250,8 @@
 	NSTimeInterval ignoringLooping = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreLooping];
 	self.sequencer.loop = NO;
 	NSTimeInterval withoutLooping = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
-	XCTAssertNotEqualWithAccuracy(withLooping, ignoringLooping, 1e-6);
-	XCTAssertEqualWithAccuracy(withoutLooping, ignoringLooping, 1e-6);
+	XCTAssertNotEqualWithAccuracy(withLooping, ignoringLooping, 1e-12);
+	XCTAssertEqualWithAccuracy(withoutLooping, ignoringLooping, 1e-12);
 
 	// Test loop "unrolling"
 	self.sequencer.loop = YES;
@@ -261,9 +261,9 @@
 	NSTimeInterval withUnrolling = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsNone];
 	NSTimeInterval expectedWithoutUnrolling = 12.5;
 	ignoringLooping = [self.sequencer musicTimeStampForTimeInSeconds:testTimeStamp options:MIKMIDISequencerTimeConversionOptionsIgnoreLooping];
-	XCTAssertNotEqualWithAccuracy(withoutUnrolling, withUnrolling, 1e-6);
-	XCTAssertNotEqualWithAccuracy(withUnrolling, ignoringLooping, 1e-6);
-	XCTAssertEqualWithAccuracy(withoutUnrolling, expectedWithoutUnrolling, 1e-6);
+	XCTAssertNotEqualWithAccuracy(withoutUnrolling, withUnrolling, 1e-12);
+	XCTAssertNotEqualWithAccuracy(withUnrolling, ignoringLooping, 1e-12);
+	XCTAssertEqualWithAccuracy(withoutUnrolling, expectedWithoutUnrolling, 1e-12);
 }
 
 - (void)testTwoWayConversionBetweenMusicTimeStampAndSeconds
