@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDISystemMessageCommand.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISystemMessageCommand.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 extern uint32_t const kMIKMIDISysexNonRealtimeManufacturerID;
 extern uint32_t const kMIKMIDISysexRealtimeManufacturerID;

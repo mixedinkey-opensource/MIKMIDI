@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
-#import "MIKMIDIMapping.h"
+#import <MIKMIDI/MIKMIDIMapping.h>
 
 @class MIKMIDIDevice;
 @class MIKMIDIMapping;
