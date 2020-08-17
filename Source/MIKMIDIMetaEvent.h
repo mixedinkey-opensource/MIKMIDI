@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIEvent.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIEvent.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 static const NSUInteger MIKMIDIEventMetadataStartOffset = 8;
 
