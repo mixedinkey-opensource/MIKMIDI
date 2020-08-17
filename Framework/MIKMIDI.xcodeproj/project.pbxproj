@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9D2C28EA24E64F1B00DF62CD /* MIKMIDI.xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9D2C28EB24E64F1B00DF62CD /* Build configuration list for PBXAggregateTarget "MIKMIDI.xcframework" */;
+			buildPhases = (
+				9D2C28EF24E64F2A00DF62CD /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MIKMIDI.xcframework;
+			productName = MIKMIDI.xcframework;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		6609EF0C1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */; };
 		8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1155,6 +1169,11 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Mixed In Key";
 				TargetAttributes = {
+					9D2C28EA24E64F1B00DF62CD = {
+						CreatedOnToolsVersion = 11.6;
+						DevelopmentTeam = 2CX7W99FJ9;
+						ProvisioningStyle = Automatic;
+					};
 					9D4DF1391AAB57430065F004 = {
 						CreatedOnToolsVersion = 6.3;
 					};
@@ -1183,6 +1202,7 @@
 				9D74EEA417A7129300BEE89F /* MIKMIDI */,
 				9DAF8B051A7AFF1100F46528 /* MIKMIDI-iOS */,
 				9D4DF1391AAB57430065F004 /* MIKMIDI Tests */,
+				9D2C28EA24E64F1B00DF62CD /* MIKMIDI.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -1213,6 +1233,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9D2C28EF24E64F2A00DF62CD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/MIKMIDI.xcframework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rd \"MIKMIDI.xcframework\"\nxcodebuild archive -scheme MIKMIDI -destination \"platform=macOS\" -archivePath \"$TEMP_DIR/MIKMIDI.macOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"generic/platform=iOS\" -archivePath \"$TEMP_DIR/MIKMIDI.iOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"platform=iOS Simulator,name=iPhone 11\" -archivePath \"$TEMP_DIR/MIKMIDI.iOS-simulator.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"platform=macOS,variant=Mac Catalyst\" -archivePath \"$TEMP_DIR/MIKMIDI.macOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild -create-xcframework -framework \"$TEMP_DIR/MIKMIDI.macOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.iOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.iOS-simulator.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.macOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -output \"${DERIVED_FILE_DIR}/MIKMIDI.xcframework\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9D4DF1361AAB57430065F004 /* Sources */ = {
@@ -1394,6 +1435,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		9D2C28EC24E64F1B00DF62CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2CX7W99FJ9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9D2C28ED24E64F1B00DF62CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2CX7W99FJ9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9D4DF1441AAB57430065F004 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1570,6 +1629,7 @@
 		9D74EEBB17A7129300BEE89F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1591,6 +1651,7 @@
 		9D74EEBC17A7129300BEE89F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1613,6 +1674,7 @@
 		9DAF8B191A7AFF1200F46528 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -1657,6 +1719,7 @@
 		9DAF8B1A1A7AFF1200F46528 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -1699,6 +1762,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9D2C28EB24E64F1B00DF62CD /* Build configuration list for PBXAggregateTarget "MIKMIDI.xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D2C28EC24E64F1B00DF62CD /* Debug */,
+				9D2C28ED24E64F1B00DF62CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9D4DF1431AAB57430065F004 /* Build configuration list for PBXNativeTarget "MIKMIDI Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

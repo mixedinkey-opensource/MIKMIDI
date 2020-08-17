@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   
   s.name         = 'MIKMIDI'
-  s.version      = '1.7.0'
+  s.version      = '1.7.1'
   s.summary      = 'Library useful for programmers writing Objective-C or Swift OS X or iOS apps that use MIDI.'
   s.description  = <<-DESC
                      MIKMIDI is a library intended to simplify implementing Objective-C or Swift apps 
@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com' }
   s.social_media_url = 'https://twitter.com/armadsen'
 
-  s.ios.deployment_target = '6.0'
+  s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.8'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
