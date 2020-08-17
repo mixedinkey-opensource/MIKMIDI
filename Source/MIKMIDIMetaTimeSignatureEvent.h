@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetaEvent.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIMetaEvent.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 /**
  *  Represents a time signature. Note that in contrast to time signature events in raw MIDI,

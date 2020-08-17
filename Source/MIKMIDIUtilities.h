@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "MIKMIDIMappableResponder.h"
-#import "MIKMIDICommand.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIMappableResponder.h>
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 #include <mach/mach_time.h>
 
 NS_ASSUME_NONNULL_BEGIN

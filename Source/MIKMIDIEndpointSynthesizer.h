@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDISynthesizer.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISynthesizer.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIEndpoint;
 @class MIKMIDISourceEndpoint;

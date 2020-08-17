@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIChannelVoiceCommand.h"
-#import "MIKMIDICommand_SubclassMethods.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#import <MIKMIDI/MIKMIDICommand_SubclassMethods.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

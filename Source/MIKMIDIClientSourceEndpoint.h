@@ -5,8 +5,8 @@
 //  Created by Dan Rosenstark on 2015-01-07
 //
 
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDICommand;
 

@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
-#import "MIKMIDICommand.h"
-#import "MIKMIDIResponder.h"
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDIResponder.h>
 
 @protocol MIKMIDIMappableResponder;
 

@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDISynthesizerInstrument.h"
-#import "MIKMIDICommandScheduler.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISynthesizerInstrument.h>
+#import <MIKMIDI/MIKMIDICommandScheduler.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

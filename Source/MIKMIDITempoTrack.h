@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDITrack.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDITrack.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDITempoEvent;
 

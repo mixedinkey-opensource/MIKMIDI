@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDISequence.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISequence.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDISequencer;
 

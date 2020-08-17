@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDICompilerCompatibility.h"
-#import "MIKMIDIMetaTimeSignatureEvent.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#import <MIKMIDI/MIKMIDIMetaTimeSignatureEvent.h>
 
 @class MIKMIDITrack;
 @class MIKMIDISequencer;

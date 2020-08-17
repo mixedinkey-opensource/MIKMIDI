@@ -6,7 +6,7 @@
 //  Copyright © 2017 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDISystemMessageCommand.h"
+#import <MIKMIDI/MIKMIDISystemMessageCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

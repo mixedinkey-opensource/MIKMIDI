@@ -6,7 +6,7 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIChannelVoiceCommand.h"
+#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
 
 /**
  *  A MIDI polyphonic key pressure message. This message is most often sent by pressing 
