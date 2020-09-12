@@ -88,7 +88,7 @@ class FilesCollectionViewController: UICollectionViewController {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "ReturnToMainView" {
-			guard let mainVC = segue.destination as? ViewController else { return }
+			guard let mainVC = segue.destination as? MainViewController else { return }
 			mainVC.sequence = loadedSequence
 		}
     }

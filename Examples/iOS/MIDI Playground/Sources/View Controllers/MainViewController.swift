@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  MIDI Playground
 //
 //  Created by Andrew Madsen on 1/29/15.
@@ -9,7 +9,7 @@
 import UIKit
 import MIKMIDI
 
-class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
+class MainViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
