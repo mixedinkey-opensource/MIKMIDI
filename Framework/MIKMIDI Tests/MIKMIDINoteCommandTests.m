@@ -41,7 +41,7 @@
 - (void)testCreatingNoteCommandsWithMIDIPacket
 {
 	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(0, @[[MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:1 midiTimeStamp:0]]);
-	MIKMIDINoteOnCommand *noteOn = [MIKMIDICommand commandWithMIDIPacket:packet];
+	MIKMIDINoteOnCommand *noteOn = (MIKMIDINoteOnCommand *)[MIKMIDICommand commandWithMIDIPacket:packet];
 	XCTAssertTrue([noteOn isKindOfClass:[MIKMIDINoteOnCommand class]]);
 	XCTAssertEqual(noteOn.note, 60);
 	XCTAssertEqual(noteOn.velocity, 64);
@@ -49,7 +49,7 @@
 	MIKMIDIPacketFree(packet);
 	
 	packet = MIKMIDIPacketCreateFromCommands(0, @[[MIKMIDINoteOffCommand noteOffCommandWithNote:60 velocity:64 channel:1 midiTimeStamp:0]]);
-	MIKMIDINoteOffCommand *noteOff = [MIKMIDICommand commandWithMIDIPacket:packet];
+	MIKMIDINoteOffCommand *noteOff = (MIKMIDINoteOffCommand *)[MIKMIDICommand commandWithMIDIPacket:packet];
 	XCTAssertTrue([noteOff isKindOfClass:[MIKMIDINoteOffCommand class]]);
 	XCTAssertEqual(noteOff.note, 60);
 	XCTAssertEqual(noteOff.velocity, 64);

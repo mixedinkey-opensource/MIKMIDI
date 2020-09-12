@@ -297,31 +297,14 @@
 // All public event getters pass through this method
 - (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-	__block NSArray *events;
-
-    [self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		if (!self.internalEvents.count) { events = @[]; return; }	// possible WORKAROUND for Issue #100
-
-		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-		if (![iterator seek:startTimeStamp]) { events = @[]; return; }
-
-		NSMutableArray *mutableEvents = [NSMutableArray array];
-
-		while (iterator.hasCurrentEvent) {
-			MIKMIDIEvent *event = iterator.currentEvent;
-			if (!event || event.timeStamp > endTimeStamp) break;
-
-			if (!eventClass || [event isKindOfClass:eventClass]) {
-				[mutableEvents addObject:event];
-			}
-
-			[iterator moveToNextEvent];
-		}
-
-		events = mutableEvents;
-	}];
-
-	return events ?: @[];
+	NSMutableArray *result = [NSMutableArray array];
+	for (MIKMIDIEvent *event in self.events) {
+		if (event.timeStamp < startTimeStamp) { continue; }
+		if (event.timeStamp > endTimeStamp) { break; }
+		if (eventClass && ![event isKindOfClass:eventClass]) { continue; }
+		[result addObject:event];
+	}
+	return [result copy];
 }
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
@@ -344,7 +327,7 @@
 		MIKMIDIEvent *event = iterator.currentEvent;
 		[allEvents addObject:event];
 		[iterator moveToNextEvent];
-}
+	}
 
 	[self willChangeValueForKey:@"internalEvents"];
 	[self.internalEvents intersectSet:allEvents];
@@ -533,7 +516,7 @@
 	[self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
 		if (!self.sortedEventsCache) {
 			NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES];
-			_sortedEventsCache = [self.internalEvents sortedArrayUsingDescriptors:@[sortDescriptor]];
+			self->_sortedEventsCache = [self.internalEvents sortedArrayUsingDescriptors:@[sortDescriptor]];
 		}
 		events = self.sortedEventsCache;
 	}];
@@ -606,9 +589,10 @@
 
 - (NSInteger)trackNumber
 {
-	if (!self.sequence) return -1;
+    __strong MIKMIDISequence *sequence = self.sequence;
+	if (!sequence) return -1;
 	UInt32 trackNumber = 0;
-	OSStatus err = MusicSequenceGetTrackIndex(self.sequence.musicSequence, self.musicTrack, &trackNumber);
+	OSStatus err = MusicSequenceGetTrackIndex(sequence.musicSequence, self.musicTrack, &trackNumber);
 	if (err) {
 		NSLog(@"MusicSequenceGetTrackIndex() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
 		return -1;

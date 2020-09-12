@@ -86,50 +86,14 @@
 	XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDISystemKeepAliveCommand instance.");	
 }
 
-- (void)testSystemExclusiveCommand
-{
-	Class immutableClass = [MIKMIDISystemExclusiveCommand class];
-	Class mutableClass = [MIKMutableMIDISystemExclusiveCommand class];
-	
-	MIKMIDISystemExclusiveCommand *command = [[immutableClass alloc] init];
-	XCTAssert([command isMemberOfClass:[immutableClass class]], @"[[MIKMIDISystemExclusiveCommand alloc] init] did not return an MIKMIDISystemExclusiveCommand instance.");
-	XCTAssert([[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeSystemExclusive] isMemberOfClass:[immutableClass class]], @"[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeSystemExclusive] did not return an MIKMIDISystemExclusiveCommand instance.");
-	XCTAssert([[command copy] isMemberOfClass:[immutableClass class]], @"[MIKMIDISystemExclusiveCommand copy] did not return an MIKMIDISystemExclusiveCommand instance.");
-	XCTAssertEqual(command.commandType, MIKMIDICommandTypeSystemExclusive, @"[[MIKMIDISystemExclusiveCommand alloc] init] produced a command instance with the wrong command type.");
-	XCTAssertEqual(command.data.length, 4, "MIKMIDISystemExclusiveCommand had an incorrect data length %@ (should be 4)", @(command.data.length));
-
-	MIKMutableMIDISystemExclusiveCommand *mutableCommand = [command mutableCopy];
-	XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"-[MIKMIDISystemExclusiveCommand mutableCopy] did not return an mutableClass instance.");
-	XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDISystemExclusiveCommand instance.");
-	
-	XCTAssertThrows([(MIKMutableMIDISystemExclusiveCommand *)command setSysexData:[NSData data]], @"-[MIKMIDISystemExclusiveCommand setSysexData:] was allowed on immutable instance.");
-	XCTAssertThrows([(MIKMutableMIDISystemExclusiveCommand *)command setSysexChannel:10], @"-[MIKMIDISystemExclusiveCommand setSysexChannel:] was allowed on immutable instance.");
-	
-	XCTAssertNoThrow([mutableCommand setSysexData:[NSData data]], @"-[MIKMIDISystemExclusiveCommand setSysexData:] was not allowed on mutable instance.");
-	XCTAssertNoThrow([mutableCommand setSysexChannel:10], @"-[MIKMIDISystemExclusiveCommand setSysexChannel:] was not allowed on mutable instance.");
-	
-	mutableCommand.sysexChannel = 27;
-	XCTAssertEqual(mutableCommand.sysexChannel, 27, @"Setting the sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance failed.");
-}
-
-- (void)testManufacturerSpecificSystemExclusiveCommand
-{
-	MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
-	command.manufacturerID = 0x41; // Roland
-	XCTAssertEqual(command.manufacturerID, 0x41, @"Setting the manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
-	
-	XCTAssertEqual(command.sysexChannel, 0, @"Sysex channel for a manufacturer specific sysex command should be 0");
-	
-	command.manufacturerID = 0x002076;
-	XCTAssertEqual(command.manufacturerID, 0x002076, @"Setting a 3-byte manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
-}
-
 - (void)testMultipleCommandTypesInOnePacket
 {
 	MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil];
 	MIKMutableMIDIControlChangeCommand *cc = [MIKMutableMIDIControlChangeCommand controlChangeCommandWithControllerNumber:27 value:63];
+	MIKMutableMIDIChannelPressureCommand *pressure = [MIKMutableMIDIChannelPressureCommand channelPressureCommandWithPressure:42 channel:0 timestamp:nil];
 	cc.midiTimestamp = noteOn.midiTimestamp; // Messages in a MIDIPacket all have the same timestamp.
-	NSArray *commands = @[noteOn, cc];
+	pressure.midiTimestamp = noteOn.midiTimestamp;
+	NSArray *commands = @[noteOn, pressure, cc];
 	
 	MIDIPacket *packet = MIKMIDIPacketCreateFromCommands(cc.midiTimestamp, commands);
 	NSArray *parsedCommands = [MIKMIDICommand commandsWithMIDIPacket:packet];

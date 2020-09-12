@@ -14,6 +14,13 @@
 #error MIKMIDISystemExclusiveCommand.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDISystemExclusiveCommand.m in the Build Phases for this target
 #endif
 
+uint32_t const kMIKMIDISysexNonRealtimeManufacturerID = 0x7E;
+uint32_t const kMIKMIDISysexRealtimeManufacturerID = 0x7F;
+
+uint8_t const kMIKMIDISysexChannelDisregard = 0x7F;
+uint8_t const kMIKMIDISysexBeginDelimiter = 0xF0;
+uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
+
 @interface MIKMIDISystemExclusiveCommand ()
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;
@@ -124,7 +131,7 @@
 			|| firstByte == kMIKMIDISysexNonRealtimeManufacturerID);
 }
 
-- (NSUInteger)sysesChannelLocation
+- (NSUInteger)sysexChannelLocation
 {
 	return _has3ByteManufacturerID ? 4 : 2;
 }
@@ -133,7 +140,7 @@
 {
 	if ([self.internalData length] < 3 || !self.isUniversal) return 0;
 	
-	NSRange sysexChannelRange = NSMakeRange([self sysesChannelLocation], 1);
+	NSRange sysexChannelRange = NSMakeRange([self sysexChannelLocation], 1);
 	NSData *sysexChannelData = [self.internalData subdataWithRange:sysexChannelRange];
 	return *(UInt8 *)[sysexChannelData bytes];
 }
@@ -143,8 +150,8 @@
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	if (!self.isUniversal) { return; }
 	
-	NSUInteger sysexChannelLocation = [self sysesChannelLocation];
-	NSUInteger requiredLength = sysexChannelLocation+1;
+	NSUInteger sysexChannelLocation = [self sysexChannelLocation];
+	NSUInteger requiredLength = MAX(sysexChannelLocation + 1, self.internalData.length);
 	[self.internalData setLength:requiredLength];
 	
 	[self.internalData replaceBytesInRange:NSMakeRange(sysexChannelLocation, 1) withBytes:&sysexChannel length:1];
@@ -162,7 +169,9 @@
 - (NSData *)sysexData
 {
 	NSUInteger sysexStartLocation = [self sysexDataStartLocation];
-	return [self.internalData subdataWithRange:NSMakeRange(sysexStartLocation, [self.internalData length]-sysexStartLocation-1)];
+	NSInteger length = MAX(0u, [self.data length]-sysexStartLocation-1);
+    if ([self.data length] < length + sysexStartLocation) { return [NSData data]; }
+	return [self.data subdataWithRange:NSMakeRange(sysexStartLocation, length)];
 }
 
 - (void)setSysexData:(NSData *)sysexData

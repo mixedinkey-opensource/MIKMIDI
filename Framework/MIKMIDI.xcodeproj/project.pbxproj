@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9D2C28EA24E64F1B00DF62CD /* MIKMIDI.xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9D2C28EB24E64F1B00DF62CD /* Build configuration list for PBXAggregateTarget "MIKMIDI.xcframework" */;
+			buildPhases = (
+				9D2C28EF24E64F2A00DF62CD /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MIKMIDI.xcframework;
+			productName = MIKMIDI.xcframework;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		6609EF0C1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */; };
 		8308F6321B46C482004307AD /* MIKMIDICommandScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8308F6311B46C482004307AD /* MIKMIDICommandScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -69,6 +83,7 @@
 		9D0895F11B0D29F200A5872E /* MIKMIDIMappingItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */; };
 		9D0895F31B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D0895F41B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D0E6B912370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */; };
 		9D1D9C201BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C211BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C221BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */; };
@@ -148,6 +163,11 @@
 		9D877D851A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877D831A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m */; };
 		9D877DFC1A670261001BA997 /* MIKMIDIProgramChangeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877DFA1A670261001BA997 /* MIKMIDIProgramChangeCommand.m */; };
 		9D877DFD1A6706E6001BA997 /* MIKMIDIProgramChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D877DF91A670261001BA997 /* MIKMIDIProgramChangeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D8DC3CD202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8DC3CC202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m */; };
+		9D8DC3CF202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */; };
+		9D8DC3D0202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */; };
+		9D8DC3D2202BD95000DDA4A8 /* MIKMIDITransmittable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3D1202BD95000DDA4A8 /* MIKMIDITransmittable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D8DC3D3202BD95000DDA4A8 /* MIKMIDITransmittable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3D1202BD95000DDA4A8 /* MIKMIDITransmittable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D9F029E1FB50B1900FE340E /* MIKMIDI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D9F02991FB50B1900FE340E /* MIKMIDI-Prefix.pch */; };
 		9D9F02A11FB50B1900FE340E /* MIKMIDI-iOS-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 9D9F029B1FB50B1900FE340E /* MIKMIDI-iOS-Prefix.pch */; };
 		9D9F02A71FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D9F02A51FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -285,11 +305,13 @@
 		9DE259E519A7B4F800DA93E9 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */; };
 		9DE259E619A7B50100DA93E9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D74EF2D17A7133900BEE89F /* CoreMIDI.framework */; };
 		9DE259E819A7B50600DA93E9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */; };
+		9DE824A6207AD02000761A07 /* MIKMIDIChannelEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DE824A5207AD02000761A07 /* MIKMIDIChannelEventTests.m */; };
 		9DEBD03B1F7085DB00676C42 /* MIKMIDINoteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEBD0391F7085DB00676C42 /* MIKMIDINoteCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DEBD03C1F7085DB00676C42 /* MIKMIDINoteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEBD0391F7085DB00676C42 /* MIKMIDINoteCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DEBD03D1F7085DB00676C42 /* MIKMIDINoteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEBD03A1F7085DB00676C42 /* MIKMIDINoteCommand.m */; };
 		9DEBD03E1F7085DB00676C42 /* MIKMIDINoteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEBD03A1F7085DB00676C42 /* MIKMIDINoteCommand.m */; };
 		9DEBD0441F708C2200676C42 /* MIKMIDINoteCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DEBD0431F708C2200676C42 /* MIKMIDINoteCommandTests.m */; };
+		9DECB3C12035EE4100B8C7A8 /* MIKMIDISystemExclusiveCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DECB3C02035EE4100B8C7A8 /* MIKMIDISystemExclusiveCommandTests.m */; };
 		9DED4E221AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DED4E231AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9DED4E241AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DED4E211AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m */; };
@@ -310,6 +332,7 @@
 		9DF99E7A1831841A004EE5F4 /* MIKMIDICommandThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E781831841A004EE5F4 /* MIKMIDICommandThrottler.m */; };
 		9DF99E7D18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */; };
 		9DF99E7E18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */; };
+		9DFF406E202E45A000562EC9 /* MIKMIDIInputPortTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFF406D202E45A000562EC9 /* MIKMIDIInputPortTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -379,6 +402,7 @@
 		9D0895EC1B0D29F200A5872E /* MIKMIDIMappingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappingItem.h; sourceTree = "<group>"; };
 		9D0895ED1B0D29F200A5872E /* MIKMIDIMappingItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMappingItem.m; sourceTree = "<group>"; };
 		9D0895F21B0D2A4700A5872E /* MIKMIDIMappableResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMappableResponder.h; sourceTree = "<group>"; };
+		9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIEventCachingTests.m; sourceTree = "<group>"; };
 		9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPolyphonicKeyPressureCommand.h; sourceTree = "<group>"; };
 		9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPolyphonicKeyPressureCommand.m; sourceTree = "<group>"; };
 		9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDICommandTests.m; sourceTree = "<group>"; };
@@ -459,9 +483,12 @@
 		9D877DF91A670261001BA997 /* MIKMIDIProgramChangeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIProgramChangeCommand.h; sourceTree = "<group>"; };
 		9D877DFA1A670261001BA997 /* MIKMIDIProgramChangeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIProgramChangeCommand.m; sourceTree = "<group>"; };
 		9D8BC91018071C00007E143C /* MIKMIDIChannelVoiceCommand_SubclassMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelVoiceCommand_SubclassMethods.h; sourceTree = "<group>"; };
+		9D8DC3CC202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIFourteenBitCCCommandTests.m; sourceTree = "<group>"; };
+		9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MIKMIDIControlChangeCommand+Private.h"; sourceTree = "<group>"; };
+		9D8DC3D1202BD95000DDA4A8 /* MIKMIDITransmittable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDITransmittable.h; sourceTree = "<group>"; };
 		9D9F02981FB50B1900FE340E /* MIKMIDI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MIKMIDI-Info.plist"; sourceTree = "<group>"; };
 		9D9F02991FB50B1900FE340E /* MIKMIDI-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDI-Prefix.pch"; sourceTree = "<group>"; };
-		9D9F029A1FB50B1900FE340E /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		9D9F029A1FB50B1900FE340E /* MIKMIDI.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = MIKMIDI.modulemap; sourceTree = "<group>"; };
 		9D9F029B1FB50B1900FE340E /* MIKMIDI-iOS-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MIKMIDI-iOS-Prefix.pch"; sourceTree = "<group>"; };
 		9D9F02A51FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDISystemKeepAliveCommand.h; sourceTree = "<group>"; };
 		9D9F02A61FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISystemKeepAliveCommand.m; sourceTree = "<group>"; };
@@ -483,10 +510,12 @@
 		9DCDDB591AB3514100F8347E /* MIKMIDISequencerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISequencerTests.m; sourceTree = "<group>"; };
 		9DE259E419A7B4F800DA93E9 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		9DE259E719A7B50600DA93E9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		9DE824A5207AD02000761A07 /* MIKMIDIChannelEventTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelEventTests.m; sourceTree = "<group>"; };
 		9DEBD0391F7085DB00676C42 /* MIKMIDINoteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDINoteCommand.h; sourceTree = "<group>"; };
 		9DEBD03A1F7085DB00676C42 /* MIKMIDINoteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDINoteCommand.m; sourceTree = "<group>"; };
 		9DEBD0401F708B0E00676C42 /* MIKMIDINoteCommand_SubclassMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDINoteCommand_SubclassMethods.h; sourceTree = "<group>"; };
 		9DEBD0431F708C2200676C42 /* MIKMIDINoteCommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDINoteCommandTests.m; sourceTree = "<group>"; };
+		9DECB3C02035EE4100B8C7A8 /* MIKMIDISystemExclusiveCommandTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDISystemExclusiveCommandTests.m; sourceTree = "<group>"; };
 		9DED4E201AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPitchBendChangeEvent.h; sourceTree = "<group>"; };
 		9DED4E211AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPitchBendChangeEvent.m; sourceTree = "<group>"; };
 		9DED4E341AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPitchBendChangeCommand.h; sourceTree = "<group>"; };
@@ -500,6 +529,7 @@
 		9DF99E7B18318D44004EE5F4 /* MIKMIDIPrivateUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivateUtilities.h; sourceTree = "<group>"; };
 		9DF99E7C18318D44004EE5F4 /* MIKMIDIPrivateUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIPrivateUtilities.m; sourceTree = "<group>"; };
 		9DFDC2B61820305C00C4C66D /* MIKMIDIPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIPrivate.h; sourceTree = "<group>"; };
+		9DFF406D202E45A000562EC9 /* MIKMIDIInputPortTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIInputPortTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -549,14 +579,19 @@
 		9D4DF13B1AAB57430065F004 /* MIKMIDI Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9DFF406D202E45A000562EC9 /* MIKMIDIInputPortTests.m */,
 				6609EF0B1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m */,
-				9DEBD0431F708C2200676C42 /* MIKMIDINoteCommandTests.m */,
 				9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */,
+				9DEBD0431F708C2200676C42 /* MIKMIDINoteCommandTests.m */,
+				9D8DC3CC202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m */,
+				9DECB3C02035EE4100B8C7A8 /* MIKMIDISystemExclusiveCommandTests.m */,
 				9D4DF14C1AAB57800065F004 /* MIKMIDISequenceTests.m */,
 				9D4DF1531AAB60490065F004 /* MIKMIDITrackTests.m */,
 				9D0225301CC92ECF0090EAB4 /* MIKMIDIMetaEventTests.m */,
 				9DCDDB591AB3514100F8347E /* MIKMIDISequencerTests.m */,
 				9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */,
+				9DE824A5207AD02000761A07 /* MIKMIDIChannelEventTests.m */,
+				9D0E6B902370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m */,
 				9D4DF13C1AAB57430065F004 /* Supporting Files */,
 				9D4DF1501AAB57CD0065F004 /* Resources */,
 			);
@@ -669,7 +704,7 @@
 			isa = PBXGroup;
 			children = (
 				9D9F02981FB50B1900FE340E /* MIKMIDI-Info.plist */,
-				9D9F029A1FB50B1900FE340E /* module.modulemap */,
+				9D9F029A1FB50B1900FE340E /* MIKMIDI.modulemap */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -791,6 +826,7 @@
 				9D74EF4517A713A100BEE89F /* MIKMIDIInputPort.m */,
 				9D74EF5317A713A100BEE89F /* MIKMIDIOutputPort.h */,
 				9D74EF5417A713A100BEE89F /* MIKMIDIOutputPort.m */,
+				9D8DC3D1202BD95000DDA4A8 /* MIKMIDITransmittable.h */,
 				9D74EF3E17A713A100BEE89F /* MIKMIDIEndpoint.h */,
 				9D74EF3F17A713A100BEE89F /* MIKMIDIEndpoint.m */,
 				9D74EF5917A713A100BEE89F /* MIKMIDISourceEndpoint.h */,
@@ -835,6 +871,7 @@
 				9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */,
 				9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */,
 				9D74EF3617A713A100BEE89F /* MIKMIDIControlChangeCommand.h */,
+				9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */,
 				9D74EF3717A713A100BEE89F /* MIKMIDIControlChangeCommand.m */,
 				9DED4E341AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h */,
 				9DED4E351AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.m */,
@@ -889,6 +926,7 @@
 				9D9F02A71FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h in Headers */,
 				9D0895F31B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */,
 				9D74EF6917A713A100BEE89F /* MIKMIDIControlChangeCommand.h in Headers */,
+				9D8DC3D2202BD95000DDA4A8 /* MIKMIDITransmittable.h in Headers */,
 				9D74EF6B17A713A100BEE89F /* MIKMIDIDestinationEndpoint.h in Headers */,
 				9D74EF6D17A713A100BEE89F /* MIKMIDIDevice.h in Headers */,
 				9D74EF6F17A713A100BEE89F /* MIKMIDIDeviceManager.h in Headers */,
@@ -958,6 +996,7 @@
 				83BC19BB1A23CD0D004F384F /* MIKMIDIMetronome.h in Headers */,
 				9D1D9C201BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */,
 				9D74EF9217A713A100BEE89F /* MIKMIDIUtilities.h in Headers */,
+				9D8DC3CF202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */,
 				83C3716719D607010017186B /* MIKMIDIClientDestinationEndpoint.h in Headers */,
 				9DAE7D8E19357AAF00B25DD7 /* MIKMIDIEndpointSynthesizer.h in Headers */,
 				9D74EF9417A713A100BEE89F /* NSUIApplication+MIKMIDI.h in Headers */,
@@ -1004,6 +1043,7 @@
 				9DAF8B701A7B00A700F46528 /* MIKMIDIMetaCuePointEvent.h in Headers */,
 				9DAF8B671A7B008A00F46528 /* MIKMIDIProgramChangeCommand.h in Headers */,
 				9D07CB231BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */,
+				9D8DC3D0202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */,
 				9DED4E231AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h in Headers */,
 				9DED4E371AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h in Headers */,
 				9DB366F71A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h in Headers */,
@@ -1045,6 +1085,7 @@
 				9DAF8B811A7B00BB00F46528 /* MIKMIDICommandThrottler.h in Headers */,
 				9DAF8B6A1A7B009100F46528 /* MIKMIDIMappingManager.h in Headers */,
 				9DAF8B741A7B00A700F46528 /* MIKMIDIMetaLyricEvent.h in Headers */,
+				9D8DC3D3202BD95000DDA4A8 /* MIKMIDITransmittable.h in Headers */,
 				9DAF8B5C1A7B007300F46528 /* MIKMIDISourceEndpoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1112,9 +1153,14 @@
 		9D74EE9C17A7129300BEE89F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Mixed In Key";
 				TargetAttributes = {
+					9D2C28EA24E64F1B00DF62CD = {
+						CreatedOnToolsVersion = 11.6;
+						DevelopmentTeam = 2CX7W99FJ9;
+						ProvisioningStyle = Automatic;
+					};
 					9D4DF1391AAB57430065F004 = {
 						CreatedOnToolsVersion = 6.3;
 					};
@@ -1132,6 +1178,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 9D74EE9B17A7129300BEE89F;
@@ -1142,6 +1189,7 @@
 				9D74EEA417A7129300BEE89F /* MIKMIDI */,
 				9DAF8B051A7AFF1100F46528 /* MIKMIDI-iOS */,
 				9D4DF1391AAB57430065F004 /* MIKMIDI Tests */,
+				9D2C28EA24E64F1B00DF62CD /* MIKMIDI.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -1172,6 +1220,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		9D2C28EF24E64F2A00DF62CD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/MIKMIDI.xcframework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rd \"MIKMIDI.xcframework\"\nxcodebuild archive -scheme MIKMIDI -destination \"platform=macOS\" -archivePath \"$TEMP_DIR/MIKMIDI.macOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"generic/platform=iOS\" -archivePath \"$TEMP_DIR/MIKMIDI.iOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"platform=iOS Simulator,name=iPhone 11\" -archivePath \"$TEMP_DIR/MIKMIDI.iOS-simulator.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild archive -scheme MIKMIDI-iOS -destination \"platform=macOS,variant=Mac Catalyst\" -archivePath \"$TEMP_DIR/MIKMIDI.macOS.xcarchive\" SKIP_INSTALL=NO | xcpretty\nxcodebuild -create-xcframework -framework \"$TEMP_DIR/MIKMIDI.macOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.iOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.iOS-simulator.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -framework \"$TEMP_DIR/MIKMIDI.macOS.xcarchive/Products/Library/Frameworks/MIKMIDI.framework\" -output \"${DERIVED_FILE_DIR}/MIKMIDI.xcframework\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		9D4DF1361AAB57430065F004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1179,12 +1248,17 @@
 			files = (
 				9DEBD0441F708C2200676C42 /* MIKMIDINoteCommandTests.m in Sources */,
 				9D1D9C251BF542BB001377F7 /* MIKMIDICommandTests.m in Sources */,
+				9DFF406E202E45A000562EC9 /* MIKMIDIInputPortTests.m in Sources */,
 				9DCDDB5A1AB3514100F8347E /* MIKMIDISequencerTests.m in Sources */,
+				9D8DC3CD202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m in Sources */,
 				9D0225311CC92ECF0090EAB4 /* MIKMIDIMetaEventTests.m in Sources */,
 				6609EF0C1EF300C400B4DAE5 /* MIKMIDISysexCoalescingTests.m in Sources */,
+				9DECB3C12035EE4100B8C7A8 /* MIKMIDISystemExclusiveCommandTests.m in Sources */,
 				9D2ED25F1AFBD062000325CC /* MIKMIDIResponderChainTests.m in Sources */,
 				9D4DF14D1AAB57800065F004 /* MIKMIDISequenceTests.m in Sources */,
 				9D4DF1541AAB60490065F004 /* MIKMIDITrackTests.m in Sources */,
+				9DE824A6207AD02000761A07 /* MIKMIDIChannelEventTests.m in Sources */,
+				9D0E6B912370B3C900AEFFE0 /* MIKMIDIEventCachingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1345,6 +1419,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		9D2C28EC24E64F1B00DF62CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2CX7W99FJ9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9D2C28ED24E64F1B00DF62CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2CX7W99FJ9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9D4DF1441AAB57430065F004 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1410,20 +1502,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES_AGGRESSIVE;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1446,6 +1545,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -1462,20 +1562,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES_AGGRESSIVE;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1491,6 +1598,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -1505,6 +1613,7 @@
 		9D74EEBB17A7129300BEE89F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1515,7 +1624,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1526,6 +1635,7 @@
 		9D74EEBC17A7129300BEE89F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1537,7 +1647,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1548,6 +1658,7 @@
 		9DAF8B191A7AFF1200F46528 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -1577,7 +1688,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MIKMIDI;
@@ -1592,6 +1703,7 @@
 		9DAF8B1A1A7AFF1200F46528 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -1618,7 +1730,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = module.modulemap;
+				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MIKMIDI;
@@ -1634,6 +1746,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9D2C28EB24E64F1B00DF62CD /* Build configuration list for PBXAggregateTarget "MIKMIDI.xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D2C28EC24E64F1B00DF62CD /* Debug */,
+				9D2C28ED24E64F1B00DF62CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9D4DF1431AAB57430065F004 /* Build configuration list for PBXNativeTarget "MIKMIDI Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -56,10 +56,14 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
 	NSMutableArray *result = [NSMutableArray array];
 	NSInteger dataOffset = 0;
-	while (1) {
+	while (dataOffset < inputPacket->length) {
 		const Byte *packetData = inputPacket->data + dataOffset;
-		NSInteger commandType = (NSInteger) packetData[0];
+		MIKMIDICommandType commandType = (MIKMIDICommandType)packetData[0];
 		NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+		if (commandType == MIKMIDICommandTypeSystemExclusive) {
+			// For sysex, the packet can only contain a single MIDI message (as per documentation for MIDIPacket)
+			standardLength = inputPacket->length;
+		}
 		if (dataOffset > (inputPacket->length - standardLength)) break;
 
 		// This is gross, but it's the only way I can find to reliably create a
@@ -313,7 +317,10 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (BOOL)isMutable { return YES; }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type; { return [[self immutableCounterpartClass] supportsMIDICommandType:type]; }
+#pragma clang diagnostic pop
 
 #pragma mark - Properties
 

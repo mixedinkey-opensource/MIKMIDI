@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readwrite, nullable) NSString *name;
 
 @property (nonatomic, readwrite) MusicTimeStamp timeStamp;
-@property (nonatomic, readwrite) UInt8 metadataType;
+@property (nonatomic, readwrite) MIKMIDIMetaEventType metadataType;
 @property (nonatomic, strong, readwrite, null_resettable) NSData *metaData;
 @property (nonatomic, copy, readwrite) NSString *string;
 
