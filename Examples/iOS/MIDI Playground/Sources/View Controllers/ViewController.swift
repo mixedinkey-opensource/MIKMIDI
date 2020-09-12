@@ -73,7 +73,7 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 			}
 		}
 		
-		playingObserver = sequencer.observe(\MIKMIDISequencer.playing, options: [.initial]) { [weak self] (sequencer, change) in
+		playingObserver = sequencer.observe(\MIKMIDISequencer.isPlaying, options: [.initial]) { [weak self] (sequencer, change) in
 			if sequencer.isPlaying {
 				self?.playButton.title = NSLocalizedString("Pause", comment: "Pause")
 				self?.configureDisplayLink()
@@ -88,7 +88,7 @@ class ViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "ShowDevices" {
-			var vc: DevicesTableViewController!
+			let vc: DevicesTableViewController
 			if let navVC = segue.destination as? UINavigationController {
 				vc = navVC.topViewController as! DevicesTableViewController
 			} else {
