@@ -74,13 +74,16 @@ class MainViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 		}
 		
 		playingObserver = sequencer.observe(\MIKMIDISequencer.isPlaying, options: [.initial]) { [weak self] (sequencer, change) in
-			if sequencer.isPlaying {
-				self?.playButton.title = NSLocalizedString("Pause", comment: "Pause")
-				self?.configureDisplayLink()
-			} else {
-				self?.playButton.title = NSLocalizedString("Play", comment: "Play")
-				self?.displayLink = nil
-			}
+            let isPlaying = sequencer.isPlaying
+            DispatchQueue.main.async {
+                if isPlaying {
+                    self?.playButton.title = NSLocalizedString("Pause", comment: "Pause")
+                    self?.configureDisplayLink()
+                } else {
+                    self?.playButton.title = NSLocalizedString("Play", comment: "Play")
+                    self?.displayLink = nil
+                }
+            }
 		}
 	}
 	
