@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDISynthesizerInstrument.h"
-#import "MIKMIDICommandScheduler.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISynthesizerInstrument.h>
+#import <MIKMIDI/MIKMIDICommandScheduler.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (nullable instancetype)initWithError:(NSError **)error;
+- (nullable instancetype)initWithError:(NSError **)error NS_SWIFT_NAME(init());
 
 /**
  *  Initializes an MIKMIDISynthesizer instance which uses an audio unit matching
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An initialized MIKMIDIEndpointSynthesizer or nil if an error occurs.
  */
-- (nullable instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithAudioUnitDescription:(AudioComponentDescription)componentDescription error:(NSError **)error NS_DESIGNATED_INITIALIZER NS_SWIFT_NAME(init(audioUnitDescription:));
 
 /**
  *  This synthesizer's available instruments. An array of 
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @see +[MIKMIDISynthesizerInstrument availableInstruments]
  */
-- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument error:(NSError **)error;
+- (BOOL)selectInstrument:(MIKMIDISynthesizerInstrument *)instrument error:(NSError **)error NS_SWIFT_NAME(select(instrument:));
 
 /**
  *  Loads the sound font (.dls or .sf2) file at fileURL.

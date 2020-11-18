@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDICommand.h"
-#import "MIKMIDITransmittable.h"
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDITransmittable.h>
 
 /**
  *  These methods can be called and/or overridden by subclasses of MIKMIDICommand, but are not
