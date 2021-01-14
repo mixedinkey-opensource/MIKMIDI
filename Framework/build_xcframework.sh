@@ -19,15 +19,14 @@ xcodebuild archive \
 -archivePath "build/MIKMIDI.iOS.xcarchive" \
 SKIP_INSTALL=NO
 
-echo "Building for iOS simulator (x86_64)"
+echo "Building for iOS simulator"
 xcodebuild archive \
 -scheme MIKMIDI-iOS \
 -sdk iphonesimulator \
--arch x86_64 \
 -archivePath "build/MIKMIDI.iOS-simulator.xcarchive" \
 SKIP_INSTALL=NO
 
-echo "Building for Mac Catalyst (x86_64)"
+echo "Building for Mac Catalyst"
 xcodebuild archive \
 -scheme MIKMIDI-iOS \
 -destination "platform=macOS,variant=Mac Catalyst" \
