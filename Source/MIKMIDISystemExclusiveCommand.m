@@ -69,6 +69,19 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 	return result;
 }
 
++ (instancetype)systemExclusiveCommandWithManufacturerID:(UInt32)manufacturerID
+                                            sysexChannel:(UInt8)sysexChannel
+                                               sysexData:(NSData *)sysexData
+                                               timestamp:(nullable NSDate *)timestamp
+{
+    MIKMutableMIDISystemExclusiveCommand *result = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    result.manufacturerID = manufacturerID;
+    result.sysexChannel = sysexChannel;
+    result.sysexData = sysexData;
+    result.timestamp = timestamp ?: [NSDate date];
+    return [self isMutable] ? result : [result copy];
+}
+
 - (id)initWithMIDIPacket:(MIDIPacket *)packet
 {
 	self = [super initWithMIDIPacket:packet];
