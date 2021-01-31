@@ -39,12 +39,27 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)identityRequestCommand;
 
 /**
+ * Creates a SysEx command.
+ *
+ * @param manufacturerID The manufacturer ID for the command,
+ * @param sysexChannel The channel of the message. Only valid for universal exclusive messages,
+ * will always be ignored for non-universal messages.
+ * @param sysexData The system exclusive data for the message. Should not include status byte, manufacturer ID, channel.
+ * End delimiter (0x7F) is optional and will be added if not present.
+ * @param timestamp The timestamp for the command. Pass nil to use the current date/time.
+ */
++ (instancetype)systemExclusiveCommandWithManufacturerID:(UInt32)manufacturerID
+                                            sysexChannel:(UInt8)sysexChannel
+                                               sysexData:(NSData *)sysexData
+                                               timestamp:(nullable NSDate *)timestamp;
+
+/**
  * Initializes the command with raw sysex data and timestamp.
  *
  * @param data Assumed to be valid with begin+end delimiters.
  * @param timeStamp Time at which the first sysex byte was received.
  */
-- (id)initWithRawData:(NSData *)data timeStamp:(MIDITimeStamp)timeStamp;
+- (instancetype)initWithRawData:(NSData *)data timeStamp:(MIDITimeStamp)timeStamp;
 
 /**
  *  The manufacturer ID for the command. This is used by devices to determine
@@ -82,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  For universal messages subID's are included in sysexData, for non-universal 
  *  messages, any device specific information (such as modelID, versionID or 
- *  whatever manufactures decide to include) will be included in sysexData.
+ *  whatever manufacturers decide to include) will be included in sysexData.
  */
 @property (nonatomic, strong, readonly) NSData *sysexData;
 
