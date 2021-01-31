@@ -15,7 +15,7 @@
 
 @implementation MIKMIDISystemExclusiveCommandTests
 
-- (void)testSystemExclusiveCommand
+- (void)testInitializingSystemExclusiveCommand
 {
 	Class immutableClass = [MIKMIDISystemExclusiveCommand class];
 	Class mutableClass = [MIKMutableMIDISystemExclusiveCommand class];
@@ -39,6 +39,44 @@
 	
 	mutableCommand.sysexChannel = 27;
 	XCTAssertEqual(mutableCommand.sysexChannel, 27, @"Setting the sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+}
+
+- (void)testSysexCommandConvenienceMethod
+{
+    Class immutableClass = [MIKMIDISystemExclusiveCommand class];
+    Class mutableClass = [MIKMutableMIDISystemExclusiveCommand class];
+
+    NSDate *timestamp = [NSDate date];
+    NSData *sysexData = [NSData dataWithBytes:(UInt8[]){0xde, 0xad, 0xbe, 0xef} length:4];
+    MIKMIDISystemExclusiveCommand *command =
+    [MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:0x41
+                                                                    sysexChannel:1
+                                                                       sysexData:sysexData
+                                                                       timestamp:timestamp];
+    XCTAssert([command isMemberOfClass:[immutableClass class]], @"[MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:...] did not return an MIKMIDISystemExclusiveCommand instance.");
+    XCTAssertEqual(command.commandType, MIKMIDICommandTypeSystemExclusive, @"[MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID] produced a command instance with the wrong command type.");
+    XCTAssertEqual(command.data.length, 7, "MIKMIDISystemExclusiveCommand had an incorrect data length %@ (should be 4)", @(command.data.length));
+    XCTAssertEqual(command.manufacturerID, 0x41, @"The manufacturerID on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqual(command.sysexChannel, 0, @"The sysexChannel on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqualObjects(command.sysexData, sysexData, @"The sysexData on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+
+    MIKMutableMIDISystemExclusiveCommand *mutableCommand =
+    [MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:0x41
+                                                                    sysexChannel:1
+                                                                       sysexData:sysexData
+                                                                       timestamp:timestamp];
+    XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"[MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:...] did not return an MIKMIDISystemExclusiveCommand instance.");
+    XCTAssertEqual(mutableCommand.commandType, MIKMIDICommandTypeSystemExclusive, @"[MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID] produced a command instance with the wrong command type.");
+    XCTAssertEqual(mutableCommand.data.length, 7, "MIKMutableMIDISystemExclusiveCommand had an incorrect data length %@ (should be 4)", @(command.data.length));
+    XCTAssertEqual(mutableCommand.manufacturerID, 0x41, @"The manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqual(mutableCommand.sysexChannel, 0, @"The sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqualObjects(mutableCommand.sysexData, sysexData, @"The sysexData on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+
+    XCTAssertNoThrow([mutableCommand setSysexData:[NSData data]], @"-[MIKMIDISystemExclusiveCommand setSysexData:] was not allowed on mutable instance.");
+    XCTAssertNoThrow([mutableCommand setSysexChannel:10], @"-[MIKMIDISystemExclusiveCommand setSysexChannel:] was not allowed on mutable instance.");
+
+    mutableCommand.manufacturerID = 0x42;
+    XCTAssertEqual(mutableCommand.manufacturerID, 0x42, @"Setting the manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
 }
 
 - (void)testSettingSysexData
