@@ -78,4 +78,54 @@
 	XCTAssertEqual(command.manufacturerID, 0x002076, @"Setting a 3-byte manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
 }
 
+- (void)testChangingManufacturerIDLength
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.manufacturerID = 0x414243;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.manufacturerID = 0x41;
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x41, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+}
+
+- (void)testForcedThreeByteManufacturerIDLength
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = YES;
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = NO;
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+}
+
+- (void)testSettingIncludesThreeByteManufacturerIDWithThreeByteManufacturerID
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x414243;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = NO;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+}
+
 @end
