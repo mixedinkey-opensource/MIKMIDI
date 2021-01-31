@@ -172,7 +172,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 
 - (NSUInteger)sysexDataStartLocation
 {
-	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 4 : 2;
+	NSUInteger sysexStartLocation = _threeByteManufacturerIDInInternalData ? 4 : 2;
 	if (self.isUniversal) {
 		sysexStartLocation++;
 	}

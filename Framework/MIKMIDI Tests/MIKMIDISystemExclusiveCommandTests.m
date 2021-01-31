@@ -114,6 +114,20 @@
     XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
 }
 
+- (void)testForcedThreeByteManufacturerIDLengthWithSysexData
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.includesThreeByteManufacturerID = YES;
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+
+    command.sysexData = [NSData dataWithBytes:(UInt8[]){0xde, 0xad, 0xbe, 0xef} length:4];
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after setting sysexData change");
+    XCTAssertEqual(command.data.length, 9); // Status, 3-byte manufacturer, 4-byte sysex data, end delimiter byte
+}
+
 - (void)testSettingIncludesThreeByteManufacturerIDWithThreeByteManufacturerID
 {
     MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
