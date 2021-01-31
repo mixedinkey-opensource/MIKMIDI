@@ -74,7 +74,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
                                                sysexData:(NSData *)sysexData
                                                timestamp:(nullable NSDate *)timestamp
 {
-    MIKMutableMIDISystemExclusiveCommand *result = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    MIKMutableMIDISystemExclusiveCommand *result = [[MIKMutableMIDISystemExclusiveCommand alloc] initWithMIDIPacket:NULL];
     result.manufacturerID = manufacturerID;
     result.sysexChannel = sysexChannel;
     result.sysexData = sysexData;
@@ -91,6 +91,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 				UInt8 firstByte = self.dataByte1;
 				if (firstByte == 0) {
 					_has3ByteManufacturerID = YES;
+                    _threeByteManufacturerIDInInternalData = YES;
 					if ([self.internalData length] < 4) [self.internalData increaseLengthBy:4-[self.internalData length]];
 				}
 			}
