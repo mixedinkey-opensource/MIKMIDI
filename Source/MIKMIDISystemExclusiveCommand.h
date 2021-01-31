@@ -63,6 +63,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UInt32 manufacturerID;
 
 /**
+ *  Whether or not the command's data will include three bytes for the manufacturer ID.
+ *  If the first three bytes of the manufacturer ID are non-zero, this *always* returns YES.
+ *  By default, if only the last byte of the manufacturer ID is non-zero, this returns NO.
+ *  It can be set to YES (in MIKMutableMIDISystemExclusiveCommand) to explicitly
+ *  Include all three bytes, including the two leading zero bytes.
+ */
+@property (nonatomic, readonly) BOOL includesThreeByteManufacturerID;
+
+/**
  *  The channel of the message. Only valid for universal exclusive messages,
  *  will always be 0 for non-universal messages.
  */
@@ -90,6 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MIKMutableMIDISystemExclusiveCommand : MIKMIDISystemExclusiveCommand
 
 @property (nonatomic, readwrite) UInt32 manufacturerID;
+@property (nonatomic, readwrite) BOOL includesThreeByteManufacturerID;
 @property (nonatomic, readwrite) UInt8 sysexChannel;
 @property (nonatomic, strong, readwrite) NSData *sysexData;
 
