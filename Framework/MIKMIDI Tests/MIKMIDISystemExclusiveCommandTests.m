@@ -180,4 +180,31 @@
     XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
 }
 
+- (void)testParsingManufacturerID
+{
+    // 0xf0 00 00 41 00 f7
+    MIDIPacket packet = MIKMIDIPacketCreate(0, 6, @[@0xf0, @0, @0, @0x41, @0, @0xf7]);
+    MIKMIDISystemExclusiveCommand *command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x41);
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+
+    // 0xf0 41 00 f7
+    packet = MIKMIDIPacketCreate(0, 4, @[@0xf0, @0x41, @0, @0xf7]);
+    command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x41);
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+
+    // 0xf0 00 42 43 00 f7
+    packet = MIKMIDIPacketCreate(0, 6, @[@0xf0, @0, @0x42, @0x43, @0, @0xf7]);
+    command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x4243);
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+}
+
 @end
