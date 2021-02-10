@@ -367,7 +367,7 @@ Float64 MIKMIDIClockSecondsPerMIDITimeStamp()
     dispatch_once(&onceToken, ^{
         mach_timebase_info_data_t timeBaseInfoData;
         mach_timebase_info(&timeBaseInfoData);
-        secondsPerMIDITimeStamp = ((Float64)timeBaseInfoData.numer / (Float64)timeBaseInfoData.denom) / 1.0e9;
+        secondsPerMIDITimeStamp = ((Float64)timeBaseInfoData.numer / (Float64)timeBaseInfoData.denom) / NSEC_PER_SEC;
     });
     return secondsPerMIDITimeStamp;
     

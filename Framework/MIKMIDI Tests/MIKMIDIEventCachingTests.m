@@ -29,7 +29,7 @@
 	self.sequence = sequence;
 }
 
-- (void)testPerformanceExample {
+- (void)testTempoEventsPerformance {
     // This is an example of a performance test case.
     [self measureBlock:^{
 		for (NSInteger i=0; i<5000; i++) {

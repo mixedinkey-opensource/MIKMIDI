@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDIInputPort.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIInputPort.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIDevice;
 @class MIKMIDISourceEndpoint;

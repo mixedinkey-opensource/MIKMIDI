@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIChannelVoiceCommand.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,6 +17,16 @@ NS_ASSUME_NONNULL_BEGIN
  *  On devices, pitch bends messages are usually generated using a wheel or lever.
  */
 @interface MIKMIDIPitchBendChangeCommand : MIKMIDIChannelVoiceCommand
+
+/**
+ * Convenience method for creating a pitch bend change command.
+ *
+ * @param pitchChange The pitch change for the command. Valid range: 0-16383, center (no pitch change) at 8192.
+ * @param channel The channel for the command. Must be between 0 and 15.
+ * @param timestamp The timestamp for the command. Pass nil to use the current date/time.
+ * @return An initialized MIKMIDIChannelPressureCommand instance.
+ */
++ (instancetype)pitchBendChangeCommandWithPitchChange:(UInt16)pitchChange channel:(UInt8)channel timestamp:(nullable NSDate *)timestamp;
 
 /**
  *  A 14-bit value indicating the pitch bend.

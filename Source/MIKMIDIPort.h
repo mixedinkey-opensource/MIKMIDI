@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIObject.h"
+#import <MIKMIDI/MIKMIDIObject.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIEndpoint;
 

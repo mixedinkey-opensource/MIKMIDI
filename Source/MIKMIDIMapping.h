@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
-#import "MIKMIDICommand.h"
-#import "MIKMIDIResponder.h"
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDIResponder.h>
 
 @protocol MIKMIDIMappableResponder;
 
@@ -87,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An initialized MIKMIDIMapping instance, or nil if an error occurred.
  */
-- (nullable instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error;
+- (nullable instancetype)initWithFileAtURL:(NSURL *)url error:(NSError **)error NS_SWIFT_NAME(init(fileAt:));
 
 /**
  *	Creates and initializes an MIKMIDIMapping object that is the same as the passed in bundled mapping

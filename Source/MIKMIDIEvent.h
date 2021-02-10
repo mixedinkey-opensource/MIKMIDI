@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 /**
  *  Types of MIDI events. These values are used to determine which subclass to
@@ -187,7 +187,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
 
-#import "MIKMIDICommand.h"
+#import <MIKMIDI/MIKMIDICommand.h>
 
 @class MIKMIDIClock;
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIEvent.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIEvent.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIClock;
 
@@ -115,8 +115,8 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-#import "MIKMIDINoteOnCommand.h"
-#import "MIKMIDINoteOffCommand.h"
+#import <MIKMIDI/MIKMIDINoteOnCommand.h>
+#import <MIKMIDI/MIKMIDINoteOffCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
