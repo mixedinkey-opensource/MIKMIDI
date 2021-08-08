@@ -86,7 +86,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *	@return YES if loading the sound font file was succesful, NO if an error occurred.
  */
-- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error;
+- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL 
+                            preset:(uint8_t)preset
+                            error:(NSError **)error;
 
 + (AudioComponentDescription)appleSynthComponentDescription;
 
@@ -109,6 +111,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  return nil.
  */
 - (BOOL)setupAUGraphWithError:(NSError **)error;
+
+- (BOOL) startAUGraph;
+- (BOOL) stopAUGraph;
 
 /**
  *  Plays MIDI messages through the synthesizer.
