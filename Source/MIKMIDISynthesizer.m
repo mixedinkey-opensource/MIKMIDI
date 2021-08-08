@@ -141,7 +141,9 @@
 	return [self sendBankSelectAndProgramChangeForInstrumentID:instrument.instrumentID error:error];
 }
 
-- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL error:(NSError **)error
+- (BOOL)loadSoundfontFromFileAtURL:(NSURL *)fileURL
+                            preset:(uint8_t)preset
+                             error:(NSError **)error
 {
 	error = error ? error : &(NSError *__autoreleasing){ nil };
 	OSStatus err = noErr;
@@ -156,7 +158,7 @@
 		instrumentData.instrumentType = [typesByFileExtension[[fileURL pathExtension]] intValue];
 		instrumentData.bankMSB  = kAUSampler_DefaultMelodicBankMSB;
 		instrumentData.bankLSB  = kAUSampler_DefaultBankLSB;
-		instrumentData.presetID = 0;
+		instrumentData.presetID = preset;
 		
 		// set the kAUSamplerProperty_LoadPresetFromBank property
 		err = AudioUnitSetProperty(self.instrumentUnit,
@@ -342,6 +344,46 @@
 	return YES;
 }
 
+- (BOOL)
+startAUGraph {
+    
+    BOOL result = NO;
+    
+    if (!self.graph) {
+        NSError* error = nil;
+        result = [self setupAUGraphWithError:&error];
+        if (error) {
+            NSLog(@"Unable to setup AU graph: %@", error.localizedDescription);
+        }
+    } else {
+        const OSStatus err = AUGraphStart(self.graph);
+        if (err == noErr) {
+            result = YES;
+        } else {
+            NSLog(@"Unable to start AU graph: %@", @(err));
+        }
+    }
+    return result;
+}
+
+- (BOOL)
+stopAUGraph {
+    
+    if (!self.graph) {
+        return YES;
+    }
+
+    BOOL result = NO;
+    
+    const OSStatus err = AUGraphStop(self.graph);
+    if (err == noErr) {
+        result = YES;
+    } else {
+        NSLog(@"Unable to stop AU graph: %@", @(err));
+    }
+    
+    return result;
+}
 #pragma mark - Instruments
 
 - (BOOL)isUsingAppleSynth
