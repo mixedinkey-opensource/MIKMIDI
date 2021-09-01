@@ -30,12 +30,13 @@ NSString * const MIKMIDIDeviceWasRemovedNotification = @"MIKMIDIDeviceWasRemoved
 NSString * const MIKMIDIVirtualEndpointWasAddedNotification = @"MIKMIDIVirtualEndpointWasAddedNotification";
 NSString * const MIKMIDIVirtualEndpointWasRemovedNotification = @"MIKMIDIVirtualEndpointWasRemovedNotification";
 NSString * const MIKMIDIDevicePropertyWasChangedNotification = @"MIKMIDIDevicePropertyWasChangedNotification";
-
+NSString * const MIKMIDIEntityWasChangedNotification = @"MIKMIDIEntityWasChangedNotification";
 
 // Notification Keys
 NSString * const MIKMIDIDeviceKey = @"MIKMIDIDeviceKey";
 NSString * const MIKMIDIDevicePropertyKey = @"MIKMIDIDevicePropertyKey";
 NSString * const MIKMIDIEndpointKey = @"MIKMIDIEndpointKey";
+NSString * const MIKMIDIEntityKey = @"MIKMIDIEntityKey";
 
 static MIKMIDIDeviceManager *sharedDeviceManager;
 
@@ -270,6 +271,9 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 				[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
 			}
 		}
+			break;
+		case kMIDIObjectType_Entity:
+			[nc postNotificationName:MIKMIDIEntityWasChangedNotification object:self userInfo:@{MIKMIDIEntityKey : changedProperty}];
 			break;
 		default:
 			break;
