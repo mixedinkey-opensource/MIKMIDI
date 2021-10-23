@@ -272,8 +272,13 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 			}
 		}
 			break;
-		case kMIDIObjectType_Entity:
-			[nc postNotificationName:MIKMIDIEntityWasChangedNotification object:self userInfo:@{MIKMIDIEntityKey : changedProperty}];
+		case kMIDIObjectType_Entity: {
+			MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->object];
+			
+			if (!changedObject) break;
+			
+			[nc postNotificationName:MIKMIDIEntityWasChangedNotification object:self userInfo:@{MIKMIDIEntityKey : changedObject}];
+		}
 			break;
 		default:
 			break;
