@@ -154,6 +154,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithTimeStamp:(MusicTimeStamp)timeStamp midiEventType:(MIKMIDIEventType)eventType data:(nullable NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /**
+ * Compares two events for equality.
+ * @param otherEvent The event with which to compare the receiver.
+ *
+ * @return YES if the events have the same type, timeStamp, and data, NO otherwise.
+ */
+- (BOOL)isEqualToEvent:(MIKMIDIEvent *)otherEvent;
+
+/**
  *  The MIDI event type.
  */
 @property (nonatomic, readonly) MIKMIDIEventType eventType;
