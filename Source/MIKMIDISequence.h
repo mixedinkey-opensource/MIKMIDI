@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see MIKMIDITrack
  *  @see MIKMIDISequencer
  */
-@interface MIKMIDISequence : NSObject
+@interface MIKMIDISequence : NSObject <NSCopying>
 
 /**
  *  Creates and initializes a new instance of MIKMIDISequence.
