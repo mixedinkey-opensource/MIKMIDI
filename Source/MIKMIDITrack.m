@@ -557,9 +557,8 @@
 
 - (void)addInternalEvents:(NSSet *)events
 {
-	for (MIKMIDIEvent *event in events) {
-		[self addInternalEventsObject:[event copy]];
-	}
+    [self.internalEvents addObjectsFromArray:[events allObjects]];
+    self.sortedEventsCache = nil;
 }
 
 - (void)removeInternalEventsObject:(MIKMIDIEvent *)event
