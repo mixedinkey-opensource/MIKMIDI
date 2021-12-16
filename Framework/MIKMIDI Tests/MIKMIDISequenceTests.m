@@ -214,6 +214,19 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
         XCTAssertEqualObjects(track.events, copiedTrack.events);
     }
 }
+
+- (void)testCopyingSequencePerformance
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *testMIDIFileURL = [bundle URLForResource:@"Parallax-Loader" withExtension:@"mid"];
+    NSError *error = nil;
+    MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+    XCTAssertNotNil(sequence);
+    [self measureBlock:^{
+        [sequence copy];
+    }];
+}
+
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
