@@ -8,6 +8,8 @@
 
 #import "MIKMIDIMachineControlCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
+#import "MIKMIDIMachineControlLocateTargetCommand.h"
+#import "MIKMIDIUtilities.h"
 
 @implementation MIKMIDIMachineControlCommand
 
