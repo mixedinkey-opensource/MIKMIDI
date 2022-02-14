@@ -89,8 +89,8 @@
 		9D1C0D4327B9D71A00094AED /* MIKMIDIMachineControlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1C0D4027B9D71A00094AED /* MIKMIDIMachineControlCommand.m */; };
 		9D1C0D4427B9D71A00094AED /* MIKMIDIMachineControlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1C0D4027B9D71A00094AED /* MIKMIDIMachineControlCommand.m */; };
 		9D1C0D4627B9D76D00094AED /* MIKMIDIMachineControlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1C0D4527B9D76D00094AED /* MIKMIDIMachineControlTests.m */; };
-		9D1C0D4E27B9E88500094AED /* MIKMIDIMachineControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1C0D4D27B9E88500094AED /* MIKMIDIMachineControl.h */; };
-		9D1C0D4F27B9E88500094AED /* MIKMIDIMachineControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1C0D4D27B9E88500094AED /* MIKMIDIMachineControl.h */; };
+		9D1C0D4E27B9E88500094AED /* MIKMIDIMachineControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1C0D4D27B9E88500094AED /* MIKMIDIMachineControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D1C0D4F27B9E88500094AED /* MIKMIDIMachineControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1C0D4D27B9E88500094AED /* MIKMIDIMachineControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C201BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C211BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1D9C1E1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9D1D9C221BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D9C1F1BF53C88001377F7 /* MIKMIDIPolyphonicKeyPressureCommand.m */; };
