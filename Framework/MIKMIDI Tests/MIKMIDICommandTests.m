@@ -119,20 +119,6 @@
 	XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDISystemKeepAliveCommand instance.");	
 }
 
-- (void)testMMCLocateCommand
-{
-    NSArray *bytes = @[@(0xf0), @(0x7f), @(0x7f), @(0x06), @(0x44), @(0x06), @(0x01), @(0x21), @(0x00), @(0x00), @(0x00), @(0x00), @(0xf7)];
-    MIDIPacket packet = MIKMIDIPacketCreate(0, bytes.count, bytes);
-
-    MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:&packet];
-    XCTAssertTrue([command isMemberOfClass:[MIKMIDIMachineControlLocateCommand class]]);
-
-    bytes = @[@(0xf0), @(0x7f), @(0x7f), @(0x06), @(0x45), @(0x06), @(0x01), @(0x21), @(0x00), @(0x00), @(0x00), @(0x00), @(0xf7)];
-    packet = MIKMIDIPacketCreate(0, bytes.count, bytes);
-    command = [MIKMIDICommand commandWithMIDIPacket:&packet]; // Should not be a locate command because message type byte is 0x45, not 0x44
-    XCTAssertFalse([command isMemberOfClass:[MIKMIDIMachineControlLocateCommand class]]);
-}
-
 - (void)testMultipleCommandTypesInOnePacket
 {
 	MIKMIDINoteOnCommand *noteOn = [MIKMIDINoteOnCommand noteOnCommandWithNote:60 velocity:64 channel:0 timestamp:nil];
