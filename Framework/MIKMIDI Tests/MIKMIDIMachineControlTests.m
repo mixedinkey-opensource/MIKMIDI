@@ -66,16 +66,36 @@
 
 - (void)testMMCLocateTargetCommand
 {
-    NSArray *bytes = @[@(0xf0), @(0x7f), @(0x7f), @(0x06), @(0x44), @(0x06), @(0x01), @(0x21), @(0x00), @(0x00), @(0x00), @(0x00), @(0xf7)];
+    Class immutableClass = [MIKMMCLocateTargetCommand class];
+    Class mutableClass = [MIKMutableMMCLocateTargetCommand class];
+
+    NSArray *bytes = @[@(0xf0), @(0x7f), @(0x7f), @(0x06), @(0x44), @(0x06), @(0x01), @(0x21), @(0x07), @(0x13), @(0x15), @(0x00), @(0xf7)];
     MIDIPacket packet = MIKMIDIPacketCreate(0, bytes.count, bytes);
 
-    MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:&packet];
-    XCTAssertTrue([command isMemberOfClass:[MIKMIDIMachineControlLocateTargetCommand class]]);
+    MIKMMCLocateTargetCommand *command = (MIKMMCLocateTargetCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertTrue([command isMemberOfClass:[MIKMMCLocateTargetCommand class]]);
+    XCTAssertEqual(command.timeCodeInSeconds, 4039.84);
+    XCTAssertThrows([(MIKMutableMMCLocateTargetCommand *)command setTimeCodeInSeconds:27.0]);
 
     bytes = @[@(0xf0), @(0x7f), @(0x7f), @(0x06), @(0x45), @(0x06), @(0x01), @(0x21), @(0x00), @(0x00), @(0x00), @(0x00), @(0xf7)];
     packet = MIKMIDIPacketCreate(0, bytes.count, bytes);
-    command = [MIKMIDICommand commandWithMIDIPacket:&packet]; // Should not be a locate command because message type byte is 0x45, not 0x44
-    XCTAssertFalse([command isMemberOfClass:[MIKMIDIMachineControlLocateTargetCommand class]]);
+    command = (MIKMMCLocateTargetCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet]; // Should not be a locate command because message type byte is 0x45, not 0x44
+    XCTAssertFalse([command isMemberOfClass:[MIKMMCLocateTargetCommand class]]);
     XCTAssertTrue([command isMemberOfClass:[MIKMIDIMachineControlCommand class]]);
+
+    MIKMutableMMCLocateTargetCommand *mutableCommand = [[MIKMutableMMCLocateTargetCommand alloc] init];
+    XCTAssert([mutableCommand isMemberOfClass:mutableClass], @"-[MIKMMCLocateTargetCommand mutableCopy] did not return a mutableClass instance.");
+    XCTAssert([[mutableCommand copy] isMemberOfClass:immutableClass], @"[MIKMutableMMCLocateTargetCommand copy] did not return an MIKMMCLocateTargetCommand instance.");
+    XCTAssertEqual(mutableCommand.commandType, MIKMIDICommandTypeSystemExclusive, @"[[MIKMMCLocateTargetCommand alloc] init] produced a command instance with the wrong command type.");
+
+    mutableCommand.timeType = MIKMMCLocateTargetCommandTimeType25FPS;
+    mutableCommand.timeCodeInSeconds = 4039.84;
+    XCTAssertEqual(mutableCommand.timeType, MIKMMCLocateTargetCommandTimeType25FPS);
+    XCTAssertEqual(mutableCommand.timeCodeInSeconds, 4039.84);
+
+    XCTAssertNoThrow([mutableCommand setTimeCodeInSeconds:27.0]);
+
+    MIKMMCLocateTargetCommand *createdCommand = [[MIKMMCLocateTargetCommand alloc] init];
+    XCTAssertEqual(createdCommand.MMCCommandType, MIKMIDIMachineControlCommandTypeLocate);
 }
 @end
