@@ -9,4 +9,4 @@
 #import <MIKMIDI/MIKMIDI.h>
 
 #import <MIKMIDI/MIKMIDIMachineControlCommand.h>
-#import <MIKMIDI/MIKMIDIMachineControlLocateTargetCommand.h>
+#import <MIKMIDI/MIKMMCLocateTargetCommand.h>

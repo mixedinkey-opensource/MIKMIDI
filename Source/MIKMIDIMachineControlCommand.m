@@ -8,7 +8,7 @@
 
 #import "MIKMIDIMachineControlCommand.h"
 #import "MIKMIDICommand_SubclassMethods.h"
-#import "MIKMIDIMachineControlLocateTargetCommand.h"
+#import "MIKMMCLocateTargetCommand.h"
 #import "MIKMIDIUtilities.h"
 
 @implementation MIKMIDIMachineControlCommand
@@ -57,7 +57,7 @@
                                         MMCCommandType:(MIKMIDIMachineControlCommandType)mmcCommandType
 {
     Class resultClass = [MIKMIDIMachineControlCommand class];
-    if (mmcCommandType == MIKMIDIMachineControlCommandTypeLocate) { resultClass = [MIKMIDIMachineControlLocateTargetCommand class]; }
+    if (mmcCommandType == MIKMIDIMachineControlCommandTypeLocate) { resultClass = [MIKMMCLocateTargetCommand class]; }
 
     MIKMutableMIDIMachineControlCommand *result = [[[resultClass mutableCounterpartClass] alloc] init];
     result.deviceAddress = deviceAddress;
