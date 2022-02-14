@@ -413,6 +413,9 @@
 		9D1D9C241BF542BB001377F7 /* MIKMIDICommandTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDICommandTests.m; sourceTree = "<group>"; };
 		9D1D9C261BF54D38001377F7 /* MIKMIDIChannelPressureCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIChannelPressureCommand.h; sourceTree = "<group>"; };
 		9D1D9C271BF54D38001377F7 /* MIKMIDIChannelPressureCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIChannelPressureCommand.m; sourceTree = "<group>"; };
+		9D1FE4F327B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMachineControlLocateCommand.h; sourceTree = "<group>"; };
+		9D1FE4F427B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIMachineControlLocateCommand.m; sourceTree = "<group>"; };
+		9D1FE4F827B07B34005317B2 /* MIKMIDIMachineControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIKMIDIMachineControl.h; sourceTree = "<group>"; };
 		9D2ED25E1AFBD062000325CC /* MIKMIDIResponderChainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIResponderChainTests.m; sourceTree = "<group>"; };
 		9D4DF13A1AAB57430065F004 /* MIKMIDI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MIKMIDI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D4DF13D1AAB57430065F004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -584,6 +587,16 @@
 				9DEE37BF1A9D66C2007B7FC7 /* Events */,
 			);
 			name = Files;
+			sourceTree = "<group>";
+		};
+		9D1FE4F227B07AEC005317B2 /* MIDI Machine Control (MMC) */ = {
+			isa = PBXGroup;
+			children = (
+				9D1FE4F827B07B34005317B2 /* MIKMIDIMachineControl.h */,
+				9D1FE4F327B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.h */,
+				9D1FE4F427B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.m */,
+			);
+			name = "MIDI Machine Control (MMC)";
 			sourceTree = "<group>";
 		};
 		9D4DF13B1AAB57430065F004 /* MIKMIDI Tests */ = {
@@ -903,6 +916,7 @@
 				9D74EF5C17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.m */,
 				9D9F02A51FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.h */,
 				9D9F02A61FB5101500FE340E /* MIKMIDISystemKeepAliveCommand.m */,
+				9D1FE4F227B07AEC005317B2 /* MIDI Machine Control (MMC) */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -958,6 +972,7 @@
 				9DEF1CA81AA6769E00E10273 /* MIKMIDIChannelEvent.h in Headers */,
 				9D8495221AA7773500C52475 /* MIKMIDIPolyphonicKeyPressureEvent.h in Headers */,
 				839D933219C3A2C9007589C3 /* MIKMIDIEvent_SubclassMethods.h in Headers */,
+				9D1FE4FA27B07B34005317B2 /* MIKMIDIMachineControl.h in Headers */,
 				9D5946CE1A9FA7C800B5ACFB /* MIKMIDISynthesizer_SubclassMethods.h in Headers */,
 				839D935519C3A2F5007589C3 /* MIKMIDIMetaInstrumentNameEvent.h in Headers */,
 				9D9F029E1FB50B1900FE340E /* MIKMIDI-Prefix.pch in Headers */,
@@ -1002,6 +1017,7 @@
 				833B73DE1A26346F00E0CC9F /* MIKMIDIClock.h in Headers */,
 				9D76DCEC1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h in Headers */,
 				9D74EF8E17A713A100BEE89F /* MIKMIDISystemExclusiveCommand.h in Headers */,
+				9D1FE4F527B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.h in Headers */,
 				9DF99E791831841A004EE5F4 /* MIKMIDICommandThrottler.h in Headers */,
 				9D74EF9017A713A100BEE89F /* MIKMIDISystemMessageCommand.h in Headers */,
 				83BC19BB1A23CD0D004F384F /* MIKMIDIMetronome.h in Headers */,
@@ -1023,6 +1039,7 @@
 				9DAF8B5D1A7B007300F46528 /* MIKMIDIClientSourceEndpoint.h in Headers */,
 				9DAF8B7A1A7B00A700F46528 /* MIKMIDINoteEvent.h in Headers */,
 				9DAF8B6C1A7B00A700F46528 /* MIKMIDITrack.h in Headers */,
+				9D1FE4FF27B07BA6005317B2 /* MIKMIDIMachineControlLocateCommand.h in Headers */,
 				9DEBD03C1F7085DB00676C42 /* MIKMIDINoteCommand.h in Headers */,
 				9DAF8B661A7B008A00F46528 /* MIKMIDISystemExclusiveCommand.h in Headers */,
 				9D0895F41B0D2A4700A5872E /* MIKMIDIMappableResponder.h in Headers */,
@@ -1077,6 +1094,7 @@
 				9D9FBCCC1B4A29A5009A7936 /* MIKMIDIPort_SubclassMethods.h in Headers */,
 				9DBEBD5A1AAA21C400E59734 /* MIKMIDIEvent_SubclassMethods.h in Headers */,
 				9DAF8B561A7B007300F46528 /* MIKMIDIDevice.h in Headers */,
+				9D1FE4FE27B07B9D005317B2 /* MIKMIDIMachineControl.h in Headers */,
 				9DAF8B761A7B00A700F46528 /* MIKMIDIMetaSequenceEvent.h in Headers */,
 				9DAF8B791A7B00A700F46528 /* MIKMIDIMetaTrackSequenceNameEvent.h in Headers */,
 				9DAF8B6F1A7B00A700F46528 /* MIKMIDIMetaCopyrightEvent.h in Headers */,
@@ -1286,6 +1304,7 @@
 				839D936419C3A2F5007589C3 /* MIKMIDIMetaTrackSequenceNameEvent.m in Sources */,
 				9D74EF6717A713A100BEE89F /* MIKMIDICommand.m in Sources */,
 				9D74EF6A17A713A100BEE89F /* MIKMIDIControlChangeCommand.m in Sources */,
+				9D1FE4F627B07B00005317B2 /* MIKMIDIMachineControlLocateCommand.m in Sources */,
 				839D935819C3A2F5007589C3 /* MIKMIDIMetaKeySignatureEvent.m in Sources */,
 				839D937419C3A319007589C3 /* MIKMIDITempoEvent.m in Sources */,
 				9D74EF6C17A713A100BEE89F /* MIKMIDIDestinationEndpoint.m in Sources */,
@@ -1360,6 +1379,7 @@
 				9DAF8B211A7AFF5900F46528 /* MIKMIDIDevice.m in Sources */,
 				9DAF8B221A7AFF5900F46528 /* MIKMIDIEntity.m in Sources */,
 				9DAF8B231A7AFF5900F46528 /* MIKMIDIPort.m in Sources */,
+				9D1FE4F727B07B04005317B2 /* MIKMIDIMachineControlLocateCommand.m in Sources */,
 				9DAF8B241A7AFF5900F46528 /* MIKMIDIInputPort.m in Sources */,
 				9DED4E391AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.m in Sources */,
 				9DAF8B251A7AFF5900F46528 /* MIKMIDIOutputPort.m in Sources */,
