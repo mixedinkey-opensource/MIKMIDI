@@ -57,6 +57,15 @@
     return self;
 }
 
++ (instancetype)locateTargetCommandWithTimeCodeInSeconds:(NSTimeInterval)timecode
+                                                timeType:(MIKMMCLocateTargetCommandTimeType)timeType
+{
+    MIKMutableMMCLocateTargetCommand *result = [[MIKMutableMMCLocateTargetCommand alloc] init];
+    result.timeType = timeType;
+    result.timeCodeInSeconds = timecode;
+    return [self isMutable] ? result : [result copy];
+}
+
 #pragma mark - Properties
 
 #pragma mark Public
