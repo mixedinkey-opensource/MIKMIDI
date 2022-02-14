@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MIKMMCLocateTargetCommand : MIKMIDIMachineControlCommand
 
++ (instancetype)locateTargetCommandWithTimeCodeInSeconds:(NSTimeInterval)timecode
+                                                timeType:(MIKMMCLocateTargetCommandTimeType)timeType;
+
 @property (nonatomic, readonly) NSTimeInterval timeCodeInSeconds;
 @property (nonatomic, readonly) MIKMMCLocateTargetCommandTimeType timeType;
 
