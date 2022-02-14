@@ -35,6 +35,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 + (BOOL)isMutable { return NO; }
 
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return [[self supportedMIDICommandTypes] containsObject:@(type)]; }
++ (MIKMIDICommandPacketHandlingIntent)handlingIntentForMIDIPacket:(MIDIPacket *)packet { return MIKMIDICommandPacketHandlingIntentAccept; }
 + (NSArray *)supportedMIDICommandTypes { return @[]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDICommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDICommand class]; }
@@ -43,8 +44,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
     Class subclass = Nil;
     if (packet) {
-        MIKMIDICommandType commandType = packet->data[0];
-        subclass = [[self class] subclassForCommandType:commandType];
+        subclass = [[self class] subclassForMIDIPacket:packet];
     }
     
 	if (!subclass) { subclass = self; }
@@ -87,7 +87,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
 {
-	Class subclass = [[self class] subclassForCommandType:commandType];
+	Class subclass = [[[self class] allSubclassesForCommandType:commandType] firstObject];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] init];
@@ -150,26 +150,71 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 #pragma mark - Private
 
-+ (Class)subclassForCommandType:(MIKMIDICommandType)commandType
++ (NSArray <Class> *)allSubclassesForCommandType:(MIKMIDICommandType)commandType
 {
-	Class result = nil;
-	for (Class subclass in registeredMIKMIDICommandSubclasses) {
-		if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
-			result = subclass;
-			break;
-		}
-	}
-	if (!result) {
-		// Try again ignoring lower 4 bits
-		commandType |= 0x0f;
-		for (Class subclass in registeredMIKMIDICommandSubclasses) {
-			if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
-				result = subclass;
-				break;
-			}
-		}
-	}
-	return result;
+    NSMutableArray *result = [NSMutableArray array];
+    for (Class subclass in registeredMIKMIDICommandSubclasses) {
+        if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
+            [result addObject:subclass];
+        }
+    }
+    if (!result.count) {
+        // Try again ignoring lower 4 bits
+        commandType |= 0x0f;
+        for (Class subclass in registeredMIKMIDICommandSubclasses) {
+            if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
+                [result addObject:subclass];
+            }
+        }
+    }
+    return result;
+}
+
++ (Class)subclassForMIDIPacket:(MIDIPacket *)packet
+{
+    MIKMIDICommandType commandType = packet->data[0];
+
+    NSArray *allSubclasses = [self allSubclassesForCommandType:commandType];
+    NSMutableArray *subclasses = [NSMutableArray array];
+    NSMutableArray *specificHandlingSubclasses = [NSMutableArray array];
+
+    for (Class subclass in allSubclasses) {
+        MIKMIDICommandPacketHandlingIntent intent = [subclass handlingIntentForMIDIPacket:packet];
+        if (intent == MIKMIDICommandPacketHandlingIntentReject) {
+            continue;
+        }
+        [subclasses addObject:subclass];
+        if (intent == MIKMIDICommandPacketHandlingIntentAcceptWithHigherPrecedence) {
+            [specificHandlingSubclasses addObject:subclass];
+        }
+    }
+
+    if (specificHandlingSubclasses.count > 1) {
+        NSData *packetData = [NSData dataWithBytes:packet->data length:packet->length];
+        NSLog(@"[MIKMIDI] Warning: More than one subclass of MIKMIDICommand was found to handle MIDI message data (%@). Candidates are: %@. Which one is used is random/undefined. This is likely a bug, and should be reported to the maintainers of MIKMIDI.", packetData, specificHandlingSubclasses);
+    }
+
+    if (specificHandlingSubclasses.count) {
+        subclasses = specificHandlingSubclasses;
+    }
+
+    // Sort so that deepest subclass hierarchy children come first
+    NSArray *sortedSubclasses = [subclasses sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(Class class1, Class class2) {
+        if ([class1 isEqualTo:class2]) { return NSOrderedSame; }
+        if ([class1 isSubclassOfClass:class2]) { return NSOrderedDescending; }
+        if ([class2 isSubclassOfClass:class1]) { return NSOrderedAscending; }
+        return NSOrderedAscending;
+    }];
+
+    // Return the first subclass that doesn't reject this MIDI packet
+    for (Class subclass in sortedSubclasses) {
+        if ([subclass handlingIntentForMIDIPacket:packet] == MIKMIDICommandPacketHandlingIntentReject) {
+            continue;
+        }
+        return subclass;
+    }
+
+    return nil;
 }
 
 #pragma mark - NSCopying
