@@ -167,7 +167,14 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
             }
         }
     }
-    return result;
+
+    // Sort so that deepest subclass hierarchy children come last
+    return [result sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(Class class1, Class class2) {
+        if ([class1 isEqualTo:class2]) { return NSOrderedSame; }
+        if ([class1 isSubclassOfClass:class2]) { return NSOrderedDescending; }
+        if ([class2 isSubclassOfClass:class1]) { return NSOrderedAscending; }
+        return NSOrderedAscending;
+    }];
 }
 
 + (Class)subclassForMIDIPacket:(MIDIPacket *)packet
@@ -198,16 +205,8 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
         subclasses = specificHandlingSubclasses;
     }
 
-    // Sort so that deepest subclass hierarchy children come first
-    NSArray *sortedSubclasses = [subclasses sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(Class class1, Class class2) {
-        if ([class1 isEqualTo:class2]) { return NSOrderedSame; }
-        if ([class1 isSubclassOfClass:class2]) { return NSOrderedDescending; }
-        if ([class2 isSubclassOfClass:class1]) { return NSOrderedAscending; }
-        return NSOrderedAscending;
-    }];
-
-    // Return the first subclass that doesn't reject this MIDI packet
-    for (Class subclass in sortedSubclasses) {
+    // Return the deepest child subclass that doesn't reject this MIDI packet
+    for (Class subclass in subclasses.reverseObjectEnumerator) {
         if ([subclass handlingIntentForMIDIPacket:packet] == MIKMIDICommandPacketHandlingIntentReject) {
             continue;
         }
