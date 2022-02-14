@@ -66,6 +66,11 @@
     return [self isMutable] ? result : [result copy];
 }
 
+- (NSString *)additionalCommandDescription
+{
+    return [NSString stringWithFormat:@"timecode: %@", @(self.timeCodeInSeconds)];
+}
+
 #pragma mark - Properties
 
 #pragma mark Public
