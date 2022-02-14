@@ -6,11 +6,11 @@
 //  Copyright © 2022 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
+#import <MIKMIDI/MIKMIDIMachineControlCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MIKMIDIMachineControlLocateTargetCommand : MIKMIDISystemExclusiveCommand
+@interface MIKMIDIMachineControlLocateTargetCommand : MIKMIDIMachineControlCommand
 
 @end
 

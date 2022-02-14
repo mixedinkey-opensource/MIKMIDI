@@ -6,7 +6,7 @@
 //  Copyright © 2022 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
+#import <MIKMIDI/MIKMIDISystemExclusiveCommand.h>
 
 /**
  * The MMC sub-ID.
