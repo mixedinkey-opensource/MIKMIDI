@@ -360,7 +360,7 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 				if (self.isCoalescingSysex) {
 					completionBlock(@[[self commandByCoalescingSysexData]]);
 				}
-			}
+            }];
 
 			// Run Timer
 			NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
