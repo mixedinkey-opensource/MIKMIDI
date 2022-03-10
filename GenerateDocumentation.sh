@@ -1,3 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-appledoc --project-name "MIKMIDI" --project-company "Mixed In Key" --company-id "com.mixedinkey" --output ./Documentation --keep-undocumented-objects --keep-undocumented-members --keep-intermediate-files --no-repeat-first-par --no-warn-invalid-crossref --docset-platform-family macosx --clean-output --ignore "*.m" --ignore "Source/MIKMIDIPort.h" --ignore "Source/MIKMIDIPort_SubclassMethods.h" --ignore "Source/MIKMIDIInputPort.h" --ignore "Source/MIKMIDIOutputPort.h" --index-desc "README.md" Source
+ln -s Source MIKMIDI # Workaround for https://github.com/realm/jazzy/issues/667
+
+jazzy \
+--objc \
+--clean \
+--github_url "https://github.com/mixedinkey-opensource/MIKMIDI" \
+--hide-documentation-coverage \
+--undocumented-text "This is currently undocumented. Documentation contributions are always welcome!" \
+--framework-root Framework \
+--umbrella-header Source/MIKMIDI.h \
+--output Documentation
+
+rm MIKMIDI

@@ -352,21 +352,19 @@ void MIKMIDIPortReadCallback(const MIDIPacketList *pktList, void *readProcRefCon
 		if (!self.sysexTimeOutTimer) {
 			// Weakify Self
 			__weak typeof(self) weakSelf = self;
-			
-			self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut target:[NSBlockOperation blockOperationWithBlock:^{
+
+			self.sysexTimeOutTimer = [NSTimer timerWithTimeInterval:self.sysexTimeOut repeats:NO block:^(NSTimer *t) {
 				// Strongify Self
 				__strong typeof(self) self = weakSelf;
-				
 				// Force-End Sysex, if necessary
 				if (self.isCoalescingSysex) {
 					completionBlock(@[[self commandByCoalescingSysexData]]);
 				}
-			}] selector:@selector(main) userInfo:nil repeats:NO];
-			
+            }];
+
 			// Run Timer
 			NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
 			NSRunLoopMode mode = currentRunLoop.currentMode ?: NSDefaultRunLoopMode;
-			
 			[currentRunLoop addTimer:self.sysexTimeOutTimer forMode:mode];
 		} else {
 			self.sysexTimeOutTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:self.sysexTimeOut];

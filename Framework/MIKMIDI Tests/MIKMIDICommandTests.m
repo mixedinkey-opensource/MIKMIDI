@@ -66,6 +66,39 @@
 	XCTAssertEqual(mutableCommand.pressure, 27, @"Setting the pressure on a MIKMutableMIDIChannelPressureCommand instance failed.");
 }
 
+- (void)testPitchBendChangeCommand
+{
+    MIDIPacket packet = MIKMIDIPacketCreate(0, 1, @[@0xef]);
+    XCTAssertTrue([[MIKMIDICommand commandWithMIDIPacket:&packet] isKindOfClass:[MIKMIDIPitchBendChangeCommand class]]);
+
+    Class immutableClass = [MIKMIDIPitchBendChangeCommand class];
+    Class mutableClass = [MIKMutableMIDIPitchBendChangeCommand class];
+
+    MIKMIDIPitchBendChangeCommand *command = [[immutableClass alloc] init];
+    XCTAssert([command isMemberOfClass:[immutableClass class]], @"[[MIKMIDIPitchBendChangeCommand alloc] init] did not return an MIKMIDIPitchBendChangeCommand instance.");
+    XCTAssert([[MIKMIDICommand commandForCommandType:MIKMIDICommandTypePitchWheelChange] isMemberOfClass:[immutableClass class]], @"[MIKMIDICommand commandForCommandType:MIKMIDICommandTypeSystemExclusive] did not return an MIKMIDIPitchBendChangeCommand instance.");
+    XCTAssert([[command copy] isMemberOfClass:[immutableClass class]], @"[MIKMIDIPitchBendChangeCommand copy] did not return an MIKMIDIPitchBendChangeCommand instance.");
+    XCTAssertEqual(command.commandType, MIKMIDICommandTypePitchWheelChange, @"[[MIKMIDIPitchBendChangeCommand alloc] init] produced a command instance with the wrong command type.");
+    XCTAssertEqual(command.data.length, 3, "MIKMIDIPitchBendChangeCommand had an incorrect data length %@ (should be 3)", @(command.data.length));
+
+    MIKMutableMIDIPitchBendChangeCommand *mutableCommand = [command mutableCopy];
+    XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"-[MIKMIDIPitchBendChangeCommand mutableCopy] did not return an mutableClass instance.");
+    XCTAssert([[mutableCommand copy] isMemberOfClass:[immutableClass class]], @"-[mutableClass mutableCopy] did not return an MIKMIDIPitchBendChangeCommand instance.");
+
+    NSDate *date = [NSDate date];
+    MIKMIDIPitchBendChangeCommand *convenienceTest = [MIKMIDIPitchBendChangeCommand pitchBendChangeCommandWithPitchChange:42 channel:2 timestamp:date];
+    XCTAssertNotNil(convenienceTest);
+    XCTAssert([convenienceTest isMemberOfClass:[immutableClass class]], @"[MIKMIDIPitchBendChangeCommand pitchBendChangeCommandWithPitchChange:...] did not return an MIKMIDIPitchBendChangeCommand instance.");
+    XCTAssertEqual(convenienceTest.pitchChange, 42);
+    XCTAssertEqual(convenienceTest.channel, 2);
+
+    MIKMutableMIDIPitchBendChangeCommand *mutableConvenienceTest = [MIKMutableMIDIPitchBendChangeCommand pitchBendChangeCommandWithPitchChange:42 channel:2 timestamp:date];
+    XCTAssertNotNil(mutableConvenienceTest);
+    XCTAssert([mutableConvenienceTest isMemberOfClass:[mutableClass class]], @"[MIKMutableMIDIPitchBendChangeCommand pitchBendChangeCommandWithPitchChange:...] did not return an MIKMutableMIDIPitchBendChangeCommand instance.");
+    XCTAssertEqual(mutableConvenienceTest.pitchChange, 42);
+    XCTAssertEqual(mutableConvenienceTest.channel, 2);
+}
+
 - (void)testKeepAliveCommand
 {
 	MIDIPacket packet = MIKMIDIPacketCreate(0, 1, @[@0xfe]);

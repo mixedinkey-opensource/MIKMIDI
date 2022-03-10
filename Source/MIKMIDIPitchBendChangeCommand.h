@@ -19,6 +19,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MIKMIDIPitchBendChangeCommand : MIKMIDIChannelVoiceCommand
 
 /**
+ * Convenience method for creating a pitch bend change command.
+ *
+ * @param pitchChange The pitch change for the command. Valid range: 0-16383, center (no pitch change) at 8192.
+ * @param channel The channel for the command. Must be between 0 and 15.
+ * @param timestamp The timestamp for the command. Pass nil to use the current date/time.
+ * @return An initialized MIKMIDIChannelPressureCommand instance.
+ */
++ (instancetype)pitchBendChangeCommandWithPitchChange:(UInt16)pitchChange channel:(UInt8)channel timestamp:(nullable NSDate *)timestamp;
+
+/**
  *  A 14-bit value indicating the pitch bend.
  *  Center is 0x2000 (8192).
  *  Valid range is from 0-16383.
