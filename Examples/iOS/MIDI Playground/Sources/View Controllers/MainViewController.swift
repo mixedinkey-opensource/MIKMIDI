@@ -136,9 +136,9 @@ class MainViewController: UIViewController, MIKMIDIConnectionManagerDelegate {
 	private var playingObserver: NSKeyValueObservation?
 	
 	let previewSynthesizer: MIKMIDISynthesizer? = {
-		let synth = MIKMIDISynthesizer()
+		let synth = try! MIKMIDISynthesizer()
 		if let soundfontURL = Bundle.main.url(forResource: "piano", withExtension: "sf2") {
-			try? synth?.loadSoundfontFromFile(at: soundfontURL)
+			try? synth.loadSoundfontFromFile(at: soundfontURL)
 		}
 		return synth
 	}()
