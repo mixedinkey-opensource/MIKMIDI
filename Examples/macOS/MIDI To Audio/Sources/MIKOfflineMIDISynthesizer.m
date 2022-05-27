@@ -104,7 +104,16 @@ AudioStreamBasicDescription LPCMASBD(void)
 	return self;
 }
 
-- (BOOL)setupAUGraph
+- (instancetype)initWithError:(NSError *__autoreleasing  _Nullable *)error
+{
+	self = [super initWithError:error];
+	if (self) {
+		_midiClock = [MIKMIDIClock clock];
+	}
+	return self;
+}
+
+- (BOOL)setupAUGraphWithError:(NSError **)error
 {
 	AUGraph graph;
 	OSStatus err = 0;

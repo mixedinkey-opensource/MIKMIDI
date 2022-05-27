@@ -69,7 +69,7 @@
 	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:self.midiFileURL error:&error];
 	if (!sequence) return [self finishWithError:error];
 	
-	self.synthesizer = [[MIKOfflineMIDISynthesizer alloc] init];
+    self.synthesizer = [[MIKOfflineMIDISynthesizer alloc] initWithError:&error];
 	self.synthesizer.tracks = sequence.tracks;
 	self.synthesizer.tempo = [sequence tempoAtTimeStamp:0];
 	
