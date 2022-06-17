@@ -227,6 +227,13 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
     }];
 }
 
+- (void)testTempoRetrieval
+{
+    MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+    [sequence setOverallTempo:75];
+    XCTAssertEqual([sequence tempoAtTimeStamp:0], 75);
+}
+
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
