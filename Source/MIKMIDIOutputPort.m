@@ -55,7 +55,6 @@
 
 #pragma mark - Private
 
-
 - (NSArray *)commandsByTransformingForTransmissionCommands:(NSArray *)commands
 {
 	NSMutableArray *transformedCommands = [NSMutableArray array];

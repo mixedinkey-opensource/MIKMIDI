@@ -44,6 +44,7 @@
 #import <MIKMIDI/MIKMIDISystemExclusiveCommand.h>
 #import <MIKMIDI/MIKMIDISystemMessageCommand.h>
 #import <MIKMIDI/MIKMIDISystemKeepAliveCommand.h>
+#import <MIKMIDI/MIKMIDIMachineControl.h> // Includes many individual MMC command types
 
 // MIDI Sequence/File support
 #import <MIKMIDI/MIKMIDISequence.h>
