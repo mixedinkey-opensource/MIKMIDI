@@ -30,7 +30,7 @@ struct TestbedView: View {
                     }
                 }
                 Button( action: {
-                    devices.FullDisconnect()
+                    devices.fullDisconnect()
                 }) {
                     Text("Disconnect")
                 }
@@ -49,7 +49,7 @@ struct TestbedView: View {
             HStack {
                 Picker(selection: $presetMessageId, label: Text("Send Message")) {
                     ForEach(0..<supportedCommands.count) { i in
-                        Text(supportedCommands[i].Description)
+                        Text(supportedCommands[i].description)
                     }
                 }
                 .onChange(of: presetMessageId) { _ in

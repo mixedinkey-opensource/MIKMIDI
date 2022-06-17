@@ -13,11 +13,11 @@
 		D3094061258ED12A003030E9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3094060258ED12A003030E9 /* Preview Assets.xcassets */; };
 		D3094075258ED661003030E9 /* TestbedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094074258ED661003030E9 /* TestbedView.swift */; };
 		D3094079258ED720003030E9 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094078258ED720003030E9 /* TextView.swift */; };
-		D309407E258ED834003030E9 /* commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309407D258ED834003030E9 /* commands.swift */; };
+		D309407E258ED834003030E9 /* SupportedCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309407D258ED834003030E9 /* SupportedCommands.swift */; };
 		D3094082258ED8AD003030E9 /* ObservedDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094081258ED8AD003030E9 /* ObservedDevices.swift */; };
 		D3094097258EDA16003030E9 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D309408D258EDA0A003030E9 /* MIKMIDI.framework */; };
 		D3094098258EDA16003030E9 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D309408D258EDA0A003030E9 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D309409B258EDE20003030E9 /* packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309409A258EDE20003030E9 /* packet.swift */; };
+		D309409B258EDE20003030E9 /* MIDIPacket+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309409A258EDE20003030E9 /* MIDIPacket+Utilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,10 +68,10 @@
 		D3094063258ED12A003030E9 /* Midi_Testbed_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Midi_Testbed_Swift.entitlements; sourceTree = "<group>"; };
 		D3094074258ED661003030E9 /* TestbedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestbedView.swift; sourceTree = "<group>"; };
 		D3094078258ED720003030E9 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
-		D309407D258ED834003030E9 /* commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = commands.swift; sourceTree = "<group>"; };
+		D309407D258ED834003030E9 /* SupportedCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCommands.swift; sourceTree = "<group>"; };
 		D3094081258ED8AD003030E9 /* ObservedDevices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservedDevices.swift; sourceTree = "<group>"; };
 		D3094085258EDA0A003030E9 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
-		D309409A258EDE20003030E9 /* packet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = packet.swift; sourceTree = "<group>"; };
+		D309409A258EDE20003030E9 /* MIDIPacket+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDIPacket+Utilities.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,9 +146,9 @@
 		D309407C258ED7C7003030E9 /* ObservedDevices */ = {
 			isa = PBXGroup;
 			children = (
-				D309407D258ED834003030E9 /* commands.swift */,
+				D309407D258ED834003030E9 /* SupportedCommands.swift */,
 				D3094081258ED8AD003030E9 /* ObservedDevices.swift */,
-				D309409A258EDE20003030E9 /* packet.swift */,
+				D309409A258EDE20003030E9 /* MIDIPacket+Utilities.swift */,
 			);
 			path = ObservedDevices;
 			sourceTree = "<group>";
@@ -274,8 +274,8 @@
 				D309405C258ED129003030E9 /* ContentView.swift in Sources */,
 				D3094079258ED720003030E9 /* TextView.swift in Sources */,
 				D309405A258ED129003030E9 /* MidiTestbedApp.swift in Sources */,
-				D309409B258EDE20003030E9 /* packet.swift in Sources */,
-				D309407E258ED834003030E9 /* commands.swift in Sources */,
+				D309409B258EDE20003030E9 /* MIDIPacket+Utilities.swift in Sources */,
+				D309407E258ED834003030E9 /* SupportedCommands.swift in Sources */,
 				D3094075258ED661003030E9 /* TestbedView.swift in Sources */,
 				D3094082258ED8AD003030E9 /* ObservedDevices.swift in Sources */,
 			);
