@@ -20,80 +20,39 @@ class DevicesSelectionViewModel: ObservableObject {
         }
     }
 
-    private var midiDevicesObserver: NSKeyValueObservation?
-    private let deviceManager = MIKMIDIDeviceManager.shared
-    private var previousIndex: Int = -1
-    private var connectionToken: Any?
-
-    @Published var availableDevices = MIKMIDIDeviceManager.shared.availableDevices
-    @Published var connectedDevice: MIKMIDIDevice?
-    @Published var hasConnection: Bool = false
-    @Published var logText: String = defaultLogText
-
-    private var hasChanged: Bool = false
-
-    @Published var selectedIndex: Int = -1 {
-        didSet {
-            handleConnectionChange()
-        }
-    }
-
-    func fullDisconnect() {
+    deinit {
         disconnect()
-        selectedIndex = -1
     }
 
-    func disconnect() {
-        if let cd = connectedDevice, let token = connectionToken {
-            deviceManager.disconnectConnection(forToken: token)
-            hasConnection = false
-            connectedDevice = nil
-            logText.append("disconnect: \(cd.name!) (\(cd.manufacturer!), \(cd.model!))\n")
-        }
-    }
+    // MARK: - Public Methods
 
-    func handleConnectionChange() {
-
-        let ok = selectedIndex > -1 &&
-        deviceManager.availableDevices.count > selectedIndex
-
-        if selectedIndex == previousIndex {
-            return
-        }
-
-        if !ok {
+    func connectToSelectedDevice() {
+        guard let selectedDevice = selectedDevice else { return }
+        if connectedDevice != nil {
             disconnect()
-            hasConnection = false
-            previousIndex = -1
-            return
         }
-
-        disconnect()
-        let nd = deviceManager.availableDevices[selectedIndex]
-
         do {
-            try connectionToken = deviceManager.connect(nd, eventHandler: { (_, commands) in
+            try connectionToken = deviceManager.connect(selectedDevice) { [weak self] (_, commands) in
                 for command in commands {
-                    self.handle(command: command)
+                    self?.handle(command: command)
                 }
-            })
-            if !hasChanged {
-                hasChanged = true
-                logText = ""
             }
-            connectedDevice = nd
-            previousIndex = selectedIndex
-            self.hasConnection = true
-            logText.append("connected: \(nd.name!) (\(nd.manufacturer!), \(nd.model!))\n")
+            connectedDevice = selectedDevice
+            logText = "connected: \(selectedDevice.name!) (\(selectedDevice.manufacturer!), \(selectedDevice.model!))\n"
         } catch {
-            hasConnection = false
-            previousIndex = -1
+            connectedDevice = nil
             print(error)
         }
     }
 
-    func handle(command: MIKMIDICommand) {
-        logText.append("received: \(command)\n")
+    func disconnect() {
+        guard let cd = connectedDevice,
+              let token = connectionToken else {
+            return
+        }
+        deviceManager.disconnectConnection(forToken: token)
+        connectedDevice = nil
+        logText.append("disconnect: \(cd.name!) (\(cd.manufacturer!), \(cd.model!))\n")
     }
 
     func send(command: MIKMIDICommand) {
@@ -105,4 +64,36 @@ class DevicesSelectionViewModel: ObservableObject {
             NSApp.presentError(error)
         }
     }
+
+    // MARK: - Private Methods
+
+    private func handleConnectionChange() {
+        guard selectedDevice != nil else {
+            disconnect()
+            return
+        }
+        connectToSelectedDevice()
+    }
+
+    private func handle(command: MIKMIDICommand) {
+        logText.append("received: \(command)\n")
+    }
+
+    // MARK: - Public Properties
+
+    @Published var availableDevices = MIKMIDIDeviceManager.shared.availableDevices
+    @Published var connectedDevice: MIKMIDIDevice?
+    @Published var logText: String = ""
+    @Published var selectedDevice: MIKMIDIDevice? {
+        didSet {
+            guard selectedDevice != oldValue else { return }
+            handleConnectionChange()
+        }
+    }
+
+    // MARK: - Private Properties
+
+    private var midiDevicesObserver: NSKeyValueObservation?
+    private let deviceManager = MIKMIDIDeviceManager.shared
+    private var connectionToken: Any?
 }

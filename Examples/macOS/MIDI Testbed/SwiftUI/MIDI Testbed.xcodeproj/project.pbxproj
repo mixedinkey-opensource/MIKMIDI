@@ -16,6 +16,7 @@
 		9D06D8C3285CF84200D0D224 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9D06D8BC285CF84200D0D224 /* Info.plist */; };
 		9D06D8D1285CF85D00D0D224 /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D06D8CC285CF85500D0D224 /* MIKMIDI.framework */; };
 		9D06D8D2285CF85D00D0D224 /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D06D8CC285CF85500D0D224 /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9D10D280285D125000301A79 /* MIKMIDIDevice+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D10D27F285D125000301A79 /* MIKMIDIDevice+Utilities.swift */; };
 		9D887828285CFE7B009E1034 /* MIKMIDICommand+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D887827285CFE7B009E1034 /* MIKMIDICommand+Utilities.swift */; };
 		D309405C258ED129003030E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309405B258ED129003030E9 /* ContentView.swift */; };
 		D3094075258ED661003030E9 /* TestbedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094074258ED661003030E9 /* TestbedView.swift */; };
@@ -70,6 +71,7 @@
 		9D06D8BB285CF84200D0D224 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9D06D8BC285CF84200D0D224 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D06D8C4285CF85500D0D224 /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
+		9D10D27F285D125000301A79 /* MIKMIDIDevice+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIKMIDIDevice+Utilities.swift"; sourceTree = "<group>"; };
 		9D887827285CFE7B009E1034 /* MIKMIDICommand+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIKMIDICommand+Utilities.swift"; sourceTree = "<group>"; };
 		D3094056258ED129003030E9 /* Midi Testbed Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Midi Testbed Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D309405B258ED129003030E9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 			children = (
 				9D06D8B6285CF84200D0D224 /* MIDIPacket+Utilities.swift */,
 				9D887827285CFE7B009E1034 /* MIKMIDICommand+Utilities.swift */,
+				9D10D27F285D125000301A79 /* MIKMIDIDevice+Utilities.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				9D06D8BD285CF84200D0D224 /* DevicesSelectionViewModel.swift in Sources */,
 				9D887828285CFE7B009E1034 /* MIKMIDICommand+Utilities.swift in Sources */,
 				9D06D8BE285CF84200D0D224 /* SupportedCommands.swift in Sources */,
+				9D10D280285D125000301A79 /* MIKMIDIDevice+Utilities.swift in Sources */,
 				9D06D8BF285CF84200D0D224 /* MIDIPacket+Utilities.swift in Sources */,
 				D3094079258ED720003030E9 /* TextView.swift in Sources */,
 				D3094075258ED661003030E9 /* TestbedView.swift in Sources */,
