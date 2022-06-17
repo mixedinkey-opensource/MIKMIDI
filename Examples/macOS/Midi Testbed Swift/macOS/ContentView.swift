@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Midi Testbed Swift
+//  MIDI Testbed (SwiftUI)
 //
 //  Created by James Ranson on 12/19/20.
 //
