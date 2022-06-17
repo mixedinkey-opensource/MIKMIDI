@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D309405A258ED129003030E9 /* MidiTestbedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094059258ED129003030E9 /* MidiTestbedApp.swift */; };
+		D309405A258ED129003030E9 /* MIDITestbedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3094059258ED129003030E9 /* MIDITestbedApp.swift */; };
 		D309405C258ED129003030E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309405B258ED129003030E9 /* ContentView.swift */; };
 		D309405E258ED12A003030E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D309405D258ED12A003030E9 /* Assets.xcassets */; };
 		D3094061258ED12A003030E9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3094060258ED12A003030E9 /* Preview Assets.xcassets */; };
@@ -60,7 +60,7 @@
 
 /* Begin PBXFileReference section */
 		D3094056258ED129003030E9 /* Midi Testbed Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Midi Testbed Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3094059258ED129003030E9 /* MidiTestbedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiTestbedApp.swift; sourceTree = "<group>"; };
+		D3094059258ED129003030E9 /* MIDITestbedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDITestbedApp.swift; sourceTree = "<group>"; };
 		D309405B258ED129003030E9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D309405D258ED12A003030E9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D3094060258ED12A003030E9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 			children = (
 				D309407B258ED7B8003030E9 /* ViewModels */,
 				D309405F258ED12A003030E9 /* Preview Content */,
-				D3094059258ED129003030E9 /* MidiTestbedApp.swift */,
+				D3094059258ED129003030E9 /* MIDITestbedApp.swift */,
 				D309405D258ED12A003030E9 /* Assets.xcassets */,
 				D3094062258ED12A003030E9 /* Info.plist */,
 				D3094063258ED12A003030E9 /* Midi_Testbed_Swift.entitlements */,
@@ -206,7 +206,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D3094051258ED129003030E9 /* Build configuration list for PBXProject "Midi Testbed Swift" */;
+			buildConfigurationList = D3094051258ED129003030E9 /* Build configuration list for PBXProject "MIDI Testbed" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -273,7 +273,7 @@
 			files = (
 				D309405C258ED129003030E9 /* ContentView.swift in Sources */,
 				D3094079258ED720003030E9 /* TextView.swift in Sources */,
-				D309405A258ED129003030E9 /* MidiTestbedApp.swift in Sources */,
+				D309405A258ED129003030E9 /* MIDITestbedApp.swift in Sources */,
 				D309409B258EDE20003030E9 /* MIDIPacket+Utilities.swift in Sources */,
 				D309407E258ED834003030E9 /* SupportedCommands.swift in Sources */,
 				D3094075258ED661003030E9 /* TestbedView.swift in Sources */,
@@ -446,7 +446,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D3094051258ED129003030E9 /* Build configuration list for PBXProject "Midi Testbed Swift" */ = {
+		D3094051258ED129003030E9 /* Build configuration list for PBXProject "MIDI Testbed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D3094064258ED12A003030E9 /* Debug */,
