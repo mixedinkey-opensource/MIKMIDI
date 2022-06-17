@@ -15,7 +15,6 @@ struct TestbedView: View {
     @State private var presetMessage: SupportedCommand = .custom
 
     var body: some View {
-
         VStack {
             VStack(alignment: .leading, spacing: nil/*@END_MENU_TOKEN@*/, content: {
                 TextView(text: $deviceSelection.logText)
@@ -23,25 +22,27 @@ struct TestbedView: View {
                     .border(Color(red: 0.3, green: 0.3, blue: 0.3))
             })
             .padding(.top, 10)
+            .onAppear {
+                clearLog()
+            }
             HStack {
-                Picker(selection: $deviceSelection.selectedIndex, label: Text("Device")) {
-                    ForEach(Array(deviceSelection.availableDevices.enumerated()), id: \.offset) { i in
-                        Text(deviceSelection.availableDevices[i.offset].name!)
+                Picker("Device", selection: $deviceSelection.selectedDevice) {
+                    ForEach(deviceSelection.availableDevices) {
+                        Text($0.name ?? "UnknownDevice").tag(Optional($0))
                     }
                 }
-                Button( action: {
-                    deviceSelection.fullDisconnect()
-                }) {
-                    Text("Disconnect")
-                }
-                .disabled(!deviceSelection.hasConnection)
-                Button( action: {
-                    if deviceSelection.hasConnection {
-                        deviceSelection.logText = ""
-                    } else {
-                        deviceSelection.logText = defaultLogText
+                if deviceSelection.connectedDevice != nil {
+                    Button("Disconnect") {
+                        deviceSelection.disconnect()
                     }
-                }) {
+                } else {
+                    Button("Connect") {
+                        deviceSelection.connectToSelectedDevice()
+                    }
+                    .disabled(deviceSelection.selectedDevice == nil)
+                }
+
+                Button(action: clearLog) {
                     Text("Clear Log")
                 }
             }
@@ -67,10 +68,16 @@ struct TestbedView: View {
                 }
                 .disabled( presetMessage.command != nil || customMessage.count < 1 )
             }
-            .disabled(!deviceSelection.hasConnection)
+            .disabled(deviceSelection.connectedDevice == nil)
             .padding(10)
         }
     }
+
+    private func clearLog() {
+        deviceSelection.logText = deviceSelection.connectedDevice != nil ? "" : defaultLogText
+    }
+
+    private let defaultLogText = "Select a device from the list.\n"
 }
 
 struct TestbedView_Previews: PreviewProvider {

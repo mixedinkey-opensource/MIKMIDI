@@ -15,5 +15,3 @@ struct MIDITestbedApp: App {
         }
     }
 }
-
-let defaultLogText = "Select a device from the list.\n"
