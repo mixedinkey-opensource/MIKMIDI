@@ -1,5 +1,5 @@
 //
-//  ObservedDevices.swift
+//  DevicesSelectionViewModel.swift
 //  MIDI Testbed (SwiftUI)
 //
 //  Created by James Ranson on 12/19/20.
@@ -8,10 +8,10 @@
 import Foundation
 import MIKMIDI
 
-// ObservedDevices is used by the TestbedView to list and
+// DevicesSelectionViewModel is used by the TestbedView to list and
 // interact with the available midi devices
 
-class ObservedDevices: ObservableObject {
+class DevicesSelectionViewModel: ObservableObject {
 
     init() {
         midiDevicesObserver = deviceManager.observe(\.availableDevices) { (_, _) in
@@ -73,8 +73,8 @@ class ObservedDevices: ObservableObject {
 
         do {
             try connectionToken = deviceManager.connect(nd, eventHandler: { (_, commands) in
-                for cmd in commands {
-                    self.handleCommand(cmd: cmd)
+                for command in commands {
+                    self.handle(command: command)
                 }
             })
             if !hasChanged {
@@ -92,18 +92,8 @@ class ObservedDevices: ObservableObject {
         }
     }
 
-    func handleCommand( cmd: MIKMIDICommand) {
-        logText.append("received: \(cmd)\n")
-    }
-
-    func processCommand(presetMessageId: Int, command: String ) {
-        guard (0..<supportedCommands.count).contains(presetMessageId),
-              connectedDevice != nil else {
-            return
-        }
-
-        let command = supportedCommands[presetMessageId].command ?? commandFromString(command: command)
-        send(command: command)
+    func handle(command: MIKMIDICommand) {
+        logText.append("received: \(command)\n")
     }
 
     func send(command: MIKMIDICommand) {
@@ -115,24 +105,4 @@ class ObservedDevices: ObservableObject {
             NSApp.presentError(error)
         }
     }
-
-    func commandFromString(command: String) -> MIKMIDICommand {
-        let packetLength = (command.count + ((command.count % 2) * 2)) / 2
-        let trimmedCommand = command.trimmingCharacters(in: .whitespaces)
-        let data = stride(from: 0, to: trimmedCommand.count, by: 2)
-            .map { index -> String in
-                let start = trimmedCommand.index(trimmedCommand.startIndex, offsetBy: index)
-                let end = trimmedCommand.index(start, offsetBy: 1, limitedBy: trimmedCommand.endIndex) ?? trimmedCommand.endIndex
-                return String(trimmedCommand[start...end])
-            }
-            .compactMap { UInt8($0, radix: 16) }
-            .reduce(into: Data(capacity: packetLength)) { partialResult, chunk in
-                partialResult.append(chunk)
-            }
-        var packet = MIDIPacket(timestamp: 0, length: packetLength, data: data)
-        let packetPtr = UnsafeMutablePointer<MIDIPacket>.allocate(capacity: 1)
-        packetPtr.initialize(from: &packet, count: 1)
-        return MIKMIDICommand(midiPacket: packetPtr)
-    }
-
 }
