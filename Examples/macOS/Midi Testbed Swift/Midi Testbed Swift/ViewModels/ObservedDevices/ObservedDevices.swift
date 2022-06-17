@@ -38,12 +38,12 @@ class ObservedDevices: ObservableObject {
         }
     }
 
-    func FullDisconnect() {
-        Disconnect()
+    func fullDisconnect() {
+        disconnect()
         selectedIndex = -1
     }
 
-    func Disconnect() {
+    func disconnect() {
         if let cd = connectedDevice, let token = connectionToken {
             deviceManager.disconnectConnection(forToken: token)
             hasConnection = false
@@ -62,13 +62,13 @@ class ObservedDevices: ObservableObject {
         }
 
         if !ok {
-            Disconnect()
+            disconnect()
             hasConnection = false
             previousIndex = -1
             return
         }
 
-        Disconnect()
+        disconnect()
         let nd = deviceManager.availableDevices[selectedIndex]
 
         do {
@@ -97,50 +97,42 @@ class ObservedDevices: ObservableObject {
     }
 
     func processCommand(presetMessageId: Int, command: String ) {
-
-        if presetMessageId >= 0 && presetMessageId < supportedCommands.count && connectedDevice != nil {
-
-            if let cmd = supportedCommands[presetMessageId].Command {
-                sendCommand(cmd: cmd)
-            } else {
-                let cmd = commandFromString(command: command)
-                sendCommand(cmd: cmd)
-            }
-
+        guard (0..<supportedCommands.count).contains(presetMessageId),
+              connectedDevice != nil else {
+            return
         }
+
+        let command = supportedCommands[presetMessageId].command ?? commandFromString(command: command)
+        send(command: command)
     }
 
-    func sendCommand(cmd: MIKMIDICommand) {
+    func send(command: MIKMIDICommand) {
         do {
             let dest = connectedDevice!.entities.first!.destinations.first!
-            try deviceManager.send([cmd], to: dest)
-            logText.append("sent: \(cmd)\n")
+            try deviceManager.send([command], to: dest)
+            logText.append("sent: \(command)\n")
         } catch {
-            print(error)
+            NSApp.presentError(error)
         }
     }
 
     func commandFromString(command: String) -> MIKMIDICommand {
-
-        var byteChars: [Int8] = [ 0, 0, 0]
-        var packet = MIDIPacket()
-        packet.timeStamp = 0
-        packet.length    = UInt16((command.count + ((command.count % 2) * 2)) / 2)
-
-        if packet.length > 0 {
-            var data = Array(repeating: UInt8(0), count: Int(packet.length))
-            for i in 0..<Int(packet.length) {
-                byteChars[0] = Int8((command as NSString).character(at: i*2))
-                byteChars[1] = Int8((command as NSString).character(at: i*2+1))
-                data[i] = UInt8(strtol(byteChars, nil, 16))
+        let packetLength = (command.count + ((command.count % 2) * 2)) / 2
+        let trimmedCommand = command.trimmingCharacters(in: .whitespaces)
+        let data = stride(from: 0, to: trimmedCommand.count, by: 2)
+            .map { index -> String in
+                let start = trimmedCommand.index(trimmedCommand.startIndex, offsetBy: index)
+                let end = trimmedCommand.index(start, offsetBy: 1, limitedBy: trimmedCommand.endIndex) ?? trimmedCommand.endIndex
+                return String(trimmedCommand[start...end])
             }
-            packet.data = packetDataFromBytes(data: data)
-        }
-
+            .compactMap { UInt8($0, radix: 16) }
+            .reduce(into: Data(capacity: packetLength)) { partialResult, chunk in
+                partialResult.append(chunk)
+            }
+        var packet = MIDIPacket(timestamp: 0, length: packetLength, data: data)
         let packetPtr = UnsafeMutablePointer<MIDIPacket>.allocate(capacity: 1)
         packetPtr.initialize(from: &packet, count: 1)
-
-        return MIKMIDICommand.init(midiPacket: packetPtr)
+        return MIKMIDICommand(midiPacket: packetPtr)
     }
 
 }

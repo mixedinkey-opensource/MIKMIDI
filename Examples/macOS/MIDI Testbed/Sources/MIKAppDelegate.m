@@ -82,7 +82,7 @@
     for (int i = 0; i < packet.length; i++) {
         byte_chars[0] = [commandString characterAtIndex:i*2];
         byte_chars[1] = [commandString characterAtIndex:i*2+1];
-        packet.data[i] = strtol(byte_chars, NULL, 16);;
+        packet.data[i] = strtol(byte_chars, NULL, 16);
     }
 
     MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:&packet];
