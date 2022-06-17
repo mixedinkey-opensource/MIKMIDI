@@ -1203,7 +1203,7 @@
 		9D74EE9C17A7129300BEE89F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = "Mixed In Key";
 				TargetAttributes = {
 					9D2C28EA24E64F1B00DF62CD = {
