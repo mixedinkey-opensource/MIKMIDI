@@ -7,17 +7,16 @@
 
 import Foundation
 import MIKMIDI
+import Combine
 
 // DevicesSelectionViewModel is used by the TestbedView to list and
-// interact with the available midi devices
-
+// interact with the available MIDI devices
 class DevicesSelectionViewModel: ObservableObject {
 
     init() {
-        midiDevicesObserver = deviceManager.observe(\.availableDevices) { (_, _) in
-            self.availableDevices = self.deviceManager.availableDevices
-            self.logText.append("available MIDI devices list has updated\n")
-        }
+        deviceManager
+            .publisher(for: \.availableDevices, options: .initial)
+            .assign(to: &$availableDevices)
     }
 
     deinit {
@@ -83,17 +82,16 @@ class DevicesSelectionViewModel: ObservableObject {
 
     @Published var availableDevices = MIKMIDIDeviceManager.shared.availableDevices
     @Published var connectedDevice: MIKMIDIDevice?
-    @Published var logText: String = ""
     @Published var selectedDevice: MIKMIDIDevice? {
         didSet {
             guard selectedDevice != oldValue else { return }
             handleConnectionChange()
         }
     }
+    @Published var logText: String = ""
 
     // MARK: - Private Properties
 
-    private var midiDevicesObserver: NSKeyValueObservation?
     private let deviceManager = MIKMIDIDeviceManager.shared
     private var connectionToken: Any?
 }
