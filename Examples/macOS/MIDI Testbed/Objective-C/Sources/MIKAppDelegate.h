@@ -25,3 +25,4 @@
 @property (weak) IBOutlet NSComboBox *commandComboBox;
 
 @end
+
