@@ -6,40 +6,40 @@
 //
 
 import SwiftUI
+import MIKMIDI
 
 struct TestbedView: View {
 
-    @ObservedObject private var devices = ObservedDevices()
+    @ObservedObject private var deviceSelection = DevicesSelectionViewModel()
     @State private var customMessage: String = ""
-    @State private var textFieldDisabled: Bool = false
-    @State private var presetMessageId: Int = 0
+    @State private var presetMessage: SupportedCommand = .custom
 
     var body: some View {
 
         VStack {
             VStack(alignment: .leading, spacing: nil/*@END_MENU_TOKEN@*/, content: {
-                TextView(text: $devices.logText)
+                TextView(text: $deviceSelection.logText)
                     .frame(width: 615, height: 390, alignment: .topLeading)
                     .border(Color(red: 0.3, green: 0.3, blue: 0.3))
             })
             .padding(.top, 10)
             HStack {
-                Picker(selection: $devices.selectedIndex, label: Text("Device")) {
-                    ForEach(Array(devices.availableDevices.enumerated()), id: \.offset) { i in
-                        Text(devices.availableDevices[i.offset].name!)
+                Picker(selection: $deviceSelection.selectedIndex, label: Text("Device")) {
+                    ForEach(Array(deviceSelection.availableDevices.enumerated()), id: \.offset) { i in
+                        Text(deviceSelection.availableDevices[i.offset].name!)
                     }
                 }
                 Button( action: {
-                    devices.fullDisconnect()
+                    deviceSelection.fullDisconnect()
                 }) {
                     Text("Disconnect")
                 }
-                .disabled(!devices.hasConnection)
+                .disabled(!deviceSelection.hasConnection)
                 Button( action: {
-                    if devices.hasConnection {
-                        devices.logText = ""
+                    if deviceSelection.hasConnection {
+                        deviceSelection.logText = ""
                     } else {
-                        devices.logText = defaultLogText
+                        deviceSelection.logText = defaultLogText
                     }
                 }) {
                     Text("Clear Log")
@@ -47,26 +47,34 @@ struct TestbedView: View {
             }
             .padding(.leading, 10).padding(.trailing, 10).padding(.top, 5)
             HStack {
-                Picker(selection: $presetMessageId, label: Text("Send Message")) {
-                    ForEach(0..<supportedCommands.count) { i in
-                        Text(supportedCommands[i].description)
+                Picker(selection: $presetMessage, label: Text("Send Message")) {
+                    ForEach(SupportedCommand.all) {
+                        Text($0.description).tag($0)
                     }
-                }
-                .onChange(of: presetMessageId) { _ in
-                    textFieldDisabled = presetMessageId > 0
                 }
 
                 TextField("MIDI Data (e.g., b02743)", text: $customMessage)
-                    .disabled(textFieldDisabled)
-                Button( action: {
-                    devices.processCommand(presetMessageId: presetMessageId, command: customMessage)
+                    .disabled( presetMessage.command != nil )
+                Button(action: {
+                    if let presetCommand = presetMessage.command {
+                        deviceSelection.send(command: presetCommand)
+                    } else {
+                        let command = MIKMIDICommand.from(string: customMessage)
+                        deviceSelection.send(command: command)
+                    }
                 }) {
                     Text("Send")
                 }
+                .disabled( presetMessage.command != nil || customMessage.count < 1 )
             }
-            .disabled(!devices.hasConnection)
+            .disabled(!deviceSelection.hasConnection)
             .padding(10)
-
         }
+    }
+}
+
+struct TestbedView_Previews: PreviewProvider {
+    static var previews: some View {
+        TestbedView()
     }
 }
