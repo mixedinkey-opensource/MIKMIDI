@@ -85,14 +85,18 @@ static NSMutableSet *registeredMIKMIDIEventSubclasses;
 
 #pragma mark - Equality
 
+- (BOOL)isEqualToEvent:(MIKMIDIEvent *)otherEvent
+{
+    if (otherEvent.eventType != self.eventType) return NO;
+    return (self.timeStamp == otherEvent.timeStamp && [self.internalData isEqualToData:otherEvent.internalData]);
+}
+
 - (BOOL)isEqual:(id)object
 {
 	if (object == self) return YES;
 	if (![object isKindOfClass:[MIKMIDIEvent class]]) return NO;
-	
-	MIKMIDIEvent *otherEvent = (MIKMIDIEvent *)object;
-	if (otherEvent.eventType != self.eventType) return NO;
-	return (self.timeStamp == otherEvent.timeStamp && [self.internalData isEqualToData:otherEvent.internalData]);
+
+    return [self isEqualToEvent:(MIKMIDIEvent *)object];
 }
 
 - (NSUInteger)hash

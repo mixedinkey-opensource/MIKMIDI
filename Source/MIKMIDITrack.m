@@ -8,6 +8,7 @@
 
 #import "MIKMIDISequence.h"
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDIEvent.h"
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDITempoEvent.h"
@@ -25,7 +26,6 @@
 
 @property (weak, nonatomic, nullable) MIKMIDISequence *sequence;
 @property (nonatomic, strong) NSMutableSet *internalEvents;
-@property (nonatomic, strong) NSArray *sortedEventsCache;
 
 @property (nonatomic) MusicTimeStamp restoredLength;
 @property (nonatomic) MusicTrackLoopInfo restoredLoopInfo;
@@ -557,9 +557,8 @@
 
 - (void)addInternalEvents:(NSSet *)events
 {
-	for (MIKMIDIEvent *event in events) {
-		[self addInternalEventsObject:[event copy]];
-	}
+    [self.internalEvents addObjectsFromArray:[events allObjects]];
+    self.sortedEventsCache = nil;
 }
 
 - (void)removeInternalEventsObject:(MIKMIDIEvent *)event

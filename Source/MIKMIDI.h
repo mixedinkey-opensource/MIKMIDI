@@ -9,92 +9,93 @@
 /** Umbrella header for MIKMIDI public interface. */
 
 // Core MIDI object wrapper
-#import "MIKMIDIObject.h"
+#import <MIKMIDI/MIKMIDIObject.h>
 
 // MIDI port
-#import "MIKMIDIPort.h"
-#import "MIKMIDIInputPort.h"
-#import "MIKMIDIOutputPort.h"
+#import <MIKMIDI/MIKMIDIPort.h>
+#import <MIKMIDI/MIKMIDIInputPort.h>
+#import <MIKMIDI/MIKMIDIOutputPort.h>
 
 // MIDI Device support
-#import "MIKMIDIDevice.h"
-#import "MIKMIDIDeviceManager.h"
-#import "MIKMIDIConnectionManager.h"
+#import <MIKMIDI/MIKMIDIDevice.h>
+#import <MIKMIDI/MIKMIDIDeviceManager.h>
+#import <MIKMIDI/MIKMIDIConnectionManager.h>
 
-#import "MIKMIDIEntity.h"
+#import <MIKMIDI/MIKMIDIEntity.h>
 
 // Endpoints
-#import "MIKMIDIEndpoint.h"
-#import "MIKMIDIDestinationEndpoint.h"
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDIClientDestinationEndpoint.h"
-#import "MIKMIDIClientSourceEndpoint.h"
+#import <MIKMIDI/MIKMIDIEndpoint.h>
+#import <MIKMIDI/MIKMIDIDestinationEndpoint.h>
+#import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#import <MIKMIDI/MIKMIDIClientDestinationEndpoint.h>
+#import <MIKMIDI/MIKMIDIClientSourceEndpoint.h>
 
 // MIDI Commands/Messages
-#import "MIKMIDICommand.h"
-#import "MIKMIDIChannelVoiceCommand.h"
-#import "MIKMIDINoteCommand.h"
-#import "MIKMIDIChannelPressureCommand.h"
-#import "MIKMIDIControlChangeCommand.h"
-#import "MIKMIDIProgramChangeCommand.h"
-#import "MIKMIDIPitchBendChangeCommand.h"
-#import "MIKMIDINoteOnCommand.h"
-#import "MIKMIDINoteOffCommand.h"
-#import "MIKMIDIPolyphonicKeyPressureCommand.h"
-#import "MIKMIDISystemExclusiveCommand.h"
-#import "MIKMIDISystemMessageCommand.h"
-#import "MIKMIDISystemKeepAliveCommand.h"
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#import <MIKMIDI/MIKMIDINoteCommand.h>
+#import <MIKMIDI/MIKMIDIChannelPressureCommand.h>
+#import <MIKMIDI/MIKMIDIControlChangeCommand.h>
+#import <MIKMIDI/MIKMIDIProgramChangeCommand.h>
+#import <MIKMIDI/MIKMIDIPitchBendChangeCommand.h>
+#import <MIKMIDI/MIKMIDINoteOnCommand.h>
+#import <MIKMIDI/MIKMIDINoteOffCommand.h>
+#import <MIKMIDI/MIKMIDIPolyphonicKeyPressureCommand.h>
+#import <MIKMIDI/MIKMIDISystemExclusiveCommand.h>
+#import <MIKMIDI/MIKMIDISystemMessageCommand.h>
+#import <MIKMIDI/MIKMIDISystemKeepAliveCommand.h>
+#import <MIKMIDI/MIKMIDIMachineControl.h> // Includes many individual MMC command types
 
 // MIDI Sequence/File support
-#import "MIKMIDISequence.h"
-#import "MIKMIDITrack.h"
+#import <MIKMIDI/MIKMIDISequence.h>
+#import <MIKMIDI/MIKMIDITrack.h>
 
 // MIDI Events
-#import "MIKMIDIEvent.h"
-#import "MIKMIDITempoEvent.h"
-#import "MIKMIDINoteEvent.h"
+#import <MIKMIDI/MIKMIDIEvent.h>
+#import <MIKMIDI/MIKMIDITempoEvent.h>
+#import <MIKMIDI/MIKMIDINoteEvent.h>
 
 // Channel Events
-#import "MIKMIDIChannelEvent.h"
-#import "MIKMIDIPolyphonicKeyPressureEvent.h"
-#import "MIKMIDIControlChangeEvent.h"
-#import "MIKMIDIProgramChangeEvent.h"
-#import "MIKMIDIChannelPressureEvent.h"
-#import "MIKMIDIPitchBendChangeEvent.h"
+#import <MIKMIDI/MIKMIDIChannelEvent.h>
+#import <MIKMIDI/MIKMIDIPolyphonicKeyPressureEvent.h>
+#import <MIKMIDI/MIKMIDIControlChangeEvent.h>
+#import <MIKMIDI/MIKMIDIProgramChangeEvent.h>
+#import <MIKMIDI/MIKMIDIChannelPressureEvent.h>
+#import <MIKMIDI/MIKMIDIPitchBendChangeEvent.h>
 
 // Meta Events
-#import "MIKMIDIMetaEvent.h"
-#import "MIKMIDIMetaCopyrightEvent.h"
-#import "MIKMIDIMetaCuePointEvent.h"
-#import "MIKMIDIMetaInstrumentNameEvent.h"
-#import "MIKMIDIMetaKeySignatureEvent.h"
-#import "MIKMIDIMetaLyricEvent.h"
-#import "MIKMIDIMetaMarkerTextEvent.h"
-#import "MIKMIDIMetaSequenceEvent.h"
-#import "MIKMIDIMetaTextEvent.h"
-#import "MIKMIDIMetaTimeSignatureEvent.h"
-#import "MIKMIDIMetaTrackSequenceNameEvent.h"
+#import <MIKMIDI/MIKMIDIMetaEvent.h>
+#import <MIKMIDI/MIKMIDIMetaCopyrightEvent.h>
+#import <MIKMIDI/MIKMIDIMetaCuePointEvent.h>
+#import <MIKMIDI/MIKMIDIMetaInstrumentNameEvent.h>
+#import <MIKMIDI/MIKMIDIMetaKeySignatureEvent.h>
+#import <MIKMIDI/MIKMIDIMetaLyricEvent.h>
+#import <MIKMIDI/MIKMIDIMetaMarkerTextEvent.h>
+#import <MIKMIDI/MIKMIDIMetaSequenceEvent.h>
+#import <MIKMIDI/MIKMIDIMetaTextEvent.h>
+#import <MIKMIDI/MIKMIDIMetaTimeSignatureEvent.h>
+#import <MIKMIDI/MIKMIDIMetaTrackSequenceNameEvent.h>
 
 // Sequencing and Synthesis
-#import "MIKMIDISequencer.h"
-#import "MIKMIDIMetronome.h"
-#import "MIKMIDIClock.h"
-#import "MIKMIDIPlayer.h"
-#import "MIKMIDIEndpointSynthesizer.h"
+#import <MIKMIDI/MIKMIDISequencer.h>
+#import <MIKMIDI/MIKMIDIMetronome.h>
+#import <MIKMIDI/MIKMIDIClock.h>
+#import <MIKMIDI/MIKMIDIPlayer.h>
+#import <MIKMIDI/MIKMIDIEndpointSynthesizer.h>
 
 // MIDI Mapping
-#import "MIKMIDIMapping.h"
-#import "MIKMIDIMappingItem.h"
-#import "MIKMIDIMappableResponder.h"
-#import "MIKMIDIMappingManager.h"
-#import "MIKMIDIMappingGenerator.h"
+#import <MIKMIDI/MIKMIDIMapping.h>
+#import <MIKMIDI/MIKMIDIMappingItem.h>
+#import <MIKMIDI/MIKMIDIMappableResponder.h>
+#import <MIKMIDI/MIKMIDIMappingManager.h>
+#import <MIKMIDI/MIKMIDIMappingGenerator.h>
 
 // Intra-application MIDI command routing
-#import "NSUIApplication+MIKMIDI.h"
-#import "MIKMIDIResponder.h"
-#import "MIKMIDICommandThrottler.h"
+#import <MIKMIDI/NSUIApplication+MIKMIDI.h>
+#import <MIKMIDI/MIKMIDIResponder.h>
+#import <MIKMIDI/MIKMIDICommandThrottler.h>
 
 // Utilities
-#import "MIKMIDIUtilities.h"
-#import "MIKMIDIErrors.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIUtilities.h>
+#import <MIKMIDI/MIKMIDIErrors.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
