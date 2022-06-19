@@ -5,8 +5,8 @@
 //  Created by Dan Rosenstark on 2015-01-07
 //
 
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDICommand;
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
  */
-- (nullable instancetype)initWithName:(NSString *)name error:(NSError **)error NS_SWIFT_NAME(init(name:));
+- (nullable instancetype)initWithName:(NSString *)name error:(NSError **)error;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint.

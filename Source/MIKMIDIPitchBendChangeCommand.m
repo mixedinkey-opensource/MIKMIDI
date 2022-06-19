@@ -31,6 +31,17 @@
 	return [NSString stringWithFormat:@"pitch change: %u", (unsigned)self.pitchChange];
 }
 
++ (instancetype)pitchBendChangeCommandWithPitchChange:(UInt16)pitchChange channel:(UInt8)channel timestamp:(nullable NSDate *)timestamp
+{
+    MIKMutableMIDIPitchBendChangeCommand *result = [[MIKMutableMIDIPitchBendChangeCommand alloc] init];
+    result.pitchChange = pitchChange;
+    result.channel = channel;
+    result.timestamp = timestamp ?: [NSDate date];
+
+    return [self isMutable] ? result : [result copy];
+}
+
+
 #pragma mark - Properties
 
 - (UInt16)pitchChange

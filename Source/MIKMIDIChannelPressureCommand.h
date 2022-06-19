@@ -6,8 +6,8 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIChannelVoiceCommand.h"
-#import "MIKMIDIChannelPressureCommand.h"
+#import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#import <MIKMIDI/MIKMIDIChannelPressureCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -24,7 +24,7 @@
 
 #endif
 
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @protocol MIKMIDIResponder;
 

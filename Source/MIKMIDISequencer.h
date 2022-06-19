@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDISequence;
 @class MIKMIDITrack;
@@ -33,6 +33,29 @@ typedef NS_ENUM(NSInteger, MIKMIDISequencerClickTrackStatus) {
 	MIKMIDISequencerClickTrackStatusEnabledOnlyInPreRoll,
 	/** The click track will always be heard during playback and recording. */
 	MIKMIDISequencerClickTrackStatusAlwaysEnabled
+};
+
+typedef NS_OPTIONS(NSInteger, MIKMIDISequencerTimeConversionOptions) {
+	/** Use default options (consider tempo override and looping, don't unroll loops) */
+	MIKMIDISequencerTimeConversionOptionsNone = 0,
+	/** Use the sequence's tempo events to calculate conversion, even if the sequencer has a tempo override set. The default is to use the overridden tempo for calculation if one is set.*/
+	MIKMIDISequencerTimeConversionOptionsIgnoreTempoOverride = 1 << 0,
+	/** Calculate conversion as if looping were disabled. The default is to take into account looping if it is enabled on the sequencer.*/
+	MIKMIDISequencerTimeConversionOptionsIgnoreLooping = 1 << 1,
+	/** When this option is set, conversion will return the time of events currently being played relative to the start of the sequence, and the result will never been greater than the end of the loop. The default, where this option is not set, is to calculate and return the absolute time since the sequence start.
+
+	 For example, consider a sequence that is 16 beats long, the tempo is a constant 75 bpm and looping is enabled for first 8 beats. The sequence will be exactly 20 seconds long, and the loop will consist of the first 10 seconds.
+
+	 If this option is *set*, and a time of 25 seconds is passed in, the result will be 4 beats, because the sequencer will be at the half way point of the loop on its third time through. If this option is *not set*, the result will be 20 beats, because 20 beats total will have elapsed since the start of the sequence.
+
+	 Setting the option allows you to determine what part of the raw sequence is currently being played, while leaving it unset allows you to determine total playback time.
+
+	 The same concept applies for conversion from beats to seconds.*/
+	MIKMIDISequencerTimeConversionOptionsDontUnrollLoop = 1 << 2,
+	/**
+	 When this option is set, the sequencer's rate will be ignore, and the default rate of 1.0 will be used for time conversion calculations.
+	 */
+	MIKMIDISequencerTimeConversionOptionsIgnoreRate = 1 << 3,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -255,6 +278,36 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable MIKMIDISynthesizer *)builtinSynthesizerForTrack:(MIKMIDITrack *)track;
 
+#pragma mark - Time Conversion
+
+
+/** Returns the time in seconds for a given MusicTimeStamp (time in beats).
+ *
+ *  This method converts a time in beats to the corresponding time in seconds on the sequencer, taking into account the tempo of the sequence, including tempo changes.
+ *  By default, looping and an overridden tempo, if enabled, will be considered when calculating the result. This behavior can be changed by passing in the appropriate options.
+ *
+ * @param musicTimeStamp The time in beats you want to convert to seconds.
+ * @param options Options to control the details of the conversion algorithm. See MIKMIDISequencerTimeConversionOptions for a list of possible options.
+ *
+ * @return A time in seconds as an NSTimeInterval.
+ *
+ * @see -musicTimeStampForTimeInSeconds:options:
+ * @see -[MIKMIDISequence musicTimeStampForTimeInSeconds:]
+ */
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp options:(MIKMIDISequencerTimeConversionOptions)options;
+
+/** Returns the time in beats for a given time in seconds.
+ *
+ * @param timeInSeconds The time in seconds you want to convert to a MusicTimeStamp (beats).
+ * @param options Options to control the details of the conversion algorithm. See MIKMIDISequencerTimeConversionOptions for a list of possible options.
+ *
+ * @return A time in beats as a MusicTimeStamp.
+ *
+ * @see -timeInSecondsForMusicTimeStamp:options:
+ * @see -[MIKMIDISequence timeInSecondsForMusicTimeStamp:]
+ */
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds options:(MIKMIDISequencerTimeConversionOptions)options;
+
 #pragma mark - Properties
 
 /**
@@ -280,6 +333,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see recordEnabledTracks
  */
 @property (readonly, nonatomic, getter=isRecording) BOOL recording;
+
+/**
+ * @property rate
+ * @abstract The playback rate of the sequencer. For example, if rate is 2.0, the sequencer will play twice as fast as normal.
+ *  Unlike the tempo property, this does not override the tempos in the sequence's tempo track. Rather, they are adjusted by multiplying by this rate.
+ * @discussion
+ * 	1.0 is normal playback rate.  Rate must be > 0.0.
+*/
+@property (nonatomic) float rate;
 
 /**
  *  The tempo the sequencer should play its sequence at. When set to 0, the sequence will be played using 

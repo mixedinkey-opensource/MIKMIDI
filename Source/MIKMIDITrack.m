@@ -8,6 +8,7 @@
 
 #import "MIKMIDISequence.h"
 #import "MIKMIDITrack.h"
+#import "MIKMIDITrack_Protected.h"
 #import "MIKMIDIEvent.h"
 #import "MIKMIDINoteEvent.h"
 #import "MIKMIDITempoEvent.h"
@@ -25,7 +26,6 @@
 
 @property (weak, nonatomic, nullable) MIKMIDISequence *sequence;
 @property (nonatomic, strong) NSMutableSet *internalEvents;
-@property (nonatomic, strong) NSArray *sortedEventsCache;
 
 @property (nonatomic) MusicTimeStamp restoredLength;
 @property (nonatomic) MusicTrackLoopInfo restoredLoopInfo;
@@ -297,31 +297,14 @@
 // All public event getters pass through this method
 - (NSArray *)eventsOfClass:(Class)eventClass fromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
 {
-	__block NSArray *events;
-
-    [self dispatchSyncToSequencerProcessingQueueAsNeeded:^{
-		if (!self.internalEvents.count) { events = @[]; return; }	// possible WORKAROUND for Issue #100
-
-		MIKMIDIEventIterator *iterator = [MIKMIDIEventIterator iteratorForTrack:self];
-		if (![iterator seek:startTimeStamp]) { events = @[]; return; }
-
-		NSMutableArray *mutableEvents = [NSMutableArray array];
-
-		while (iterator.hasCurrentEvent) {
-			MIKMIDIEvent *event = iterator.currentEvent;
-			if (!event || event.timeStamp > endTimeStamp) break;
-
-			if (!eventClass || [event isKindOfClass:eventClass]) {
-				[mutableEvents addObject:event];
-			}
-
-			[iterator moveToNextEvent];
-		}
-
-		events = mutableEvents;
-	}];
-
-	return events ?: @[];
+	NSMutableArray *result = [NSMutableArray array];
+	for (MIKMIDIEvent *event in self.events) {
+		if (event.timeStamp < startTimeStamp) { continue; }
+		if (event.timeStamp > endTimeStamp) { break; }
+		if (eventClass && ![event isKindOfClass:eventClass]) { continue; }
+		[result addObject:event];
+	}
+	return [result copy];
 }
 
 - (NSArray *)eventsFromTimeStamp:(MusicTimeStamp)startTimeStamp toTimeStamp:(MusicTimeStamp)endTimeStamp
@@ -344,7 +327,7 @@
 		MIKMIDIEvent *event = iterator.currentEvent;
 		[allEvents addObject:event];
 		[iterator moveToNextEvent];
-}
+	}
 
 	[self willChangeValueForKey:@"internalEvents"];
 	[self.internalEvents intersectSet:allEvents];
@@ -574,9 +557,8 @@
 
 - (void)addInternalEvents:(NSSet *)events
 {
-	for (MIKMIDIEvent *event in events) {
-		[self addInternalEventsObject:[event copy]];
-	}
+    [self.internalEvents addObjectsFromArray:[events allObjects]];
+    self.sortedEventsCache = nil;
 }
 
 - (void)removeInternalEventsObject:(MIKMIDIEvent *)event

@@ -6,14 +6,14 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIEndpoint.h"
-#import "MIKMIDICommandScheduler.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIEndpoint.h>
+#import <MIKMIDI/MIKMIDICommandScheduler.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- *  MIKMIDIDestinationEndpoint represents a source (input) MIDI endpoint.
+ *  MIKMIDIDestinationEndpoint represents a destination (output) MIDI endpoint.
  *  It is essentially an Objective-C wrapper for instances of CoreMIDI's MIDIEndpoint class
  *  which are kMIDIObjectType_Destination type endpoints.
  *

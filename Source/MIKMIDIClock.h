@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 /**
  *  Returns the number of MIDITimeStamps that would occur during a specified time interval.

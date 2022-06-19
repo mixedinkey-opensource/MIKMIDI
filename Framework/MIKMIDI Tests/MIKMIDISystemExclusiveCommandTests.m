@@ -15,7 +15,7 @@
 
 @implementation MIKMIDISystemExclusiveCommandTests
 
-- (void)testSystemExclusiveCommand
+- (void)testInitializingSystemExclusiveCommand
 {
 	Class immutableClass = [MIKMIDISystemExclusiveCommand class];
 	Class mutableClass = [MIKMutableMIDISystemExclusiveCommand class];
@@ -39,6 +39,44 @@
 	
 	mutableCommand.sysexChannel = 27;
 	XCTAssertEqual(mutableCommand.sysexChannel, 27, @"Setting the sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+}
+
+- (void)testSysexCommandConvenienceMethod
+{
+    Class immutableClass = [MIKMIDISystemExclusiveCommand class];
+    Class mutableClass = [MIKMutableMIDISystemExclusiveCommand class];
+
+    NSDate *timestamp = [NSDate date];
+    NSData *sysexData = [NSData dataWithBytes:(UInt8[]){0xde, 0xad, 0xbe, 0xef} length:4];
+    MIKMIDISystemExclusiveCommand *command =
+    [MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:0x41
+                                                                    sysexChannel:1
+                                                                       sysexData:sysexData
+                                                                       timestamp:timestamp];
+    XCTAssert([command isMemberOfClass:[immutableClass class]], @"[MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:...] did not return an MIKMIDISystemExclusiveCommand instance.");
+    XCTAssertEqual(command.commandType, MIKMIDICommandTypeSystemExclusive, @"[MIKMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID] produced a command instance with the wrong command type.");
+    XCTAssertEqual(command.data.length, 7, "MIKMIDISystemExclusiveCommand had an incorrect data length %@ (should be 4)", @(command.data.length));
+    XCTAssertEqual(command.manufacturerID, 0x41, @"The manufacturerID on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqual(command.sysexChannel, 0, @"The sysexChannel on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqualObjects(command.sysexData, sysexData, @"The sysexData on a MIKMIDISystemExclusiveCommand instance was incorrect.");
+
+    MIKMutableMIDISystemExclusiveCommand *mutableCommand =
+    [MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:0x41
+                                                                    sysexChannel:1
+                                                                       sysexData:sysexData
+                                                                       timestamp:timestamp];
+    XCTAssert([mutableCommand isMemberOfClass:[mutableClass class]], @"[MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID:...] did not return an MIKMIDISystemExclusiveCommand instance.");
+    XCTAssertEqual(mutableCommand.commandType, MIKMIDICommandTypeSystemExclusive, @"[MIKMutableMIDISystemExclusiveCommand systemExclusiveCommandWithManufacturerID] produced a command instance with the wrong command type.");
+    XCTAssertEqual(mutableCommand.data.length, 7, "MIKMutableMIDISystemExclusiveCommand had an incorrect data length %@ (should be 4)", @(command.data.length));
+    XCTAssertEqual(mutableCommand.manufacturerID, 0x41, @"The manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqual(mutableCommand.sysexChannel, 0, @"The sysexChannel on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+    XCTAssertEqualObjects(mutableCommand.sysexData, sysexData, @"The sysexData on a MIKMutableMIDISystemExclusiveCommand instance was incorrect.");
+
+    XCTAssertNoThrow([mutableCommand setSysexData:[NSData data]], @"-[MIKMIDISystemExclusiveCommand setSysexData:] was not allowed on mutable instance.");
+    XCTAssertNoThrow([mutableCommand setSysexChannel:10], @"-[MIKMIDISystemExclusiveCommand setSysexChannel:] was not allowed on mutable instance.");
+
+    mutableCommand.manufacturerID = 0x42;
+    XCTAssertEqual(mutableCommand.manufacturerID, 0x42, @"Setting the manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
 }
 
 - (void)testSettingSysexData
@@ -76,6 +114,97 @@
 	
 	command.manufacturerID = 0x002076;
 	XCTAssertEqual(command.manufacturerID, 0x002076, @"Setting a 3-byte manufacturerID on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+}
+
+- (void)testChangingManufacturerIDLength
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.manufacturerID = 0x414243;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.manufacturerID = 0x41;
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x41, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+}
+
+- (void)testForcedThreeByteManufacturerIDLength
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = YES;
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = NO;
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.data.length, 4); // Status, 1-byte manufacturer, (zero) channel, end delimiter byte
+}
+
+- (void)testForcedThreeByteManufacturerIDLengthWithSysexData
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.includesThreeByteManufacturerID = YES;
+    command.manufacturerID = 0x41; // Roland
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+
+    command.sysexData = [NSData dataWithBytes:(UInt8[]){0xde, 0xad, 0xbe, 0xef} length:4];
+    XCTAssertEqual(command.manufacturerID, 0x41, @"manufacturerID is wrong after setting sysexData change");
+    XCTAssertEqual(command.data.length, 9); // Status, 3-byte manufacturer, 4-byte sysex data, end delimiter byte
+}
+
+- (void)testSettingIncludesThreeByteManufacturerIDWithThreeByteManufacturerID
+{
+    MIKMutableMIDISystemExclusiveCommand *command = [[MIKMutableMIDISystemExclusiveCommand alloc] init];
+    command.manufacturerID = 0x414243;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"Changing the manufacturerID length on a MIKMutableMIDISystemExclusiveCommand instance failed.");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+
+    command.includesThreeByteManufacturerID = NO;
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+    XCTAssertEqual(command.manufacturerID, 0x414243, @"manufacturerID is wrong after includesThreeByteManufacturerID change");
+    XCTAssertEqual(command.data.length, 6); // Status, 3-byte manufacturer, (zero) channel, end delimiter byte
+}
+
+- (void)testParsingManufacturerID
+{
+    // 0xf0 00 00 41 00 f7
+    MIDIPacket packet = MIKMIDIPacketCreate(0, 6, @[@0xf0, @0, @0, @0x41, @0, @0xf7]);
+    MIKMIDISystemExclusiveCommand *command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x41);
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
+
+    // 0xf0 41 00 f7
+    packet = MIKMIDIPacketCreate(0, 4, @[@0xf0, @0x41, @0, @0xf7]);
+    command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x41);
+    XCTAssertFalse(command.includesThreeByteManufacturerID);
+
+    // 0xf0 00 42 43 00 f7
+    packet = MIKMIDIPacketCreate(0, 6, @[@0xf0, @0, @0x42, @0x43, @0, @0xf7]);
+    command = (MIKMIDISystemExclusiveCommand *)[MIKMIDICommand commandWithMIDIPacket:&packet];
+    XCTAssertNotNil(command);
+    XCTAssertTrue([command isKindOfClass:[MIKMIDISystemExclusiveCommand class]]);
+    XCTAssertEqual(command.manufacturerID, 0x4243);
+    XCTAssertTrue(command.includesThreeByteManufacturerID);
 }
 
 @end
