@@ -31,7 +31,7 @@
 	[super setUp];
 	
 	self.defaultSequence = [MIKMIDISequence sequence];
-	self.defaultTrack = [self.defaultSequence addTrack];
+    self.defaultTrack = [self.defaultSequence addTrackWithError:NULL];
 	
 	[self.defaultTrack addObserver:self forKeyPath:@"events" options:0 context:NULL];
 	[self.defaultTrack addObserver:self forKeyPath:@"notes" options:0 context:NULL];
@@ -469,7 +469,9 @@
 
 - (void)testCopyingSingleEvent
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -497,7 +499,9 @@
 
 - (void)testCopyingSingleEventInWiderRange
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -527,7 +531,9 @@
 
 - (void)testCopyingMultipleEvents
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -559,7 +565,9 @@
 
 - (void)testCopyingMultipleEventsAtSameTimestamp
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -588,7 +596,9 @@
 
 - (void)testCopyingMultipleEventsInAWiderRange
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -622,7 +632,9 @@
 
 - (void)testMergingSingleEvent
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -650,7 +662,9 @@
 
 - (void)testMergingSingleEventInWiderRange
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -678,7 +692,9 @@
 
 - (void)testMergingMultipleEvents
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -708,7 +724,9 @@
 
 - (void)testMergingMultipleEventsAtSameTimestamp
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -738,7 +756,9 @@
 
 - (void)testMergingMultipleEventsInAWiderRange
 {
-	MIKMIDITrack *sourceTrack = [self.defaultSequence addTrack];
+    NSError *error = nil;
+    MIKMIDITrack *sourceTrack = [self.defaultSequence addTrackWithError:&error];
+    XCTAssertNotNil(sourceTrack, @"Unable to add track. Error: %@", error);
 	MIKMIDIEvent *event1 = [MIKMIDINoteEvent noteEventWithTimeStamp:0.5 note:60 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event2 = [MIKMIDINoteEvent noteEventWithTimeStamp:2 note:61 velocity:127 duration:1 channel:0];
 	MIKMIDIEvent *event3 = [MIKMIDINoteEvent noteEventWithTimeStamp:3 note:62 velocity:127 duration:1 channel:0];
@@ -767,28 +787,6 @@
 }
 
 #pragma mark - Other Properties
-
-- (void)testSettingNumberOfLoops
-{
-	[self.defaultTrack addObserver:self forKeyPath:@"numberOfLoops" options:0 context:NULL];
-	{
-		self.defaultTrack.numberOfLoops = 42;
-		XCTAssertEqual(self.defaultTrack.numberOfLoops, 42, @"Setting numberOfLoops failed.");
-		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"numberOfLoops", @"Setting numberOfLoops did not produce a KVO notification.");
-	}
-	[self.defaultTrack removeObserver:self forKeyPath:@"numberOfLoops"];
-}
-
-- (void)testSettingLoopDuration
-{
-	[self.defaultTrack addObserver:self forKeyPath:@"loopDuration" options:0 context:NULL];
-	{
-		self.defaultTrack.loopDuration = 42;
-		XCTAssertEqual(self.defaultTrack.loopDuration, 42, @"Setting loopDuration failed.");
-		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"loopDuration", @"Setting loopDuration did not produce a KVO notification.");
-	}
-	[self.defaultTrack removeObserver:self forKeyPath:@"loopDuration"];
-}
 
 - (void)testSettingLoopInfo
 {
@@ -861,31 +859,6 @@
 		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"length", @"Setting length did not produce a KVO notification.");
 	}
 	[self.defaultTrack removeObserver:self forKeyPath:@"length"];
-}
-
-- (void)testDoesLoopKVO
-{
-	self.defaultTrack.loopDuration = 0;
-	XCTAssertFalse(self.defaultTrack.doesLoop, @"Setting loop duration to zero did not make doesLoop NO.");
-	[self.defaultTrack addObserver:self forKeyPath:@"doesLoop" options:0 context:NULL];
-	{
-		self.defaultTrack.loopDuration = 42;
-		XCTAssertEqual(self.defaultTrack.loopDuration, 42, @"Setting loopDuration failed.");
-		XCTAssert(self.defaultTrack.doesLoop, @"Setting loop duration did not change doesLoop to YES.");
-		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"doesLoop", @"Setting loopDuration did not produce a KVO notification for doesLoop.");
-		
-		self.receivedKVONotificationKeyPath = nil;
-		
-		MusicTrackLoopInfo info = {
-			.loopDuration = 0,
-			.numberOfLoops = 1,
-		};
-		self.defaultTrack.loopInfo = info;
-		XCTAssertEqual(self.defaultTrack.loopDuration, 0, @"Setting loopDuration via loop info failed.");
-		XCTAssertFalse(self.defaultTrack.doesLoop, @"Clearing loop duration via loop info did not change doesLoop to NO.");
-		XCTAssertEqualObjects(self.receivedKVONotificationKeyPath, @"doesLoop", @"Setting loop info did not produce a KVO notification for doesLoop.");
-	}
-	[self.defaultTrack removeObserver:self forKeyPath:@"doesLoop"];
 }
 
 #pragma mark - (KVO Test Helper)
