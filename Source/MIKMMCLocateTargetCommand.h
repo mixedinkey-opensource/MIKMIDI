@@ -6,7 +6,11 @@
 //  Copyright © 2022 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIMachineControlCommand.h"
+#else
 #import <MIKMIDI/MIKMIDIMachineControlCommand.h>
+#endif
 
 typedef NS_ENUM(UInt8, MIKMMCLocateTargetCommandTimeType) {
     MIKMMCLocateTargetCommandTimeType24FPS = 0x00,

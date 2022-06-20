@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 /**
  *  Types of MIDI events. These values are used to determine which subclass to
@@ -195,7 +200,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - MIKMIDICommand+MIKMIDIEventToCommands
 
+#ifdef SWIFTPM
+#import "MIKMIDICommand.h"
+#else
 #import <MIKMIDI/MIKMIDICommand.h>
+#endif
 
 @class MIKMIDIClock;
 

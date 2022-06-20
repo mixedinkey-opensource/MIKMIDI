@@ -8,7 +8,11 @@
 
 #import "MIKMIDIMappingGenerator.h"
 
-#import "MIKMIDI.h"
+#import "MIKMIDIDevice.h"
+#import "MIKMIDIDeviceManager.h"
+#import "MIKMIDIErrors.h"
+#import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIControlChangeCommand.h"
 #import "MIKMIDIMapping.h"
 #import "MIKMIDIMappingItem.h"
 #import "MIKMIDIPrivateUtilities.h"

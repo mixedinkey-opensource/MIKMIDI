@@ -6,8 +6,13 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDICommand.h"
+#import "MIKMIDITransmittable.h"
+#else
 #import <MIKMIDI/MIKMIDICommand.h>
 #import <MIKMIDI/MIKMIDITransmittable.h>
+#endif
 
 /**
  Used by MIKMIDICommand subclasses to communicate their desire to handle a specific

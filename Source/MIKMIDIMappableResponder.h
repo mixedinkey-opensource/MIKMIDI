@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDIResponder.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIResponder.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 /**
  *  Bit-mask constants used to specify MIDI responder types for mapping.

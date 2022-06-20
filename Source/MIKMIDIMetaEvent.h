@@ -6,8 +6,13 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIEvent.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 static const NSUInteger MIKMIDIEventMetadataStartOffset = 8;
 

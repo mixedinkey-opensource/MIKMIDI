@@ -6,7 +6,10 @@
 //  Copyright © 2022 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDI.h>
-
+#ifdef SWIFTPM
+#import "MIKMIDI/MIKMIDIMachineControlCommand.h"
+#import "MIKMIDI/MIKMMCLocateTargetCommand.h"
+#else
 #import <MIKMIDI/MIKMIDIMachineControlCommand.h>
 #import <MIKMIDI/MIKMMCLocateTargetCommand.h>
+#endif

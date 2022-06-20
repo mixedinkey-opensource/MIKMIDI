@@ -6,7 +6,11 @@
 //  Copyright © 2022 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDISystemExclusiveCommand.h"
+#else
 #import <MIKMIDI/MIKMIDISystemExclusiveCommand.h>
+#endif
 
 /**
  * The MMC sub-ID.

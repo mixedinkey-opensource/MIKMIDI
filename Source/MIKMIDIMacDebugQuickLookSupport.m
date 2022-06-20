@@ -8,7 +8,12 @@
 
 #if !TARGET_OS_IPHONE
 
-#import "MIKMIDI.h"
+#import <CoreMIDI/CoreMIDI.h>
+#import <Cocoa/Cocoa.h>
+
+#import "MIKMIDITrack.h"
+#import "MIKMIDINoteEvent.h"
+#import "MIKMIDISequence.h"
 
 #define kMIKMIDITrackDebugViewFrameRect (NSMakeRect(0, 0, 900, 500))
 
