@@ -6,7 +6,11 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDINoteCommand.h"
+#else
 #import <MIKMIDI/MIKMIDINoteCommand.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

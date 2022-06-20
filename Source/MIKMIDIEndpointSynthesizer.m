@@ -8,9 +8,11 @@
 
 #import "MIKMIDIEndpointSynthesizer.h"
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDI.h"
+
 #import "MIKMIDIClientDestinationEndpoint.h"
 #import "MIKMIDIPrivate.h"
+#import "MIKMIDISourceEndpoint.h"
+#import "MIKMIDIDeviceManager.h"
 
 #if !__has_feature(objc_arc)
 #error MIKMIDIEndpointSynthesizer.m must be compiled with ARC. Either turn on ARC for the project or set the -fobjc-arc flag for MIKMIDIEndpointSynthesizer.m in the Build Phases for this target

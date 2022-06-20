@@ -6,8 +6,13 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIChannelVoiceCommand.h"
+#import "MIKMIDIChannelPressureCommand.h"
+#else
 #import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
 #import <MIKMIDI/MIKMIDIChannelPressureCommand.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

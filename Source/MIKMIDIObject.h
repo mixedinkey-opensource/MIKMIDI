@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -6,7 +6,11 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIChannelVoiceCommand.h"
+#else
 #import <MIKMIDI/MIKMIDIChannelVoiceCommand.h>
+#endif
 
 /**
  *  A MIDI polyphonic key pressure message. This message is most often sent by pressing 

@@ -7,7 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDIChannelVoiceCommand;
 

@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDISequence;
 @class MIKMIDIMetronome;

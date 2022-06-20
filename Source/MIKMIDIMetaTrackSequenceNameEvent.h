@@ -6,8 +6,13 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIMetaTextEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIMetaTextEvent.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

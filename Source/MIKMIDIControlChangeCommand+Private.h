@@ -6,8 +6,13 @@
 //  Copyright © 2018 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIControlChangeCommand.h"
+#import "MIKMIDIOutputPort.h"
+#else
 #import <MIKMIDI/MIKMIDIControlChangeCommand.h>
 #import <MIKMIDI/MIKMIDIOutputPort.h>
+#endif
 
 @interface MIKMIDIControlChangeCommand () <MIKMIDITransmittable>
 

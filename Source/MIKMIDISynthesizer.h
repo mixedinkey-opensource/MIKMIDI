@@ -8,9 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDISynthesizerInstrument.h"
+#import "MIKMIDICommandScheduler.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDISynthesizerInstrument.h>
 #import <MIKMIDI/MIKMIDICommandScheduler.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
