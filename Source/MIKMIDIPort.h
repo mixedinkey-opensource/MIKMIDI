@@ -6,9 +6,13 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import <MIKMIDI/MIKMIDIObject.h>
 #import <CoreMIDI/CoreMIDI.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDIEndpoint;
 

@@ -6,8 +6,13 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIMetaEvent.h"
+#import "MIKMIDIEvent_SubclassMethods.h"
+#else
 #import <MIKMIDI/MIKMIDIMetaEvent.h>
 #import <MIKMIDI/MIKMIDIEvent_SubclassMethods.h>
+#endif
 
 @interface MIKMIDIMetaEvent ()
 

@@ -6,8 +6,13 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIMetaEvent.h"
+#import "MIKMIDIEvent_SubclassMethods.h"
+#else
 #import <MIKMIDI/MIKMIDIMetaEvent.h>
-#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#import <MIKMIDI/MIKMIDIEvent_SubclassMethods.h>
+#endif
 
 typedef NS_ENUM(int8_t, MIKMIDIMusicalKey) {
 	MIKMIDIMusicalKeyCFlatMajor = -7,

@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#import "MIKMIDISourceEndpoint.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 #import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#endif
 
 @class MIKMIDIDevice;
 @class MIKMIDINoteOnCommand;

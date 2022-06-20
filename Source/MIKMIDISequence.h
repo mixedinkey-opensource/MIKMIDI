@@ -8,8 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDICompilerCompatibility.h"
+#import "MIKMIDIMetaTimeSignatureEvent.h"
+#else
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 #import <MIKMIDI/MIKMIDIMetaTimeSignatureEvent.h>
+#endif
 
 @class MIKMIDITrack;
 @class MIKMIDISequencer;

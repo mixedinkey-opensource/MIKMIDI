@@ -174,6 +174,9 @@
 		9D877D851A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877D831A6237CC001BA997 /* MIKMIDIClientSourceEndpoint.m */; };
 		9D877DFC1A670261001BA997 /* MIKMIDIProgramChangeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D877DFA1A670261001BA997 /* MIKMIDIProgramChangeCommand.m */; };
 		9D877DFD1A6706E6001BA997 /* MIKMIDIProgramChangeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D877DF91A670261001BA997 /* MIKMIDIProgramChangeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9D8BF589285FDDDF0049EC97 /* MIKMIDISequence+MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB360C1B42D58000F91DCD /* MIKMIDISequence+MIKMIDIPrivate.h */; };
+		9D8BF58A285FDDE80049EC97 /* MIKMIDITrack_Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D76DCEA1A9E52DB00A24C16 /* MIKMIDITrack_Protected.h */; };
+		9D8BF58B285FDE220049EC97 /* MIKMIDISequencer+MIKMIDIPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 835124E31B42D16E00202312 /* MIKMIDISequencer+MIKMIDIPrivate.h */; };
 		9D8DC3CD202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8DC3CC202BBBFB00DDA4A8 /* MIKMIDIFourteenBitCCCommandTests.m */; };
 		9D8DC3CF202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */; };
 		9D8DC3D0202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D8DC3CE202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h */; };
@@ -1092,6 +1095,7 @@
 				9DAF8B671A7B008A00F46528 /* MIKMIDIProgramChangeCommand.h in Headers */,
 				9D07CB231BEC13E400C4ABB0 /* MIKMIDIConnectionManager.h in Headers */,
 				9D8DC3D0202BD84600DDA4A8 /* MIKMIDIControlChangeCommand+Private.h in Headers */,
+				9D8BF58A285FDDE80049EC97 /* MIKMIDITrack_Protected.h in Headers */,
 				9DED4E231AA77DAC00DA8356 /* MIKMIDIPitchBendChangeEvent.h in Headers */,
 				9DED4E371AA90CA700DA8356 /* MIKMIDIPitchBendChangeCommand.h in Headers */,
 				9DB366F71A964D4A001D1CF3 /* MIKMIDISynthesizerInstrument.h in Headers */,
@@ -1101,6 +1105,7 @@
 				9DAF8B6D1A7B00A700F46528 /* MIKMIDIEvent.h in Headers */,
 				9DAF8B771A7B00A700F46528 /* MIKMIDIMetaTextEvent.h in Headers */,
 				9DAF8B721A7B00A700F46528 /* MIKMIDIMetaInstrumentNameEvent.h in Headers */,
+				9D8BF58B285FDE220049EC97 /* MIKMIDISequencer+MIKMIDIPrivate.h in Headers */,
 				9DAF8B881A7B01FA00F46528 /* NSUIApplication+MIKMIDI.h in Headers */,
 				9DAF8B711A7B00A700F46528 /* MIKMIDIMetaEvent.h in Headers */,
 				9DAF8B7C1A7B00A700F46528 /* MIKMIDITempoEvent.h in Headers */,
@@ -1136,6 +1141,7 @@
 				9DAF8B6A1A7B009100F46528 /* MIKMIDIMappingManager.h in Headers */,
 				9DAF8B741A7B00A700F46528 /* MIKMIDIMetaLyricEvent.h in Headers */,
 				9D8DC3D3202BD95000DDA4A8 /* MIKMIDITransmittable.h in Headers */,
+				9D8BF589285FDDDF0049EC97 /* MIKMIDISequence+MIKMIDIPrivate.h in Headers */,
 				9DAF8B5C1A7B007300F46528 /* MIKMIDISourceEndpoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

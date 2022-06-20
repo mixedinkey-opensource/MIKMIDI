@@ -6,8 +6,13 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIEvent.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIEvent.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDIClock;
 
@@ -115,8 +120,13 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
+#ifdef SWIFTPM
+#import "MIKMIDINoteOnCommand.h"
+#import "MIKMIDINoteOffCommand.h"
+#else
 #import <MIKMIDI/MIKMIDINoteOnCommand.h>
 #import <MIKMIDI/MIKMIDINoteOffCommand.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

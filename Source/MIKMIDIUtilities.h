@@ -8,10 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
+#include <mach/mach_time.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDIMappableResponder.h"
+#import "MIKMIDICommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIMappableResponder.h>
 #import <MIKMIDI/MIKMIDICommand.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
-#include <mach/mach_time.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

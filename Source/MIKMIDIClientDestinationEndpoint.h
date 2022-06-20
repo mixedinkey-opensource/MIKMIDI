@@ -6,8 +6,13 @@
 //
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDIDestinationEndpoint.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDIDestinationEndpoint.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDIClientDestinationEndpoint;
 @class MIKMIDICommand;

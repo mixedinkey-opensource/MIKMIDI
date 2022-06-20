@@ -6,8 +6,13 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
+#ifdef SWIFTPM
+#import "MIKMIDISystemMessageCommand.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDISystemMessageCommand.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 extern uint32_t const kMIKMIDISysexNonRealtimeManufacturerID;
 extern uint32_t const kMIKMIDISysexRealtimeManufacturerID;

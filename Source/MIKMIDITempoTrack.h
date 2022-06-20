@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#ifdef SWIFTPM
+#import "MIKMIDITrack.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDITrack.h>
 #import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @class MIKMIDITempoEvent;
 

@@ -7,10 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
+#ifdef SWIFTPM
+#import "MIKMIDICommand.h"
+#import "MIKMIDIResponder.h"
+#import "MIKMIDICompilerCompatibility.h"
+#else
 #import <MIKMIDI/MIKMIDICommand.h>
 #import <MIKMIDI/MIKMIDIResponder.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#endif
 
 @protocol MIKMIDIMappableResponder;
 
