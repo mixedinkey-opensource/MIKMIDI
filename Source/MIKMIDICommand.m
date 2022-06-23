@@ -170,7 +170,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
     // Sort so that deepest subclass hierarchy children come last
     return [result sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(Class class1, Class class2) {
-        if ([class1 isEqualTo:class2]) { return NSOrderedSame; }
+        if ([class1 isEqual:class2]) { return NSOrderedSame; }
         if ([class1 isSubclassOfClass:class2]) { return NSOrderedDescending; }
         if ([class2 isSubclassOfClass:class1]) { return NSOrderedAscending; }
         return NSOrderedAscending;
