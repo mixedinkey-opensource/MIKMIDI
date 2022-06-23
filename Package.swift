@@ -23,9 +23,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "MIKMIDI",
-            path: "Source",
-            exclude: ["MIKMIDI.h",
-                      "MIKMIDIPrivate.h",
+            path: "Sources",
+            exclude: ["MIKMIDIPrivate.h",
                       "MIKMIDIObject_SubclassMethods.h",
                       "MIKMIDIPort_SubclassMethods.h",
                       "MIKMIDIChannelVoiceCommand_SubclassMethods.h",
@@ -39,7 +38,6 @@ let package = Package(
                       "MIKMIDISequencer+MIKMIDIPrivate.h",
                       "MIKMIDIPrivateUtilities.h"
                      ],
-            publicHeadersPath: ".",
             cSettings: [.define("SWIFTPM")]
             //    sources: ["Source/**/*.m"]
         )
