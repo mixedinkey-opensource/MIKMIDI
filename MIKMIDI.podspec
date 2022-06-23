@@ -19,8 +19,8 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.9'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
-  s.source_files = 'Source/**/*.{h,m}'
-  s.private_header_files = 'Source/MIKMIDIPrivateUtilities.h'
+  s.source_files = 'Sources/**/*.{h,m}'
+  s.private_header_files = 'Sources/*.h'
   s.requires_arc = true
   
   s.osx.frameworks = 'CoreMIDI', 'AudioToolbox', 'AudioUnit'
