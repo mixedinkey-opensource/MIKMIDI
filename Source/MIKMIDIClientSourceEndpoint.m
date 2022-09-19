@@ -8,6 +8,7 @@
 #import "MIKMIDIClientSourceEndpoint.h"
 #import "MIKMIDICommand.h"
 #import "MIKMIDIErrors.h"
+#import "MIKMIDICommand_SubclassMethods.h"
 
 @implementation MIKMIDIClientSourceEndpoint
 
@@ -46,28 +47,44 @@
 	return self;
 }
 
-- (BOOL)sendCommands:(NSArray *)commands error:(NSError **)error
-{
-	if (![commands count]) return NO;
-	
-	error = error ? error : &(NSError *__autoreleasing){ nil };
-	
-	MIDIPacketList *packetList;
-	if (!MIKCreateMIDIPacketListFromCommands(&packetList, commands)) return NO;
-	OSStatus err = MIDIReceived(self.objectRef, packetList);
-	
-	free(packetList);
-	if (err != noErr) {
-		*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		return NO;
-	}
-	
-	return YES;
-}
-
 -(void)dealloc
 {
-	MIDIEndpointDispose(self.objectRef);
+    MIDIEndpointDispose(self.objectRef);
+}
+
+- (BOOL)sendCommands:(NSArray *)commands error:(NSError **)error
+{
+    commands = [self commandsByTransformingForTransmissionCommands:commands];
+    if (![commands count]) return NO;
+
+    error = error ? error : &(NSError *__autoreleasing){ nil };
+
+    MIDIPacketList *packetList;
+    if (!MIKCreateMIDIPacketListFromCommands(&packetList, commands)) return NO;
+    OSStatus err = MIDIReceived(self.objectRef, packetList);
+
+    free(packetList);
+    if (err != noErr) {
+        *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+        return NO;
+    }
+
+    return YES;
+}
+
+#pragma mark - Private
+
+- (NSArray *)commandsByTransformingForTransmissionCommands:(NSArray *)commands
+{
+    NSMutableArray *transformedCommands = [NSMutableArray array];
+    for (MIKMIDICommand *command in commands) {
+        if ([command respondsToSelector:@selector(commandsForTransmission)]) {
+            [transformedCommands addObjectsFromArray:[command commandsForTransmission]];
+        } else {
+            [transformedCommands addObject:command];
+        }
+    }
+    return transformedCommands;
 }
 
 @end

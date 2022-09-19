@@ -29,11 +29,14 @@ NSString * const MIKMIDIDeviceWasAddedNotification = @"MIKMIDIDeviceWasAddedNoti
 NSString * const MIKMIDIDeviceWasRemovedNotification = @"MIKMIDIDeviceWasRemovedNotification";
 NSString * const MIKMIDIVirtualEndpointWasAddedNotification = @"MIKMIDIVirtualEndpointWasAddedNotification";
 NSString * const MIKMIDIVirtualEndpointWasRemovedNotification = @"MIKMIDIVirtualEndpointWasRemovedNotification";
-
+NSString * const MIKMIDIDevicePropertyWasChangedNotification = @"MIKMIDIDevicePropertyWasChangedNotification";
+NSString * const MIKMIDIEntityWasChangedNotification = @"MIKMIDIEntityWasChangedNotification";
 
 // Notification Keys
 NSString * const MIKMIDIDeviceKey = @"MIKMIDIDeviceKey";
+NSString * const MIKMIDIDevicePropertyKey = @"MIKMIDIDevicePropertyKey";
 NSString * const MIKMIDIEndpointKey = @"MIKMIDIEndpointKey";
+NSString * const MIKMIDIEntityKey = @"MIKMIDIEntityKey";
 
 static MIKMIDIDeviceManager *sharedDeviceManager;
 
@@ -217,7 +220,10 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 	switch (notification->objectType) {
 		case kMIDIObjectType_Device: {
 			
-			if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) break;
+			if (![changedProperty isEqualToString:(__bridge NSString *)kMIDIPropertyOffline]) {
+				[nc postNotificationName:MIKMIDIDevicePropertyWasChangedNotification object:self userInfo:@{MIKMIDIDevicePropertyKey : changedProperty}];
+				break;
+			}
 			
 			MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->object];
 			if (!changedObject) break;
@@ -264,6 +270,14 @@ static MIKMIDIDeviceManager *sharedDeviceManager;
 				[self removeInternalVirtualDestinationsObject:changedObject];
 				[nc postNotificationName:MIKMIDIVirtualEndpointWasRemovedNotification object:self userInfo:@{MIKMIDIEndpointKey : changedObject}];
 			}
+		}
+			break;
+		case kMIDIObjectType_Entity: {
+			MIKMIDIDevice *changedObject = [MIKMIDIDevice MIDIObjectWithObjectRef:notification->object];
+			
+			if (!changedObject) break;
+			
+			[nc postNotificationName:MIKMIDIEntityWasChangedNotification object:self userInfo:@{MIKMIDIEntityKey : changedObject}];
 		}
 			break;
 		default:
