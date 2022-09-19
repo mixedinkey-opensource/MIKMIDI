@@ -1,7 +1,6 @@
 #!/bin/zsh
 
 rm -r MIKMIDI.xcframework
-rm -r build
 xcodebuild clean 
 
 echo "Building for macOS"
