@@ -340,7 +340,7 @@ OSStatus instrumentRenderCallback(void							*info,
 		
 		for (MIKMIDINoteOnCommand *command in commands) {
 			NSLog(@"channel: %i status: %x (%@)", command.channel, (unsigned int)command.statusByte, command.data);
-			error = MusicDeviceMIDIEvent(self.instrumentUnit, command.statusByte, command.dataByte1, command.dataByte2, 0);
+			error = MusicDeviceMIDIEvent(self.instrumentUnit, command.statusByte | command.channel, command.dataByte1, command.dataByte2, 0);
 			if (error) return error;
 		}
 	}
