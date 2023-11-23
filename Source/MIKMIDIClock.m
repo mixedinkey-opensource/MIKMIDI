@@ -360,7 +360,7 @@ static void releaseHistoricalClocks(MIKMIDIClock *self)
 
 #pragma mark - Functions
 
-Float64 MIKMIDIClockSecondsPerMIDITimeStamp()
+Float64 MIKMIDIClockSecondsPerMIDITimeStamp(void)
 {
     static Float64 secondsPerMIDITimeStamp;
     static dispatch_once_t onceToken;
