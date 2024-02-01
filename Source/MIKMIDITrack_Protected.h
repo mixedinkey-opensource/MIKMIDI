@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDITrack.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDITrack.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  @note You should not call this method. It is exclusively used by MIKMIDISequence when the sequence is being looped by a MIKMIDIPlayer.
  */
 - (void)restoreLengthAndLoopInfo;
+
+- (void)dispatchSyncToSequencerProcessingQueueAsNeeded:(void (^)(void))block;
+
+@property (nonatomic, strong, nullable) NSArray *sortedEventsCache;
 
 @end
 

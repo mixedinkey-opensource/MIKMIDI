@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "MIKMIDITrack.h"
 #import "MIKMIDITrack_Protected.h"
+#import "MIKMIDITempoTrack.h"
 #import "MIKMIDITempoEvent.h"
 #import "MIKMIDIMetaTimeSignatureEvent.h"
 #import "MIKMIDIDestinationEndpoint.h"
@@ -31,6 +32,8 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 @property (nonatomic, strong) MIKMIDITrack *tempoTrack;
 @property (nonatomic, strong) NSMutableArray *internalTracks;
 @property (nonatomic) MusicTimeStamp lengthDefinedByTracks;
+
+@property (nonatomic, getter=isLengthUpdatingDisabled) BOOL lengthUpdatingDisabled;
 
 @end
 
@@ -141,7 +144,7 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 			*error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 			return nil;
 		}
-		self.tempoTrack = [MIKMIDITrack trackWithSequence:self musicTrack:tempoTrack];
+		self.tempoTrack = [MIKMIDITempoTrack trackWithSequence:self musicTrack:tempoTrack];
 		
 		UInt32 numTracks = 0;
 		err = MusicSequenceGetTrackCount(musicSequence, &numTracks);
@@ -182,6 +185,27 @@ const MusicTimeStamp MIKMIDISequenceLongestTrackLength = -1;
 	
 	OSStatus err = DisposeMusicSequence(_musicSequence);
 	if (err) NSLog(@"DisposeMusicSequence() failed with error %@ in %s.", @(err), __PRETTY_FUNCTION__);
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    NSError *error = nil;
+    MIKMIDISequence *newSequence = [MIKMIDISequence sequence];
+    newSequence.lengthUpdatingDisabled = YES;
+    [newSequence.tempoTrack copyEventsFromMIDITrack:self.tempoTrack fromTimeStamp:0 toTimeStamp:self.tempoTrack.length andInsertAtTimeStamp:0];
+    for (MIKMIDITrack *track in self.tracks) {
+        MIKMIDITrack *newTrack = [newSequence addTrackWithError:&error];
+        if (!newTrack) {
+            NSLog(@"Error creating new track during copy of %@: %@", self, error);
+            return nil;
+        }
+        [newTrack copyEventsFromMIDITrack:track fromTimeStamp:0 toTimeStamp:track.length andInsertAtTimeStamp:0];
+    }
+
+    newSequence.lengthUpdatingDisabled = NO;
+    return newSequence;
 }
 
 #pragma mark - Sequencer Synchronization
@@ -291,7 +315,7 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 
 - (NSArray *)tempoEvents
 {
-	return [self.tempoTrack eventsOfClass:[MIKMIDITempoEvent class] fromTimeStamp:0 toTimeStamp:kMusicTimeStamp_EndOfTrack];
+	return [(MIKMIDITempoTrack *)self.tempoTrack tempoEvents];
 }
 
 - (BOOL)setOverallTempo:(Float64)bpm
@@ -358,6 +382,22 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 		result.numerator = event.numerator;
 		result.denominator = event.denominator;
 	}
+	return result;
+}
+
+#pragma mark - Timing
+
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp
+{
+	Float64 result = 0;
+	MusicSequenceGetSecondsForBeats(self.musicSequence, musicTimeStamp, &result);
+	return (NSTimeInterval)result;
+}
+
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds
+{
+	MusicTimeStamp result = 0;
+	MusicSequenceGetBeatsForSeconds(self.musicSequence, (Float64)timeInSeconds, &result);
 	return result;
 }
 
@@ -496,6 +536,16 @@ static void MIKSequenceCallback(void *inClientData, MusicSequence inSequence, Mu
 	}
 	
 	return (__bridge_transfer NSData *)data;
+}
+
+- (void)setLengthUpdatingDisabled:(BOOL)lengthUpdatingDisabled
+{
+    if (lengthUpdatingDisabled != _lengthUpdatingDisabled) {
+        _lengthUpdatingDisabled = lengthUpdatingDisabled;
+        if (!_lengthUpdatingDisabled) {
+            [self updateLengthDefinedByTracks];
+        }
+    }
 }
 
 #pragma mark - Deprecated

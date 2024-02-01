@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIPort.h"
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIPort.h>
+#import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIEndpoint;
 @class MIKMIDICommand;

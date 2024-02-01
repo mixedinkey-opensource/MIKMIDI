@@ -8,6 +8,7 @@
 
 #import "MIKMIDINoteOnCommand.h"
 #import "MIKMIDINoteCommand_SubclassMethods.h"
+#import "MIKMIDICommand_SubclassMethods.h"
 #import "MIKMIDIUtilities.h"
 
 #if !__has_feature(objc_arc)

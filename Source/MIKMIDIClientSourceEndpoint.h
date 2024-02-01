@@ -5,8 +5,8 @@
 //  Created by Dan Rosenstark on 2015-01-07
 //
 
-#import "MIKMIDISourceEndpoint.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDISourceEndpoint.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDICommand;
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
  */
-- (instancetype)initWithName:(NSString *)name error:(NSError **)error;
+- (nullable instancetype)initWithName:(NSString *)name error:(NSError **)error;
 
 /**
  *  Used to send MIDI messages/commands from your application to a MIDI output endpoint.
@@ -66,7 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An instance of MIKMIDIClientSourceEndpoint, or nil if an error occurs.
  */
-- (nullable instancetype)initWithName:(NSString *)name DEPRECATED_ATTRIBUTE;
+- (nullable instancetype)initWithName:(NSString *)name
+DEPRECATED_ATTRIBUTE
+NS_SWIFT_UNAVAILABLE("Use the error throwing variant instead.");
 
 @end
 

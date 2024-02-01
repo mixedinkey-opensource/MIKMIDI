@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetaEvent.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIMetaEvent.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 typedef NS_ENUM(int8_t, MIKMIDIMusicalKey) {
 	MIKMIDIMusicalKeyCFlatMajor = -7,

@@ -6,8 +6,8 @@
 //  Copyright © 2015 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDIMetaEvent.h"
-#import "MIKMIDIEvent_SubclassMethods.h"
+#import <MIKMIDI/MIKMIDIMetaEvent.h>
+#import <MIKMIDI/MIKMIDIEvent_SubclassMethods.h>
 
 @interface MIKMIDIMetaEvent ()
 

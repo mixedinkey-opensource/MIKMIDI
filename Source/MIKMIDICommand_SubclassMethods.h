@@ -6,8 +6,23 @@
 //  Copyright (c) 2013 Mixed In Key. All rights reserved.
 //
 
-#import "MIKMIDICommand.h"
-#import "MIKMIDITransmittable.h"
+#import <MIKMIDI/MIKMIDICommand.h>
+#import <MIKMIDI/MIKMIDITransmittable.h>
+
+/**
+ Used by MIKMIDICommand subclasses to communicate their desire to handle a specific
+ MIDIPacket.
+
+ @see +[MIKMIDICommand handlingIntentForMIDIPacket:]
+ */
+typedef NS_ENUM(NSInteger, MIKMIDICommandPacketHandlingIntent) {
+    /** The receiver never wants to be initialized with the given MIDIPacket */
+    MIKMIDICommandPacketHandlingIntentReject,
+    /** The receiver can be initialized with the given MIDIPacket but doesn't need precedence over other supporters of the same command type. The default. */
+    MIKMIDICommandPacketHandlingIntentAccept,
+    /** The receiver implements special support for the passed-in MIDI packet and should be used to handle it instead of other supports (e.g. the superclass) */
+    MIKMIDICommandPacketHandlingIntentAcceptWithHigherPrecedence,
+};
 
 /**
  *  These methods can be called and/or overridden by subclasses of MIKMIDICommand, but are not
@@ -40,6 +55,20 @@
  *  @return An NSArray of NSNumber instances containing MIKMIDICommandType values.
  */
 + (MIKArrayOf(NSNumber *) *)supportedMIDICommandTypes;
+
+/**
+ * Subclasses of MIKMIDICommand can implement this to indicate that they want to handle
+ * a specific MIDI packet, even if other commands (e.g. superclass(es)) can also handle the
+ * more general MIDI message type. For example, this is used for the MIDI Machine Control-spefic
+ * subclasses of MIKMIDISystemExclusiveCommand to indicate that they should take precedence
+ * over MIKMIDISystemExclusiveCommand itself for their specific MMC sysex messages.
+ *
+ * Note that this method will only be called if the receiver is registered as a subclass with MIKMIDICommand
+ * and has already returned the MIDI command type represented by packet from its +supportedMIDICommandTypes method.
+ *
+ * @return One of the values in MIKMIDICommandPacketHandlingIntent
+ */
++ (MIKMIDICommandPacketHandlingIntent)handlingIntentForMIDIPacket:(MIDIPacket *)packet;
 
 /**
  *  The immutable counterpart class of the receiver.
