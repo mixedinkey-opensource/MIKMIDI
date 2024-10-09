@@ -384,6 +384,18 @@ ByteCount MIKMIDIPacketListSizeForCommands(NSArray *commands)
 		return 0;
 	}
 
+#if defined(__arm__) || defined(__aarch64__)
+	// [4-byte aligned]
+	// Compute the size of static members of MIDIPacketList
+	ByteCount packetListSize = offsetof(MIDIPacketList, packet);
+	
+	for (MIKMIDICommand *command in commands) {
+		// Compute the size of MIDIPacket
+		ByteCount packetSize = offsetof(MIDIPacket, data) + command.data.length;
+		packetListSize += 4 * ((packetSize + 3) / 4);
+	}
+#else
+	// [packed]
 	// Compute the size of static members of MIDIPacketList and (MIDIPacket * [commands count])
 	ByteCount packetListSize = offsetof(MIDIPacketList, packet) + offsetof(MIDIPacket, data) * [commands count];
 
@@ -391,7 +403,7 @@ ByteCount MIKMIDIPacketListSizeForCommands(NSArray *commands)
 	for (MIKMIDICommand *command in commands) {
 		packetListSize += [[command data] length];
 	}
-
+#endif
 	return packetListSize;
 }
 
