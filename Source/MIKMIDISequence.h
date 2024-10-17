@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "MIKMIDICompilerCompatibility.h"
-#import "MIKMIDIMetaTimeSignatureEvent.h"
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
+#import <MIKMIDI/MIKMIDIMetaTimeSignatureEvent.h>
 
 @class MIKMIDITrack;
 @class MIKMIDISequencer;
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @see MIKMIDITrack
  *  @see MIKMIDISequencer
  */
-@interface MIKMIDISequence : NSObject
+@interface MIKMIDISequence : NSObject <NSCopying>
 
 /**
  *  Creates and initializes a new instance of MIKMIDISequence.
@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return If an error occurs, upon return contains an NSError object that describes the problem. If you are not interested in possible errors,
  *  you may pass in NULL.
  */
-- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error;
+- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error NS_SWIFT_NAME(init(data:));
 
 /**
  *  Initializes a new instance of MIKMIDISequence from MIDI data.
@@ -270,6 +270,43 @@ NS_ASSUME_NONNULL_BEGIN
  *	@see -setOverallTimeSignature:
  */
 - (MIKMIDITimeSignature)timeSignatureAtTimeStamp:(MusicTimeStamp)timeStamp;
+
+#pragma mark - Timing
+
+
+/** Returns the time in seconds for a given MusicTimeStamp (time in beats) in the sequence.
+ *
+ *  This method converts a time in beats to the corresponding time in seconds in the sequence, taking into account the tempo of the sequence, including tempo changes.
+ *
+ *  @note This methhod only considers the sequence itself. If you're playing the sequence using an MIKMIDISequencer,
+ *  you should use the corresponding methods on MIKMIDISequencer, which take into account looping, tempo overrides, and provide options
+ *  to control the details of the conversion algorithm.
+ *
+ *  @param musicTimeStamp  The time in beats you want to convert to seconds.
+ *
+ *  @return A time in seconds as an NSTimeInterval.
+ *
+ *  @see -musicTimeStampForTimeInSeconds:
+ *  @see -[MIKMIDISequencer timeInSecondsForMusicTimeStamp:options:]
+ */
+- (NSTimeInterval)timeInSecondsForMusicTimeStamp:(MusicTimeStamp)musicTimeStamp;
+
+/** Returns the time in beats for a given time in seconds in the sequence.
+*
+*  This method converts a time in seconds to the corresponding time in beats in the sequence, taking into account the tempo of the sequence, including tempo changes.
+*
+*  @note This methhod only considers the sequence itself. If you're playing the sequence using an MIKMIDISequencer,
+*  you should use the corresponding methods on MIKMIDISequencer, which take into account looping, tempo overrides, and provide options
+*  to control the details of the conversion algorithm.
+*
+*  @param timeInSeconds  The time in seconds you want to convert to a MusicTimeStamp (beats).
+*
+*  @return A time in beats as a MusicTimeStamp.
+*
+*  @see -timeInSecondsForMusicTimeStamp:
+*  @see -[MIKMIDISequencer timeInSecondsForMusicTimeStamp:options:]
+*/
+- (MusicTimeStamp)musicTimeStampForTimeInSeconds:(NSTimeInterval)timeInSeconds;
 
 #pragma mark - Properties
 

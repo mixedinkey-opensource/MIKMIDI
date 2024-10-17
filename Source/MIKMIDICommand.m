@@ -35,6 +35,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 + (BOOL)isMutable { return NO; }
 
 + (BOOL)supportsMIDICommandType:(MIKMIDICommandType)type { return [[self supportedMIDICommandTypes] containsObject:@(type)]; }
++ (MIKMIDICommandPacketHandlingIntent)handlingIntentForMIDIPacket:(MIDIPacket *)packet { return MIKMIDICommandPacketHandlingIntentAccept; }
 + (NSArray *)supportedMIDICommandTypes { return @[]; }
 + (Class)immutableCounterpartClass; { return [MIKMIDICommand class]; }
 + (Class)mutableCounterpartClass; { return [MIKMutableMIDICommand class]; }
@@ -43,8 +44,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 {
     Class subclass = Nil;
     if (packet) {
-        MIKMIDICommandType commandType = packet->data[0];
-        subclass = [[self class] subclassForCommandType:commandType];
+        subclass = [[self class] subclassForMIDIPacket:packet];
     }
     
 	if (!subclass) { subclass = self; }
@@ -55,16 +55,33 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 + (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
 {
 	NSMutableArray *result = [NSMutableArray array];
-	NSInteger dataOffset = 0;
+	ByteCount dataOffset = 0;
 	while (dataOffset < inputPacket->length) {
-		const Byte *packetData = inputPacket->data + dataOffset;
-		MIKMIDICommandType commandType = (MIKMIDICommandType)packetData[0];
-		NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
-		if (commandType == MIKMIDICommandTypeSystemExclusive) {
-			// For sysex, the packet can only contain a single MIDI message (as per documentation for MIDIPacket)
-			standardLength = inputPacket->length;
+		ByteCount eventDataLength = 0;
+		const Byte *eventData = inputPacket->data + dataOffset;
+		MIKMIDICommandType commandType = (MIKMIDICommandType)eventData[0];
+		switch (commandType) {
+			//	For sysex, the packet can only contain a single MIDI message (as per documentation for MIDIPacket)
+			case MIKMIDICommandTypeSystemExclusive:
+				eventDataLength = inputPacket->length;
+				break;
+				
+			//	Is MIKMIDIStandardLengthOfMessageForCommandType() correct returning -1?
+			//	This seems to be the realtime 'System Reset' message coming from a device
+			//	(but could be a meta packet when coming from a file?)
+			case MIKMIDICommandTypeSystemMessage:
+				eventDataLength = 1;
+				break;
+
+			default: {
+				__auto_type standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+				NSAssert(standardLength > 0, @"message length failed for command type %lu", commandType);
+				eventDataLength = (ByteCount)standardLength;
+				break;
+			}
 		}
-		if (dataOffset > (inputPacket->length - standardLength)) break;
+		
+		if (dataOffset > (inputPacket->length - eventDataLength)) break;
 
 		// This is gross, but it's the only way I can find to reliably create a
 		// single-message MIDIPacket.
@@ -74,12 +91,12 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 										  sizeof(MIDIPacketList),
 										  midiPacket,
 										  inputPacket->timeStamp,
-										  standardLength,
-										  packetData);
+										  eventDataLength,
+										  eventData);
         
 		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
 		if (command) [result addObject:command];
-		dataOffset += standardLength;
+		dataOffset += eventDataLength;
 	}
 
 	return result;
@@ -87,7 +104,7 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
 {
-	Class subclass = [[self class] subclassForCommandType:commandType];
+	Class subclass = [[[self class] allSubclassesForCommandType:commandType] firstObject];
 	if (!subclass) subclass = self;
 	if ([self isMutable]) subclass = [subclass mutableCounterpartClass];
 	return [[subclass alloc] init];
@@ -150,26 +167,70 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 #pragma mark - Private
 
-+ (Class)subclassForCommandType:(MIKMIDICommandType)commandType
++ (NSArray <Class> *)allSubclassesForCommandType:(MIKMIDICommandType)commandType
 {
-	Class result = nil;
-	for (Class subclass in registeredMIKMIDICommandSubclasses) {
-		if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
-			result = subclass;
-			break;
-		}
-	}
-	if (!result) {
-		// Try again ignoring lower 4 bits
-		commandType |= 0x0f;
-		for (Class subclass in registeredMIKMIDICommandSubclasses) {
-			if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
-				result = subclass;
-				break;
-			}
-		}
-	}
-	return result;
+    NSMutableArray *result = [NSMutableArray array];
+    for (Class subclass in registeredMIKMIDICommandSubclasses) {
+        if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
+            [result addObject:subclass];
+        }
+    }
+    if (!result.count) {
+        // Try again ignoring lower 4 bits
+        commandType |= 0x0f;
+        for (Class subclass in registeredMIKMIDICommandSubclasses) {
+            if ([[subclass supportedMIDICommandTypes] containsObject:@(commandType)]) {
+                [result addObject:subclass];
+            }
+        }
+    }
+
+    // Sort so that deepest subclass hierarchy children come last
+    return [result sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(Class class1, Class class2) {
+        if ([class1 isEqual:class2]) { return NSOrderedSame; }
+        if ([class1 isSubclassOfClass:class2]) { return NSOrderedDescending; }
+        if ([class2 isSubclassOfClass:class1]) { return NSOrderedAscending; }
+        return NSOrderedAscending;
+    }];
+}
+
++ (Class)subclassForMIDIPacket:(MIDIPacket *)packet
+{
+    MIKMIDICommandType commandType = packet->data[0];
+
+    NSArray *allSubclasses = [self allSubclassesForCommandType:commandType];
+    NSMutableArray *subclasses = [NSMutableArray array];
+    NSMutableArray *specificHandlingSubclasses = [NSMutableArray array];
+
+    for (Class subclass in allSubclasses) {
+        MIKMIDICommandPacketHandlingIntent intent = [subclass handlingIntentForMIDIPacket:packet];
+        if (intent == MIKMIDICommandPacketHandlingIntentReject) {
+            continue;
+        }
+        [subclasses addObject:subclass];
+        if (intent == MIKMIDICommandPacketHandlingIntentAcceptWithHigherPrecedence) {
+            [specificHandlingSubclasses addObject:subclass];
+        }
+    }
+
+    if (specificHandlingSubclasses.count > 1) {
+        NSData *packetData = [NSData dataWithBytes:packet->data length:packet->length];
+        NSLog(@"[MIKMIDI] Warning: More than one subclass of MIKMIDICommand was found to handle MIDI message data (%@). Candidates are: %@. Which one is used is random/undefined. This is likely a bug, and should be reported to the maintainers of MIKMIDI.", packetData, specificHandlingSubclasses);
+    }
+
+    if (specificHandlingSubclasses.count) {
+        subclasses = specificHandlingSubclasses;
+    }
+
+    // Return the deepest child subclass that doesn't reject this MIDI packet
+    for (Class subclass in subclasses.reverseObjectEnumerator) {
+        if ([subclass handlingIntentForMIDIPacket:packet] == MIKMIDICommandPacketHandlingIntentReject) {
+            continue;
+        }
+        return subclass;
+    }
+
+    return nil;
 }
 
 #pragma mark - NSCopying
@@ -340,6 +401,18 @@ ByteCount MIKMIDIPacketListSizeForCommands(NSArray *commands)
 		return 0;
 	}
 
+#if defined(__arm__) || defined(__aarch64__)
+	// [4-byte aligned]
+	// Compute the size of static members of MIDIPacketList
+	ByteCount packetListSize = offsetof(MIDIPacketList, packet);
+	
+	for (MIKMIDICommand *command in commands) {
+		// Compute the size of MIDIPacket
+		ByteCount packetSize = offsetof(MIDIPacket, data) + command.data.length;
+		packetListSize += 4 * ((packetSize + 3) / 4);
+	}
+#else
+	// [packed]
 	// Compute the size of static members of MIDIPacketList and (MIDIPacket * [commands count])
 	ByteCount packetListSize = offsetof(MIDIPacketList, packet) + offsetof(MIDIPacket, data) * [commands count];
 
@@ -347,7 +420,7 @@ ByteCount MIKMIDIPacketListSizeForCommands(NSArray *commands)
 	for (MIKMIDICommand *command in commands) {
 		packetListSize += [[command data] length];
 	}
-
+#endif
 	return packetListSize;
 }
 

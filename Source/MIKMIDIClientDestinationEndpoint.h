@@ -6,8 +6,8 @@
 //
 //
 
-#import "MIKMIDIDestinationEndpoint.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIDestinationEndpoint.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 @class MIKMIDIClientDestinationEndpoint;
 @class MIKMIDICommand;

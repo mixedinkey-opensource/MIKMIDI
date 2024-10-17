@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MIKMIDIResponder.h"
-#import "MIKMIDICompilerCompatibility.h"
+#import <MIKMIDI/MIKMIDIResponder.h>
+#import <MIKMIDI/MIKMIDICompilerCompatibility.h>
 
 /**
  *  Bit-mask constants used to specify MIDI responder types for mapping.

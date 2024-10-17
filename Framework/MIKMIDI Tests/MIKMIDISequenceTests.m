@@ -139,9 +139,99 @@ static void *MIKMIDISequenceTestsKVOContext = &MIKMIDISequenceTestsKVOContext;
 	XCTAssertTrue([self.receivedNotificationKeyPaths containsObject:@"durationInSeconds"], @"KVO notification for durationInSeconds failed after removing longest child track.");
 }
 
+- (void)testConversionFromMusicTimeStampToSeconds
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"tempochanges" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(sequence);
+
+	XCTAssertEqual([sequence timeInSecondsForMusicTimeStamp:0], 0.0);
+
+	MIKMIDITempoEvent *firstTempo = [sequence.tempoEvents firstObject];
+	XCTAssertNotNil(firstTempo);
+	NSTimeInterval expectedTimeAt3 = 60 * 3.0 / firstTempo.bpm;
+	XCTAssertEqualWithAccuracy([sequence timeInSecondsForMusicTimeStamp:3], expectedTimeAt3, 1e-6);
+
+	MIKMIDITempoEvent *secondTempo = sequence.tempoEvents[1];
+	NSTimeInterval expectedTimeAtSecondTempo = 60 * secondTempo.timeStamp / firstTempo.bpm;
+	MusicTimeStamp nextCheck = secondTempo.timeStamp+1;
+	NSTimeInterval expectedTimeAtNextCheck = 60 * (nextCheck - secondTempo.timeStamp) / secondTempo.bpm + expectedTimeAtSecondTempo;
+	XCTAssertEqualWithAccuracy([sequence timeInSecondsForMusicTimeStamp:nextCheck], expectedTimeAtNextCheck, 1e-6);
+}
+
+- (void)testConversionFromSecondsToMusicTimeStamp
+{
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSURL *testMIDIFileURL = [bundle URLForResource:@"tempochanges" withExtension:@"mid"];
+	NSError *error = nil;
+	MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+	XCTAssertNotNil(sequence);
+
+	XCTAssertEqual([sequence musicTimeStampForTimeInSeconds:0.0], 0);
+
+	MIKMIDITempoEvent *firstTempo = [sequence.tempoEvents firstObject];
+	XCTAssertNotNil(firstTempo);
+	NSTimeInterval firstCheckTime = 1.5;
+	MusicTimeStamp firstExpectedTimeStamp = firstTempo.bpm * firstCheckTime / 60.0;
+	XCTAssertEqualWithAccuracy([sequence musicTimeStampForTimeInSeconds:firstCheckTime], firstExpectedTimeStamp, 1e-6);
+
+	MIKMIDITempoEvent *secondTempo = sequence.tempoEvents[1];
+	NSTimeInterval timeAtSecondTempo = 60 * secondTempo.timeStamp / firstTempo.bpm;
+	NSTimeInterval secondCheckTime = 4;
+	MusicTimeStamp expectedTimeStampAtNextCheck = secondTempo.bpm * (secondCheckTime - timeAtSecondTempo) / 60.0 + secondTempo.timeStamp;
+	XCTAssertEqualWithAccuracy([sequence musicTimeStampForTimeInSeconds:secondCheckTime], expectedTimeStampAtNextCheck, 1e-6);
+}
+
 - (void)testSetTimeSignature
 {
 	[self.sequence setTimeSignature:MIKMIDITimeSignatureMake(2, 4) atTimeStamp:0];
+}
+
+- (void)testCopyingSequence
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *testMIDIFileURL = [bundle URLForResource:@"Parallax-Loader" withExtension:@"mid"];
+    NSError *error = nil;
+    MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+    XCTAssertNotNil(sequence);
+
+    MIKMIDISequence *copiedSequence = [sequence copy];
+    XCTAssertNotIdentical(sequence, copiedSequence, @"Copied sequence was same instance as original");
+    XCTAssertEqual(sequence.tracks.count, copiedSequence.tracks.count);
+    XCTAssertEqual(sequence.length, copiedSequence.length);
+    XCTAssertEqual(sequence.durationInSeconds, copiedSequence.durationInSeconds);
+
+    NSMutableArray *allTracks = [NSMutableArray arrayWithObject:sequence.tempoTrack];
+    [allTracks addObjectsFromArray:sequence.tracks];
+    NSMutableArray *allCopiedTracks = [NSMutableArray arrayWithObject:copiedSequence.tempoTrack];
+    [allCopiedTracks addObjectsFromArray:copiedSequence.tracks];
+    for (NSUInteger i=0; i<allTracks.count; i++) {
+        MIKMIDITrack *track = allTracks[i];
+        MIKMIDITrack *copiedTrack = allCopiedTracks[i];
+        XCTAssertNotIdentical(track, copiedTrack, @"Copied track was same instance as original");
+        XCTAssertEqualObjects(track.events, copiedTrack.events);
+    }
+}
+
+- (void)testCopyingSequencePerformance
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *testMIDIFileURL = [bundle URLForResource:@"Parallax-Loader" withExtension:@"mid"];
+    NSError *error = nil;
+    MIKMIDISequence *sequence = [MIKMIDISequence sequenceWithFileAtURL:testMIDIFileURL convertMIDIChannelsToTracks:NO error:&error];
+    XCTAssertNotNil(sequence);
+    [self measureBlock:^{
+        [sequence copy];
+    }];
+}
+
+- (void)testTempoRetrieval
+{
+    MIKMIDISequence *sequence = [MIKMIDISequence sequence];
+    [sequence setOverallTempo:75];
+    XCTAssertEqual([sequence tempoAtTimeStamp:0], 75);
 }
 
 #pragma mark - KVO

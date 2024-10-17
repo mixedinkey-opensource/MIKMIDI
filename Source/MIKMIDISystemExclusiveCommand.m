@@ -32,6 +32,8 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 @implementation MIKMIDISystemExclusiveCommand
 {
 	BOOL _has3ByteManufacturerID;
+    BOOL _includesThreeByteManufacturerID;
+    BOOL _threeByteManufacturerIDInInternalData;
 }
 
 + (void)load { [super load]; [MIKMIDICommand registerSubclass:self]; }
@@ -67,6 +69,19 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 	return result;
 }
 
++ (instancetype)systemExclusiveCommandWithManufacturerID:(UInt32)manufacturerID
+                                            sysexChannel:(UInt8)sysexChannel
+                                               sysexData:(NSData *)sysexData
+                                               timestamp:(nullable NSDate *)timestamp
+{
+    MIKMutableMIDISystemExclusiveCommand *result = [[MIKMutableMIDISystemExclusiveCommand alloc] initWithMIDIPacket:NULL];
+    result.manufacturerID = manufacturerID;
+    result.sysexChannel = sysexChannel;
+    result.sysexData = sysexData;
+    result.timestamp = timestamp ?: [NSDate date];
+    return [self isMutable] ? result : [result copy];
+}
+
 - (id)initWithMIDIPacket:(MIDIPacket *)packet
 {
 	self = [super initWithMIDIPacket:packet];
@@ -76,6 +91,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 				UInt8 firstByte = self.dataByte1;
 				if (firstByte == 0) {
 					_has3ByteManufacturerID = YES;
+                    _threeByteManufacturerIDInInternalData = YES;
 					if ([self.internalData length] < 4) [self.internalData increaseLengthBy:4-[self.internalData length]];
 				}
 			}
@@ -101,7 +117,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 {
 	if ([self.internalData length] < 2) return 0;
 	
-	NSUInteger manufacturerIDLength = _has3ByteManufacturerID ? 3 : 1;
+	NSUInteger manufacturerIDLength = _threeByteManufacturerIDInInternalData ? 3 : 1;
 	NSData *idData = [self.internalData subdataWithRange:NSMakeRange(1, manufacturerIDLength)];
 	UInt8 *bytes = (UInt8 *)[idData bytes];
 	if (manufacturerIDLength == 1) { return bytes[0]; }
@@ -112,16 +128,27 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 {
 	if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
 	
-	NSUInteger numExistingBytes = _has3ByteManufacturerID ? 3 : 1;
+	NSUInteger numExistingBytes = _threeByteManufacturerIDInInternalData ? 3 : 1;
 	NSUInteger numNewBytes = (manufacturerID & 0xFFFF00) != 0 ? 3 : 1;
+    _has3ByteManufacturerID = (numNewBytes == 3);
+    if (self.includesThreeByteManufacturerID) { numNewBytes = 3; }
 	manufacturerID = CFSwapInt32HostToBig(manufacturerID);
-	NSUInteger numRequiredBytes = MAX(numExistingBytes, numNewBytes) + 1;
-	if ([self.internalData length] < numRequiredBytes) [self.internalData increaseLengthBy:numRequiredBytes-[self.internalData length]];
-	
 	UInt8 *replacementBytes = (UInt8 *)(&manufacturerID) + 4 - numNewBytes;
 	[self.internalData replaceBytesInRange:NSMakeRange(1, numExistingBytes) withBytes:replacementBytes length:numNewBytes];
-	
-	_has3ByteManufacturerID = (numNewBytes == 3);
+    _threeByteManufacturerIDInInternalData = numNewBytes == 3;
+}
+
+- (BOOL)includesThreeByteManufacturerID
+{
+    if (_has3ByteManufacturerID) { return YES; }
+    return _includesThreeByteManufacturerID;
+}
+
+- (void)setIncludesThreeByteManufacturerID:(BOOL)includesThreeByteManufacturerID
+{
+    if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
+    _includesThreeByteManufacturerID = includesThreeByteManufacturerID;
+    self.manufacturerID = self.manufacturerID;
 }
 
 - (BOOL)isUniversal
@@ -159,7 +186,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 
 - (NSUInteger)sysexDataStartLocation
 {
-	NSUInteger sysexStartLocation = _has3ByteManufacturerID ? 4 : 2;
+	NSUInteger sysexStartLocation = _threeByteManufacturerIDInInternalData ? 4 : 2;
 	if (self.isUniversal) {
 		sysexStartLocation++;
 	}
@@ -226,6 +253,7 @@ uint8_t const kMIKMIDISysexEndDelimiter = 0xF7;
 
 // One of the super classes already implements a getter *and* setter for these. @dynamic keeps the compiler happy.
 @dynamic manufacturerID;
+@dynamic includesThreeByteManufacturerID;
 @dynamic sysexChannel;
 @dynamic sysexData;
 @dynamic timestamp;
