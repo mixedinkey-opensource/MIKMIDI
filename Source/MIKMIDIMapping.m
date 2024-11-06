@@ -378,11 +378,11 @@ CLEANUP_AND_EXIT:
 	
 	NSArray *nameAttributes = [mapping nodesForXPath:@"./@MappingName" error:&error];
 	if (!nameAttributes) NSLog(@"Unable to get name attributes from MIDI Mapping XML: %@", error);
-	self.name = [[nameAttributes lastObject] stringValue];
+	self.name = [[nameAttributes lastObject] stringValue] ? : @"";
 	
 	NSArray *controllerNameAttributes = [mapping nodesForXPath:@"./@ControllerName" error:&error];
 	if (!controllerNameAttributes) NSLog(@"Unable to get controller name attributes from MIDI Mapping XML: %@", error);
-	self.controllerName = [[controllerNameAttributes lastObject] stringValue];
+	self.controllerName = [[controllerNameAttributes lastObject] stringValue] ? : @"";
 	
 	NSArray *mappingItemElements = [mapping nodesForXPath:@"./MappingItems/MappingItem" error:&error];
 	if (!mappingItemElements) {
