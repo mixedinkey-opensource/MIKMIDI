@@ -75,8 +75,11 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 			default: {
 				__auto_type standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
-				NSAssert(standardLength > 0, @"message length failed for command type %lu", commandType);
-				eventDataLength = (ByteCount)standardLength;
+				if ( standardLength > 0 ) {
+					eventDataLength = (ByteCount)standardLength;
+				} else { /* -1 or NSIntegerMin */
+					eventDataLength = 1; /* assume 1 and hope for the best */
+				}
 				break;
 			}
 		}
