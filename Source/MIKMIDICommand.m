@@ -54,51 +54,79 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
 
 + (NSArray *)commandsWithMIDIPacket:(MIDIPacket *)inputPacket
 {
-	NSMutableArray *result = [NSMutableArray array];
-	ByteCount dataOffset = 0;
-	while (dataOffset < inputPacket->length) {
-		ByteCount eventDataLength = 0;
-		const Byte *eventData = inputPacket->data + dataOffset;
-		MIKMIDICommandType commandType = (MIKMIDICommandType)eventData[0];
-		switch (commandType) {
-			//	For sysex, the packet can only contain a single MIDI message (as per documentation for MIDIPacket)
-			case MIKMIDICommandTypeSystemExclusive:
-				eventDataLength = inputPacket->length;
-				break;
-				
-			//	Is MIKMIDIStandardLengthOfMessageForCommandType() correct returning -1?
-			//	This seems to be the realtime 'System Reset' message coming from a device
-			//	(but could be a meta packet when coming from a file?)
-			case MIKMIDICommandTypeSystemMessage:
-				eventDataLength = 1;
-				break;
-
-			default: {
-				__auto_type standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
-				if ( standardLength > 0 ) {
-					eventDataLength = (ByteCount)standardLength;
-				} else { /* -1 or NSIntegerMin */
-					eventDataLength = 1; /* assume 1 and hope for the best */
-				}
-				break;
-			}
-		}
-		
-		if (dataOffset > (inputPacket->length - eventDataLength)) break;
-
-		// This is gross, but it's the only way I can find to reliably create a
-		// single-message MIDIPacket.
-		MIDIPacketList packetList;
-		MIDIPacket *midiPacket = MIDIPacketListInit(&packetList);
-		midiPacket = MIDIPacketListAdd(&packetList,
-										  sizeof(MIDIPacketList),
-										  midiPacket,
-										  inputPacket->timeStamp,
-										  eventDataLength,
-										  eventData);
+    // Guard
+    if (!inputPacket || inputPacket->length == 0) {
+        return @[];
+    }
+    
+    NSMutableArray *result = [NSMutableArray array];
+    ByteCount dataOffset = 0;
+    
+    while (dataOffset < inputPacket->length)
+    {
+        const Byte *eventData = inputPacket->data + dataOffset;
+        ByteCount eventDataLength = 0;
         
-		MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
-		if (command) [result addObject:command];
+        // Guard: must have at least 1 byte
+        if ((inputPacket->length - dataOffset) < 1) {
+            break;
+        }
+        
+        MIKMIDICommandType commandType = (MIKMIDICommandType)eventData[0];
+        
+        switch (commandType)
+        {
+                // SysEx must occupy the remainder of the packet
+            case MIKMIDICommandTypeSystemExclusive:
+                eventDataLength = inputPacket->length - dataOffset;
+                break;
+                
+                //  Realtime messages (0xF8–0xFF) are 1 byte
+            case MIKMIDICommandTypeSystemMessage:
+                eventDataLength = 1;
+                break;
+                
+            default:
+            {
+                NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+                
+                if ( standardLength > 0 ) {
+                    eventDataLength = (ByteCount)standardLength;
+                } else {
+                    // Variable-length or unknown → assume 1 byte (and hope for the best)
+                    eventDataLength = 1;
+                }
+            }
+                break;
+        }
+        
+        // Bounds check
+        if (eventDataLength == 0 || eventDataLength > 256 || dataOffset + eventDataLength > inputPacket->length) {
+            break;
+        }
+        
+        UInt32 bufferSize = (UInt32)(sizeof(MIDIPacketList) + eventDataLength);
+        MIDIPacketList *packetList = malloc(bufferSize);
+        if (!packetList) break;
+        
+        MIDIPacket *midiPacket = MIDIPacketListInit(packetList);
+        midiPacket = MIDIPacketListAdd(packetList,
+                                       bufferSize,
+                                       midiPacket,
+                                       inputPacket->timeStamp,
+                                       eventDataLength,
+                                       eventData);
+
+        if (midiPacket) {
+            MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
+            if (command) {
+                [result addObject:command];
+            }
+        }
+
+        free(packetList);
+        
+        // Increment Offset
 		dataOffset += eventDataLength;
 	}
 
@@ -462,3 +490,4 @@ BOOL MIKCreateMIDIPacketListFromCommands(MIDIPacketList **outPacketList, NSArray
 	*outPacketList = packetList;
 	return YES;
 }
+
