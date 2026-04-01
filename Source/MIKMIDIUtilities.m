@@ -150,7 +150,7 @@ NSInteger MIKMIDIStandardLengthOfMessageForCommandType(MIKMIDICommandType comman
 	return result;
 }
 
-MIDITimeStamp MIKMIDIGetCurrentTimeStamp(void)
+MIDITimeStamp MIKMIDIGetCurrentTimeStamp()
 {
 	return mach_absolute_time();
 }
