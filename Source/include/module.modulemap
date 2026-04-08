@@ -6,6 +6,7 @@ module MIKMIDI [system] {
     explicit module Private {
         header "MIKMIDIPrivate.h"
         header "MIKMIDITrack_Protected.h"
+        header "MIKMIDITransmittable.h"
         header "MIKMIDIControlChangeCommand+Private.h"
         header "MIKMIDISequence+MIKMIDIPrivate.h"
         header "MIKMIDISequencer+MIKMIDIPrivate.h"
