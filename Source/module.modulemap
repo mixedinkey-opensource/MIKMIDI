@@ -24,4 +24,4 @@ module MIKMIDI [system] {
         header "MIKMIDIPort_SubclassMethods.h"
         export *
     }
-} 
+}
