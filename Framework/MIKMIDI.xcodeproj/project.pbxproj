@@ -1691,6 +1691,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1715,6 +1716,7 @@
 				GCC_PREFIX_HEADER = "MIKMIDI-Prefix.pch";
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MODULEMAP_FILE = MIKMIDI.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mixedinkey.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1754,6 +1756,7 @@
 				);
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1795,6 +1798,7 @@
 				);
 				INFOPLIST_FILE = "MIKMIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = MIKMIDI.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;

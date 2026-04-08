@@ -15,8 +15,8 @@ Pod::Spec.new do |s|
   s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com' }
   s.social_media_url = 'https://twitter.com/armadsen'
 
-  s.ios.deployment_target = '9.0'
-  s.osx.deployment_target = '10.9'
+  s.ios.deployment_target = '15.6'
+  s.osx.deployment_target = '11.5'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
   s.source_files = 'Source/**/*.{h,m}'
