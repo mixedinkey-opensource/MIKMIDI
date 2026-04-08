@@ -1,0 +1,26 @@
+module MIKMIDI [system] {
+    umbrella header "MIKMIDI.h"
+    export *
+    module * { export * }
+    
+    explicit module Private {
+        header "MIKMIDIPrivate.h"
+        header "MIKMIDITrack_Protected.h"
+        header "MIKMIDIControlChangeCommand+Private.h"
+        header "MIKMIDISequence+MIKMIDIPrivate.h"
+        header "MIKMIDISequencer+MIKMIDIPrivate.h"
+        export *
+    }
+    
+    explicit module Subclassing {
+        header "MIKMIDICommand_SubclassMethods.h"
+        header "MIKMIDIEvent_SubclassMethods.h"
+        header "MIKMIDIMetaEvent_SubclassMethods.h"
+        header "MIKMIDISynthesizer_SubclassMethods.h"
+        header "MIKMIDIObject_SubclassMethods.h"
+        header "MIKMIDIChannelVoiceCommand_SubclassMethods.h"
+        header "MIKMIDINoteCommand_SubclassMethods.h"
+        header "MIKMIDIPort_SubclassMethods.h"
+        export *
+    }
+} 

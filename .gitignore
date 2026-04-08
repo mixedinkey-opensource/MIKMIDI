@@ -18,3 +18,4 @@ profile
 
 build
 .DS_Store
+.build

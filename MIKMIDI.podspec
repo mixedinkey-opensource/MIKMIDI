@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.8'
+  s.visionos.deployment_target = '1.0'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
   s.source_files = 'Source/**/*.{h,m}'
@@ -25,6 +26,7 @@ Pod::Spec.new do |s|
   
   s.osx.frameworks = 'CoreMIDI', 'AudioToolbox', 'AudioUnit'
   s.ios.frameworks = 'CoreMIDI', 'AudioToolbox'
+  s.visionos.frameworks = 'CoreMIDI', 'AudioToolbox'
   s.ios.library = 'xml2'
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SDK_DIR)"/usr/include/libxml2' }
 # s.compiler_flags = '-Wno-deprecated-implementations'
