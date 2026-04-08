@@ -12,7 +12,8 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "MIKMIDI",
-            targets: ["MIKMIDI"]),
+            targets: ["MIKMIDI"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -37,8 +38,7 @@ let package = Package(
                       "MIKMIDISequencer+MIKMIDIPrivate.h",
                       "MIKMIDIPrivateUtilities.h"
                      ],
-            cSettings: [.define("SWIFTPM")]
-            //    sources: ["Source/**/*.m"]
+            cSettings: [.define("MIKMIDI_SWIFT_PACKAGE")]
         )
     ]
 )
