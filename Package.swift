@@ -23,8 +23,7 @@ let package = Package(
             path: "Source",
             publicHeadersPath: ".",
             cSettings: [
-                .headerSearchPath("../Framework"),
-                .define("MIKMIDI_SWIFT_PACKAGE", to: "1")
+                .headerSearchPath("../Framework")
             ],
             linkerSettings: [
                 .linkedFramework("CoreMIDI"),
