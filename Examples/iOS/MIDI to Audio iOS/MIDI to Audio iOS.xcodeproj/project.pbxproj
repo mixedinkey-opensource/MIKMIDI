@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D92256921E0F9D3200A8815D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92256911E0F9D3200A8815D /* AppDelegate.swift */; };
+		D92256941E0F9D3200A8815D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92256931E0F9D3200A8815D /* ViewController.swift */; };
+		D92256971E0F9D3200A8815D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D92256951E0F9D3200A8815D /* Main.storyboard */; };
+		D92256991E0F9D3200A8815D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D92256981E0F9D3200A8815D /* Assets.xcassets */; };
+		D922569C1E0F9D3200A8815D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D922569A1E0F9D3200A8815D /* LaunchScreen.storyboard */; };
+		D92256C31E0FA5DC00A8815D /* Stereo Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = D92256C11E0FA5DC00A8815D /* Stereo Piano.sf2 */; };
+		D92256C41E0FA5DC00A8815D /* TheOriginal.mid in Resources */ = {isa = PBXBuildFile; fileRef = D92256C21E0FA5DC00A8815D /* TheOriginal.mid */; };
+		D92256D61E0FB46E00A8815D /* MIKMIDIToAudioExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = D92256D31E0FB46E00A8815D /* MIKMIDIToAudioExporter.m */; };
+		D92256D71E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.m in Sources */ = {isa = PBXBuildFile; fileRef = D92256D51E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.m */; };
+		D92256D81E0FB48800A8815D /* MIKMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D92256CF1E0FB43E00A8815D /* MIKMIDI.framework */; };
+		D92256D91E0FB48800A8815D /* MIKMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D92256CF1E0FB43E00A8815D /* MIKMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D92256CC1E0FB43E00A8815D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D74EEA517A7129300BEE89F;
+			remoteInfo = MIKMIDI;
+		};
+		D92256CE1E0FB43E00A8815D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DAF8B061A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+		D92256D01E0FB43E00A8815D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D4DF13A1AAB57430065F004;
+			remoteInfo = "MIKMIDI Tests";
+		};
+		D92256DA1E0FB48800A8815D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DAF8B051A7AFF1100F46528;
+			remoteInfo = "MIKMIDI-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D92256B31E0F9DA000A8815D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D92256D91E0FB48800A8815D /* MIKMIDI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D922568E1E0F9D3200A8815D /* MIDI to Audio iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIDI to Audio iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D92256911E0F9D3200A8815D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D92256931E0F9D3200A8815D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D92256961E0F9D3200A8815D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D92256981E0F9D3200A8815D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D922569B1E0F9D3200A8815D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D922569D1E0F9D3200A8815D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D92256B51E0FA15E00A8815D /* MIDI to Audio iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MIDI to Audio iOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		D92256C11E0FA5DC00A8815D /* Stereo Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Stereo Piano.sf2"; sourceTree = "<group>"; };
+		D92256C21E0FA5DC00A8815D /* TheOriginal.mid */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = TheOriginal.mid; sourceTree = "<group>"; };
+		D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIKMIDI.xcodeproj; path = ../../../Framework/MIKMIDI.xcodeproj; sourceTree = "<group>"; };
+		D92256D21E0FB46E00A8815D /* MIKMIDIToAudioExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKMIDIToAudioExporter.h; sourceTree = "<group>"; };
+		D92256D31E0FB46E00A8815D /* MIKMIDIToAudioExporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKMIDIToAudioExporter.m; sourceTree = "<group>"; };
+		D92256D41E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIKOfflineMIDISynthesizer.h; sourceTree = "<group>"; };
+		D92256D51E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIKOfflineMIDISynthesizer.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D922568B1E0F9D3200A8815D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D92256D81E0FB48800A8815D /* MIKMIDI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D92256851E0F9D3200A8815D = {
+			isa = PBXGroup;
+			children = (
+				D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */,
+				D92256901E0F9D3200A8815D /* MIDI to Audio iOS */,
+				D922568F1E0F9D3200A8815D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D922568F1E0F9D3200A8815D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D922568E1E0F9D3200A8815D /* MIDI to Audio iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D92256901E0F9D3200A8815D /* MIDI to Audio iOS */ = {
+			isa = PBXGroup;
+			children = (
+				D92256BD1E0FA18B00A8815D /* Converting Files */,
+				D92256911E0F9D3200A8815D /* AppDelegate.swift */,
+				D92256931E0F9D3200A8815D /* ViewController.swift */,
+				D92256951E0F9D3200A8815D /* Main.storyboard */,
+				D92256981E0F9D3200A8815D /* Assets.xcassets */,
+				D922569A1E0F9D3200A8815D /* LaunchScreen.storyboard */,
+				D922569D1E0F9D3200A8815D /* Info.plist */,
+				D92256C11E0FA5DC00A8815D /* Stereo Piano.sf2 */,
+				D92256C21E0FA5DC00A8815D /* TheOriginal.mid */,
+			);
+			path = "MIDI to Audio iOS";
+			sourceTree = "<group>";
+		};
+		D92256BD1E0FA18B00A8815D /* Converting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D92256B51E0FA15E00A8815D /* MIDI to Audio iOS-Bridging-Header.h */,
+				D92256D21E0FB46E00A8815D /* MIKMIDIToAudioExporter.h */,
+				D92256D31E0FB46E00A8815D /* MIKMIDIToAudioExporter.m */,
+				D92256D41E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.h */,
+				D92256D51E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.m */,
+			);
+			name = "Converting Files";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		D92256C71E0FB43D00A8815D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D92256CD1E0FB43E00A8815D /* MIKMIDI.framework */,
+				D92256CF1E0FB43E00A8815D /* MIKMIDI.framework */,
+				D92256D11E0FB43E00A8815D /* MIKMIDI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D922568D1E0F9D3200A8815D /* MIDI to Audio iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D92256A01E0F9D3200A8815D /* Build configuration list for PBXNativeTarget "MIDI to Audio iOS" */;
+			buildPhases = (
+				D922568A1E0F9D3200A8815D /* Sources */,
+				D922568B1E0F9D3200A8815D /* Frameworks */,
+				D922568C1E0F9D3200A8815D /* Resources */,
+				D92256B31E0F9DA000A8815D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D92256DB1E0FB48800A8815D /* PBXTargetDependency */,
+			);
+			name = "MIDI to Audio iOS";
+			productName = "MIDI to Audio iOS";
+			productReference = D922568E1E0F9D3200A8815D /* MIDI to Audio iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D92256861E0F9D3200A8815D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = madebysasha;
+				TargetAttributes = {
+					D922568D1E0F9D3200A8815D = {
+						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0820;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D92256891E0F9D3200A8815D /* Build configuration list for PBXProject "MIDI to Audio iOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D92256851E0F9D3200A8815D;
+			productRefGroup = D922568F1E0F9D3200A8815D /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D92256C71E0FB43D00A8815D /* Products */;
+					ProjectRef = D92256C61E0FB43D00A8815D /* MIKMIDI.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				D922568D1E0F9D3200A8815D /* MIDI to Audio iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D92256CD1E0FB43E00A8815D /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = D92256CC1E0FB43E00A8815D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D92256CF1E0FB43E00A8815D /* MIKMIDI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MIKMIDI.framework;
+			remoteRef = D92256CE1E0FB43E00A8815D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D92256D11E0FB43E00A8815D /* MIKMIDI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "MIKMIDI Tests.xctest";
+			remoteRef = D92256D01E0FB43E00A8815D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D922568C1E0F9D3200A8815D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D922569C1E0F9D3200A8815D /* LaunchScreen.storyboard in Resources */,
+				D92256991E0F9D3200A8815D /* Assets.xcassets in Resources */,
+				D92256C31E0FA5DC00A8815D /* Stereo Piano.sf2 in Resources */,
+				D92256971E0F9D3200A8815D /* Main.storyboard in Resources */,
+				D92256C41E0FA5DC00A8815D /* TheOriginal.mid in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D922568A1E0F9D3200A8815D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D92256941E0F9D3200A8815D /* ViewController.swift in Sources */,
+				D92256D71E0FB46E00A8815D /* MIKOfflineMIDISynthesizer.m in Sources */,
+				D92256D61E0FB46E00A8815D /* MIKMIDIToAudioExporter.m in Sources */,
+				D92256921E0F9D3200A8815D /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D92256DB1E0FB48800A8815D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "MIKMIDI-iOS";
+			targetProxy = D92256DA1E0FB48800A8815D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D92256951E0F9D3200A8815D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D92256961E0F9D3200A8815D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D922569A1E0F9D3200A8815D /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D922569B1E0F9D3200A8815D /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D922569E1E0F9D3200A8815D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D922569F1E0F9D3200A8815D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D92256A11E0F9D3200A8815D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "MIDI to Audio iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madebysasha.MIDI-to-Audio-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MIDI to Audio iOS-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		D92256A21E0F9D3200A8815D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "MIDI to Audio iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.madebysasha.MIDI-to-Audio-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MIDI to Audio iOS-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D92256891E0F9D3200A8815D /* Build configuration list for PBXProject "MIDI to Audio iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D922569E1E0F9D3200A8815D /* Debug */,
+				D922569F1E0F9D3200A8815D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D92256A01E0F9D3200A8815D /* Build configuration list for PBXNativeTarget "MIDI to Audio iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D92256A11E0F9D3200A8815D /* Debug */,
+				D92256A21E0F9D3200A8815D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D92256861E0F9D3200A8815D /* Project object */;
+}

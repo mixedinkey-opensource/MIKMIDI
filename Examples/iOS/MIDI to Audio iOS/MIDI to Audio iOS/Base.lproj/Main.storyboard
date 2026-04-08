@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="MIDI_to_Audio_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UQ3-EZ-nTP">
+                                <rect key="frame" x="16" y="150" width="343" height="165"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                <state key="normal" title="Play Original MIDI File"/>
+                                <connections>
+                                    <action selector="playOriginalButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y5n-Sw-9UZ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vdn-Nq-oaR">
+                                <rect key="frame" x="16" y="485" width="343" height="162"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                <state key="normal" title="Play to Converted Audio File"/>
+                                <connections>
+                                    <action selector="playConvertedButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6qJ-Tc-2is"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MIDI To Audio File" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.25" translatesAutoresizingMaskIntoConstraints="NO" id="V8h-kC-8LS">
+                                <rect key="frame" x="16" y="20" width="343" height="122"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="122" id="ohq-me-Nke"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="36"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eUE-Fb-YfL">
+                                <rect key="frame" x="16" y="323" width="343" height="154"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="154" id="7Me-B4-mUw"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                <state key="normal" title="Convert MIDI to Audio File"/>
+                                <connections>
+                                    <action selector="convertToAudioFileButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zvr-jc-0WI"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="eUE-Fb-YfL" firstAttribute="leading" secondItem="vdn-Nq-oaR" secondAttribute="leading" id="04I-KH-KMY"/>
+                            <constraint firstItem="V8h-kC-8LS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="1ND-BR-jdf"/>
+                            <constraint firstItem="V8h-kC-8LS" firstAttribute="trailing" secondItem="UQ3-EZ-nTP" secondAttribute="trailing" id="9wk-P0-8HT"/>
+                            <constraint firstItem="eUE-Fb-YfL" firstAttribute="top" secondItem="UQ3-EZ-nTP" secondAttribute="bottom" constant="8" symbolic="YES" id="A4M-pe-g6k"/>
+                            <constraint firstItem="V8h-kC-8LS" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="KML-n8-sNG"/>
+                            <constraint firstItem="eUE-Fb-YfL" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="66.5" id="NY1-vU-C3U"/>
+                            <constraint firstItem="UQ3-EZ-nTP" firstAttribute="trailing" secondItem="eUE-Fb-YfL" secondAttribute="trailing" id="OUq-Vx-EZr"/>
+                            <constraint firstItem="V8h-kC-8LS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Uy4-Qq-qEQ"/>
+                            <constraint firstItem="vdn-Nq-oaR" firstAttribute="top" secondItem="eUE-Fb-YfL" secondAttribute="bottom" constant="8" symbolic="YES" id="XET-f0-XMc"/>
+                            <constraint firstItem="eUE-Fb-YfL" firstAttribute="trailing" secondItem="vdn-Nq-oaR" secondAttribute="trailing" id="Xdh-Yz-IZm"/>
+                            <constraint firstItem="V8h-kC-8LS" firstAttribute="leading" secondItem="UQ3-EZ-nTP" secondAttribute="leading" id="aXH-7L-Yv2"/>
+                            <constraint firstItem="UQ3-EZ-nTP" firstAttribute="leading" secondItem="eUE-Fb-YfL" secondAttribute="leading" id="dwv-2k-k4l"/>
+                            <constraint firstItem="UQ3-EZ-nTP" firstAttribute="top" secondItem="V8h-kC-8LS" secondAttribute="bottom" constant="8" symbolic="YES" id="jTC-Sd-6qx"/>
+                            <constraint firstAttribute="bottom" secondItem="vdn-Nq-oaR" secondAttribute="bottom" constant="20" symbolic="YES" id="vXf-uq-tCE"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="convertToAudioFileButton" destination="eUE-Fb-YfL" id="Qbt-jB-sps"/>
+                        <outlet property="playConvertedAudioFileButton" destination="vdn-Nq-oaR" id="Qgm-Fi-aoE"/>
+                        <outlet property="playOriginalButton" destination="UQ3-EZ-nTP" id="Yne-4Q-fCL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="137.18140929535232"/>
+        </scene>
+    </scenes>
+</document>
