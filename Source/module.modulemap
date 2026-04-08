@@ -4,7 +4,10 @@ module MIKMIDI {
     module * { export * }
     
     explicit module Private {
+        header "MIKMIDIEventIterator.h"
+        header "MIKMIDIMappingXMLParser.h"
         header "MIKMIDIPrivate.h"
+        header "MIKMIDIPrivateUtilities.h"
         header "MIKMIDITrack_Protected.h"
         header "MIKMIDITransmittable.h"
         header "MIKMIDIControlChangeCommand+Private.h"
