@@ -29,7 +29,6 @@ let package = Package(
                       "MIKMIDIPort_SubclassMethods.h",
                       "MIKMIDIChannelVoiceCommand_SubclassMethods.h",
                       "MIKMIDIControlChangeCommand+Private.h",
-                      "MIKMIDIChannelVoiceCommand_SubclassMethods.h",
                       "MIKMIDIMappingXMLParser.h",
                       "MIKMIDISequence+MIKMIDIPrivate.h",
                       "MIKMIDITrack_Protected.h",
