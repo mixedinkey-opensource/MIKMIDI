@@ -21,9 +21,8 @@ let package = Package(
         .target(
             name: "MIKMIDI",
             path: "Source",
-            publicHeadersPath: "include",
+            publicHeadersPath: ".",
             cSettings: [
-                .headerSearchPath("."),
                 .headerSearchPath("../Framework"),
                 .define("MIKMIDI_SWIFT_PACKAGE", to: "1")
             ],
