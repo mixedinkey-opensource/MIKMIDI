@@ -15,12 +15,12 @@ Pod::Spec.new do |s|
   s.author       = { 'Andrew Madsen' => 'andrew@mixedinkey.com' }
   s.social_media_url = 'https://twitter.com/armadsen'
 
-  s.ios.deployment_target = '8.0'
-  s.osx.deployment_target = '10.8'
+  s.ios.deployment_target = '15.6'
+  s.osx.deployment_target = '11.5'
   
   s.source       = { :git => 'https://github.com/mixedinkey-opensource/MIKMIDI.git', :tag => s.version.to_s }
-  s.source_files = 'Source/**/*.{h,m}'
-  s.private_header_files = 'Source/MIKMIDIPrivateUtilities.h'
+  s.source_files = 'Sources/**/*.{h,m}'
+  s.private_header_files = 'Sources/*.h'
   s.requires_arc = true
   
   s.osx.frameworks = 'CoreMIDI', 'AudioToolbox', 'AudioUnit'
