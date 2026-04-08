@@ -1,4 +1,4 @@
-module MIKMIDI [system] {
+module MIKMIDI {
     umbrella header "MIKMIDI.h"
     export *
     module * { export * }
