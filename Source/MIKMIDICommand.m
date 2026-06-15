@@ -81,31 +81,41 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
                 eventDataLength = inputPacket->length - dataOffset;
                 break;
                 
-                //  Realtime messages (0xF8–0xFF) are 1 byte
-            case MIKMIDICommandTypeSystemMessage:
-                eventDataLength = 1;
-                break;
+            // System Common messages — lengths per MIDI spec
+            case 0xF1: eventDataLength = 2; break;  // MTC Quarter Frame
+            case 0xF2: eventDataLength = 3; break;  // Song Position Pointer
+            case 0xF3: eventDataLength = 2; break;  // Song Select
+            case 0xF6: eventDataLength = 1; break;  // Tune Request
+            case 0xF7: eventDataLength = 1; break;  // End of SysEx (orphaned)
                 
             default:
             {
-                NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
-                
-                if ( standardLength > 0 ) {
-                    eventDataLength = (ByteCount)standardLength;
-                } else {
-                    // Variable-length or unknown → assume 1 byte (and hope for the best)
+                // Realtime messages (0xF8–0xFF) are always 1 byte.
+                // Note: the MIDI spec allows realtime messages to be interleaved
+                // inside SysEx, but that case is not handled here.
+                if (commandType >= 0xF8) {
                     eventDataLength = 1;
+                } else {
+                    NSInteger standardLength = MIKMIDIStandardLengthOfMessageForCommandType(commandType);
+                    if (standardLength > 0) {
+                        eventDataLength = (ByteCount)standardLength;
+                    } else {
+                        // Variable-length or unknown → assume 1 byte
+                        eventDataLength = 1;
+                    }
                 }
             }
-                break;
-        }
-        
-        // Bounds check
-        if (eventDataLength == 0 || eventDataLength > 256 || dataOffset + eventDataLength > inputPacket->length) {
             break;
         }
         
-        UInt32 bufferSize = (UInt32)(sizeof(MIDIPacketList) + eventDataLength);
+        // Bounds check
+        if (eventDataLength == 0 || dataOffset + eventDataLength > inputPacket->length) {
+            break;
+        }
+        
+        // sizeof(MIDIPacketList) includes one MIDIPacket with a 1-byte data array,
+        // so subtract 1 to avoid double-counting when adding eventDataLength.
+        UInt32 bufferSize = (UInt32)(sizeof(MIDIPacketList) + eventDataLength - 1);
         MIDIPacketList *packetList = malloc(bufferSize);
         if (!packetList) break;
         
@@ -116,21 +126,19 @@ static NSMutableSet *registeredMIKMIDICommandSubclasses;
                                        inputPacket->timeStamp,
                                        eventDataLength,
                                        eventData);
-
         if (midiPacket) {
             MIKMIDICommand *command = [MIKMIDICommand commandWithMIDIPacket:midiPacket];
             if (command) {
                 [result addObject:command];
             }
         }
-
         free(packetList);
         
-        // Increment Offset
-		dataOffset += eventDataLength;
-	}
-
-	return result;
+        // Increment offset
+        dataOffset += eventDataLength;
+    }
+    
+    return result;
 }
 
 + (instancetype)commandForCommandType:(MIKMIDICommandType)commandType; // Most useful for mutable commands
